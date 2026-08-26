@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { EventItem, MetaPixelConfig, TicketBatch } from './types/event';
 import type { Producer, NavigationPage } from './types/producer';
+import type { FinanceModuleKey } from './types/financeHub';
 import type { Participant } from './data/participants';
 import { mockEvents } from './data/events';
 import { mockProducers } from './data/producers';
 import { mockParticipants } from './data/participants';
+
+// Auth & Security Provider (Fase 7)
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { LoginPage } from './pages/auth/LoginPage';
+import { UserManagerPage } from './pages/admin/UserManagerPage';
+import { AuditLogsPage } from './pages/admin/AuditLogsPage';
+
+// Layout Components (Phase 6 Template)
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
+import { ModuleTitleBar } from './components/layout/ModuleTitleBar';
+import { AppFooter } from './components/layout/AppFooter';
+import { ScrollTop } from './components/layout/ScrollTop';
+
+// Page Views
 import { EventosPage } from './pages/Eventos';
 import { EventFormPage } from './pages/EventFormPage';
 import { LotsPage } from './pages/LotsPage';
@@ -16,20 +30,26 @@ import { DashboardPage } from './pages/Dashboard';
 import { ProdutoraPage } from './pages/Produtora';
 import { StatusFaciaisPage } from './pages/StatusFaciais';
 import { FinanceiroPage, type FinanceTab } from './pages/Financeiro';
+import { POSPage, type POSTab } from './pages/POSPage';
 import { MarketingPage } from './pages/Marketing';
 import { GenericModulePage } from './pages/GenericModulePage';
 import { MetaPixelModal } from './components/events/MetaPixelModal';
 import { Check } from 'lucide-react';
 
-export default function App() {
+function AuthenticatedApp() {
+  const { isAuthenticated, currentUser, activeProducer, allProducers, selectProducer } = useAuth();
+
+  // If not logged in, render Login Page
+  if (!isAuthenticated || !currentUser) {
+    return <LoginPage />;
+  }
+
   // Global Data State
   const [events, setEvents] = useState<EventItem[]>(mockEvents);
-  const [producers] = useState<Producer[]>(mockProducers);
-  const [selectedProducer, setSelectedProducer] = useState<Producer>(mockProducers[0]);
   const [participants, setParticipants] = useState<Participant[]>(mockParticipants);
   
   // Navigation & Search State
-  const [currentPage, setCurrentPage] = useState<NavigationPage>('eventos');
+  const [currentPage, setCurrentPage] = useState<NavigationPage>('fin-hub');
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -49,6 +69,17 @@ export default function App() {
       setToastMessage(null);
     }, 4000);
   };
+
+  // MULTI-TENANT ISOLATION: Filter events by active producer
+  const scopedEvents = useMemo(() => {
+    if (!activeProducer) {
+      return events; // Admin Master seeing all producers
+    }
+    // Filter events strictly belonging to the active producer
+    return events.filter(
+      (ev) => ev.producerId === activeProducer.id || ev.producerName === activeProducer.name
+    );
+  }, [events, activeProducer]);
 
   // Navigation Handlers
   const handleNavigateToNewEvent = () => {
@@ -155,23 +186,72 @@ export default function App() {
     triggerToast('Configurações de rastreamento do Pixel Meta salvas!');
   };
 
-  const getFinanceTab = (page: NavigationPage): FinanceTab => {
+  const getFinanceConfig = (page: NavigationPage): { tab: FinanceTab; module: FinanceModuleKey } => {
     switch (page) {
-      case 'vendas': return 'sales';
-      case 'repasses': return 'payouts';
-      case 'fluxo-caixa': return 'cashflow';
-      case 'extrato': return 'statement';
-      case 'financeiro':
+      case 'fin-saldo':
       case 'saldo':
+        return { tab: 'overview', module: 'saldo-consolidado' };
+      case 'vendas':
       case 'recebimentos':
+        return { tab: 'sales', module: 'saldo-consolidado' };
+      case 'fin-repasses':
+      case 'repasses':
+        return { tab: 'payouts', module: 'solicitar-repasse' };
+      case 'fluxo-caixa':
+        return { tab: 'cashflow', module: 'saldo-consolidado' };
+      case 'fin-extrato':
+      case 'extrato':
+        return { tab: 'statement', module: 'extrato-geral' };
+      case 'fin-antecipacoes':
+        return { tab: 'hub', module: 'antecipacoes' };
+      case 'fin-despesas':
+        return { tab: 'hub', module: 'despesas' };
+      case 'fin-contas':
+        return { tab: 'hub', module: 'contas-bancarias' };
+      case 'fin-bordero':
+        return { tab: 'hub', module: 'bordero-assinaturas' };
+      case 'fin-negociacoes':
+        return { tab: 'hub', module: 'negociacoes' };
+      case 'fin-advanced':
+        return { tab: 'hub', module: 'financeiro-advanced' };
+      case 'fin-split':
+        return { tab: 'hub', module: 'split-financeiro' };
+      case 'fin-inteligencia':
+        return { tab: 'hub', module: 'inteligencia-financeira' };
+      case 'fin-conciliacao':
       case 'conciliacao':
+        return { tab: 'hub', module: 'conciliacao-bancaria' };
+      case 'fin-spread':
+        return { tab: 'hub', module: 'simulador-spread' };
+      case 'financeiro':
+      case 'fin-hub':
+      default:
+        return { tab: 'hub', module: 'hub' };
+    }
+  };
+
+  const isFinancePage = [
+    'financeiro', 'fin-hub', 'fin-saldo', 'fin-repasses', 
+    'fin-antecipacoes', 'fin-extrato', 'fin-despesas', 
+    'fin-contas', 'fin-bordero', 'fin-negociacoes', 
+    'fin-advanced', 'fin-split', 'fin-inteligencia', 
+    'fin-conciliacao', 'fin-spread', 'saldo', 'vendas', 
+    'recebimentos', 'repasses', 'conciliacao', 'fluxo-caixa', 'extrato'
+  ].includes(currentPage);
+
+  const getPOSTab = (page: NavigationPage): POSTab => {
+    switch (page) {
+      case 'pos-terminals': return 'terminals';
+      case 'pos-sales': return 'sales';
+      case 'pos-closing': return 'closing';
+      case 'terminais-pos':
       default:
         return 'overview';
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F6F9] text-[#0E1726] flex flex-col font-sans selection:bg-[#1677FF] selection:text-white relative">
+    <div className="min-h-screen bg-[#F1F4F8] text-[#0E1726] flex flex-col font-sans selection:bg-[#1677FF] selection:text-white relative">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-btn border border-[#10B981]/40 bg-[#1E2530] px-5 py-3 text-white shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-200">
@@ -182,25 +262,25 @@ export default function App() {
         </div>
       )}
 
-      {/* Top Header */}
+      {/* 1. Header Global com Multi-Tenant Selector */}
       <Header
         query={globalSearchQuery}
         onQueryChange={(q) => {
           setGlobalSearchQuery(q);
           if (currentPage !== 'eventos') setCurrentPage('eventos');
         }}
-        selectedProducer={selectedProducer}
-        producers={producers}
-        onSelectProducer={(prod) => setSelectedProducer(prod)}
+        selectedProducer={activeProducer}
+        producers={allProducers}
+        onSelectProducer={(prod) => selectProducer(prod ? prod.id : null)}
         onOpenNewEvent={handleNavigateToNewEvent}
         onOpenAdvancedFilters={() => {
           if (currentPage !== 'eventos') setCurrentPage('eventos');
         }}
       />
 
-      {/* Main Layout Container (Sidebar + Content) */}
+      {/* 2. Main Layout Container (Sidebar Contextual + Área Principal) */}
       <div className="flex flex-1 min-w-0">
-        {/* Collapsible Main Sidebar */}
+        {/* Sidebar Contextual */}
         <Sidebar
           currentPage={currentPage}
           onNavigate={(page) => {
@@ -208,147 +288,182 @@ export default function App() {
               handleNavigateToNewEvent();
             } else {
               setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
             }
           }}
           onOpenNewEvent={handleNavigateToNewEvent}
+          onBackToHome={() => setCurrentPage('eventos')}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
 
-        {/* Page Content Viewport */}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 max-w-[1720px] mx-auto w-full">
-          {/* 1. Flagship Events List */}
-          {currentPage === 'eventos' && (
-            <EventosPage
-              events={events}
-              setEvents={setEvents}
-              selectedProducer={selectedProducer}
-              producers={producers}
-              searchQuery={globalSearchQuery}
-              onNavigateToNewEvent={handleNavigateToNewEvent}
-              onNavigateToEditEvent={handleNavigateToEditEvent}
-              onNavigateToLots={handleNavigateToLots}
-              onNavigateToParticipants={handleNavigateToParticipants}
-              onNavigateToEventDashboard={handleNavigateToEventDashboard}
-            />
-          )}
+        {/* Área Principal (Barra de Título + Conteúdo + Footer) */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Barra de Título Independente */}
+          <ModuleTitleBar currentPage={currentPage} />
 
-          {/* 2. Individual Event Dashboard Page */}
-          {currentPage === 'dashboard-evento' && (
-            <EventDashboardPage
-              event={activeEventForDashboard}
-              participants={participants}
-              onBack={() => setCurrentPage('eventos')}
-              onNavigateToParticipants={() => {
-                setSelectedEventForParticipants(activeEventForDashboard);
-                setCurrentPage('participantes');
-              }}
-              onNavigateToLots={() => {
-                setSelectedEventForLots(activeEventForDashboard);
-                setCurrentPage('lotes');
-              }}
-              onNavigateToEdit={() => {
-                setSelectedEventForEdit(activeEventForDashboard);
-                setCurrentPage('editar-evento');
-              }}
-            />
-          )}
+          {/* Viewport de Conteúdo */}
+          <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 max-w-[1720px] w-full mx-auto">
+            {/* 1. Flagship Events List (Multi-Tenant Scoped) */}
+            {currentPage === 'eventos' && (
+              <EventosPage
+                events={scopedEvents}
+                setEvents={setEvents}
+                selectedProducer={activeProducer || allProducers[0]}
+                producers={allProducers}
+                searchQuery={globalSearchQuery}
+                onNavigateToNewEvent={handleNavigateToNewEvent}
+                onNavigateToEditEvent={handleNavigateToEditEvent}
+                onNavigateToLots={handleNavigateToLots}
+                onNavigateToParticipants={handleNavigateToParticipants}
+                onNavigateToEventDashboard={handleNavigateToEventDashboard}
+              />
+            )}
 
-          {/* 3. Create Event Dedicated Page */}
-          {currentPage === 'novo-evento' && (
-            <EventFormPage
-              mode="new"
-              selectedProducer={selectedProducer}
-              producers={producers}
-              onCancel={() => setCurrentPage('eventos')}
-              onSave={handleSaveEvent}
-            />
-          )}
+            {/* 2. Individual Event Dashboard Page */}
+            {currentPage === 'dashboard-evento' && (
+              <EventDashboardPage
+                event={activeEventForDashboard}
+                participants={participants}
+                onBack={() => setCurrentPage('eventos')}
+                onNavigateToParticipants={() => {
+                  setSelectedEventForParticipants(activeEventForDashboard);
+                  setCurrentPage('participantes');
+                }}
+                onNavigateToLots={() => {
+                  setSelectedEventForLots(activeEventForDashboard);
+                  setCurrentPage('lotes');
+                }}
+                onNavigateToEdit={() => {
+                  setSelectedEventForEdit(activeEventForDashboard);
+                  setCurrentPage('editar-evento');
+                }}
+              />
+            )}
 
-          {/* 4. Edit Event Dedicated Page */}
-          {currentPage === 'editar-evento' && (
-            <EventFormPage
-              mode="edit"
-              event={selectedEventForEdit}
-              selectedProducer={selectedProducer}
-              producers={producers}
-              onCancel={() => setCurrentPage('eventos')}
-              onSave={handleSaveEvent}
-            />
-          )}
+            {/* 3. Create Event Dedicated Page */}
+            {currentPage === 'novo-evento' && (
+              <EventFormPage
+                mode="new"
+                selectedProducer={activeProducer || allProducers[0]}
+                producers={allProducers}
+                onCancel={() => setCurrentPage('eventos')}
+                onSave={handleSaveEvent}
+              />
+            )}
 
-          {/* 5. Configure Lots Dedicated Page */}
-          {currentPage === 'lotes' && (
-            <LotsPage
-              events={events}
-              selectedEvent={selectedEventForLots}
-              onSelectEvent={(ev) => setSelectedEventForLots(ev)}
-              onBack={() => setCurrentPage('eventos')}
-              onSaveBatches={handleSaveBatches}
-            />
-          )}
+            {/* 4. Edit Event Dedicated Page */}
+            {currentPage === 'editar-evento' && (
+              <EventFormPage
+                mode="edit"
+                event={selectedEventForEdit}
+                selectedProducer={activeProducer || allProducers[0]}
+                producers={allProducers}
+                onCancel={() => setCurrentPage('eventos')}
+                onSave={handleSaveEvent}
+              />
+            )}
 
-          {/* 6. Participants Dedicated Page */}
-          {currentPage === 'participantes' && (
-            <ParticipantsPage
-              events={events}
-              participants={participants}
-              selectedEvent={selectedEventForParticipants}
-              onSelectEvent={(ev) => setSelectedEventForParticipants(ev)}
-              onToggleCheckin={handleToggleCheckin}
-            />
-          )}
+            {/* 5. Configure Lots Dedicated Page */}
+            {currentPage === 'lotes' && (
+              <LotsPage
+                events={scopedEvents}
+                selectedEvent={selectedEventForLots}
+                onSelectEvent={(ev) => setSelectedEventForLots(ev)}
+                onBack={() => setCurrentPage('eventos')}
+                onSaveBatches={handleSaveBatches}
+              />
+            )}
 
-          {/* 7. Executive General Dashboard */}
-          {currentPage === 'dashboard' && (
-            <DashboardPage
-              events={events}
-              selectedProducer={selectedProducer}
-              onNavigateToEvents={() => setCurrentPage('eventos')}
-              onOpenNewEvent={handleNavigateToNewEvent}
-            />
-          )}
+            {/* 6. Participants Dedicated Page */}
+            {currentPage === 'participantes' && (
+              <ParticipantsPage
+                events={scopedEvents}
+                participants={participants}
+                selectedEvent={selectedEventForParticipants}
+                onSelectEvent={(ev) => setSelectedEventForParticipants(ev)}
+                onToggleCheckin={handleToggleCheckin}
+              />
+            )}
 
-          {/* 8. Producer Page */}
-          {currentPage === 'produtora' && (
-            <ProdutoraPage selectedProducer={selectedProducer} />
-          )}
+            {/* 7. Executive General Dashboard */}
+            {currentPage === 'dashboard' && (
+              <DashboardPage
+                events={scopedEvents}
+                selectedProducer={activeProducer || allProducers[0]}
+                onNavigateToEvents={() => setCurrentPage('eventos')}
+                onOpenNewEvent={handleNavigateToNewEvent}
+              />
+            )}
 
-          {/* 9. Status Faciais Page */}
-          {currentPage === 'status-faciais' && (
-            <StatusFaciaisPage
-              events={events}
-              participants={participants}
-            />
-          )}
+            {/* 8. Producer Page */}
+            {currentPage === 'produtora' && (
+              <ProdutoraPage selectedProducer={activeProducer || allProducers[0]} />
+            )}
 
-          {/* 10. Financial Module (Fase 4) */}
-          {(currentPage === 'financeiro' || currentPage === 'saldo' || currentPage === 'vendas' || currentPage === 'recebimentos' || currentPage === 'repasses' || currentPage === 'extrato' || currentPage === 'conciliacao' || currentPage === 'fluxo-caixa') && (
-            <FinanceiroPage
-              key={currentPage}
-              events={events}
-              initialTab={getFinanceTab(currentPage)}
-              notify={triggerToast}
-            />
-          )}
+            {/* 9. Status Faciais Page */}
+            {currentPage === 'status-faciais' && (
+              <StatusFaciaisPage
+                events={scopedEvents}
+                participants={participants}
+              />
+            )}
 
-          {/* 11. Marketing Pages */}
-          {(currentPage === 'marketing' || currentPage === 'campanhas' || currentPage === 'pixel-meta' || currentPage === 'google-analytics') && (
-            <MarketingPage
-              events={events}
-              onOpenMetaModal={(ev) => setMarketingModalEvent(ev)}
-            />
-          )}
+            {/* 10. Official Hub Financeiro & Modules */}
+            {isFinancePage && (
+              <FinanceiroPage
+                key={currentPage}
+                events={scopedEvents}
+                initialTab={getFinanceConfig(currentPage).tab}
+                initialSubModule={getFinanceConfig(currentPage).module}
+                notify={triggerToast}
+              />
+            )}
 
-          {/* 12. Generic Module Pages */}
-          {(currentPage === 'terminais-pos' || currentPage === 'atendimento' || currentPage === 'remarketing' || currentPage === 'gerenciar-acessos' || currentPage === 'administracao' || currentPage === 'clube-beneficios' || currentPage === 'cupons' || currentPage === 'cortesias' || currentPage === 'categorias-setores' || currentPage === 'mensagens') && (
-            <GenericModulePage
-              page={currentPage}
-              onNavigateToEvents={() => setCurrentPage('eventos')}
-            />
-          )}
-        </main>
+            {/* 11. POS / PDV Module */}
+            {(currentPage === 'terminais-pos' || currentPage === 'pos-terminals' || currentPage === 'pos-sales' || currentPage === 'pos-closing') && (
+              <POSPage
+                key={currentPage}
+                events={scopedEvents}
+                initialTab={getPOSTab(currentPage)}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* 12. User Management (Fase 7) */}
+            {(currentPage === 'gerenciar-usuarios' || currentPage === 'gerenciar-acessos') && (
+              <UserManagerPage />
+            )}
+
+            {/* 13. Audit Logs (Fase 7) */}
+            {currentPage === 'logs-auditoria' && (
+              <AuditLogsPage />
+            )}
+
+            {/* 14. Marketing Pages */}
+            {(currentPage === 'marketing' || currentPage === 'campanhas' || currentPage === 'pixel-meta' || currentPage === 'google-analytics') && (
+              <MarketingPage
+                events={scopedEvents}
+                onOpenMetaModal={(ev) => setMarketingModalEvent(ev)}
+              />
+            )}
+
+            {/* 15. Generic Module Pages */}
+            {(currentPage === 'atendimento' || currentPage === 'remarketing' || currentPage === 'administracao' || currentPage === 'clube-beneficios' || currentPage === 'cupons' || currentPage === 'cortesias' || currentPage === 'categorias-setores' || currentPage === 'mensagens') && (
+              <GenericModulePage
+                page={currentPage}
+                onNavigateToEvents={() => setCurrentPage('eventos')}
+              />
+            )}
+          </main>
+
+          {/* Footer Global Oficial */}
+          <AppFooter />
+        </div>
       </div>
+
+      {/* Floating Scroll to Top */}
+      <ScrollTop />
 
       {/* Meta Pixel Modal */}
       <MetaPixelModal
@@ -358,5 +473,13 @@ export default function App() {
         onSave={handleSaveMetaPixel}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AuthenticatedApp />
+    </AuthProvider>
   );
 }

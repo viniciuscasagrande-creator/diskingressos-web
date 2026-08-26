@@ -1,23 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  Search, Bell, ChevronDown, Check, Building2, 
-  SlidersHorizontal, User, Shield, LogOut,
-  HelpCircle, Sparkles, X, CheckCheck
+  Search, Bell, Plus, ChevronDown, Building2, 
+  User as UserIcon, LogOut, ShieldCheck, Check, 
+  ExternalLink, KeyRound, Globe
 } from 'lucide-react';
 import type { Producer } from '../../types/producer';
-import type { NotificationItem } from '../../data/mockNotifications';
-import { mockNotifications } from '../../data/mockNotifications';
+import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
 
 interface HeaderProps {
   query: string;
   onQueryChange: (query: string) => void;
-  selectedProducer: Producer;
+  selectedProducer: Producer | null;
   producers: Producer[];
-  onSelectProducer: (producer: Producer) => void;
+  onSelectProducer: (producer: Producer | null) => void;
   onOpenNewEvent: () => void;
   onOpenAdvancedFilters: () => void;
-  activeFiltersCount?: number;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -28,280 +26,196 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectProducer,
   onOpenNewEvent,
   onOpenAdvancedFilters,
-  activeFiltersCount = 0,
 }) => {
+  const { currentUser, logout, selectProducer, activeProducer } = useAuth();
+
   const [producerDropdownOpen, setProducerDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [notificationsList, setNotificationsList] = useState<NotificationItem[]>(mockNotifications);
 
-  const producerRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
-  const notificationsRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (producerRef.current && !producerRef.current.contains(event.target as Node)) {
-        setProducerDropdownOpen(false);
-      }
-      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-        setProfileDropdownOpen(false);
-      }
-      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
-        setNotificationsOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const unreadCount = notificationsList.filter(n => !n.read).length;
-
-  const markAllAsRead = () => {
-    setNotificationsList(prev => prev.map(n => ({ ...n, read: true })));
-  };
+  const isAdminMaster = currentUser?.role === 'admin-master' || currentUser?.role === 'admin';
 
   return (
-    <header className="sticky top-0 z-30 flex h-[74px] w-full items-center justify-between border-b border-white/[0.08] bg-[#222A36] px-4 md:px-7 text-white select-none">
-      {/* Brand & Producer Selector */}
-      <div className="flex items-center gap-4 lg:gap-6">
-        {/* Brand Logo */}
-        <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => window.location.reload()}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-[#1677FF] shadow-sm shadow-blue-600/30 group-hover:scale-105 transition-transform">
-            <span className="text-xl font-black italic tracking-tighter text-white">Di</span>
+    <header className="sticky top-0 z-40 flex h-[74px] w-full items-center justify-between border-b border-white/[0.08] bg-[#222A36] px-4 sm:px-6 lg:px-7 select-none">
+      {/* 1. Left: Brand Logo & Producer Selector */}
+      <div className="flex items-center gap-4 sm:gap-6 min-w-0">
+        {/* Logo DiskIngressos */}
+        <div className="flex items-center gap-2.5 cursor-pointer">
+          <div className="flex h-9 w-9 items-center justify-center rounded-btn bg-[#1677FF] text-white shadow-md">
+            <span className="font-extrabold text-[17px] tracking-tight">Di</span>
           </div>
-          <div className="hidden sm:flex flex-col">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[17px] font-extrabold tracking-tight text-white">DiskIngressos</span>
-              <span className="rounded bg-blue-500/20 px-1.5 py-0.5 text-[9px] font-black text-blue-400 border border-blue-500/30">PRO</span>
-            </div>
-            <span className="text-[11px] font-medium text-slate-400">Painel de Gestão</span>
+          <div className="hidden sm:block">
+            <span className="font-black text-[18px] tracking-tight text-white block leading-none">
+              DiskIngressos
+            </span>
+            <span className="text-[10px] font-semibold text-[#8F9BAD] uppercase tracking-widest mt-0.5 block">
+              Painel do Produtor
+            </span>
           </div>
         </div>
 
         {/* Vertical Divider */}
-        <div className="hidden lg:block h-7 w-[1px] bg-slate-700/60" />
+        <div className="h-6 w-px bg-white/[0.12] hidden md:block" />
 
-        {/* Selected Producer Switcher */}
-        <div className="relative" ref={producerRef}>
-          <button
-            onClick={() => setProducerDropdownOpen(!producerDropdownOpen)}
-            className="flex items-center gap-2.5 rounded-btn border border-slate-700/70 bg-[#2A3442] px-3 py-1.5 text-left transition hover:border-slate-600 hover:bg-[#344052]"
-            title="Trocar produtora ativa"
-          >
-            <div className={`flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br ${selectedProducer.avatarColor} text-xs font-bold text-white shadow-xs`}>
-              {selectedProducer.logoInitial}
-            </div>
-            <div className="hidden md:flex flex-col">
-              <span className="text-xs font-semibold text-slate-200 line-clamp-1 max-w-[140px] lg:max-w-[180px]">
-                {selectedProducer.name}
+        {/* Multi-Tenant Producer Indicator / Selector */}
+        {isAdminMaster ? (
+          /* Admin Master Dropdown: Pode ver "Todas as Produtoras" ou escolher uma */
+          <div className="relative">
+            <button
+              onClick={() => setProducerDropdownOpen(!producerDropdownOpen)}
+              className="flex items-center gap-2 rounded-btn border border-white/[0.12] bg-[#2A3442] px-3 py-1.5 text-xs text-white hover:bg-[#344052] transition shadow-xs"
+              title="Alternar Produtora (Acesso Global Admin Master)"
+            >
+              <Building2 size={15} className="text-[#1677FF]" />
+              <span className="font-bold max-w-[160px] truncate">
+                {activeProducer ? activeProducer.name : 'Todas as Produtoras'}
               </span>
-              <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                <Building2 size={10} />
-                {selectedProducer.cnpj}
-              </span>
-            </div>
-            <ChevronDown size={14} className={`text-slate-400 transition-transform duration-200 ${producerDropdownOpen ? 'rotate-180' : ''}`} />
-          </button>
+              <ChevronDown size={14} className="text-slate-400" />
+            </button>
 
-          {/* Producer Dropdown Menu */}
-          {producerDropdownOpen && (
-            <div className="absolute left-0 top-full mt-2 w-72 rounded-card border border-slate-700/80 bg-[#1E2530] p-1.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="px-3 py-2 border-b border-slate-700/50">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Produtora Ativa</p>
-                <p className="text-xs text-slate-300 font-medium">Selecione para filtrar os eventos</p>
-              </div>
-              <div className="py-1 space-y-0.5 max-h-64 overflow-y-auto">
+            {producerDropdownOpen && (
+              <div className="absolute left-0 mt-2 w-64 rounded-card border border-[#E2E8F0] bg-white p-2 shadow-2xl text-slate-800 z-50 animate-in fade-in zoom-in-95 duration-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] px-2 py-1 block">
+                  Visão Multi-Produtor (Master)
+                </span>
+
+                {/* Opção: Todas as Produtoras */}
+                <button
+                  onClick={() => {
+                    selectProducer(null);
+                    onSelectProducer(null);
+                    setProducerDropdownOpen(false);
+                  }}
+                  className={`flex w-full items-center justify-between rounded px-2.5 py-2 text-xs font-semibold transition ${
+                    activeProducer === null
+                      ? 'bg-[#1677FF] text-white font-bold'
+                      : 'hover:bg-slate-100 text-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Globe size={14} />
+                    <span>Todas as Produtoras (Global)</span>
+                  </div>
+                  {activeProducer === null && <Check size={14} />}
+                </button>
+
+                <div className="my-1 border-t border-slate-100" />
+
                 {producers.map((prod) => (
                   <button
                     key={prod.id}
                     onClick={() => {
+                      selectProducer(prod.id);
                       onSelectProducer(prod);
                       setProducerDropdownOpen(false);
                     }}
-                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition ${
-                      selectedProducer.id === prod.id
-                        ? 'bg-blue-600/20 text-blue-300 border border-blue-500/30'
-                        : 'text-slate-300 hover:bg-[#283243]'
+                    className={`flex w-full items-center justify-between rounded px-2.5 py-2 text-xs font-semibold transition ${
+                      activeProducer?.id === prod.id
+                        ? 'bg-[#1677FF] text-white font-bold'
+                        : 'hover:bg-slate-100 text-slate-700'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <div className={`flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br ${prod.avatarColor} text-[11px] font-bold text-white`}>
-                        {prod.logoInitial}
-                      </div>
-                      <div>
-                        <p className="font-semibold">{prod.name}</p>
-                        <p className="text-[10px] text-slate-400">{prod.activeEventsCount} eventos ativos</p>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10B981]" />
+                      <span className="truncate">{prod.name}</span>
                     </div>
-                    {selectedProducer.id === prod.id && <Check size={16} className="text-blue-400" />}
+                    {activeProducer?.id === prod.id && <Check size={14} />}
                   </button>
                 ))}
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        ) : (
+          /* Regular Producer: Fixo na própria produtora (Sem dropdown) */
+          <div className="flex items-center gap-2 rounded-btn bg-[#2A3442] border border-white/[0.12] px-3 py-1.5 text-xs text-white">
+            <Building2 size={14} className="text-[#10B981]" />
+            <span className="font-bold">{activeProducer?.name || 'Sua Produtora'}</span>
+            <span className="text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded font-mono">
+              PJ
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Global Search Bar (Fundo #2A3442) */}
-      <div className="flex-1 max-w-xl mx-3 lg:mx-6">
-        <div className="relative flex items-center">
-          <Search size={17} className="absolute left-3.5 text-slate-400 pointer-events-none" />
+      {/* 2. Center: Global Search Bar */}
+      <div className="hidden md:flex flex-1 max-w-[480px] mx-4 lg:mx-8">
+        <div className="relative w-full">
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            placeholder="Buscar eventos, locais, pedidos (#DI-XXXXX)..."
-            className="w-full h-[42px] rounded-full border border-slate-700/80 bg-[#2A3442] pl-10 pr-24 text-[13px] text-slate-100 placeholder:text-slate-400 focus:border-[#1677FF] focus:bg-[#303B4B] focus:outline-none focus:shadow-[0_0_0_3px_rgba(22,119,255,0.15)] transition"
+            placeholder="Buscar eventos, pedidos, participantes ou transações..."
+            className="w-full h-[40px] pl-10 pr-4 rounded-input border border-white/[0.08] bg-[#2A3442] text-xs font-medium text-white placeholder-slate-400 outline-none transition focus:border-[#1677FF] focus:bg-[#323E4F]"
           />
-          {query && (
-            <button
-              onClick={() => onQueryChange('')}
-              className="absolute right-12 text-slate-400 hover:text-slate-200"
-              title="Limpar busca"
-            >
-              <X size={15} />
-            </button>
-          )}
-          <button
-            onClick={onOpenAdvancedFilters}
-            className={`absolute right-1.5 flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold transition ${
-              activeFiltersCount > 0
-                ? 'bg-[#1677FF] text-white shadow-xs'
-                : 'bg-slate-700/70 text-slate-300 hover:bg-slate-600/70'
-            }`}
-            title="Filtros avançados"
-          >
-            <SlidersHorizontal size={12} />
-            <span className="hidden sm:inline">Filtros</span>
-            {activeFiltersCount > 0 && (
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-extrabold text-[#1677FF]">
-                {activeFiltersCount}
-              </span>
-            )}
-          </button>
         </div>
       </div>
 
-      {/* Right Navigation & Profile Area */}
-      <div className="flex items-center gap-2 lg:gap-3.5">
-        {/* Quick New Event Button (Header Shortcut) */}
-        <Button
-          variant="primary"
-          size="sm"
+      {/* 3. Right: Action Buttons, Notifications & User Menu */}
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Quick New Event Button (if allowed) */}
+        <button
           onClick={onOpenNewEvent}
-          icon={<Sparkles size={14} />}
-          className="hidden xl:inline-flex"
+          className="hidden sm:flex items-center gap-1.5 rounded-btn bg-[#1677FF] px-3.5 py-2 text-xs font-bold text-white hover:bg-[#1366DB] active:scale-95 transition shadow-sm"
         >
-          Novo Evento
-        </Button>
+          <Plus size={15} />
+          <span>Novo Evento</span>
+        </button>
 
-        {/* Notifications Dropdown */}
-        <div className="relative" ref={notificationsRef}>
-          <button
-            onClick={() => setNotificationsOpen(!notificationsOpen)}
-            className="relative flex h-9 w-9 items-center justify-center rounded-btn border border-slate-700/60 bg-[#2A3442] text-slate-300 transition hover:bg-[#344052] hover:text-white"
-            title="Notificações e Alertas"
-          >
-            <Bell size={17} />
-            {unreadCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444] text-[10px] font-bold text-white ring-2 ring-[#222A36]">
-                {unreadCount}
-              </span>
-            )}
-          </button>
+        {/* Notifications Icon */}
+        <button
+          onClick={() => setNotificationsOpen(!notificationsOpen)}
+          className="relative flex h-9 w-9 items-center justify-center rounded-btn text-slate-300 hover:bg-[#2D3746] hover:text-white transition"
+          title="Notificações do Sistema"
+        >
+          <Bell size={18} />
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#EF4444]" />
+        </button>
 
-          {/* Notifications Flyout */}
-          {notificationsOpen && (
-            <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-card border border-slate-700/80 bg-[#1E2530] shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="flex items-center justify-between border-b border-slate-700/60 px-4 py-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-white">Notificações</span>
-                  {unreadCount > 0 && (
-                    <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-[10px] font-bold text-blue-400 border border-blue-500/30">
-                      {unreadCount} novas
-                    </span>
-                  )}
-                </div>
-                {unreadCount > 0 && (
-                  <button
-                    onClick={markAllAsRead}
-                    className="flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 font-medium transition"
-                  >
-                    <CheckCheck size={13} />
-                    Marcar lidas
-                  </button>
-                )}
-              </div>
-
-              <div className="max-h-80 overflow-y-auto divide-y divide-slate-800">
-                {notificationsList.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`p-3.5 transition hover:bg-[#252E3C] ${item.read ? 'opacity-70' : 'bg-blue-950/20'}`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-xs font-bold text-slate-100">{item.title}</h4>
-                      <span className="text-[10px] text-slate-400 whitespace-nowrap">{item.time}</span>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-300 leading-relaxed">{item.message}</p>
-                    {item.eventCode && (
-                      <span className="mt-2 inline-block rounded bg-slate-800 px-2 py-0.5 text-[10px] font-mono text-slate-300 border border-slate-700">
-                        Evento #{item.eventCode}
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* User Profile Area */}
-        <div className="relative" ref={profileRef}>
+        {/* User Profile Dropdown */}
+        <div className="relative">
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-            className="flex items-center gap-2.5 rounded-btn border border-slate-700/60 bg-[#2A3442] p-1.5 pr-2.5 transition hover:bg-[#344052]"
+            className="flex items-center gap-2.5 p-1 rounded-btn hover:bg-[#2D3746] transition"
           >
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 font-bold text-slate-800 text-xs shadow-inner">
-              VI
-              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#10B981] ring-2 ring-[#222A36]" />
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-full text-white font-bold text-xs shadow-inner"
+              style={{ backgroundColor: currentUser?.avatarColor || '#1677FF' }}
+            >
+              {currentUser ? currentUser.name.slice(0, 2).toUpperCase() : 'VI'}
             </div>
-            <div className="hidden lg:flex flex-col text-left">
-              <span className="text-xs font-semibold text-slate-100">Vinicius</span>
-              <span className="text-[10px] text-slate-400">Administrador</span>
+            <div className="hidden lg:block text-left">
+              <span className="text-xs font-bold text-white block leading-tight truncate max-w-[130px]">
+                {currentUser?.name || 'Vinícius Admin'}
+              </span>
+              <span className="text-[10px] text-[#06B6D4] font-medium block">
+                {currentUser?.roleLabel || 'Admin Master'}
+              </span>
             </div>
-            <ChevronDown size={14} className={`text-slate-400 transition-transform ${profileDropdownOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown size={14} className="text-slate-400 hidden sm:block" />
           </button>
 
-          {/* Profile Dropdown */}
+          {/* Profile Dropdown Menu */}
           {profileDropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-60 rounded-card border border-slate-700/80 bg-[#1E2530] p-1.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="px-3 py-2.5 border-b border-slate-700/60">
-                <p className="text-xs font-bold text-white">Vinicius Casagrande</p>
-                <p className="text-[11px] text-slate-400">vinicius@diskingressos.com.br</p>
-                <div className="mt-1.5 flex items-center gap-1">
-                  <span className="inline-block h-2 w-2 rounded-full bg-[#10B981]" />
-                  <span className="text-[10px] text-emerald-400 font-medium">Conta Master Ativa</span>
-                </div>
+            <div className="absolute right-0 mt-2 w-64 rounded-card border border-[#E2E8F0] bg-white p-2 shadow-2xl text-slate-800 z-50 animate-in fade-in zoom-in-95 duration-100">
+              <div className="p-3 border-b border-slate-100">
+                <strong className="block text-xs font-bold text-[#0E1726]">{currentUser?.name}</strong>
+                <span className="text-[11px] text-[#64748B] block truncate">{currentUser?.email}</span>
+                <span className="mt-1.5 inline-block rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-[#1677FF]">
+                  ● {currentUser?.roleLabel}
+                </span>
               </div>
 
-              <div className="py-1 space-y-0.5">
-                <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-300 hover:bg-[#283243] hover:text-white transition">
-                  <User size={15} className="text-slate-400" />
-                  Meu Perfil & Segurança
-                </button>
-                <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-300 hover:bg-[#283243] hover:text-white transition">
-                  <Shield size={15} className="text-slate-400" />
-                  Permissões & Tokens de API
-                </button>
-              </div>
-
-              <div className="pt-1 mt-1 border-t border-slate-700/60">
-                <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-[#EF4444] hover:bg-rose-950/40 transition">
+              <div className="py-1">
+                <button
+                  onClick={() => {
+                    setProfileDropdownOpen(false);
+                    logout();
+                  }}
+                  className="flex w-full items-center gap-2 rounded px-3 py-2 text-xs font-bold text-[#EF4444] hover:bg-rose-50 transition"
+                >
                   <LogOut size={15} />
-                  Sair do Painel
+                  <span>Sair do Sistema</span>
                 </button>
               </div>
             </div>

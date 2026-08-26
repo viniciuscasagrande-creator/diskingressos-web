@@ -3,9 +3,10 @@ import {
   CircleDollarSign, ShoppingCart, Landmark, CalendarDays, 
   Download, Banknote, Filter, Search, TrendingUp, 
   ArrowDownLeft, ArrowUpRight, ChevronRight, ReceiptText, 
-  CreditCard, WalletCards, ArrowLeftRight
+  CreditCard, WalletCards, LayoutGrid, ArrowLeft
 } from 'lucide-react';
 import type { EventItem } from '../types/event';
+import type { FinanceModuleKey } from '../types/financeHub';
 import { 
   transactions as initialTransactions, 
   payouts as initialPayouts, 
@@ -22,20 +23,33 @@ import { DataTable } from '../components/ui/DataTable';
 import { FilterBar } from '../components/ui/FilterBar';
 import { RequestPayoutModal } from '../components/finance/RequestPayoutModal';
 
-export type FinanceTab = 'overview' | 'sales' | 'payouts' | 'cashflow' | 'statement';
+// Dedicated Sub-Modules
+import { FinanceHubHome } from './finance/FinanceHubHome';
+import { SimuladorSpreadModule } from './finance/SimuladorSpreadModule';
+import { SplitFinanceiroModule } from './finance/SplitFinanceiroModule';
+import { BorderoAssinaturasModule } from './finance/BorderoAssinaturasModule';
+import { ContasBancariasModule } from './finance/ContasBancariasModule';
+import { AntecipacoesModule } from './finance/AntecipacoesModule';
+import { GenericFinanceSubView } from './finance/GenericFinanceSubView';
+
+export type FinanceTab = 'hub' | 'overview' | 'sales' | 'payouts' | 'cashflow' | 'statement';
 
 interface FinanceiroPageProps {
   events: EventItem[];
   initialTab?: FinanceTab;
+  initialSubModule?: FinanceModuleKey;
   notify?: (message: string) => void;
 }
 
 export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
   events,
-  initialTab = 'overview',
+  initialTab = 'hub',
+  initialSubModule = 'hub',
   notify,
 }) => {
   const [tab, setTab] = useState<FinanceTab>(initialTab);
+  const [activeModule, setActiveModule] = useState<FinanceModuleKey>(initialSubModule);
+
   const [query, setQuery] = useState('');
   const [selectedEvent, setSelectedEvent] = useState('Todos os eventos');
   const [selectedPeriod, setSelectedPeriod] = useState('Últimos 30 dias');
@@ -92,6 +106,20 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
     }
   };
 
+  const handleSelectModuleFromHub = (key: FinanceModuleKey) => {
+    setActiveModule(key);
+    if (key === 'saldo-consolidado') {
+      setTab('overview');
+    } else if (key === 'solicitar-repasse') {
+      setTab('payouts');
+      setIsPayoutModalOpen(true);
+    } else if (key === 'extrato-geral') {
+      setTab('statement');
+    } else {
+      setTab('hub');
+    }
+  };
+
   const transactionHeaders = [
     'Data / Hora',
     'Descrição / Tipo',
@@ -114,6 +142,38 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
 
   const maxCashValue = Math.max(...cashFlow.flatMap((d) => [d.entry, d.exit]));
 
+  // Route specialized modules
+  if (tab === 'hub' && activeModule !== 'hub') {
+    if (activeModule === 'simulador-spread') {
+      return <SimuladorSpreadModule onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'split-financeiro') {
+      return <SplitFinanceiroModule onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'bordero-assinaturas') {
+      return <BorderoAssinaturasModule events={events} onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'contas-bancarias') {
+      return <ContasBancariasModule onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'antecipacoes') {
+      return <AntecipacoesModule onBack={() => setActiveModule('hub')} />;
+    }
+    // Generic subviews for all other modules
+    return (
+      <GenericFinanceSubView
+        moduleKey={activeModule}
+        onBack={() => setActiveModule('hub')}
+        notify={notify}
+      />
+    );
+  }
+
+  // Hub Homepage
+  if (tab === 'hub') {
+    return <FinanceHubHome onSelectModule={handleSelectModuleFromHub} />;
+  }
+
   return (
     <div className="w-full space-y-6">
       {/* Page Header */}
@@ -123,6 +183,16 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
         subtitle="Acompanhe saldo disponível, valores a receber, faturamento e fluxo de caixa."
         actions={
           <div className="flex items-center gap-2.5">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setActiveModule('hub');
+                setTab('hub');
+              }}
+              icon={<LayoutGrid size={15} />}
+            >
+              Ver Hub Financeiro
+            </Button>
             <Button
               variant="secondary"
               onClick={() => {
@@ -147,15 +217,21 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
       {/* Navigation Sub-Tabs */}
       <div className="flex items-center gap-1.5 border-b border-[#E2E8F0] pb-2 overflow-x-auto">
         {[
-          { id: 'overview', label: 'Visão Geral' },
+          { id: 'hub', label: '⊞ Hub Financeiro' },
+          { id: 'overview', label: 'Visão Geral & Saldo' },
           { id: 'sales', label: 'Vendas & Recebimentos' },
           { id: 'payouts', label: 'Repasses' },
           { id: 'cashflow', label: 'Fluxo de Caixa' },
-          { id: 'statement', label: 'Extrato' },
+          { id: 'statement', label: 'Extrato Geral' },
         ].map((item) => (
           <button
             key={item.id}
-            onClick={() => setTab(item.id as FinanceTab)}
+            onClick={() => {
+              if (item.id === 'hub') {
+                setActiveModule('hub');
+              }
+              setTab(item.id as FinanceTab);
+            }}
             className={`rounded-btn px-4 py-2 text-[13px] font-bold transition whitespace-nowrap select-none ${
               tab === item.id
                 ? 'bg-[#1677FF] text-white shadow-xs'
@@ -171,7 +247,7 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
       <FilterBar
         searchQuery={query}
         onSearchChange={setQuery}
-        searchPlaceholder="Buscar por pedido (#DI-XXXXX), evento ou descrição..."
+        searchPlaceholder="Buscar por pedido (#DI-XXXXX), evento ou lançamento..."
         selectFilters={
           <>
             <select
@@ -201,7 +277,7 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
         }
       />
 
-      {/* TAB 1: VISÃO GERAL */}
+      {/* TAB 1: VISÃO GERAL & SALDO CONSOLIDADO */}
       {tab === 'overview' && (
         <>
           {/* Main 4 KPIs Strip */}
@@ -270,13 +346,11 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
                 {cashFlow.map((d) => (
                   <div key={d.day} className="flex-1 flex flex-col items-center gap-1 group">
                     <div className="w-full flex items-end justify-center gap-1 h-36">
-                      {/* Entry Bar */}
                       <div
                         className="w-3.5 sm:w-5 bg-[#10B981] rounded-t transition-all group-hover:brightness-110"
                         style={{ height: `${Math.max(10, (d.entry / maxCashValue) * 100)}%` }}
                         title={`Entradas: ${formatCurrency(d.entry)}`}
                       />
-                      {/* Exit Bar */}
                       <div
                         className="w-3.5 sm:w-5 bg-[#EF4444] rounded-t transition-all group-hover:brightness-110"
                         style={{ height: `${Math.max(8, (d.exit / maxCashValue) * 100)}%` }}
@@ -314,7 +388,6 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
                   </strong>
                 </div>
 
-                {/* Progress Lines */}
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between text-xs mb-1">
