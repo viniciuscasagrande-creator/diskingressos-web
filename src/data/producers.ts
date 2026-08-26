@@ -1,0 +1,48 @@
+import type { Producer } from '../types/producer';
+
+export const mockProducers: Producer[] = [
+  {
+    id: 'prod-live',
+    name: 'Live Entretenimento',
+    legalName: 'Live Eventos e Produções Artísticas Ltda.',
+    cnpj: '18.492.301/0001-84',
+    logoInitial: 'LE',
+    activeEventsCount: 6,
+    totalEventsCount: 24,
+    verified: true,
+    avatarColor: 'from-blue-600 to-indigo-700',
+  },
+  {
+    id: 'prod-opus',
+    name: 'Opus Entretenimento',
+    legalName: 'Opus Promoções e Eventos S.A.',
+    cnpj: '04.182.930/0001-12',
+    logoInitial: 'OE',
+    activeEventsCount: 4,
+    totalEventsCount: 18,
+    verified: true,
+    avatarColor: 'from-emerald-600 to-teal-700',
+  },
+  {
+    id: 'prod-seven',
+    name: 'Seven Entretenimento',
+    legalName: 'Seven Promoção de Eventos Ltda.',
+    cnpj: '12.839.402/0001-99',
+    logoInitial: '7E',
+    activeEventsCount: 3,
+    totalEventsCount: 15,
+    verified: true,
+    avatarColor: 'from-purple-600 to-pink-700',
+  },
+  {
+    id: 'prod-showmaster',
+    name: 'ShowMaster Curitiba',
+    legalName: 'ShowMaster Gestão de Espetáculos Eireli',
+    cnpj: '31.902.114/0001-45',
+    logoInitial: 'SM',
+    activeEventsCount: 2,
+    totalEventsCount: 9,
+    verified: false,
+    avatarColor: 'from-amber-600 to-orange-700',
+  },
+];
