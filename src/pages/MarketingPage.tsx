@@ -3,6 +3,7 @@ import { ArrowUpRight, BarChart3, Copy, Download, Link2, Megaphone, MousePointer
 import type { EventItem } from '../data/events'
 import AutomationCenterPage from './AutomationCenterPage'
 import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
+import { EventUtmCentralPage } from './marketing/EventUtmCentralPage'
 import { createMarketingCampaign, createTrackingLink, getMarketingCampaigns, getResolvedTracking, getTrackingConfigs, getTrackingLinks, saveTrackingConfig, updateMarketingCampaign, type MarketingCampaign, type ResolvedTracking, type TrackingConfig, type TrackingLink } from '../services/api'
 
 type Mode='hub'|'dashboard'|'campaigns'|'create'|'automations'|'whatsapp'|'email'|'coupons'|'links'|'affiliates'|'tracking'|'reports'
@@ -17,7 +18,7 @@ export default function MarketingPage({events,producerName,producerId,mode,notif
  if(mode==='hub')return <section className="growth-page"><Context producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod}/><div className="growth-intro"><div><p className="eyebrow">MARKETING & GROWTH</p><h2>Hub Marketing</h2><p>Centralize aquisição, campanhas, automações, promoções e mensuração.</p></div></div><div className="module-card-grid">{modules.map(([title,desc])=><button key={title} className="finance-module-card marketing-card" onClick={()=>notify(`${title}: disponível no menu lateral.`)}><span className="module-card-icon"><Megaphone size={24}/></span><span><strong>{title}</strong><small>{desc}</small></span><ArrowUpRight size={18}/></button>)}</div></section>
  if(mode==='dashboard')return <Dashboard producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} eventName={eventName} notify={notify}/>
  if(mode==='campaigns'||mode==='create')return <Campaigns producerId={producerId} events={events} initialEventId={selectedEventId} createOnly={mode==='create'} notify={notify}/>
- if(mode==='links')return <Links producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify}/>
+ if(mode==='links')return <EventUtmCentralPage event={(events.find(e=>String(e.id)===eventId) || events[0]) as any} notify={notify}/>
  if(mode==='tracking')return <Tracking producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify}/>
  if(mode==='automations'||mode==='whatsapp'||mode==='email')return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify}/>
  return <FeaturePage title={featureTitle(mode)} eventName={eventName} producerName={producerName} notify={notify}/>

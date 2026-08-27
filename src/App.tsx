@@ -28,6 +28,7 @@ import RemarketingPage from './pages/RemarketingPage'
 import SupportPage from './pages/SupportPage'
 import CommunicationPage from './pages/CommunicationPage'
 import EventContextPage from './pages/EventContextPage'
+import { EventUtmCentralPage } from './pages/marketing/EventUtmCentralPage'
 import GlobalDashboardPage from './pages/GlobalDashboardPage'
 import ProfileDashboardPage from './pages/ProfileDashboardPage'
 import { canAccess, isGlobalAdmin, producers as seedProducers, seedUsers, type AppUser } from './auth/model'
@@ -114,7 +115,8 @@ export default function App(){
      {page==='new-event'&&<EventFormPage mode="new" onCancel={()=>setPage('events')} onSave={saveEvent}/>} {page==='edit-event'&&<EventFormPage mode="edit" event={selectedEvent} onCancel={()=>setPage('events')} onSave={saveEvent}/>} 
      {page==='lots'&&<LotsPage events={visibleEvents} selectedEvent={selectedEvent} onSelect={setSelectedEvent} onBack={()=>setPage('events')}/>} 
      {page==='participants'&&<ParticipantsPage events={visibleEvents} participants={visibleParticipants} onToggleCheckin={toggleCheckin}/>} {page==='facial'&&<FacialPage participants={visibleParticipants}/>} 
-     {selectedEvent&&eventContextPages.has(page)&&visibleEvents.some(e=>e.id===selectedEvent.id)&&<EventContextPage event={selectedEvent} participants={visibleParticipants} page={page} onNavigate={navigate} notify={notify}/>} 
+     {page==='event-utm'&&<EventUtmCentralPage event={(selectedEvent || visibleEvents[0] || seedEvents[0]) as any} notify={notify}/>}
+     {selectedEvent&&eventContextPages.has(page)&&page!=='event-utm'&&visibleEvents.some(e=>e.id===selectedEvent.id)&&<EventContextPage event={selectedEvent} participants={visibleParticipants} page={page} onNavigate={navigate} notify={notify}/>} 
      {page==='finance'&&<FinancePage events={visibleEvents} initialTab="overview" notify={notify}/>} {page==='finance-sales'&&<FinancePage events={visibleEvents} initialTab="sales" notify={notify}/>} {page==='finance-payouts'&&<FinancePage events={visibleEvents} initialTab="payouts" notify={notify}/>} {page==='finance-cashflow'&&<FinancePage events={visibleEvents} initialTab="cashflow" notify={notify}/>} {page==='finance-statement'&&<FinancePage events={visibleEvents} initialTab="statement" notify={notify}/>} 
      {financePlaceholder.includes(page)&&<ModulePlaceholder title={titleMap[page]||'Módulo Financeiro'} description="Estrutura visual já incorporada ao template global. O acesso a este módulo respeita o perfil e a produtora autenticada." onBack={()=>setPage('finance-hub')}/>} 
 
