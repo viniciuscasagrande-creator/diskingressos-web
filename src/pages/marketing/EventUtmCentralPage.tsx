@@ -694,7 +694,8 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
 
   // Active Selected UTM
   const selectedUtm = useMemo(() => {
-    return utmList.find(u => u.id === selectedUtmId) || utmList[0];
+    if (!selectedUtmId) return null;
+    return utmList.find(u => u.id === selectedUtmId) || null;
   }, [utmList, selectedUtmId]);
 
   // Live preview URL for New UTM Form
@@ -824,7 +825,7 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
   // Recovery Handler
   const handleTriggerRecovery = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!recoveryOrderModal) return;
+    if (!recoveryOrderModal || !selectedUtm) return;
 
     setUtmList(prev => prev.map(u => {
       if (u.id === selectedUtm.id) {
@@ -864,6 +865,10 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
 
   // Export CSV
   const handleExportCsv = () => {
+    if (!selectedUtm) {
+      if (notify) notify('Selecione uma URL para exportar.');
+      return;
+    }
     const rows = [
       ['Pedido', 'Status', 'Cliente', 'Email', 'UTM', 'Ingressos', 'Valor (BRL)', 'Data/Hora'],
       ...selectedUtm.orders.map(o => [
@@ -962,6 +967,7 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
                 onChange={(e) => setSelectedUtmId(e.target.value)}
                 className="w-full h-[40px] pl-3 pr-8 rounded-input border border-[#CBD5E1] bg-[#F8FAFC] text-xs font-bold text-[#0E1726] outline-none focus:border-[#1677FF] transition cursor-pointer appearance-none"
               >
+                <option value="">-- Nenhuma URL selecionada (ver estado inicial) --</option>
                 {utmList.map(u => (
                   <option key={u.id} value={u.id}>
                     {u.name} ({u.source} / {u.medium}) — {u.metrics.purchased} vendas
@@ -1067,16 +1073,37 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
                 {selectedUtm.status === 'ativo' ? <Pause size={14} /> : <Play size={14} />}
                 <span>{selectedUtm.status === 'ativo' ? 'Pausar' : 'Ativar'}</span>
               </button>
+
+              <button
+                onClick={() => { setSelectedUtmId(''); if (notify) notify('Seleção de URL limpa. Exibindo estado inicial.'); }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 font-bold text-xs shadow-xs transition cursor-pointer"
+                title="Desmarcar URL para ver o estado inicial vazio"
+              >
+                <X size={14} />
+                <span>Desmarcar</span>
+              </button>
             </div>
           </div>
         ) : (
-          <div className="text-center py-8 bg-slate-50 rounded-btn border border-dashed border-slate-300">
-            <Link size={28} className="mx-auto text-slate-400 mb-2" />
-            <p className="text-sm font-bold text-slate-700">Nenhuma campanha selecionada</p>
-            <p className="text-xs text-slate-500 mb-3">Selecione uma URL UTM existente ou crie uma nova para começar.</p>
-            <Button variant="primary" onClick={() => setIsNewUtmDrawerOpen(true)}>
-              + Criar primeira URL
-            </Button>
+          <div className="text-center py-12 bg-slate-50 rounded-btn border border-dashed border-slate-300 space-y-2">
+            <div className="h-12 w-12 rounded-full bg-blue-50 text-[#1677FF] flex items-center justify-center mx-auto mb-2">
+              <Link size={24} />
+            </div>
+            <h4 className="text-base font-black text-slate-800">Nenhuma URL selecionada</h4>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              Selecione uma URL rastreável na lista abaixo ou no seletor para visualizar o desempenho, funil, gráficos e pedidos da campanha.
+            </p>
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
+              <Button variant="secondary" onClick={() => {
+                const first = utmList[0];
+                if (first) setSelectedUtmId(first.id);
+              }}>
+                Selecionar URL existente
+              </Button>
+              <Button variant="primary" onClick={() => setIsNewUtmDrawerOpen(true)}>
+                <Plus size={15} /> + Criar nova UTM
+              </Button>
+            </div>
           </div>
         )}
       </div>
