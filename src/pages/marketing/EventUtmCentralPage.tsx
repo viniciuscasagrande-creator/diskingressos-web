@@ -694,8 +694,7 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
 
   // Active Selected UTM
   const selectedUtm = useMemo(() => {
-    if (!selectedUtmId) return null;
-    return utmList.find(u => u.id === selectedUtmId) || null;
+    return utmList.find(u => u.id === selectedUtmId) || utmList[0];
   }, [utmList, selectedUtmId]);
 
   // Live preview URL for New UTM Form
@@ -967,7 +966,6 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
                 onChange={(e) => setSelectedUtmId(e.target.value)}
                 className="w-full h-[40px] pl-3 pr-8 rounded-input border border-[#CBD5E1] bg-[#F8FAFC] text-xs font-bold text-[#0E1726] outline-none focus:border-[#1677FF] transition cursor-pointer appearance-none"
               >
-                <option value="">-- Nenhuma URL selecionada (ver estado inicial) --</option>
                 {utmList.map(u => (
                   <option key={u.id} value={u.id}>
                     {u.name} ({u.source} / {u.medium}) — {u.metrics.purchased} vendas
@@ -997,115 +995,83 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
         </div>
 
         {/* Card Detalhado da URL Ativa */}
-        {selectedUtm ? (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-[#F8FAFC] rounded-btn p-4 border border-[#EDF2F7]">
-            <div className="lg:col-span-6 space-y-2">
-              <div className="flex items-center gap-2">
-                <span className={`h-2.5 w-2.5 rounded-full ${selectedUtm.status === 'ativo' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                <strong className="text-[15px] font-extrabold text-[#0E1726]">
-                  {selectedUtm.name}
-                </strong>
-                <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                  {selectedUtm.source}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold text-[#1677FF] bg-blue-50 px-2.5 py-1 rounded border border-blue-200 select-all truncate max-w-[320px]">
-                  {selectedUtm.shortUrl}
-                </span>
-                <span className="text-[11px] text-slate-500 truncate max-w-[200px]" title={selectedUtm.fullUrl}>
-                  {selectedUtm.fullUrl}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px]">
-                <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
-                  source: <strong>{selectedUtm.source}</strong>
-                </span>
-                <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
-                  medium: <strong>{selectedUtm.medium}</strong>
-                </span>
-                <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
-                  campaign: <strong>{selectedUtm.campaign}</strong>
-                </span>
-                {selectedUtm.content && (
-                  <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
-                    content: <strong>{selectedUtm.content}</strong>
-                  </span>
-                )}
-              </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center bg-[#F8FAFC] rounded-btn p-4 border border-[#EDF2F7]">
+          <div className="lg:col-span-6 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className={`h-2.5 w-2.5 rounded-full ${selectedUtm.status === 'ativo' ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+              <strong className="text-[15px] font-extrabold text-[#0E1726]">
+                {selectedUtm.name}
+              </strong>
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                {selectedUtm.source}
+              </span>
             </div>
 
-            <div className="lg:col-span-6 flex flex-wrap items-center justify-start lg:justify-end gap-2">
-              <button
-                onClick={() => handleCopy(selectedUtm.shortUrl)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-xs transition cursor-pointer"
-              >
-                {copiedLink ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-                <span>{copiedLink ? 'Copiado!' : 'Copiar URL Curta'}</span>
-              </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-[#1677FF] bg-blue-50 px-2.5 py-1 rounded border border-blue-200 select-all truncate max-w-[320px]">
+                {selectedUtm.shortUrl}
+              </span>
+              <span className="text-[11px] text-slate-500 truncate max-w-[200px]" title={selectedUtm.fullUrl}>
+                {selectedUtm.fullUrl}
+              </span>
+            </div>
 
-              <button
-                onClick={() => handleCopy(selectedUtm.fullUrl)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-xs transition cursor-pointer"
-              >
-                <ExternalLink size={14} />
-                <span>Copiar URL Completa</span>
-              </button>
-
-              <button
-                onClick={() => setIsQrCodeModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-xs transition cursor-pointer"
-              >
-                <QrCode size={14} />
-                <span>QR Code</span>
-              </button>
-
-              <button
-                onClick={() => handleToggleStatus(selectedUtm.id)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-btn font-bold text-xs border shadow-xs transition cursor-pointer ${
-                  selectedUtm.status === 'ativo'
-                    ? 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100'
-                    : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
-                }`}
-              >
-                {selectedUtm.status === 'ativo' ? <Pause size={14} /> : <Play size={14} />}
-                <span>{selectedUtm.status === 'ativo' ? 'Pausar' : 'Ativar'}</span>
-              </button>
-
-              <button
-                onClick={() => { setSelectedUtmId(''); if (notify) notify('Seleção de URL limpa. Exibindo estado inicial.'); }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 font-bold text-xs shadow-xs transition cursor-pointer"
-                title="Desmarcar URL para ver o estado inicial vazio"
-              >
-                <X size={14} />
-                <span>Desmarcar</span>
-              </button>
+            <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px]">
+              <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
+                source: <strong>{selectedUtm.source}</strong>
+              </span>
+              <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
+                medium: <strong>{selectedUtm.medium}</strong>
+              </span>
+              <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
+                campaign: <strong>{selectedUtm.campaign}</strong>
+              </span>
+              {selectedUtm.content && (
+                <span className="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600 font-mono">
+                  content: <strong>{selectedUtm.content}</strong>
+                </span>
+              )}
             </div>
           </div>
-        ) : (
-          <div className="text-center py-12 bg-slate-50 rounded-btn border border-dashed border-slate-300 space-y-2">
-            <div className="h-12 w-12 rounded-full bg-blue-50 text-[#1677FF] flex items-center justify-center mx-auto mb-2">
-              <Link size={24} />
-            </div>
-            <h4 className="text-base font-black text-slate-800">Nenhuma URL selecionada</h4>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Selecione uma URL rastreável na lista abaixo ou no seletor para visualizar o desempenho, funil, gráficos e pedidos da campanha.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
-              <Button variant="secondary" onClick={() => {
-                const first = utmList[0];
-                if (first) setSelectedUtmId(first.id);
-              }}>
-                Selecionar URL existente
-              </Button>
-              <Button variant="primary" onClick={() => setIsNewUtmDrawerOpen(true)}>
-                <Plus size={15} /> + Criar nova UTM
-              </Button>
-            </div>
+
+          <div className="lg:col-span-6 flex flex-wrap items-center justify-start lg:justify-end gap-2">
+            <button
+              onClick={() => handleCopy(selectedUtm.shortUrl)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-xs transition cursor-pointer"
+            >
+              {copiedLink ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
+              <span>{copiedLink ? 'Copiado!' : 'Copiar URL Curta'}</span>
+            </button>
+
+            <button
+              onClick={() => handleCopy(selectedUtm.fullUrl)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-xs transition cursor-pointer"
+            >
+              <ExternalLink size={14} />
+              <span>Copiar URL Completa</span>
+            </button>
+
+            <button
+              onClick={() => setIsQrCodeModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-xs transition cursor-pointer"
+            >
+              <QrCode size={14} />
+              <span>QR Code</span>
+            </button>
+
+            <button
+              onClick={() => handleToggleStatus(selectedUtm.id)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-btn font-bold text-xs border shadow-xs transition cursor-pointer ${
+                selectedUtm.status === 'ativo'
+                  ? 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100'
+                  : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+              }`}
+            >
+              {selectedUtm.status === 'ativo' ? <Pause size={14} /> : <Play size={14} />}
+              <span>{selectedUtm.status === 'ativo' ? 'Pausar' : 'Ativar'}</span>
+            </button>
           </div>
-        )}
+        </div>
       </div>
 
       {/* 3. KPIs da Campanha Selecionada */}

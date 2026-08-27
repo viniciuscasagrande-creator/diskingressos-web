@@ -8,17 +8,45 @@ const money=(cents:number)=>`R$ ${(cents/100).toLocaleString('pt-BR',{minimumFra
 const actionLabels:Record<string,string>={added:'Adicionou',checkout:'Checkout',removed:'Removeu',abandoned:'Abandonou',finalized:'Finalizou'}
 
 export default function UtmConversionsCenter({event,notify}:Props){
- const [links,setLinks]=useState<TrackingLink[]>([]);const [selectedId,setSelectedId]=useState<number|''>('');const [dashboard,setDashboard]=useState<UtmDashboard|null>(null);const [loading,setLoading]=useState(false);const [openNew,setOpenNew]=useState(false);const [filter,setFilter]=useState('all');const [search,setSearch]=useState('')
- const [form,setForm]=useState({name:'',source:'instagram',medium:'cpc',campaign:`evento-${event.code}`,term:'',content:'',destination:`https://www.diskingressos.com.br/evento/${event.code}`})
- const loadLinks=async()=>{try{setLinks(await getTrackingLinks(undefined,event.id))}catch(e:any){notify(e.message||'Não foi possível carregar links UTM.')}}
- useEffect(()=>{setSelectedId('');setDashboard(null);loadLinks()},[event.id])
- useEffect(()=>{if(!selectedId){setDashboard(null);return}setLoading(true);getUtmDashboard(event.id,Number(selectedId)).then(setDashboard).catch((e:any)=>notify(e.message||'Falha ao carregar métricas UTM.')).finally(()=>setLoading(false))},[selectedId,event.id])
- const filtered=useMemo(()=>dashboard?.actions.filter(a=>(filter==='all'||a.action===filter)&&`${a.orderCode||''} ${a.customerName||''} ${a.customerEmail||''} ${a.ticketSummary||''}`.toLowerCase().includes(search.toLowerCase()))||[],[dashboard,filter,search])
+ const [links,setLinks]=useState<TrackingLink[]>([]);
+ const [selectedId,setSelectedId]=useState<number|''>('');
+ const [dashboard,setDashboard]=useState<UtmDashboard|null>(null);
+ const [loading,setLoading]=useState(false);
+ const [openNew,setOpenNew]=useState(false);
+ const [filter,setFilter]=useState('all');
+ const [search,setSearch]=useState('');
+ const [form,setForm]=useState({name:'',source:'instagram',medium:'cpc',campaign:`evento-${event.code}`,term:'',content:'',destination:`https://www.diskingressos.com.br/evento/${event.code}`});
+
+ const loadLinks=async()=>{
+   try{
+     const rows = await getTrackingLinks(undefined,event.id);
+     setLinks(rows);
+     if (rows && rows.length > 0 && !selectedId) {
+       setSelectedId(rows[0].id);
+     }
+   }catch(e:any){
+     notify(e.message||'Não foi possível carregar links UTM.');
+   }
+ }
+
+ useEffect(()=>{loadLinks()},[event.id]);
+
+ useEffect(()=>{
+   if(!selectedId) return;
+   setLoading(true);
+   getUtmDashboard(event.id,Number(selectedId))
+     .then(setDashboard)
+     .catch((e:any)=>notify(e.message||'Falha ao carregar métricas UTM.'))
+     .finally(()=>setLoading(false));
+ },[selectedId,event.id]);
+
+ const filtered=useMemo(()=>dashboard?.actions.filter(a=>(filter==='all'||a.action===filter)&&`${a.orderCode||''} ${a.customerName||''} ${a.customerEmail||''} ${a.ticketSummary||''}`.toLowerCase().includes(search.toLowerCase()))||[],[dashboard,filter,search]);
  const createLink=async(e:FormEvent)=>{e.preventDefault();try{const row=await createTrackingLink({...form,eventId:event.id});await loadLinks();setSelectedId(row.id);setOpenNew(false);notify('Link UTM criado e selecionado.')}catch(err:any){notify(err.message||'Não foi possível criar o link.')}}
  const copy=async(text:string)=>{try{await navigator.clipboard.writeText(text);notify('Link copiado.')}catch{notify('Copie o link manualmente.')}}
+
  return <div className="utm-center">
   <section className="utm-toolbar">
-   <div><span className="eyebrow">MARKETING / UTM</span><h2>Central UTM & Conversões</h2><p>Selecione uma URL criada para alimentar KPIs, funil, gráficos e pedidos do evento.</p></div>
+   <div><span className="eyebrow">MARKETING / UTM</span><h2>Central UTM & Conversões</h2><p>Métricas, funil, gráficos e pedidos da campanha selecionada.</p></div>
    <div className="utm-actions"><button className="btn primary" onClick={()=>setOpenNew(true)}><Plus size={16}/> Nova UTM</button><button className="btn secondary" onClick={()=>notify('Exportação preparada em modo demonstração.')}><Download size={16}/> Exportar</button></div>
   </section>
   <section className="utm-event-strip"><div><strong>ID.{event.code} - {event.title}</strong><span>{event.venue}</span></div><div><span>Data do evento</span><strong>{event.date}</strong></div><div><span>Status</span><strong className="utm-status">{event.status}</strong></div></section>
@@ -26,12 +54,10 @@ export default function UtmConversionsCenter({event,notify}:Props){
    <div className="utm-select-wrap"><label>Campanha / URL UTM</label><div className="utm-select-control"><Link2 size={17}/><select value={selectedId} onChange={e=>setSelectedId(e.target.value?Number(e.target.value):'')}><option value="">Selecione uma URL para visualizar os dados</option>{links.map(l=><option key={l.id} value={l.id}>{l.name} · {l.source||'sem origem'} / {l.medium||'sem meio'}</option>)}</select><ChevronDown size={16}/></div></div>
    <div className="utm-link-count"><strong>{links.length}</strong><span>links deste evento</span></div>
   </section>
-  {!selectedId?<EmptyStart links={links} onSelect={id=>setSelectedId(id)} onCreate={()=>setOpenNew(true)}/>:loading?<div className="utm-empty"><strong>Carregando dados da URL...</strong></div>:dashboard?<DashboardContent data={dashboard} eventId={event.id} linkId={Number(selectedId)} refresh={()=>getUtmDashboard(event.id,Number(selectedId)).then(setDashboard)} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} filtered={filtered} copy={copy} notify={notify}/>:null}
+  {loading?<div className="utm-empty"><strong>Carregando dados da URL...</strong></div>:dashboard?<DashboardContent data={dashboard} eventId={event.id} linkId={Number(selectedId)} refresh={()=>getUtmDashboard(event.id,Number(selectedId)).then(setDashboard)} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} filtered={filtered} copy={copy} notify={notify}/>:null}
   {openNew&&<NewLinkDrawer form={form} setForm={setForm} onClose={()=>setOpenNew(false)} onSubmit={createLink}/>} 
  </div>
 }
-
-function EmptyStart({links,onSelect,onCreate}:{links:TrackingLink[];onSelect:(id:number)=>void;onCreate:()=>void}){return <section className="utm-empty-state"><div className="utm-empty-icon"><BarChart3 size={30}/></div><h3>Os gráficos começam vazios</h3><p>Escolha uma URL UTM existente para carregar conversões, pedidos e gráficos. Se ainda não houver uma campanha, crie a primeira sem sair desta tela.</p><div className="utm-empty-buttons"><button className="btn primary" onClick={onCreate}><Plus size={16}/> Criar URL UTM</button></div>{links.length>0&&<div className="utm-quick-links"><strong>Links disponíveis</strong>{links.slice(0,4).map(l=><button key={l.id} onClick={()=>onSelect(l.id)}><span><b>{l.name}</b><small>{l.source} / {l.medium} / {l.campaign}</small></span><TrendingUp size={16}/></button>)}</div>}</section>}
 
 function DashboardContent({data,eventId,linkId,refresh,filter,setFilter,search,setSearch,filtered,copy,notify}:{data:UtmDashboard;eventId:number;linkId:number;refresh:()=>Promise<void>|void;filter:string;setFilter:(v:string)=>void;search:string;setSearch:(v:string)=>void;filtered:UtmDashboard['actions'];copy:(t:string)=>void;notify:(m:string)=>void}){
  const s=data.summary;const [sweeping,setSweeping]=useState(false);const runSweep=async()=>{setSweeping(true);try{const r=await sweepUtmAbandonments(eventId,linkId,30);notify(`${r.processed} sessão(ões) processada(s); ${r.recoveries} oportunidade(s) criada(s).`);await refresh()}catch(e:any){notify(e.message||'Falha ao detectar abandonos.')}finally{setSweeping(false)}};const funnel=[['Visitas',s.visits,'visits'],['Adicionou',s.added,'added'],['Checkout',s.checkout,'checkout'],['Abandonou',s.abandoned,'abandoned'],['Compra',s.finalized,'finalized']] as const
