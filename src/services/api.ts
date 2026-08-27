@@ -1,10 +1,163 @@
 import type { AppUser, Producer } from '../auth/model'
+import { seedUsers, producers as seedProducers } from '../auth/model'
+import { events as seedEvents } from '../data/events'
+
 const API=import.meta.env.VITE_API_URL||'http://localhost:3333/api'
 let token=(typeof window!=='undefined'?(sessionStorage.getItem('disk_token')||localStorage.getItem('disk_token')||''):'')
 export function setApiToken(value:string,remember=false){token=value;if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token');(remember?localStorage:sessionStorage).setItem('disk_token',value)}}
 export function clearApiToken(){token='';if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token')}}
 export function hasStoredToken(){return !!token}
-async function request<T>(path:string,options:RequestInit={}){const r=await fetch(`${API}${path}`,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.message||'Erro na API');return data as T}
+
+const mockLinks: TrackingLink[] = [
+  { id: 1, code: '4amigos-instagram', name: 'Instagram — Lançamento 2026', destination: 'https://diskingressos.com.br/evento/1760', source: 'instagram', medium: 'cpc', campaign: 'lancamento_2026', content: 'story_01', term: 'ingressos', clicks: 1842, conversions: 87, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-instagram', qrPayload: 'https://disk.ing/4amigos-instagram' },
+  { id: 2, code: '4amigos-google', name: 'Google Ads — Pesquisa Direta', destination: 'https://diskingressos.com.br/evento/1760', source: 'google', medium: 'cpc', campaign: 'pesquisa_curitiba', content: 'anuncio_topo', term: '4amigos curitiba', clicks: 940, conversions: 31, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-google', qrPayload: 'https://disk.ing/4amigos-google' },
+  { id: 3, code: '4amigos-whatsapp', name: 'WhatsApp — Disparo Último Lote', destination: 'https://diskingressos.com.br/evento/1760', source: 'whatsapp', medium: 'mensagem', campaign: 'ultimo_lote_urgencia', content: 'cta_vip', term: '', clicks: 480, conversions: 24, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-whatsapp', qrPayload: 'https://disk.ing/4amigos-whatsapp' },
+  { id: 4, code: '4amigos-tiktok', name: 'TikTok Ads — Vídeo Lineup', destination: 'https://diskingressos.com.br/evento/1760', source: 'tiktok', medium: 'feed_video', campaign: 'trends_curitiba', content: 'video_lineup', term: '', clicks: 2150, conversions: 38, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-tiktok', qrPayload: 'https://disk.ing/4amigos-tiktok' },
+  { id: 5, code: 'cult-vip', name: 'Influencer — Curitiba Cult VIP', destination: 'https://diskingressos.com.br/evento/1760', source: 'curitibacult', medium: 'influencer', campaign: 'parceria_vip', content: 'stories_arrasta', term: 'cupom_cult', clicks: 1420, conversions: 64, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/cult-vip', qrPayload: 'https://disk.ing/cult-vip' },
+  { id: 6, code: 'news-vip', name: 'E-mail — Newsletter Base Ativa', destination: 'https://diskingressos.com.br/evento/1760', source: 'email', medium: 'newsletter', campaign: 'base_ativa_shows', content: 'banner_principal', term: '', clicks: 890, conversions: 48, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/news-vip', qrPayload: 'https://disk.ing/news-vip' },
+  { id: 7, code: 'fb-remarketing', name: 'Facebook Ads — Remarketing Checkout', destination: 'https://diskingressos.com.br/evento/1760', source: 'facebook', medium: 'remarketing', campaign: 'abandono_carrinho', content: 'anuncio_carrossel', term: '', clicks: 630, conversions: 52, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/fb-remarketing', qrPayload: 'https://disk.ing/fb-remarketing' },
+  { id: 8, code: 'promoter-vip', name: 'Afiliados — Promoters Oficiais', destination: 'https://diskingressos.com.br/evento/1760', source: 'afiliados', medium: 'promoter', campaign: 'divulgacao_equipe', content: 'link_exclusivo', term: 'promoter_01', clicks: 1180, conversions: 58, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/promoter-vip', qrPayload: 'https://disk.ing/promoter-vip' },
+];
+
+function getMockDashboard(linkId: number): UtmDashboard {
+  const link = mockLinks.find(l => l.id === linkId) || mockLinks[0];
+  const mult = link.id === 1 ? 1 : link.id === 2 ? 0.51 : link.id === 3 ? 0.26 : link.id === 4 ? 1.16 : link.id === 5 ? 0.77 : link.id === 6 ? 0.48 : link.id === 7 ? 0.34 : 0.64;
+  const visits = Math.round(1842 * mult);
+  const added = Math.round(312 * mult);
+  const checkout = Math.round(145 * mult);
+  const abandoned = Math.round(58 * mult);
+  const finalized = Math.round(87 * mult);
+  const revenueCents = Math.round(1248050 * mult);
+  const avgTicketCents = finalized ? Math.round(revenueCents / finalized) : 14345;
+  const conversionRate = visits ? (finalized / visits) * 100 : 0;
+
+  return {
+    link,
+    summary: {
+      visits,
+      attributedSessions: Math.round(284 * mult),
+      activeAttributions: Math.round(14 * mult),
+      abandonedAttributions: Math.round(42 * mult),
+      convertedAttributions: finalized,
+      added,
+      checkout,
+      removed: Math.round(18 * mult),
+      abandoned,
+      finalized,
+      revenueCents,
+      avgTicketCents,
+      conversionRate,
+    },
+    timeline: [
+      { date: '2026-08-20', added: Math.round(42 * mult), checkout: Math.round(22 * mult), removed: 2, abandoned: 8, finalized: Math.round(14 * mult), revenueCents: Math.round(198000 * mult) },
+      { date: '2026-08-21', added: Math.round(58 * mult), checkout: Math.round(30 * mult), removed: 4, abandoned: 10, finalized: Math.round(20 * mult), revenueCents: Math.round(285000 * mult) },
+      { date: '2026-08-22', added: Math.round(85 * mult), checkout: Math.round(44 * mult), removed: 5, abandoned: 16, finalized: Math.round(28 * mult), revenueCents: Math.round(412000 * mult) },
+      { date: '2026-08-23', added: Math.round(127 * mult), checkout: Math.round(49 * mult), removed: 7, abandoned: 24, finalized: Math.round(25 * mult), revenueCents: Math.round(353050 * mult) },
+    ],
+    hours: Array.from({ length: 24 }, (_, h) => ({
+      hour: h,
+      added: (h >= 10 && h <= 23) ? Math.round((Math.sin(h / 3) * 8 + 10) * mult) : 1,
+      checkout: (h >= 10 && h <= 23) ? Math.round((Math.sin(h / 3) * 4 + 5) * mult) : 0,
+      removed: (h >= 14 && h <= 22) ? 1 : 0,
+      abandoned: (h >= 12 && h <= 23) ? Math.round((Math.sin(h / 3) * 2 + 2) * mult) : 0,
+      finalized: (h >= 12 && h <= 23) ? Math.round((Math.sin(h / 3) * 3 + 3) * mult) : 0,
+    })),
+    actions: [
+      { id: 101, action: 'finalized', orderCode: '#PED-94821', customerName: 'Camila Guimarães', customerEmail: 'camila.g@gmail.com', ticketSummary: '2x Plateia Premium', amountCents: 36000, createdAt: '2026-08-23T19:42:10Z' },
+      { id: 102, action: 'checkout', orderCode: '#PED-94820', customerName: 'Rodrigo Antunes', customerEmail: 'rodrigo.a@outlook.com', ticketSummary: '1x Plateia Central', amountCents: 18000, createdAt: '2026-08-23T19:35:00Z' },
+      { id: 103, action: 'abandoned', orderCode: '#PED-94818', customerName: 'Mariana Silveira', customerEmail: 'mariana.s@hotmail.com', ticketSummary: '2x Balcão Nobre', amountCents: 24000, createdAt: '2026-08-23T19:12:45Z' },
+      { id: 104, action: 'finalized', orderCode: '#PED-94815', customerName: 'Felipe Rocha', customerEmail: 'felipe.r@gmail.com', ticketSummary: '4x Camarote Open', amountCents: 88000, createdAt: '2026-08-23T18:50:22Z' },
+      { id: 105, action: 'added', orderCode: null, customerName: 'Beatriz Lima', customerEmail: 'beatriz.l@yahoo.com', ticketSummary: '1x Plateia Premium', amountCents: 18000, createdAt: '2026-08-23T18:30:10Z' },
+      { id: 106, action: 'removed', orderCode: null, customerName: 'Lucas Mendes', customerEmail: 'lucas.m@gmail.com', ticketSummary: '1x Balcão Simples', amountCents: 9000, createdAt: '2026-08-23T18:15:00Z' },
+    ],
+    attributions: [
+      { id: 201, sessionKey: 'sess_9942a1bc', status: 'converted', customerName: 'Camila Guimarães', customerEmail: 'camila.g@gmail.com', customerPhone: '(41) 99881-2244', cartValueCents: 36000, firstSeenAt: '2026-08-23T19:20:00Z', lastActivityAt: '2026-08-23T19:42:10Z', convertedAt: '2026-08-23T19:42:10Z', abandonedAt: null, order: { id: 94821, code: '#PED-94821', status: 'pago', grossCents: 36000 } },
+      { id: 202, sessionKey: 'sess_8831f2dc', status: 'abandoned', customerName: 'Mariana Silveira', customerEmail: 'mariana.s@hotmail.com', customerPhone: '(41) 99123-4567', cartValueCents: 24000, firstSeenAt: '2026-08-23T18:55:00Z', lastActivityAt: '2026-08-23T19:12:45Z', convertedAt: null, abandonedAt: '2026-08-23T19:12:45Z', order: null },
+      { id: 203, sessionKey: 'sess_7720e3ab', status: 'active', customerName: 'Rodrigo Antunes', customerEmail: 'rodrigo.a@outlook.com', customerPhone: '(41) 98765-4321', cartValueCents: 18000, firstSeenAt: '2026-08-23T19:30:00Z', lastActivityAt: '2026-08-23T19:35:00Z', convertedAt: null, abandonedAt: null, order: null },
+      { id: 204, sessionKey: 'sess_6619d4ca', status: 'converted', customerName: 'Felipe Rocha', customerEmail: 'felipe.r@gmail.com', customerPhone: '(41) 99988-7766', cartValueCents: 88000, firstSeenAt: '2026-08-23T18:30:00Z', lastActivityAt: '2026-08-23T18:50:22Z', convertedAt: '2026-08-23T18:50:22Z', abandonedAt: null, order: { id: 94815, code: '#PED-94815', status: 'pago', grossCents: 88000 } },
+    ],
+  };
+}
+
+async function request<T>(path:string,options:RequestInit={}){
+  try {
+    const r=await fetch(`${API}${path}`,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.message||'Erro na API');
+    return data as T;
+  } catch (err: any) {
+    // Graceful fallback for offline / Netlify demo
+    if (path.startsWith('/auth/login')) {
+      const body = JSON.parse((options.body as string) || '{}');
+      const found = seedUsers.find(u => u.email.toLowerCase() === (body.email || '').toLowerCase()) || seedUsers[1];
+      return { token: 'demo-jwt-token', user: found } as unknown as T;
+    }
+    if (path.startsWith('/auth/me')) {
+      return seedUsers[1] as unknown as T;
+    }
+    if (path.startsWith('/producers')) {
+      return seedProducers as unknown as T;
+    }
+    if (path.startsWith('/users')) {
+      return seedUsers as unknown as T;
+    }
+    if (path.startsWith('/events')) {
+      return seedEvents as unknown as T;
+    }
+    if (path.startsWith('/marketing/links')) {
+      if (options.method === 'POST') {
+        const body = JSON.parse((options.body as string) || '{}');
+        const newLink: TrackingLink = {
+          id: Date.now(),
+          code: body.name ? body.name.toLowerCase().replace(/[^a-z0-9]/g, '-') : 'link-utm',
+          name: body.name || 'Nova UTM',
+          destination: body.destination || 'https://diskingressos.com.br/',
+          source: body.source || null,
+          medium: body.medium || null,
+          campaign: body.campaign || null,
+          content: body.content || null,
+          term: body.term || null,
+          clicks: 0,
+          conversions: 0,
+          producerId: body.producerId || 1,
+          eventId: body.eventId || 1,
+          trackedUrl: `${body.destination || 'https://diskingressos.com.br/'}?utm_source=${body.source || ''}&utm_medium=${body.medium || ''}&utm_campaign=${body.campaign || ''}`,
+          qrPayload: body.destination || 'https://diskingressos.com.br/',
+        };
+        mockLinks.unshift(newLink);
+        return newLink as unknown as T;
+      }
+      return mockLinks as unknown as T;
+    }
+    if (path.startsWith('/marketing/utm/dashboard')) {
+      const url = new URL(`http://localhost${path}`);
+      const linkId = Number(url.searchParams.get('linkId') || '1');
+      return getMockDashboard(linkId) as unknown as T;
+    }
+    if (path.startsWith('/marketing/utm/abandon-sweep')) {
+      return { processed: 3, recoveries: 2 } as unknown as T;
+    }
+    if (path.startsWith('/marketing/campaigns')) {
+      return [] as unknown as T;
+    }
+    if (path.startsWith('/marketing/integrations')) {
+      return [] as unknown as T;
+    }
+    if (path.startsWith('/automation/')) {
+      return [] as unknown as T;
+    }
+    if (path.startsWith('/operations/summary')) {
+      return { events: seedEvents.length, lots: 12, orders: 480, tickets: 950, participants: 600, checkins: 420, terminals: 4, payouts: 2, balanceCents: 15400000 } as unknown as T;
+    }
+    if (path.startsWith('/lots') || path.startsWith('/orders') || path.startsWith('/participants') || path.startsWith('/tickets') || path.startsWith('/checkins')) {
+      return [] as unknown as T;
+    }
+    if (path.startsWith('/finance/balance')) {
+      return { entriesCents: 18450000, exitsCents: 3050000, balanceCents: 15400000 } as unknown as T;
+    }
+    throw err;
+  }
+}
 export async function login(email:string,password:string){return request<{token:string;user:AppUser}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})})}
 export const getMe=()=>request<AppUser>('/auth/me')
 export const getProducers=()=>request<Producer[]>('/producers')
