@@ -1,10 +1,15 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+import crypto from 'node:crypto'
 const prisma = new PrismaClient()
 
+function demoToken(token:string){
+  const secret=process.env.TRACKING_TOKEN_SECRET||process.env.JWT_SECRET||'dev-only-change-me'
+  const key=crypto.createHash('sha256').update(secret).digest();const iv=crypto.randomBytes(12);const cipher=crypto.createCipheriv('aes-256-gcm',key,iv);const ciphertext=Buffer.concat([cipher.update(token,'utf8'),cipher.final()]);const tag=cipher.getAuthTag();return {tokenCiphertext:ciphertext.toString('base64'),tokenIv:iv.toString('base64'),tokenTag:tag.toString('base64'),tokenLast4:token.slice(-4)}
+}
+
 async function main(){
-  await prisma.trackingEventLog.deleteMany()
-  await prisma.trackingEventConfig.deleteMany()
+  await prisma.trackingDeliveryLog.deleteMany()
   await prisma.trackingIntegrationEvent.deleteMany()
   await prisma.trackingIntegration.deleteMany()
   await prisma.contactConsent.deleteMany()
@@ -14,9 +19,12 @@ async function main(){
   await prisma.slaPolicy.deleteMany()
   await prisma.supportIntegration.deleteMany()
   await prisma.automationExecution.deleteMany()
+  await prisma.recoveryAttempt.deleteMany()
   await prisma.recoveryOpportunity.deleteMany()
   await prisma.messageTemplate.deleteMany()
   await prisma.automationFlow.deleteMany()
+  await prisma.trackingJourneyAction.deleteMany()
+  await prisma.trackingAttribution.deleteMany()
   await prisma.trackingLink.deleteMany()
   await prisma.trackingConfig.deleteMany()
   await prisma.marketingCampaign.deleteMany()
@@ -41,7 +49,9 @@ async function main(){
     {name:'Administrador Master',email:'admin@diskingressos.com.br',password:'Admin@123',role:'admin-master',producerId:null},
     {name:'Vinicius Casagrande',email:'vinicius@diskingressos.com.br',password:'Produtor@123',role:'producer-admin',producerId:disk.id},
     {name:'Financeiro FEP',email:'financeiro@fep.com.br',password:'Financeiro@123',role:'producer-finance',producerId:fep.id},
-    {name:'Marketing Disk',email:'marketing@diskingressos.com.br',password:'Marketing@123',role:'producer-marketing',producerId:disk.id}
+    {name:'Marketing Disk',email:'marketing@diskingressos.com.br',password:'Marketing@123',role:'producer-marketing',producerId:disk.id},
+    {name:'Operação Disk',email:'operacao@diskingressos.com.br',password:'Operacao@123',role:'producer-operation',producerId:disk.id},
+    {name:'Consulta Disk',email:'consulta@diskingressos.com.br',password:'Consulta@123',role:'viewer',producerId:disk.id}
   ]
   for(const u of users) await prisma.user.create({data:{name:u.name,email:u.email,passwordHash:await bcrypt.hash(u.password,12),role:u.role,producerId:u.producerId}})
 
@@ -107,10 +117,42 @@ async function main(){
     {code:'ig-maiden',name:'Instagram Iron Maiden',destination:'https://www.diskingressos.com.br/evento/iron-maiden',source:'instagram',medium:'social',campaign:'lancamento-maiden',producerId:disk.id,eventId:maiden.id,clicks:1240,conversions:86},
     {code:'wa-maiden',name:'WhatsApp Último Lote',destination:'https://www.diskingressos.com.br/evento/iron-maiden',source:'whatsapp',medium:'message',campaign:'ultimo-lote',producerId:disk.id,eventId:maiden.id,clicks:870,conversions:64}
   ]})
+  const instagramLink=await prisma.trackingLink.findUniqueOrThrow({where:{code:'ig-maiden'}})
+  const whatsappLink=await prisma.trackingLink.findUniqueOrThrow({where:{code:'wa-maiden'}})
+  const actionPlan:Array<[string,number]>=[['added',36],['removed',10],['abandoned',1],['finalized',7]]
+  const finalValues=[8050,9500,12000,15000,11000,12700,1900]
+  let seq=0; let finalIdx=0
+  for(const [action,count] of actionPlan){
+    for(let i=0;i<count;i++){
+      const day=19+(seq%5); const hour=12+(seq%9); const minute=(seq*7)%60
+      await prisma.trackingJourneyAction.create({data:{action,orderCode:`#${16358000+Math.floor(seq/2)}`,customerName:['Ana Souza','Bruno Lima','Carla Mendes','Diego Alves'][seq%4],customerEmail:`cliente${(seq%12)+1}@example.com`,ticketSummary:action==='removed'?`${1+(seq%3)}x Sem modalidade`:`${1+(seq%2)}x INTEIRA - LOTE 02`,amountCents:action==='finalized'?finalValues[finalIdx++]:0,trackingLinkId:instagramLink.id,producerId:disk.id,eventId:maiden.id,createdAt:new Date(`2026-08-${String(day).padStart(2,'0')}T${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}:00`)}})
+      seq++
+    }
+  }
+
+  // Fase 16.5 — sessões de atribuição UTM: first-touch persistente até a compra ou abandono.
+  const now=new Date('2026-08-23T20:00:00')
+  const attr1=await prisma.trackingAttribution.create({data:{sessionKey:'utm-demo-instagram-001',visitorKey:'visitor-ana',status:'converted',landingUrl:instagramLink.destination,customerName:'Ana Souza',customerEmail:'ana.utm@example.com',cartValueCents:21800,trackingLinkId:instagramLink.id,producerId:disk.id,eventId:maiden.id,orderId:o1.id,firstSeenAt:new Date('2026-08-23T18:55:00'),lastActivityAt:new Date('2026-08-23T19:06:00'),expiresAt:new Date('2026-09-22T18:55:00'),convertedAt:new Date('2026-08-23T19:06:00')}})
+  const attr2=await prisma.trackingAttribution.create({data:{sessionKey:'utm-demo-whatsapp-002',visitorKey:'visitor-julia',status:'abandoned',landingUrl:whatsappLink.destination,customerName:'Julia Martins',customerEmail:'julia.utm@example.com',customerPhone:'+5541999990001',cartValueCents:43600,trackingLinkId:whatsappLink.id,producerId:disk.id,eventId:maiden.id,firstSeenAt:new Date('2026-08-23T17:05:00'),lastActivityAt:new Date('2026-08-23T17:18:00'),expiresAt:new Date('2026-09-22T17:05:00'),abandonedAt:new Date('2026-08-23T17:48:00')}})
+  const recUtm=await prisma.recoveryOpportunity.create({data:{code:'REC-UTM-DEMO',kind:'carrinho',customerName:'Julia Martins',email:'julia.utm@example.com',phone:'+5541999990001',amountCents:43600,status:'em_recuperacao',preferredChannel:'whatsapp',lastActivityAt:new Date('2026-08-23T17:18:00'),firstContactAt:new Date('2026-08-23T17:50:00'),nextAttemptAt:new Date('2026-08-23T18:20:00'),attemptCount:1,producerId:disk.id,eventId:maiden.id,trackingLinkId:whatsappLink.id,attributionId:attr2.id}})
+  await prisma.trackingJourneyAction.createMany({data:[
+    {action:'added',orderCode:'#16359001',customerName:'Marina Costa',ticketSummary:'2x INTEIRA - LOTE 02',trackingLinkId:whatsappLink.id,producerId:disk.id,eventId:maiden.id,createdAt:new Date('2026-08-23T17:12:00')},
+    {action:'abandoned',orderCode:'#16359001',customerName:'Marina Costa',ticketSummary:'2x INTEIRA - LOTE 02',trackingLinkId:whatsappLink.id,producerId:disk.id,eventId:maiden.id,createdAt:new Date('2026-08-23T17:18:00')},
+    {action:'finalized',orderCode:'#16359002',customerName:'Paulo Reis',ticketSummary:'1x INTEIRA - LOTE 02',amountCents:21800,trackingLinkId:whatsappLink.id,producerId:disk.id,eventId:maiden.id,createdAt:new Date('2026-08-23T18:21:00')}
+  ]})
+  const pixelPrincipal=await prisma.trackingIntegration.create({data:{name:'Pixel Principal',provider:'meta',integrationType:'pixel_capi',pixelId:'123456789012345',status:'ativo',applyToAllEvents:true,enabledEventsJson:JSON.stringify(['PageView','ViewContent','AddToCart','InitiateCheckout','Purchase']),producerId:disk.id,...demoToken('DEMO_META_TOKEN_PRINCIPAL_4F8A')}})
+  const pixelAgencia=await prisma.trackingIntegration.create({data:{name:'Pixel Agência / Performance',provider:'meta',integrationType:'pixel_capi',pixelId:'987654321098765',status:'ativo',applyToAllEvents:false,enabledEventsJson:JSON.stringify(['PageView','ViewContent','InitiateCheckout','Purchase','Lead']),producerId:disk.id,...demoToken('DEMO_META_TOKEN_AGENCIA_92BC'),events:{create:[{eventId:maiden.id},{eventId:semParar.id}]}}})
+  await prisma.trackingDeliveryLog.createMany({data:[
+    {integrationId:pixelPrincipal.id,producerId:disk.id,eventId:maiden.id,eventName:'Purchase',status:'ok',responseCode:200,message:'Evento de demonstração registrado.'},
+    {integrationId:pixelAgencia.id,producerId:disk.id,eventId:maiden.id,eventName:'InitiateCheckout',status:'ok',responseCode:200,message:'Evento de demonstração registrado.'}
+  ]})
+
 
 
 
   const cartFlow=await prisma.automationFlow.create({data:{name:'Carrinho 30 min',trigger:'cart_abandoned',channel:'whatsapp',audience:'checkout abandonado',status:'ativo',delayMinutes:30,sentCount:124,convertedCount:28,revenueCents:612000,producerId:disk.id,eventId:maiden.id}})
+  await prisma.recoveryOpportunity.update({where:{id:recUtm.id},data:{flowId:cartFlow.id}})
+  await prisma.recoveryAttempt.create({data:{channel:'whatsapp',destination:'+5541999990001',status:'sent',attemptNumber:1,templateName:'Carrinho - lembrete rápido',messagePreview:'Olá Julia Martins! Seu ingresso ainda está no carrinho. Retome a compra pelo link da campanha.',scheduledAt:new Date('2026-08-23T17:50:00'),sentAt:new Date('2026-08-23T17:50:05'),deliveredAt:new Date('2026-08-23T17:50:07'),producerId:disk.id,eventId:maiden.id,recoveryId:recUtm.id,flowId:cartFlow.id}})
   const pixFlow=await prisma.automationFlow.create({data:{name:'PIX pendente 15 min',trigger:'payment_pending',channel:'multicanal',audience:'pagamento pendente',status:'ativo',delayMinutes:15,sentCount:96,convertedCount:19,revenueCents:414200,producerId:disk.id,eventId:maiden.id}})
   await prisma.automationFlow.createMany({data:[
     {name:'Último Lote',trigger:'last_lot',channel:'whatsapp',audience:'leads interessados',status:'ativo',delayMinutes:0,sentCount:580,convertedCount:42,revenueCents:915600,producerId:disk.id,eventId:maiden.id},
@@ -171,98 +213,6 @@ async function main(){
   await prisma.serviceTicket.create({data:{code:'SAC-000003',subject:'Dúvida sobre acesso ao evento',description:'Participante quer confirmar horário e portão de entrada.',category:'requisicao',impact:'baixo',urgency:'baixa',priority:'P4',status:'resolvido',channel:'portal',requesterName:'Carlos Souza',requesterEmail:'carlos@example.com',responseDueAt:new Date(Date.now()-24*3600000),resolutionDueAt:new Date(Date.now()+24*3600000),resolvedAt:new Date(),producerId:fep.id,eventId:conferencia.id}})
   await prisma.ticketMessage.create({data:{author:'Equipe N1',body:'Chamado recebido. Validando o pedido e o disparo do ingresso.',channel:'whatsapp',internal:false,producerId:disk.id,ticketId:sac1.id}})
 
-  // Fase 16.1 — Multi-Pixel & Multi-Token Seed
-  const pxMeta1 = await prisma.trackingIntegration.create({
-    data: {
-      name: 'Pixel Meta Principal - Tráfego Geral & Ingressos (Conta 01)',
-      provider: 'meta',
-      type: 'meta-capi',
-      pixelId: '891044728912903',
-      encryptedApiToken: 'EAAO7ZBa9ZCl4cBAOn93821KLPZa09238472918472918472918472918',
-      testEventCode: 'TEST94821',
-      status: 'ativo',
-      inheritanceMode: 'all_events',
-      lastEventName: 'Purchase',
-      lastFiredAt: new Date(Date.now() - 1000 * 60 * 3),
-      lastResponseStatus: '200 OK',
-      eventsSentToday: 1482,
-      producerId: disk.id,
-      eventConfigs: {
-        create: ['PageView', 'ViewContent', 'AddToCart', 'InitiateCheckout', 'AddPaymentInfo', 'Purchase', 'Lead', 'CompleteRegistration'].map(eventName => ({ eventName, enabled: true }))
-      }
-    }
-  })
-
-  const pxMeta2 = await prisma.trackingIntegration.create({
-    data: {
-      name: 'Pixel Meta Remarketing - Agência Alpha Performance (Conta 02)',
-      provider: 'meta',
-      type: 'meta-capi',
-      pixelId: '439201948201948',
-      encryptedApiToken: 'EAAG992018402910482910482910482910482910482910482910482910',
-      testEventCode: 'TEST33219',
-      status: 'ativo',
-      inheritanceMode: 'selected_events',
-      lastEventName: 'InitiateCheckout',
-      lastFiredAt: new Date(Date.now() - 1000 * 60 * 18),
-      lastResponseStatus: '200 OK',
-      eventsSentToday: 640,
-      producerId: disk.id,
-      events: {
-        create: [{ eventId: maiden.id }, { eventId: semParar.id }]
-      },
-      eventConfigs: {
-        create: ['PageView', 'ViewContent', 'AddToCart', 'InitiateCheckout', 'Purchase'].map(eventName => ({ eventName, enabled: true }))
-      }
-    }
-  })
-
-  const pxGA4 = await prisma.trackingIntegration.create({
-    data: {
-      name: 'Google Analytics 4 (GA4) - Produção Matriz',
-      provider: 'google',
-      type: 'ga4',
-      pixelId: 'G-E7X9023412',
-      encryptedApiToken: 'secret_ga4_measurement_protocol_key_48291',
-      status: 'ativo',
-      inheritanceMode: 'all_events',
-      lastEventName: 'purchase',
-      lastFiredAt: new Date(Date.now() - 1000 * 60 * 1),
-      lastResponseStatus: '200 OK',
-      eventsSentToday: 2310,
-      producerId: disk.id,
-      eventConfigs: {
-        create: ['PageView', 'ViewContent', 'InitiateCheckout', 'Purchase'].map(eventName => ({ eventName, enabled: true }))
-      }
-    }
-  })
-
-  // Seed sample dispatch log
-  await prisma.trackingEventLog.createMany({
-    data: [
-      {
-        integrationId: pxMeta1.id,
-        eventId: maiden.id,
-        eventName: 'Purchase',
-        status: 'success',
-        responseCode: 200,
-        responseBody: '{"events_received":1,"fbtrace_id":"trace_9f8d7a6e"}',
-        payloadSample: '{"event_name":"Purchase","currency":"BRL","value":180.00,"event_source_url":"https://diskingressos.com.br/eventos/3571"}',
-        createdAt: new Date(Date.now() - 1000 * 60 * 3)
-      },
-      {
-        integrationId: pxMeta2.id,
-        eventId: maiden.id,
-        eventName: 'InitiateCheckout',
-        status: 'success',
-        responseCode: 200,
-        responseBody: '{"events_received":1,"fbtrace_id":"trace_4a2c8e1f"}',
-        payloadSample: '{"event_name":"InitiateCheckout","currency":"BRL","value":180.00}',
-        createdAt: new Date(Date.now() - 1000 * 60 * 18)
-      }
-    ]
-  })
-
-  console.log('Fase 16.1: banco inicializado com Multi-Pixel, Multi-Token, logs CAPI e herança por evento.')
+  console.log('Fase 16.6: remarketing automático, fila de recuperação e atribuição UTM inicializados.')
 }
 main().finally(()=>prisma.$disconnect())

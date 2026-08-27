@@ -385,7 +385,274 @@ const initialUtmCampaigns: UtmCampaignData[] = [
       { hour: 20, hourLabel: '20h', count: 14, revenue: 1960 },
       { hour: 22, hourLabel: '22h', count: 10, revenue: 1400 },
     ],
-    orders: []
+    orders: [
+      {
+        id: '#16359210',
+        status: 'Finalizou',
+        customerName: 'Larissa Manoela Reis',
+        customerEmail: 'larissa.reis@gmail.com',
+        customerPhone: '(41) 99112-3344',
+        utmParams: 'tiktok / feed_video',
+        ticketDescription: '2x Ingressos Pista Promo',
+        value: 140.00,
+        dateTime: '22/08 20:15',
+        hour: 20,
+        journey: [
+          { time: '20:10', event: 'Visualizou vídeo no TikTok' },
+          { time: '20:11', event: 'Clicou no link da bio' },
+          { time: '20:13', event: 'Adicionou 2 ingressos' },
+          { time: '20:15', event: 'Compra confirmada • R$ 140,00' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'utm-5',
+    code: 'influencer-curitiba',
+    name: 'Influencer — Curitiba Cult VIP',
+    shortUrl: 'disk.ing/cult-vip',
+    fullUrl: 'https://diskingressos.com.br/evento/1760?utm_source=curitibacult&utm_medium=influencer&utm_campaign=parceria_vip&utm_content=stories_arrasta',
+    source: 'curitibacult',
+    medium: 'influencer',
+    campaign: 'parceria_vip',
+    content: 'stories_arrasta',
+    term: 'cupom_cult',
+    description: 'Ação de divulgação nos stories do portal Curitiba Cult com cupom VIP',
+    status: 'ativo',
+    createdAt: '22/04/2026',
+    metrics: {
+      visitors: 1420,
+      addedToCart: 280,
+      checkoutStarted: 110,
+      abandoned: 12,
+      purchased: 64,
+      revenue: 9240.00,
+      averageTicket: 144.37,
+      conversionRate: 4.51,
+      rates: {
+        visitorToCart: 19.7,
+        cartToCheckout: 39.3,
+        checkoutToPurchase: 58.2,
+      }
+    },
+    timelineData: [
+      { time: '19/08', revenue: 1600, conversions: 11, actions: 52, avgTicket: 145.4 },
+      { time: '20/08', revenue: 2320, conversions: 16, actions: 76, avgTicket: 145.0 },
+      { time: '21/08', revenue: 2900, conversions: 20, actions: 94, avgTicket: 145.0 },
+      { time: '22/08', revenue: 2420, conversions: 17, actions: 82, avgTicket: 142.3 },
+    ],
+    hourlyDistribution: [
+      { hour: 11, hourLabel: '11h', count: 8, revenue: 1160 },
+      { hour: 14, hourLabel: '14h', count: 12, revenue: 1740 },
+      { hour: 18, hourLabel: '18h', count: 24, revenue: 3480 },
+      { hour: 21, hourLabel: '21h', count: 20, revenue: 2860 },
+    ],
+    orders: [
+      {
+        id: '#16359440',
+        status: 'Finalizou',
+        customerName: 'Fernanda Meirelles',
+        customerEmail: 'fernanda.meirelles@uol.com.br',
+        customerPhone: '(41) 98822-4455',
+        utmParams: 'curitibacult / influencer',
+        ticketDescription: '2x Ingressos Área VIP Cupom Cult',
+        value: 200.00,
+        dateTime: '22/08 18:32',
+        hour: 18,
+        journey: [
+          { time: '18:25', event: 'Arrastou link no Story Curitiba Cult' },
+          { time: '18:27', event: 'Aplicou cupom CULT10' },
+          { time: '18:30', event: 'Checkout iniciado com sucesso' },
+          { time: '18:32', event: 'Pago via PIX • R$ 200,00' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'utm-6',
+    code: 'email-base-ativa',
+    name: 'E-mail — Newsletter Base Ativa',
+    shortUrl: 'disk.ing/news-vip',
+    fullUrl: 'https://diskingressos.com.br/evento/1760?utm_source=email&utm_medium=newsletter&utm_campaign=base_ativa_shows&utm_content=banner_principal',
+    source: 'email',
+    medium: 'newsletter',
+    campaign: 'base_ativa_shows',
+    content: 'banner_principal',
+    term: '',
+    description: 'Disparo de newsletter semanal para clientes compradores de shows',
+    status: 'ativo',
+    createdAt: '24/04/2026',
+    metrics: {
+      visitors: 890,
+      addedToCart: 175,
+      checkoutStarted: 78,
+      abandoned: 6,
+      purchased: 48,
+      revenue: 7360.00,
+      averageTicket: 153.33,
+      conversionRate: 5.39,
+      rates: {
+        visitorToCart: 19.6,
+        cartToCheckout: 44.5,
+        checkoutToPurchase: 61.5,
+      }
+    },
+    timelineData: [
+      { time: '20/08', revenue: 2150, conversions: 14, actions: 60, avgTicket: 153.5 },
+      { time: '21/08', revenue: 3060, conversions: 20, actions: 88, avgTicket: 153.0 },
+      { time: '22/08', revenue: 2150, conversions: 14, actions: 60, avgTicket: 153.5 },
+    ],
+    hourlyDistribution: [
+      { hour: 9, hourLabel: '09h', count: 10, revenue: 1530 },
+      { hour: 12, hourLabel: '12h', count: 16, revenue: 2450 },
+      { hour: 15, hourLabel: '15h', count: 14, revenue: 2150 },
+      { hour: 20, hourLabel: '20h', count: 8, revenue: 1230 },
+    ],
+    orders: [
+      {
+        id: '#16359550',
+        status: 'Finalizou',
+        customerName: 'Marcos Vinicius Duarte',
+        customerEmail: 'marcos.duarte@terra.com.br',
+        customerPhone: '(41) 97711-2233',
+        utmParams: 'email / newsletter',
+        ticketDescription: '2x Ingressos Pista Premium',
+        value: 180.00,
+        dateTime: '21/08 12:45',
+        hour: 12,
+        journey: [
+          { time: '12:38', event: 'Abriu e-mail marketing "Não perca o 4 Amigos"' },
+          { time: '12:40', event: 'Clicou no botão Garantir Ingresso' },
+          { time: '12:42', event: 'Adicionou ao carrinho' },
+          { time: '12:45', event: 'Compra confirmada Cartão Crédito • R$ 180,00' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'utm-7',
+    code: 'facebook-remarketing',
+    name: 'Facebook Ads — Remarketing Checkout',
+    shortUrl: 'disk.ing/fb-remarketing',
+    fullUrl: 'https://diskingressos.com.br/evento/1760?utm_source=facebook&utm_medium=remarketing&utm_campaign=abandono_carrinho&utm_content=anuncio_carrossel',
+    source: 'facebook',
+    medium: 'remarketing',
+    campaign: 'abandono_carrinho',
+    content: 'anuncio_carrossel',
+    term: '',
+    description: 'Campanha de remarketing de 3 dias para visitantes que iniciaram checkout',
+    status: 'ativo',
+    createdAt: '25/04/2026',
+    metrics: {
+      visitors: 630,
+      addedToCart: 145,
+      checkoutStarted: 88,
+      abandoned: 9,
+      purchased: 52,
+      revenue: 8120.00,
+      averageTicket: 156.15,
+      conversionRate: 8.25,
+      rates: {
+        visitorToCart: 23.0,
+        cartToCheckout: 60.7,
+        checkoutToPurchase: 59.1,
+      }
+    },
+    timelineData: [
+      { time: '20/08', revenue: 2480, conversions: 16, actions: 68, avgTicket: 155.0 },
+      { time: '21/08', revenue: 3120, conversions: 20, actions: 85, avgTicket: 156.0 },
+      { time: '22/08', revenue: 2520, conversions: 16, actions: 70, avgTicket: 157.5 },
+    ],
+    hourlyDistribution: [
+      { hour: 13, hourLabel: '13h', count: 12, revenue: 1870 },
+      { hour: 17, hourLabel: '17h', count: 15, revenue: 2340 },
+      { hour: 20, hourLabel: '20h', count: 18, revenue: 2810 },
+      { hour: 22, hourLabel: '22h', count: 7, revenue: 1100 },
+    ],
+    orders: [
+      {
+        id: '#16359660',
+        status: 'Finalizou',
+        customerName: 'Renata Albuquerque',
+        customerEmail: 'renata.albuquerque@gmail.com',
+        customerPhone: '(41) 98123-4567',
+        utmParams: 'facebook / remarketing',
+        ticketDescription: '2x Ingressos Pista',
+        value: 160.00,
+        dateTime: '21/08 20:18',
+        hour: 20,
+        recovered: true,
+        recoveryChannel: 'automacao',
+        journey: [
+          { time: '19/08 16:30', event: 'Abandonou carrinho inicial' },
+          { time: '21/08 19:55', event: 'Visualizou carrossel de remarketing no Facebook' },
+          { time: '21/08 20:00', event: 'Retornou ao checkout com carrinho preservado' },
+          { time: '21/08 20:18', event: 'Venda recuperada • R$ 160,00' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'utm-8',
+    code: 'afiliados-promoters',
+    name: 'Afiliados — Promoters Oficiais',
+    shortUrl: 'disk.ing/promoter-vip',
+    fullUrl: 'https://diskingressos.com.br/evento/1760?utm_source=afiliados&utm_medium=promoter&utm_campaign=divulgacao_equipe&utm_content=link_exclusivo',
+    source: 'afiliados',
+    medium: 'promoter',
+    campaign: 'divulgacao_equipe',
+    content: 'link_exclusivo',
+    term: 'promoter_01',
+    description: 'Links comissionados distribuídos pela equipe de promoters oficiais',
+    status: 'ativo',
+    createdAt: '26/04/2026',
+    metrics: {
+      visitors: 1180,
+      addedToCart: 195,
+      checkoutStarted: 90,
+      abandoned: 10,
+      purchased: 58,
+      revenue: 8700.00,
+      averageTicket: 150.00,
+      conversionRate: 4.92,
+      rates: {
+        visitorToCart: 16.5,
+        cartToCheckout: 46.1,
+        checkoutToPurchase: 64.4,
+      }
+    },
+    timelineData: [
+      { time: '19/08', revenue: 1800, conversions: 12, actions: 55, avgTicket: 150.0 },
+      { time: '20/08', revenue: 2400, conversions: 16, actions: 72, avgTicket: 150.0 },
+      { time: '21/08', revenue: 2700, conversions: 18, actions: 82, avgTicket: 150.0 },
+      { time: '22/08', revenue: 1800, conversions: 12, actions: 55, avgTicket: 150.0 },
+    ],
+    hourlyDistribution: [
+      { hour: 14, hourLabel: '14h', count: 14, revenue: 2100 },
+      { hour: 17, hourLabel: '17h', count: 16, revenue: 2400 },
+      { hour: 19, hourLabel: '19h', count: 18, revenue: 2700 },
+      { hour: 22, hourLabel: '22h', count: 10, revenue: 1500 },
+    ],
+    orders: [
+      {
+        id: '#16359770',
+        status: 'Finalizou',
+        customerName: 'Thiago Guimarães',
+        customerEmail: 'thiago.guimaraes@gmail.com',
+        customerPhone: '(41) 99654-3210',
+        utmParams: 'afiliados / promoter',
+        ticketDescription: '2x Ingressos Pista Premium Promoter',
+        value: 180.00,
+        dateTime: '21/08 19:40',
+        hour: 19,
+        journey: [
+          { time: '19:30', event: 'Recebeu link do Promoter no WhatsApp' },
+          { time: '19:32', event: 'Acessou link direto com comissão atribuída' },
+          { time: '19:35', event: 'Checkout preenchido' },
+          { time: '19:40', event: 'Pagamento PIX confirmado • R$ 180,00' }
+        ]
+      }
+    ]
   }
 ];
 

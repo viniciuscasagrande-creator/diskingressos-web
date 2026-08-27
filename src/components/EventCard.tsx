@@ -1,0 +1,55 @@
+import { CalendarDays, Layers3, MapPin, MoreHorizontal, Pencil, Settings2 } from 'lucide-react'
+import type { EventItem } from '../data/events'
+
+type Props = {
+  event: EventItem
+  onEdit: (event: EventItem) => void
+  onLots: (event: EventItem) => void
+  onDashboard: (event: EventItem) => void
+  onOpen: (event: EventItem) => void
+}
+
+export default function EventCard({event, onEdit, onLots, onDashboard, onOpen}: Props) {
+  const occupancyNum = parseFloat(event.occupancy)
+  const high = occupancyNum > 50
+  return (
+    <article className="event-card event-card-clickable" role="button" tabIndex={0} onClick={()=>onOpen(event)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onOpen(event)}}}>
+      <div className={`event-cover ${event.cover}`}>
+        {event.badge && <span className="cover-badge">{event.badge}</span>}
+        <div className="cover-overlay">
+          {event.cover.startsWith('conference') && <><strong>O Espiritismo</strong><span>Luz em nossas vidas.</span></>}
+          {event.cover === 'nature' && <><strong>Música e natureza</strong><span>fazendo arte.</span></>}
+          {event.cover === 'maiden' && <><strong>IRON MAIDEN SYMPHONIC</strong><span>THE BEAST EXPERIENCE</span></>}
+          {event.cover === 'custom' && <><strong>{event.category || 'Novo evento'}</strong><span>{event.city}</span></>}
+        </div>
+        <span className="event-id">{event.code}</span>
+      </div>
+      <div className="event-body">
+        <div>
+          <div className="title-with-status"><h3>{event.title}</h3><span className={`status-pill ${event.status}`}>{event.status}</span></div>
+          <p className="venue"><MapPin size={17}/>{event.venue}</p>
+        </div>
+        <div className="metrics">
+          <Metric label="Total (R$)" value={event.total} accent="green" />
+          <Metric label="Vendas" value={String(event.sales)} accent="blue" />
+          <Metric label="Disponível" value={String(event.available)} accent="cyan" />
+          <Metric label="Cortesia" value={String(event.courtesy)} accent="slate" />
+          <Metric label="Ocupação" value={event.occupancy} accent={high ? 'orange' : 'blue'} />
+        </div>
+        <div className="card-footer">
+          <span><CalendarDays size={17}/>{event.date}</span>
+          <div className="actions">
+            <button title="Painel do evento" onClick={e=>{e.stopPropagation();onDashboard(event)}}><Settings2 size={17}/></button>
+            <button title="Editar evento" onClick={e=>{e.stopPropagation();onEdit(event)}}><Pencil size={17}/></button>
+            <button title="Lotes" onClick={e=>{e.stopPropagation();onLots(event)}}><Layers3 size={18}/></button>
+            <button title="Mais opções" onClick={e=>e.stopPropagation()}><MoreHorizontal size={18}/></button>
+          </div>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function Metric({label, value, accent}:{label:string;value:string;accent:string}) {
+  return <div className="metric"><span>{label}</span><strong>{value}</strong><i className={`metric-line ${accent}`}/></div>
+}

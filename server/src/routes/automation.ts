@@ -45,8 +45,80 @@ automationRouter.get('/executions',requireRoles(...readRoles),async(req:AuthRequ
 automationRouter.post('/flows/:id/test',requireRoles(...writeRoles),async(req:AuthRequest,res)=>{const id=Number(req.params.id);const flow=await prisma.automationFlow.findUnique({where:{id}});if(!flow||!ownsProducer(req,flow.producerId))return res.status(404).json({message:'Automação não encontrada.'});const execution=await prisma.automationExecution.create({data:{channel:flow.channel==='multicanal'?'whatsapp':flow.channel,destination:'contato-demo',status:'enviado',scheduledAt:new Date(),executedAt:new Date(),messagePreview:`Teste do fluxo ${flow.name}`,producerId:flow.producerId,eventId:flow.eventId,flowId:flow.id}});await prisma.automationFlow.update({where:{id},data:{sentCount:{increment:1}}});await audit(req,'automation.flow.test','AutomationFlow',String(id),{executionId:execution.id});res.status(201).json(execution)})
 
 const recoverySchema=z.object({kind:z.enum(['carrinho','pagamento','inativo','pos_evento']).default('carrinho'),customerName:z.string().min(2),email:z.string().email().optional().nullable(),phone:z.string().optional().nullable(),amountCents:z.number().int().nonnegative(),preferredChannel:z.enum(['whatsapp','email']).default('whatsapp'),producerId:z.number().int().positive().optional(),eventId:z.number().int().positive().optional().nullable()})
-automationRouter.get('/recoveries',requireRoles(...readRoles),async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req);const eventId=req.query.eventId?Number(req.query.eventId):undefined;const kind=req.query.kind?String(req.query.kind):undefined;const rows=await prisma.recoveryOpportunity.findMany({where:{...(producerId?{producerId}:{}),...(eventId?{eventId}:{}),...(kind?{kind}:{})},include:{event:{select:{id:true,title:true}}},orderBy:{lastActivityAt:'desc'}});res.json(rows)})
+automationRouter.get('/recoveries',requireRoles(...readRoles),async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req);const eventId=req.query.eventId?Number(req.query.eventId):undefined;const kind=req.query.kind?String(req.query.kind):undefined;const rows=await prisma.recoveryOpportunity.findMany({where:{...(producerId?{producerId}:{}),...(eventId?{eventId}:{}),...(kind?{kind}:{})},include:{event:{select:{id:true,title:true}},trackingLink:{select:{id:true,name:true,source:true,medium:true,campaign:true,code:true}},flow:{select:{id:true,name:true,channel:true,delayMinutes:true}},attempts:{orderBy:{createdAt:'desc'},take:5}},orderBy:{lastActivityAt:'desc'}});res.json(rows)})
 automationRouter.post('/recoveries',requireRoles(...writeRoles),async(req:AuthRequest,res)=>{const parsed=recoverySchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({message:'Oportunidade inválida.',issues:parsed.error.issues});const body=parsed.data;let producerId=writeProducerId(req,body.producerId);if(body.eventId){const event=await prisma.event.findUnique({where:{id:body.eventId}});if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'});producerId=event.producerId}if(!producerId)return res.status(400).json({message:'Selecione uma produtora ou evento.'});const row=await prisma.recoveryOpportunity.create({data:{...body,producerId,eventId:body.eventId||null,code:`REC-${crypto.randomBytes(4).toString('hex').toUpperCase()}`}});res.status(201).json(row)})
-automationRouter.patch('/recoveries/:id/recover',requireRoles(...writeRoles),async(req:AuthRequest,res)=>{const id=Number(req.params.id);const current=await prisma.recoveryOpportunity.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Oportunidade não encontrada.'});const row=await prisma.recoveryOpportunity.update({where:{id},data:{status:'recuperado',recoveredAt:new Date(),revenueCents:current.amountCents}});await audit(req,'remarketing.recovery.complete','RecoveryOpportunity',String(id),{amountCents:current.amountCents});res.json(row)})
+automationRouter.patch('/recoveries/:id/recover',requireRoles(...writeRoles),async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id);const current=await prisma.recoveryOpportunity.findUnique({where:{id},include:{attribution:true}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Oportunidade não encontrada.'})
+  const parsed=z.object({revenueCents:z.number().int().nonnegative().optional(),orderId:z.number().int().positive().optional().nullable()}).safeParse(req.body||{});const revenueCents=parsed.success&&parsed.data.revenueCents!==undefined?parsed.data.revenueCents:current.amountCents
+  const row=await prisma.$transaction(async tx=>{
+    const updated=await tx.recoveryOpportunity.update({where:{id},data:{status:'recuperado',recoveredAt:new Date(),revenueCents,nextAttemptAt:null}})
+    if(current.flowId)await tx.automationFlow.update({where:{id:current.flowId},data:{convertedCount:{increment:1},revenueCents:{increment:revenueCents}}})
+    if(current.attributionId)await tx.trackingAttribution.update({where:{id:current.attributionId},data:{status:'converted',convertedAt:new Date(),...(parsed.success&&parsed.data.orderId?{orderId:parsed.data.orderId}:{})}})
+    if(current.trackingLinkId)await tx.trackingLink.update({where:{id:current.trackingLinkId},data:{conversions:{increment:1}}})
+    return updated
+  })
+  await audit(req,'remarketing.recovery.complete','RecoveryOpportunity',String(id),{revenueCents,trackingLinkId:current.trackingLinkId,attributionId:current.attributionId});res.json(row)
+})
+
+const channelAllowed=async(producerId:number,contact:string|undefined|null,channel:string)=>{
+  if(!contact)return false
+  const consent=await prisma.contactConsent.findUnique({where:{producerId_contact_channel:{producerId,contact,channel}}}).catch(()=>null)
+  return !consent||consent.status!=='optout'
+}
+const buildRecoveryPreview=(body:string,name:string,eventName:string,link:string)=>body.replaceAll('{{nome}}',name).replaceAll('{{evento}}',eventName).replaceAll('{{link}}',link)
+
+// Fase 16.6: inicia a jornada de recuperação de uma oportunidade com consentimento, template e canal.
+automationRouter.post('/recoveries/:id/start',requireRoles(...writeRoles),async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id);const current=await prisma.recoveryOpportunity.findUnique({where:{id},include:{event:true,trackingLink:true,flow:true}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Oportunidade não encontrada.'})
+  if(current.status==='recuperado')return res.status(409).json({message:'Esta oportunidade já foi recuperada.'})
+  const requested=z.object({channel:z.enum(['whatsapp','email','multicanal']).optional(),flowId:z.number().int().positive().optional()}).safeParse(req.body||{})
+  let flow=current.flow
+  if(requested.success&&requested.data.flowId){const candidate=await prisma.automationFlow.findUnique({where:{id:requested.data.flowId}});if(candidate&&ownsProducer(req,candidate.producerId))flow=candidate}
+  if(!flow)flow=await prisma.automationFlow.findFirst({where:{producerId:current.producerId,status:'ativo',trigger:current.kind==='pagamento'?'payment_pending':'cart_abandoned',OR:[{eventId:current.eventId},{eventId:null}]},orderBy:{eventId:'desc'}})
+  const channel=requested.success&&requested.data.channel?requested.data.channel:(flow?.channel||current.preferredChannel)
+  const candidates=channel==='multicanal'?['whatsapp','email']:[channel]
+  const attempts:any[]=[]
+  for(const ch of candidates){
+    const destination=ch==='whatsapp'?current.phone:current.email
+    if(!destination||!(await channelAllowed(current.producerId,destination,ch)))continue
+    const template=await prisma.messageTemplate.findFirst({where:{producerId:current.producerId,channel:ch,status:'ativo',category:'remarketing',OR:[{eventId:current.eventId},{eventId:null}]},orderBy:{eventId:'desc'}})
+    const eventName=current.event?.title||'seu evento';const resumeLink=current.trackingLink?`${process.env.PUBLIC_APP_URL||'http://localhost:5173'}/r/${current.trackingLink.code}`:'#'
+    const preview=buildRecoveryPreview(template?.body||'Olá {{nome}}, retome sua compra para {{evento}}: {{link}}',current.customerName,eventName,resumeLink)
+    const attempt=await prisma.recoveryAttempt.create({data:{channel:ch,destination,status:'queued',attemptNumber:current.attemptCount+1,templateName:template?.name||'Recuperação padrão',messagePreview:preview,scheduledAt:new Date(),producerId:current.producerId,eventId:current.eventId,recoveryId:current.id,flowId:flow?.id||null}});attempts.push(attempt)
+    if(flow)await prisma.automationExecution.create({data:{channel:ch,destination,status:'agendado',scheduledAt:new Date(),messagePreview:preview,producerId:current.producerId,eventId:current.eventId,flowId:flow.id}})
+  }
+  if(!attempts.length)return res.status(409).json({message:'Nenhum canal disponível com contato e consentimento válidos.'})
+  const nextAttemptAt=new Date(Date.now()+Math.max(flow?.delayMinutes||30,30)*60000)
+  await prisma.recoveryOpportunity.update({where:{id},data:{status:'em_recuperacao',firstContactAt:current.firstContactAt||new Date(),nextAttemptAt,attemptCount:{increment:1},flowId:flow?.id||current.flowId}})
+  if(flow)await prisma.automationFlow.update({where:{id:flow.id},data:{sentCount:{increment:attempts.length}}})
+  await audit(req,'remarketing.recovery.start','RecoveryOpportunity',String(id),{channels:attempts.map(a=>a.channel),flowId:flow?.id||null});res.status(201).json({attempts,nextAttemptAt})
+})
+
+// Simula o worker/fila: processa mensagens agendadas, aplica retries e mantém histórico de entrega.
+automationRouter.post('/recoveries/process-queue',requireRoles(...writeRoles),async(req:AuthRequest,res)=>{
+  const producerId=requestedProducerId(req);const limit=Math.min(Number(req.body?.limit||50),200);const now=new Date()
+  // Auto-enrollment: oportunidades abertas entram no fluxo ativo sem depender de clique individual.
+  const openRows=await prisma.recoveryOpportunity.findMany({where:{...(producerId?{producerId}:{}),status:'aberto'},include:{event:true,trackingLink:true},take:limit})
+  let enrolled=0
+  for(const current of openRows){
+    const flow=await prisma.automationFlow.findFirst({where:{producerId:current.producerId,status:'ativo',trigger:current.kind==='pagamento'?'payment_pending':'cart_abandoned',OR:[{eventId:current.eventId},{eventId:null}]},orderBy:{eventId:'desc'}})
+    if(!flow)continue
+    const channels=flow.channel==='multicanal'?['whatsapp','email']:[flow.channel];let created=0
+    for(const ch of channels){const destination=ch==='whatsapp'?current.phone:current.email;if(!destination||!(await channelAllowed(current.producerId,destination,ch)))continue;const template=await prisma.messageTemplate.findFirst({where:{producerId:current.producerId,channel:ch,status:'ativo',category:'remarketing',OR:[{eventId:current.eventId},{eventId:null}]},orderBy:{eventId:'desc'}});const link=current.trackingLink?`${process.env.PUBLIC_APP_URL||'http://localhost:5173'}/r/${current.trackingLink.code}`:'#';const preview=buildRecoveryPreview(template?.body||'Olá {{nome}}, retome sua compra para {{evento}}: {{link}}',current.customerName,current.event?.title||'seu evento',link);await prisma.recoveryAttempt.create({data:{channel:ch,destination,status:'queued',attemptNumber:1,templateName:template?.name||'Recuperação padrão',messagePreview:preview,scheduledAt:now,producerId:current.producerId,eventId:current.eventId,recoveryId:current.id,flowId:flow.id}});created++}
+    if(created){await prisma.recoveryOpportunity.update({where:{id:current.id},data:{status:'em_recuperacao',firstContactAt:now,nextAttemptAt:new Date(now.getTime()+Math.max(flow.delayMinutes,30)*60000),attemptCount:1,flowId:flow.id}});await prisma.automationFlow.update({where:{id:flow.id},data:{sentCount:{increment:created}}});enrolled++}
+  }
+  const queued=await prisma.recoveryAttempt.findMany({where:{...(producerId?{producerId}:{}),status:'queued',scheduledAt:{lte:now}},orderBy:{scheduledAt:'asc'},take:limit})
+  let sent=0;for(const item of queued){await prisma.recoveryAttempt.update({where:{id:item.id},data:{status:'sent',sentAt:now,deliveredAt:now}});sent++}
+  await audit(req,'remarketing.queue.process','RecoveryAttempt','batch',{enrolled,queued:queued.length,sent});res.json({enrolled,processed:queued.length,sent})
+})
+
+automationRouter.get('/recovery-dashboard',requireRoles(...readRoles),async(req:AuthRequest,res)=>{
+  const producerId=requestedProducerId(req);const eventId=req.query.eventId?Number(req.query.eventId):undefined;const where:any={...(producerId?{producerId}:{}),...(eventId?{eventId}:{})}
+  const rows=await prisma.recoveryOpportunity.findMany({where,include:{trackingLink:{select:{id:true,name:true,source:true,medium:true,campaign:true}},attempts:true}})
+  const recovered=rows.filter(r=>r.status==='recuperado');const byChannel:any={whatsapp:{attempts:0,recovered:0,revenueCents:0},email:{attempts:0,recovered:0,revenueCents:0}}
+  for(const r of rows){for(const a of r.attempts){if(byChannel[a.channel])byChannel[a.channel].attempts++}if(r.status==='recuperado'&&byChannel[r.preferredChannel]){byChannel[r.preferredChannel].recovered++;byChannel[r.preferredChannel].revenueCents+=r.revenueCents}}
+  const campaigns=new Map<string,any>();for(const r of rows){if(!r.trackingLink)continue;const key=r.trackingLink.campaign||r.trackingLink.name;if(!campaigns.has(key))campaigns.set(key,{campaign:key,source:r.trackingLink.source,opportunities:0,recovered:0,revenueCents:0});const c=campaigns.get(key);c.opportunities++;if(r.status==='recuperado'){c.recovered++;c.revenueCents+=r.revenueCents}}
+  res.json({open:rows.filter(r=>r.status==='aberto').length,inRecovery:rows.filter(r=>r.status==='em_recuperacao').length,recovered:recovered.length,potentialCents:rows.filter(r=>r.status!=='recuperado').reduce((a,r)=>a+r.amountCents,0),recoveredCents:recovered.reduce((a,r)=>a+r.revenueCents,0),byChannel,campaigns:[...campaigns.values()]})
+})
 
 automationRouter.get('/summary',requireRoles(...readRoles),async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req);const where=producerId?{producerId}:{};const [flows,recoveries,executions,templates]=await Promise.all([prisma.automationFlow.findMany({where}),prisma.recoveryOpportunity.findMany({where}),prisma.automationExecution.findMany({where}),prisma.messageTemplate.count({where})]);const open=recoveries.filter(r=>r.status==='aberto');const recovered=recoveries.filter(r=>r.status==='recuperado');res.json({activeFlows:flows.filter(f=>f.status==='ativo').length,totalFlows:flows.length,templates,executions:executions.length,openRecoveries:open.length,potentialCents:open.reduce((a,r)=>a+r.amountCents,0),recoveredCount:recovered.length,recoveredCents:recovered.reduce((a,r)=>a+r.revenueCents,0),sent:flows.reduce((a,f)=>a+f.sentCount,0),conversions:flows.reduce((a,f)=>a+f.convertedCount,0)})})

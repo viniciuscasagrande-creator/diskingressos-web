@@ -1,340 +1,52 @@
-import React, { useState } from 'react';
-import { 
-  Layers3, Plus, Trash2, ArrowLeft, 
-  Check, Ticket, AlertCircle, ShoppingBag, ShieldCheck
-} from 'lucide-react';
-import type { EventItem, TicketBatch } from '../types/event';
-import { PageHeader } from '../components/ui/PageHeader';
-import { KpiCard } from '../components/ui/KpiCard';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { DataTable } from '../components/ui/DataTable';
-import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
+import { ArrowLeft, CalendarClock, MoreHorizontal, Plus, Search, Ticket, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import type { EventItem } from '../data/events'
 
-interface LotsPageProps {
-  events: EventItem[];
-  selectedEvent: EventItem | null;
-  onSelectEvent: (event: EventItem) => void;
-  onBack: () => void;
-  onSaveBatches: (eventId: number, batches: TicketBatch[]) => void;
-}
+type Lot = {id:number; name:string; type:string; price:number; qty:number; sold:number; start:string; end:string; status:'ativo'|'agendado'|'encerrado'}
 
-export const LotsPage: React.FC<LotsPageProps> = ({
-  events,
-  selectedEvent,
-  onSelectEvent,
-  onBack,
-  onSaveBatches,
-}) => {
-  const activeEvent = selectedEvent || events[0];
-  const [batches, setBatches] = useState<TicketBatch[]>(activeEvent?.batches || []);
-  const [showAddForm, setShowAddForm] = useState(false);
+const initialLots:Lot[] = [
+  {id:1,name:'1º Lote - Pista',type:'Inteira',price:120,qty:500,sold:318,start:'01/10/2026',end:'15/12/2026',status:'ativo'},
+  {id:2,name:'1º Lote - Pista',type:'Meia',price:60,qty:300,sold:180,start:'01/10/2026',end:'15/12/2026',status:'ativo'},
+  {id:3,name:'2º Lote - Pista',type:'Inteira',price:150,qty:700,sold:0,start:'16/12/2026',end:'28/02/2027',status:'agendado'},
+]
 
-  // New batch form state
-  const [name, setName] = useState('');
-  const [type, setType] = useState('Pista');
-  const [price, setPrice] = useState('100.00');
-  const [qty, setQty] = useState('500');
-  const [start, setStart] = useState('2026-08-01');
-  const [end, setEnd] = useState('2026-10-30');
+type Props = {events:EventItem[]; selectedEvent:EventItem|null; onSelect:(event:EventItem)=>void; onBack:()=>void}
 
-  // Handle Event Selector switch
-  const handleEventSwitch = (eventId: number) => {
-    const ev = events.find((e) => e.id === eventId);
-    if (ev) {
-      onSelectEvent(ev);
-      setBatches(ev.batches || []);
-    }
-  };
+export default function LotsPage({events,selectedEvent,onSelect,onBack}:Props){
+  const event = selectedEvent || events[0]
+  const [lots,setLots] = useState(initialLots)
+  const [search,setSearch] = useState('')
+  const [showForm,setShowForm] = useState(false)
+  const [draft,setDraft] = useState({name:'',type:'Inteira',price:'',qty:'',start:'',end:''})
+  const filtered = useMemo(()=>lots.filter(l=>`${l.name} ${l.type}`.toLowerCase().includes(search.toLowerCase())),[lots,search])
+  const totalQty = lots.reduce((s,l)=>s+l.qty,0), sold = lots.reduce((s,l)=>s+l.sold,0)
 
-  const handleAddBatch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim()) return;
+  const addLot=()=>{
+    if(!draft.name || !draft.price || !draft.qty) return
+    setLots(prev=>[...prev,{id:Date.now(),name:draft.name,type:draft.type,price:Number(draft.price),qty:Number(draft.qty),sold:0,start:draft.start||'A definir',end:draft.end||'A definir',status:'agendado'}])
+    setDraft({name:'',type:'Inteira',price:'',qty:'',start:'',end:''}); setShowForm(false)
+  }
 
-    const priceNum = parseFloat(price) || 0;
-    const qtyNum = parseInt(qty, 10) || 0;
+  return <>
+    <section className="page-head form-page-head">
+      <div><button className="back-link" onClick={onBack}><ArrowLeft size={17}/> Voltar para eventos</button><p className="eyebrow">EVENTOS / CONFIGURAÇÃO</p><h1>Lotes e ingressos</h1><p className="head-subtitle">Defina preços, quantidades e períodos de venda.</p></div>
+      <button className="primary-btn" onClick={()=>setShowForm(true)}><Plus size={18}/>Novo lote</button>
+    </section>
 
-    const newBatch: TicketBatch = {
-      id: `b-${Date.now()}`,
-      name: name.trim(),
-      type: type as any,
-      category: type as any,
-      price: priceNum,
-      fee: priceNum * 0.1,
-      totalQuantity: qtyNum,
-      qty: qtyNum,
-      soldQuantity: 0,
-      sold: 0,
-      availableQuantity: qtyNum,
-      startDate: start,
-      endDate: end,
-      status: 'ativo',
-    };
-
-    const updated = [...batches, newBatch];
-    setBatches(updated);
-    onSaveBatches(activeEvent.id, updated);
-
-    setName('');
-    setPrice('100.00');
-    setQty('500');
-    setShowAddForm(false);
-  };
-
-  const handleRemoveBatch = (id: string | number) => {
-    const updated = batches.filter((b) => b.id !== id);
-    setBatches(updated);
-    onSaveBatches(activeEvent.id, updated);
-  };
-
-  const handleToggleStatus = (id: string | number) => {
-    const updated = batches.map((b) => {
-      if (b.id === id) {
-        const next = b.status === 'ativo' ? 'pausado' : 'ativo';
-        return { ...b, status: next as any };
-      }
-      return b;
-    });
-    setBatches(updated);
-    onSaveBatches(activeEvent.id, updated);
-  };
-
-  const totalCapacity = batches.reduce((acc, b) => acc + (b.totalQuantity || b.qty || 0), 0);
-  const totalSold = batches.reduce((acc, b) => acc + (b.soldQuantity || b.sold || 0), 0);
-  const totalAvailable = batches.reduce((acc, b) => acc + (b.availableQuantity || 0), 0);
-
-  const tableHeaders = [
-    'Lote / Setor',
-    'Preço Unitário',
-    <div key="prog" className="text-center">Progresso de Vendas</div>,
-    <div key="disp" className="text-center">Disponível</div>,
-    <div key="vig" className="text-center">Vigência</div>,
-    <div key="st" className="text-center">Status</div>,
-    <div key="ac" className="text-right pr-2">Ação</div>
-  ];
-
-  return (
-    <div className="w-full space-y-6">
-      {/* Back link */}
-      <button
-        onClick={onBack}
-        className="flex items-center gap-1.5 text-xs font-bold text-[#1677FF] hover:underline"
-      >
-        <ArrowLeft size={16} />
-        Voltar para Todos os Eventos
-      </button>
-
-      {/* Page Header */}
-      <PageHeader
-        eyebrow="EVENTOS / GESTÃO DE INGRESSOS"
-        title="Configuração de Lotes & Preços"
-        subtitle="Gerencie setores, limites de vendas, precificação e períodos de vigência dos lotes."
-        actions={
-          <Button
-            variant="primary"
-            onClick={() => setShowAddForm(!showAddForm)}
-            icon={<Plus size={16} />}
-          >
-            {showAddForm ? 'Fechar Formulário' : 'Novo Lote'}
-          </Button>
-        }
-      />
-
-      {/* Event Selector Card */}
-      <Card padding="sm" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748B] block">
-            Evento Selecionado
-          </span>
-          <strong className="text-[16px] font-bold text-[#0E1726]">
-            {activeEvent.title}
-          </strong>
-          <span className="text-[12px] text-[#718096] block">
-            {activeEvent.venue} — #{activeEvent.code}
-          </span>
-        </div>
-
-        <div className="min-w-[280px]">
-          <Select
-            value={activeEvent.id}
-            onChange={(e) => handleEventSwitch(Number(e.target.value))}
-          >
-            {events.map((e) => (
-              <option key={e.id} value={e.id}>
-                #{e.code} — {e.title}
-              </option>
-            ))}
-          </Select>
-        </div>
-      </Card>
-
-      {/* Summary KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <KpiCard
-          label="TOTAL DE INGRESSOS"
-          value={`${totalCapacity.toLocaleString('pt-BR')} un.`}
-          note="capacidade dos lotes"
-          accent="blue"
-          icon={<Layers3 size={20} />}
-        />
-        <KpiCard
-          label="INGRESSOS VENDIDOS"
-          value={`${totalSold.toLocaleString('pt-BR')} un.`}
-          note="processados na plataforma"
-          accent="green"
-          icon={<ShoppingBag size={20} />}
-        />
-        <KpiCard
-          label="SALDO DISPONÍVEL"
-          value={`${totalAvailable.toLocaleString('pt-BR')} un.`}
-          note="restantes para venda"
-          accent="cyan"
-          icon={<Ticket size={20} />}
-        />
-      </div>
-
-      {/* Inline Batch Creation Form */}
-      {showAddForm && (
-        <Card padding="md" className="border-[#1677FF]/40 animate-in fade-in duration-150">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-[16px] font-bold text-[#0E1726]">Adicionar Novo Lote ou Setor</h3>
-              <p className="text-[12px] text-[#718096]">Defina a categoria, preço e quantidade limite.</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleAddBatch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-            <div className="lg:col-span-2">
-              <Input
-                label="Nome do Lote"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ex: Pista Premium - 2º Lote"
-                required
-              />
-            </div>
-
-            <div>
-              <Select
-                label="Setor / Tipo"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-              >
-                <option value="Pista">Pista</option>
-                <option value="VIP">VIP</option>
-                <option value="Camarote">Camarote</option>
-                <option value="Plateia">Plateia</option>
-                <option value="Cortesia">Cortesia</option>
-              </Select>
-            </div>
-
-            <div>
-              <Input
-                label="Valor Unitário (R$)"
-                type="number"
-                step="0.50"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Input
-                label="Quantidade"
-                type="number"
-                value={qty}
-                onChange={(e) => setQty(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="flex items-end">
-              <Button type="submit" variant="primary" fullWidth icon={<Plus size={15} />}>
-                Salvar Lote
-              </Button>
-            </div>
-          </form>
-        </Card>
-      )}
-
-      {/* Standardized DataTable of Batches */}
-      <DataTable
-        headers={tableHeaders}
-        empty={batches.length === 0}
-        emptyMessage="Nenhum lote configurado para este evento."
-      >
-        {batches.map((batch) => {
-          const totalQ = batch.totalQuantity || batch.qty || 0;
-          const soldQ = batch.soldQuantity || batch.sold || 0;
-          const percent = totalQ > 0 ? Math.round((soldQ / totalQ) * 100) : 0;
-
-          return (
-            <tr key={batch.id} className="hover:bg-slate-50 transition-colors">
-              {/* Name */}
-              <td className="py-3.5 px-4">
-                <strong className="block text-[#0E1726] font-bold">{batch.name}</strong>
-                <span className="inline-block text-[11px] text-[#718096] bg-slate-100 rounded px-1.5 py-0.2 mt-0.5">
-                  {batch.type || batch.category || 'Pista'}
-                </span>
-              </td>
-
-              {/* Price */}
-              <td className="py-3.5 px-4 font-bold text-[#0E1726]">
-                R$ {batch.price.toFixed(2)}
-              </td>
-
-              {/* Progress */}
-              <td className="py-3.5 px-4">
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center justify-between w-full max-w-[120px] text-[11px]">
-                    <span className="font-bold text-[#1677FF]">{soldQ}</span>
-                    <span className="text-slate-400">/ {totalQ}</span>
-                  </div>
-                  <div className="w-full max-w-[120px] bg-slate-100 rounded-full h-1.5 mt-1 overflow-hidden">
-                    <div className="bg-[#1677FF] h-full rounded-full" style={{ width: `${percent}%` }} />
-                  </div>
-                </div>
-              </td>
-
-              {/* Available */}
-              <td className="py-3.5 px-4 text-center font-bold text-[#10B981]">
-                {batch.availableQuantity || 0} un.
-              </td>
-
-              {/* Period */}
-              <td className="py-3.5 px-4 text-center text-[11px] text-[#718096]">
-                {batch.startDate || '01/08/2026'} até {batch.endDate || '30/10/2026'}
-              </td>
-
-              {/* Status */}
-              <td className="py-3.5 px-4 text-center">
-                <button
-                  type="button"
-                  onClick={() => handleToggleStatus(batch.id)}
-                  title="Clique para alternar status"
-                >
-                  <Badge status={batch.status} />
-                </button>
-              </td>
-
-              {/* Actions */}
-              <td className="py-3.5 pr-4 pl-2 text-right">
-                <button
-                  type="button"
-                  onClick={() => handleRemoveBatch(batch.id)}
-                  className="p-1.5 text-slate-400 hover:text-[#EF4444] transition rounded-btn"
-                  title="Excluir Lote"
-                >
-                  <Trash2 size={15} />
-                </button>
-              </td>
-            </tr>
-          );
-        })}
-      </DataTable>
+    <div className="event-selector-card">
+      <div><span>Evento selecionado</span><strong>{event?.title || 'Nenhum evento'}</strong><small>{event?.venue} • {event?.date}</small></div>
+      <select value={event?.id || ''} onChange={e=>{const found=events.find(x=>x.id===Number(e.target.value));if(found)onSelect(found)}}>{events.map(e=><option key={e.id} value={e.id}>{e.title}</option>)}</select>
     </div>
-  );
-};
+
+    <section className="summary-strip lots-summary">
+      <div><span>Lotes</span><strong>{lots.length}</strong></div><div><span>Ingressos configurados</span><strong>{totalQty.toLocaleString('pt-BR')}</strong></div><div><span>Vendidos</span><strong>{sold.toLocaleString('pt-BR')}</strong></div><div><span>Disponibilidade</span><strong>{Math.max(0,totalQty-sold).toLocaleString('pt-BR')}</strong></div>
+    </section>
+
+    {showForm && <div className="inline-lot-form"><div className="inline-lot-title"><strong>Novo lote</strong><button onClick={()=>setShowForm(false)}>×</button></div><div className="form-grid lot-grid"><label className="field"><span>Nome do lote</span><input value={draft.name} onChange={e=>setDraft({...draft,name:e.target.value})} placeholder="Ex.: 3º Lote - Pista"/></label><label className="field"><span>Tipo</span><select value={draft.type} onChange={e=>setDraft({...draft,type:e.target.value})}><option>Inteira</option><option>Meia</option><option>VIP</option><option>Cortesia</option></select></label><label className="field"><span>Preço (R$)</span><input type="number" value={draft.price} onChange={e=>setDraft({...draft,price:e.target.value})}/></label><label className="field"><span>Quantidade</span><input type="number" value={draft.qty} onChange={e=>setDraft({...draft,qty:e.target.value})}/></label><label className="field"><span>Início</span><input value={draft.start} onChange={e=>setDraft({...draft,start:e.target.value})} placeholder="DD/MM/AAAA"/></label><label className="field"><span>Fim</span><input value={draft.end} onChange={e=>setDraft({...draft,end:e.target.value})} placeholder="DD/MM/AAAA"/></label></div><div className="form-actions"><button className="secondary-btn" onClick={()=>setShowForm(false)}>Cancelar</button><button className="primary-btn" onClick={addLot}>Adicionar lote</button></div></div>}
+
+    <section className="table-card">
+      <div className="table-toolbar"><div><h2>Lotes cadastrados</h2><p>Controle comercial do evento selecionado.</p></div><div className="small-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar lote..."/></div></div>
+      <div className="lots-table-wrap"><table className="lots-table"><thead><tr><th>Lote</th><th>Preço</th><th>Quantidade</th><th>Vendidos</th><th>Período</th><th>Status</th><th></th></tr></thead><tbody>{filtered.map(l=><tr key={l.id}><td><div className="lot-name"><span className="lot-icon"><Ticket size={16}/></span><div><strong>{l.name}</strong><small>{l.type}</small></div></div></td><td><strong>{l.price.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong></td><td>{l.qty}</td><td><div className="sold-cell"><strong>{l.sold}</strong><div className="progress"><i style={{width:`${Math.min(100,(l.sold/l.qty)*100)}%`}}/></div></div></td><td><span className="period"><CalendarClock size={15}/>{l.start} → {l.end}</span></td><td><span className={`status-pill ${l.status}`}>{l.status}</span></td><td><div className="row-actions"><button onClick={()=>setLots(prev=>prev.filter(x=>x.id!==l.id))}><Trash2 size={16}/></button><button><MoreHorizontal size={17}/></button></div></td></tr>)}</tbody></table></div>
+    </section>
+  </>
+}

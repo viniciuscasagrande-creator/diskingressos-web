@@ -6,11 +6,9 @@ import { requireAuth, requireRoles, type AuthRequest } from '../middleware/auth.
 import { globalAdmin } from '../auth.js'
 import { requestedProducerId, writeProducerId, ownsProducer } from '../tenant.js'
 import { audit } from '../audit.js'
-import { trackingRouter } from './tracking.js'
 
 export const marketingRouter=Router()
 marketingRouter.use(requireAuth)
-marketingRouter.use('/integrations', trackingRouter)
 const marketingWriteRoles=['admin-master','admin','producer-admin','producer-marketing']
 const marketingReadRoles=[...marketingWriteRoles,'viewer']
 
@@ -52,6 +50,46 @@ marketingRouter.post('/links',requireRoles(...marketingWriteRoles),async(req:Aut
 })
 marketingRouter.post('/links/:id/click',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{const id=Number(req.params.id);const current=await prisma.trackingLink.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Link não encontrado.'});res.json(await prisma.trackingLink.update({where:{id},data:{clicks:{increment:1}}}))})
 
+// Fase 16.4 — Central UTM & Conversões: uma URL selecionada alimenta KPIs, funil, gráficos e pedidos.
+marketingRouter.get('/utm/dashboard',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
+ const eventId=Number(req.query.eventId);const linkId=Number(req.query.linkId)
+ if(!eventId||!linkId)return res.status(400).json({message:'Evento e link UTM são obrigatórios.'})
+ const event=await prisma.event.findUnique({where:{id:eventId}});if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'})
+ const link=await prisma.trackingLink.findUnique({where:{id:linkId}});if(!link||link.eventId!==eventId||!ownsProducer(req,link.producerId))return res.status(404).json({message:'Link UTM não encontrado para este evento.'})
+ const [actions,attributions]=await Promise.all([prisma.trackingJourneyAction.findMany({where:{trackingLinkId:linkId,eventId},orderBy:{createdAt:'desc'},take:250}),prisma.trackingAttribution.findMany({where:{trackingLinkId:linkId,eventId},include:{order:{select:{id:true,code:true,status:true,grossCents:true}}},orderBy:{lastActivityAt:'desc'},take:250})])
+ const count=(name:string)=>actions.filter(a=>a.action===name).length
+ const finalized=count('finalized');const revenueCents=actions.filter(a=>a.action==='finalized').reduce((sum,a)=>sum+a.amountCents,0)
+ const activeAttributions=attributions.filter(a=>a.status==='active').length;const abandonedAttributions=attributions.filter(a=>a.status==='abandoned').length;const convertedAttributions=attributions.filter(a=>a.status==='converted').length;const summary={visits:link.clicks,attributedSessions:attributions.length,activeAttributions,abandonedAttributions,convertedAttributions,added:count('added'),checkout:count('checkout'),removed:count('removed'),abandoned:count('abandoned'),finalized,revenueCents,avgTicketCents:finalized?Math.round(revenueCents/finalized):0,conversionRate:link.clicks?Number(((finalized/link.clicks)*100).toFixed(2)):0}
+ const byDate=new Map<string,any>(); const byHour=new Map<number,any>()
+ for(const action of actions){
+   const d=action.createdAt; const date=d.toISOString().slice(0,10); const hour=d.getHours()
+   if(!byDate.has(date))byDate.set(date,{date,added:0,checkout:0,removed:0,abandoned:0,finalized:0,revenueCents:0})
+   if(!byHour.has(hour))byHour.set(hour,{hour,added:0,checkout:0,removed:0,abandoned:0,finalized:0})
+   const dateRow=byDate.get(date);const hourRow=byHour.get(hour);if(action.action in dateRow)dateRow[action.action]++;if(action.action in hourRow)hourRow[action.action]++;if(action.action==='finalized')dateRow.revenueCents+=action.amountCents
+ }
+ const timeline=[...byDate.values()].sort((a,b)=>a.date.localeCompare(b.date));const hours=[...Array(24)].map((_,hour)=>byHour.get(hour)||{hour,added:0,checkout:0,removed:0,abandoned:0,finalized:0})
+ res.json({link:{...link,trackedUrl:buildTrackedUrl(link),qrPayload:`${process.env.PUBLIC_APP_URL||'http://localhost:5173'}/r/${link.code}`},summary,timeline,hours,actions,attributions})
+})
+
+
+marketingRouter.post('/utm/abandon-sweep',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+ const parsed=z.object({eventId:z.number().int().positive(),linkId:z.number().int().positive(),inactiveMinutes:z.number().int().min(5).max(10080).default(30)}).safeParse(req.body);if(!parsed.success)return res.status(400).json({message:'Parâmetros inválidos.'})
+ const {eventId,linkId,inactiveMinutes}=parsed.data;const link=await prisma.trackingLink.findUnique({where:{id:linkId}});if(!link||link.eventId!==eventId||!ownsProducer(req,link.producerId))return res.status(404).json({message:'Link não encontrado.'})
+ const cutoff=new Date(Date.now()-inactiveMinutes*60000);const candidates=await prisma.trackingAttribution.findMany({where:{trackingLinkId:linkId,eventId,status:'active',lastActivityAt:{lte:cutoff}}})
+ let recoveries=0;for(const attr of candidates){await prisma.$transaction(async tx=>{await tx.trackingAttribution.update({where:{id:attr.id},data:{status:'abandoned',abandonedAt:new Date()}});await tx.trackingJourneyAction.create({data:{action:'abandoned',customerName:attr.customerName,customerEmail:attr.customerEmail,amountCents:attr.cartValueCents,trackingLinkId:attr.trackingLinkId,producerId:attr.producerId,eventId:attr.eventId}});if(attr.customerEmail||attr.customerPhone){const existing=await tx.recoveryOpportunity.findFirst({where:{eventId:attr.eventId,status:'aberto',email:attr.customerEmail||undefined}});if(!existing){await tx.recoveryOpportunity.create({data:{code:`REC-UTM-${crypto.randomBytes(3).toString('hex').toUpperCase()}`,kind:'carrinho',customerName:attr.customerName||'Cliente UTM',email:attr.customerEmail,phone:attr.customerPhone,amountCents:attr.cartValueCents,status:'aberto',preferredChannel:attr.customerPhone?'whatsapp':'email',lastActivityAt:attr.lastActivityAt,producerId:attr.producerId,eventId:attr.eventId,trackingLinkId:attr.trackingLinkId,attributionId:attr.id}});recoveries++}}})}
+ await audit(req,'marketing.utm.abandon.sweep','TrackingAttribution',String(linkId),{eventId,candidates:candidates.length,recoveries,inactiveMinutes});res.json({processed:candidates.length,recoveries})
+})
+
+const journeyActionSchema=z.object({linkId:z.number().int().positive(),eventId:z.number().int().positive(),action:z.enum(['added','checkout','removed','abandoned','finalized']),orderCode:z.string().optional().nullable(),customerName:z.string().optional().nullable(),customerEmail:z.string().email().optional().nullable(),ticketSummary:z.string().optional().nullable(),amountCents:z.number().int().nonnegative().default(0)})
+marketingRouter.post('/utm/actions',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+ const parsed=journeyActionSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({message:'Ação UTM inválida.',issues:parsed.error.issues})
+ const body=parsed.data;const link=await prisma.trackingLink.findUnique({where:{id:body.linkId}});if(!link||link.eventId!==body.eventId||!ownsProducer(req,link.producerId))return res.status(404).json({message:'Link UTM não encontrado.'})
+ const row=await prisma.trackingJourneyAction.create({data:{action:body.action,orderCode:body.orderCode||null,customerName:body.customerName||null,customerEmail:body.customerEmail||null,ticketSummary:body.ticketSummary||null,amountCents:body.amountCents,trackingLinkId:link.id,producerId:link.producerId,eventId:body.eventId}})
+ if(body.action==='finalized')await prisma.trackingLink.update({where:{id:link.id},data:{conversions:{increment:1}}})
+ await audit(req,'marketing.utm.action','TrackingJourneyAction',String(row.id),{action:body.action,linkId:link.id,eventId:body.eventId})
+ res.status(201).json(row)
+})
+
 const providers=['meta_pixel','ga4','gtm','google_ads','whatsapp','email','automation_api'] as const
 const trackingSchema=z.object({provider:z.enum(providers),scope:z.enum(['global','producer','event']),mode:z.enum(['inherit','own','disabled']),externalId:z.string().optional().nullable(),configJson:z.string().optional().nullable(),producerId:z.number().int().positive().optional().nullable(),eventId:z.number().int().positive().optional().nullable()})
 marketingRouter.get('/tracking',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req);const eventId=req.query.eventId?Number(req.query.eventId):undefined;const rows=await prisma.trackingConfig.findMany({where:{OR:[{scope:'global'},...(producerId?[{scope:'producer',producerId}]:[]),...(eventId?[{scope:'event',eventId}]:[])]},orderBy:[{provider:'asc'},{scope:'asc'}]});res.json(rows)})
@@ -75,3 +113,80 @@ marketingRouter.get('/tracking/resolved',requireRoles(...marketingReadRoles),asy
 })
 
 function buildTrackedUrl(r:{destination:string;source:string|null;medium:string|null;campaign:string|null;content:string|null;term:string|null}){const url=new URL(r.destination);if(r.source)url.searchParams.set('utm_source',r.source);if(r.medium)url.searchParams.set('utm_medium',r.medium);if(r.campaign)url.searchParams.set('utm_campaign',r.campaign);if(r.content)url.searchParams.set('utm_content',r.content);if(r.term)url.searchParams.set('utm_term',r.term);return url.toString()}
+
+// Fase 16.1 — múltiplos Pixels + Tokens da Conversion API por produtora.
+const integrationSchema=z.object({
+  name:z.string().min(2),
+  provider:z.string().default('meta'),
+  integrationType:z.string().default('pixel_capi'),
+  pixelId:z.string().min(3),
+  apiToken:z.string().min(8).optional().nullable(),
+  status:z.enum(['ativo','inativo']).default('ativo'),
+  applyToAllEvents:z.boolean().default(true),
+  eventIds:z.array(z.number().int().positive()).default([]),
+  enabledEvents:z.array(z.string()).default(['PageView','ViewContent','AddToCart','InitiateCheckout','Purchase']),
+  producerId:z.number().int().positive().optional()
+})
+
+function serializeIntegration(row:any){
+  return {...row,apiTokenMasked:row.tokenLast4?`••••••••••••${row.tokenLast4}`:'Não configurado',tokenCiphertext:undefined,tokenIv:undefined,tokenTag:undefined,enabledEvents:JSON.parse(row.enabledEventsJson||'[]')}
+}
+
+marketingRouter.get('/integrations',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
+  const producerId=requestedProducerId(req)
+  if(!producerId&&!globalAdmin(req.auth!.role))return res.status(400).json({message:'Produtora obrigatória.'})
+  const eventId=req.query.eventId?Number(req.query.eventId):undefined
+  const rows=await prisma.trackingIntegration.findMany({
+    where:{...(producerId?{producerId}:{}),...(eventId?{OR:[{applyToAllEvents:true},{events:{some:{eventId}}}]}:{})},
+    include:{events:{include:{event:{select:{id:true,title:true,code:true}}}},_count:{select:{deliveryLogs:true}}},orderBy:{createdAt:'desc'}
+  })
+  res.json(rows.map(serializeIntegration))
+})
+
+marketingRouter.post('/integrations',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const parsed=integrationSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({message:'Integração inválida.',issues:parsed.error.issues})
+  const body=parsed.data;const producerId=writeProducerId(req,body.producerId);if(!producerId)return res.status(400).json({message:'Produtora obrigatória.'})
+  if(body.eventIds.length){const count=await prisma.event.count({where:{id:{in:body.eventIds},producerId}});if(count!==body.eventIds.length)return res.status(400).json({message:'Um ou mais eventos não pertencem à produtora selecionada.'})}
+  const secret=body.apiToken?encryptTrackingToken(body.apiToken):null
+  const row=await prisma.trackingIntegration.create({data:{name:body.name,provider:body.provider,integrationType:body.integrationType,pixelId:body.pixelId,status:body.status,applyToAllEvents:body.applyToAllEvents,enabledEventsJson:JSON.stringify(body.enabledEvents),producerId,...(secret?{tokenCiphertext:secret.ciphertext,tokenIv:secret.iv,tokenTag:secret.tag,tokenLast4:secret.last4}:{}),events:!body.applyToAllEvents&&body.eventIds.length?{create:body.eventIds.map(eventId=>({eventId}))}:undefined},include:{events:{include:{event:{select:{id:true,title:true,code:true}}}},_count:{select:{deliveryLogs:true}}}})
+  await audit(req,'marketing.integration.create','TrackingIntegration',String(row.id),{name:row.name,pixelId:row.pixelId,eventIds:body.eventIds})
+  res.status(201).json(serializeIntegration(row))
+})
+
+marketingRouter.patch('/integrations/:id',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id);const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
+  const parsed=integrationSchema.partial().safeParse(req.body);if(!parsed.success)return res.status(400).json({message:'Alteração inválida.',issues:parsed.error.issues})
+  const body=parsed.data;const eventIds=body.eventIds
+  if(eventIds){const count=await prisma.event.count({where:{id:{in:eventIds},producerId:current.producerId}});if(count!==eventIds.length)return res.status(400).json({message:'Evento fora da produtora.'})}
+  const secret=body.apiToken?encryptTrackingToken(body.apiToken):null
+  const row=await prisma.$transaction(async tx=>{
+    if(eventIds!==undefined||body.applyToAllEvents===true){await tx.trackingIntegrationEvent.deleteMany({where:{integrationId:id}})}
+    const updated=await tx.trackingIntegration.update({where:{id},data:{...(body.name!==undefined?{name:body.name}:{}),...(body.provider!==undefined?{provider:body.provider}:{}),...(body.integrationType!==undefined?{integrationType:body.integrationType}:{}),...(body.pixelId!==undefined?{pixelId:body.pixelId}:{}),...(body.status!==undefined?{status:body.status}:{}),...(body.applyToAllEvents!==undefined?{applyToAllEvents:body.applyToAllEvents}:{}),...(body.enabledEvents!==undefined?{enabledEventsJson:JSON.stringify(body.enabledEvents)}:{}),...(secret?{tokenCiphertext:secret.ciphertext,tokenIv:secret.iv,tokenTag:secret.tag,tokenLast4:secret.last4}:{}),...((eventIds&&body.applyToAllEvents!==true)?{events:{create:eventIds.map(eventId=>({eventId}))}}:{})},include:{events:{include:{event:{select:{id:true,title:true,code:true}}}},_count:{select:{deliveryLogs:true}}}})
+    return updated
+  })
+  await audit(req,'marketing.integration.update','TrackingIntegration',String(id),{name:row.name,status:row.status,tokenReplaced:!!secret})
+  res.json(serializeIntegration(row))
+})
+
+marketingRouter.delete('/integrations/:id',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id);const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
+  await prisma.trackingIntegration.delete({where:{id}});await audit(req,'marketing.integration.delete','TrackingIntegration',String(id),{name:current.name});res.status(204).end()
+})
+
+marketingRouter.post('/integrations/:id/test',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id);const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
+  const ok=Boolean(current.pixelId&&current.tokenCiphertext&&current.status==='ativo');const now=new Date();const message=ok?'Configuração local válida. Pronta para envio à Conversion API.':'Pixel, token ou status da integração precisam ser revisados.'
+  const updated=await prisma.trackingIntegration.update({where:{id},data:{lastTestAt:now,lastTestStatus:ok?'ok':'erro',lastError:ok?null:message}})
+  await prisma.trackingDeliveryLog.create({data:{integrationId:id,producerId:current.producerId,eventName:'ConnectionTest',status:ok?'ok':'erro',responseCode:ok?200:400,message}})
+  await audit(req,'marketing.integration.test','TrackingIntegration',String(id),{ok})
+  res.json({ok,message,lastTestAt:updated.lastTestAt})
+})
+
+marketingRouter.get('/integrations/:id/logs',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id);const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
+  res.json(await prisma.trackingDeliveryLog.findMany({where:{integrationId:id},include:{event:{select:{id:true,title:true}}},orderBy:{createdAt:'desc'},take:50}))
+})
+
+function encryptTrackingToken(token:string){
+  const secret=process.env.TRACKING_TOKEN_SECRET||process.env.JWT_SECRET||'dev-only-change-me';const key=crypto.createHash('sha256').update(secret).digest();const iv=crypto.randomBytes(12);const cipher=crypto.createCipheriv('aes-256-gcm',key,iv);const ciphertext=Buffer.concat([cipher.update(token,'utf8'),cipher.final()]);const tag=cipher.getAuthTag();return {ciphertext:ciphertext.toString('base64'),iv:iv.toString('base64'),tag:tag.toString('base64'),last4:token.slice(-4)}
+}

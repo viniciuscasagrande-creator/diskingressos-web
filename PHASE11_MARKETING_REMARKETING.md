@@ -33,7 +33,7 @@ Adicionar Marketing e Remarketing como módulos independentes, mantendo o templa
 - Relatórios
 
 ## Permissões
-Admin Master/Admin: acesso global. Produtor Admin e Produtor Marketing: acesso à própria produtora. Viewer: leitura. O backend continua sendo a autoridade para producerId.
+Admin Master/Admin: acesso global. Produtor Admin e Produtor Marketing: acesso à própria produtora. Viewer: leitura. O backend deve continuar sendo a autoridade para producerId.
 
-## Próxima evolução (Fase 12)
+## Próxima evolução
 Persistir campanhas, canais, públicos, UTMs, pixels, automações e eventos de conversão no banco e expor APIs multi-tenant dedicadas.

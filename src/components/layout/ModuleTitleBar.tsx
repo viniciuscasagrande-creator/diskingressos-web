@@ -10,7 +10,7 @@ interface ModuleTitleBarProps {
 const pageTitles: Partial<Record<NavigationPage, string>> = {
   'dashboard': 'Dashboard Executivo',
   'produtora': 'Dados da Produtora',
-  'eventos': 'Hub de Eventos',
+  'eventos': 'Todos os Eventos',
   'nucleo-operacional': 'Núcleo Operacional',
   'novo-evento': 'Novo Evento',
   'editar-evento': 'Editar Evento',

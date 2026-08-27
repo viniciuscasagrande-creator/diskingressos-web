@@ -1,0 +1,10 @@
+import { Search, Download } from 'lucide-react'
+import { useMemo, useState } from 'react'
+const logs=[
+ {id:1,date:'26/08/2026 17:42',user:'Administrador Master',producer:'Visão global',action:'Alterou permissões',resource:'Produtor Financeiro',status:'Concluído'},
+ {id:2,date:'26/08/2026 17:31',user:'Vinicius Casagrande',producer:'DiskIngressos Produções',action:'Editou evento',resource:'SEM PARAR',status:'Concluído'},
+ {id:3,date:'26/08/2026 17:18',user:'Financeiro FEP',producer:'FEP Eventos',action:'Consultou extrato',resource:'Extrato Detalhado',status:'Concluído'},
+ {id:4,date:'26/08/2026 16:56',user:'Administrador Master',producer:'Visão global',action:'Criou usuário',resource:'Financeiro FEP',status:'Concluído'},
+ {id:5,date:'26/08/2026 16:21',user:'Operador Evento',producer:'DiskIngressos Produções',action:'Tentativa sem permissão',resource:'Solicitar Repasse',status:'Bloqueado'},
+]
+export default function AuditPage({notify}:{notify:(m:string)=>void}){const [q,setQ]=useState('');const visible=useMemo(()=>logs.filter(l=>Object.values(l).join(' ').toLowerCase().includes(q.toLowerCase())),[q]);return <div className="users-page"><div className="users-toolbar"><div><p className="eyebrow">SEGURANÇA</p><h2>Logs de Auditoria</h2><p>Histórico de acessos e operações relevantes para rastreabilidade.</p></div><button className="tool-btn" onClick={()=>notify('Exportação de auditoria simulada.') }><Download size={17}/> Exportar</button></div><div className="table-card"><div className="table-tools"><div className="table-search"><Search size={18}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar ação, usuário ou produtora..."/></div></div><div className="table-scroll"><table className="users-table audit-table"><thead><tr><th>Data / hora</th><th>Usuário</th><th>Produtora</th><th>Ação</th><th>Recurso</th><th>Status</th></tr></thead><tbody>{visible.map(l=><tr key={l.id}><td>{l.date}</td><td><b>{l.user}</b></td><td>{l.producer}</td><td>{l.action}</td><td>{l.resource}</td><td><span className={`status-chip ${l.status==='Concluído'?'ativo':'danger'}`}>{l.status}</span></td></tr>)}</tbody></table></div></div></div>}

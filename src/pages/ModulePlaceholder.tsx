@@ -1,0 +1,2 @@
+import { ArrowLeft, Construction } from 'lucide-react'
+export default function ModulePlaceholder({title,description,onBack}:{title:string;description:string;onBack:()=>void}){return <section className="placeholder-module"><div className="placeholder-icon"><Construction size={30}/></div><h2>{title}</h2><p>{description}</p><button className="tool-btn" onClick={onBack}><ArrowLeft size={16}/>Voltar ao Hub Financeiro</button></section>}

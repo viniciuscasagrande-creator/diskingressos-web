@@ -1,899 +1,109 @@
-import React, { useState, useMemo } from 'react';
-import type { EventItem, MetaPixelConfig, TicketBatch } from './types/event';
-import type { Producer, NavigationPage } from './types/producer';
-import type { FinanceModuleKey } from './types/financeHub';
-import type { Participant } from './data/participants';
-import { mockEvents } from './data/events';
-import { mockProducers } from './data/producers';
-import { mockParticipants } from './data/participants';
-
-// Auth & Security Provider
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { LoginPage } from './pages/auth/LoginPage';
-
-// Operational Core (Fase 10)
-import OperationsPage from './pages/OperationsPage';
-
-// Marketing & Remarketing Modules (Fase 11)
-import { MarketingHub, type MarketingSubTab } from './pages/marketing/MarketingHub';
-import { RemarketingHub, type RemarketingSubTab } from './pages/remarketing/RemarketingHub';
-import { SupportPage, type SupportMode } from './pages/support/SupportPage';
-
-// Administration Module (Fase 8)
-import { AdminHubPage } from './pages/admin/AdminHubPage';
-import { UserManagerPage } from './pages/admin/UserManagerPage';
-import { ProducersPage } from './pages/admin/ProducersPage';
-import { PermissionsPage } from './pages/admin/PermissionsPage';
-import { AuditLogsPage } from './pages/admin/AuditLogsPage';
-import { SecurityPage } from './pages/admin/SecurityPage';
-
-// Layout Components (Phase 6 Template)
-import { Header } from './components/layout/Header';
-import { Sidebar } from './components/layout/Sidebar';
-import { ModuleTitleBar } from './components/layout/ModuleTitleBar';
-import { AppFooter } from './components/layout/AppFooter';
-import { ScrollTop } from './components/layout/ScrollTop';
-
-// Page Views
-import { EventosPage } from './pages/Eventos';
-import { EventFormPage } from './pages/EventFormPage';
-import { LotsPage } from './pages/LotsPage';
-import { ParticipantsPage } from './pages/ParticipantsPage';
-import { EventDashboardPage } from './pages/EventDashboardPage';
-import { DashboardPage } from './pages/Dashboard';
-import { ProdutoraPage } from './pages/Produtora';
-import { StatusFaciaisPage } from './pages/StatusFaciais';
-import { FinanceiroPage, type FinanceTab } from './pages/Financeiro';
-import { POSPage, type POSTab } from './pages/POSPage';
-import { GenericModulePage } from './pages/GenericModulePage';
-import { CortesiasPage } from './pages/CortesiasPage';
-import { MetaPixelModal } from './components/events/MetaPixelModal';
-import { UtmLinksPage } from './pages/marketing/UtmLinksPage';
-import { PixelInheritancePage } from './pages/marketing/PixelInheritancePage';
-import { MarketingCampaignsPage } from './pages/marketing/MarketingCampaignsPage';
-import { MarketingDashboardPage } from './pages/marketing/MarketingDashboardPage';
-import { RecoveryCenterPage } from './pages/remarketing/RecoveryCenterPage';
-import { Check } from 'lucide-react';
-
-function AuthenticatedApp() {
-  const { isAuthenticated, currentUser, activeProducer, allProducers, selectProducer } = useAuth();
-
-  // If not logged in, render Login Page
-  if (!isAuthenticated || !currentUser) {
-    return <LoginPage />;
-  }
-
-  // Global Data State
-  const [events, setEvents] = useState<EventItem[]>(mockEvents);
-  const [participants, setParticipants] = useState<Participant[]>(mockParticipants);
-  
-  // Navigation & Search State
-  const [currentPage, setCurrentPage] = useState<NavigationPage>(() => {
-    if (currentUser.role === 'admin-master' || currentUser.role === 'admin') {
-      return 'dashboard';
-    }
-    if (currentUser.role === 'produtor-marketing') {
-      return 'mkt-dashboard';
-    }
-    if (currentUser.role === 'produtor-operacional') {
-      return 'nucleo-operacional';
-    }
-    return 'eventos';
-  });
-  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  // Subpage Contexts
-  const [activeEventForDashboard, setActiveEventForDashboard] = useState<EventItem | null>(null);
-  const [selectedEventForEdit, setSelectedEventForEdit] = useState<EventItem | null>(null);
-  const [selectedEventForLots, setSelectedEventForLots] = useState<EventItem | null>(null);
-  const [selectedEventForParticipants, setSelectedEventForParticipants] = useState<EventItem | null>(null);
-  const [marketingModalEvent, setMarketingModalEvent] = useState<EventItem | null>(null);
-
-  // Toast Notification State
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const triggerToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4000);
-  };
-
-  // MULTI-TENANT ISOLATION: Filter events by active producer
-  const scopedEvents = useMemo(() => {
-    if (!activeProducer) {
-      return events; // Admin Master seeing all producers
-    }
-    // Filter events strictly belonging to the active producer
-    return events.filter(
-      (ev) => ev.producerId === activeProducer.id || ev.producerName === activeProducer.name
-    );
-  }, [events, activeProducer]);
-
-  // Navigation Handlers
-  const handleNavigateToNewEvent = () => {
-    setSelectedEventForEdit(null);
-    setCurrentPage('novo-evento');
-  };
-
-  const handleNavigateToEditEvent = (event: EventItem) => {
-    setSelectedEventForEdit(event);
-    setCurrentPage('editar-evento');
-  };
-
-  const handleNavigateToLots = (event: EventItem) => {
-    setSelectedEventForLots(event);
-    setCurrentPage('lotes');
-  };
-
-  const handleNavigateToParticipants = (event: EventItem) => {
-    setSelectedEventForParticipants(event);
-    setCurrentPage('participantes');
-  };
-
-  const handleNavigateToEventDashboard = (event: EventItem) => {
-    setActiveEventForDashboard(event);
-    setCurrentPage('evento-dashboard');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // Toggle Checkin Handler
-  const handleToggleCheckin = (participantId: number) => {
-    setParticipants((prev) =>
-      prev.map((p) => {
-        if (p.id === participantId) {
-          const next = p.checkin === 'presente' ? 'pendente' : 'presente';
-          const time = next === 'presente' ? 'Agora mesmo' : undefined;
-          const gate = next === 'presente' ? (p.gate || 'Portão Principal') : undefined;
-
-          return {
-            ...p,
-            checkin: next,
-            checkinStatus: next === 'presente' ? 'realizado' : 'pendente',
-            checkinTime: time,
-            gate,
-          };
-        }
-        return p;
-      })
-    );
-  };
-
-  // Save/Create Event Handler
-  const handleSaveEvent = (savedEvent: EventItem) => {
-    setEvents((prev) => {
-      const exists = prev.some((e) => e.id === savedEvent.id);
-      if (exists) {
-        return prev.map((e) => (e.id === savedEvent.id ? savedEvent : e));
-      } else {
-        return [savedEvent, ...prev];
-      }
-    });
-
-    triggerToast(
-      selectedEventForEdit
-        ? `Evento "${savedEvent.title}" atualizado com sucesso!`
-        : `Evento "${savedEvent.title}" criado e publicado!`
-    );
-
-    setSelectedEventForEdit(null);
-    setCurrentPage('eventos');
-  };
-
-  // Save Lots Handler
-  const handleSaveBatches = (eventId: number, updatedBatches: TicketBatch[]) => {
-    setEvents((prev) =>
-      prev.map((ev) => {
-        if (ev.id === eventId) {
-          const totalCapacity = updatedBatches.reduce((a, b) => a + (b.totalQuantity || b.qty || 0), 0);
-          const totalSold = updatedBatches.reduce((a, b) => a + (b.soldQuantity || b.sold || 0), 0);
-          const totalAvailable = updatedBatches.reduce((a, b) => a + (b.availableQuantity || 0), 0);
-          const totalRevenue = updatedBatches.reduce((a, b) => a + ((b.soldQuantity || b.sold || 0) * b.price), 0);
-          const occupancyRate = totalCapacity > 0 ? (totalSold / totalCapacity) * 100 : 0;
-
-          return {
-            ...ev,
-            batches: updatedBatches,
-            totalCapacity,
-            salesCount: totalSold,
-            availableCount: totalAvailable,
-            totalRevenue,
-            occupancyRate,
-          };
-        }
-        return ev;
-      })
-    );
-
-    triggerToast('Configuração de lotes e ingressos atualizada com sucesso!');
-  };
-
-  // Save Meta Pixel
-  const handleSaveMetaPixel = (eventId: number, config: MetaPixelConfig) => {
-    setEvents((prev) =>
-      prev.map((ev) => (ev.id === eventId ? { ...ev, metaPixel: config } : ev))
-    );
-    triggerToast('Configurações de rastreamento do Pixel Meta salvas!');
-  };
-
-  const getFinanceConfig = (page: NavigationPage): { tab: FinanceTab; module: FinanceModuleKey } => {
-    switch (page) {
-      case 'fin-saldo':
-      case 'saldo':
-        return { tab: 'overview', module: 'saldo-consolidado' };
-      case 'vendas':
-      case 'recebimentos':
-        return { tab: 'sales', module: 'saldo-consolidado' };
-      case 'fin-repasses':
-      case 'repasses':
-        return { tab: 'payouts', module: 'solicitar-repasse' };
-      case 'fluxo-caixa':
-        return { tab: 'cashflow', module: 'saldo-consolidado' };
-      case 'fin-extrato':
-      case 'extrato':
-        return { tab: 'statement', module: 'extrato-geral' };
-      case 'fin-antecipacoes':
-        return { tab: 'hub', module: 'antecipacoes' };
-      case 'fin-despesas':
-        return { tab: 'hub', module: 'despesas' };
-      case 'fin-contas':
-        return { tab: 'hub', module: 'contas-bancarias' };
-      case 'fin-bordero':
-        return { tab: 'hub', module: 'bordero-assinaturas' };
-      case 'fin-negociacoes':
-        return { tab: 'hub', module: 'negociacoes' };
-      case 'fin-advanced':
-        return { tab: 'hub', module: 'financeiro-advanced' };
-      case 'fin-split':
-        return { tab: 'hub', module: 'split-financeiro' };
-      case 'fin-inteligencia':
-        return { tab: 'hub', module: 'inteligencia-financeira' };
-      case 'fin-conciliacao':
-      case 'conciliacao':
-        return { tab: 'hub', module: 'conciliacao-bancaria' };
-      case 'fin-spread':
-        return { tab: 'hub', module: 'simulador-spread' };
-      case 'financeiro':
-      case 'fin-hub':
-      default:
-        return { tab: 'hub', module: 'hub' };
-    }
-  };
-
-  const isFinancePage = [
-    'financeiro', 'fin-hub', 'fin-saldo', 'fin-repasses', 
-    'fin-antecipacoes', 'fin-extrato', 'fin-despesas', 
-    'fin-contas', 'fin-bordero', 'fin-negociacoes', 
-    'fin-advanced', 'fin-split', 'fin-inteligencia', 
-    'fin-conciliacao', 'fin-spread', 'saldo', 'vendas', 
-    'recebimentos', 'repasses', 'conciliacao', 'fluxo-caixa', 'extrato'
-  ].includes(currentPage);
-
-  const getPOSTab = (page: NavigationPage): POSTab => {
-    switch (page) {
-      case 'pos-terminals': return 'terminals';
-      case 'pos-sales': return 'sales';
-      case 'pos-closing': return 'closing';
-      case 'terminais-pos':
-      default:
-        return 'overview';
-    }
-  };
-
-  const getMarketingTab = (page: NavigationPage): MarketingSubTab => {
-    switch (page) {
-      case 'mkt-campaigns':
-      case 'campanhas':
-        return 'mkt-campaigns';
-      case 'mkt-new-campaign':
-        return 'mkt-new-campaign';
-      case 'mkt-coupons':
-      case 'cupons':
-        return 'mkt-coupons';
-      case 'mkt-links':
-        return 'mkt-links';
-      case 'mkt-analytics':
-      case 'pixel-meta':
-      case 'google-analytics':
-        return 'mkt-analytics';
-      case 'mkt-automations':
-        return 'mkt-automations';
-      case 'mkt-whatsapp':
-        return 'mkt-whatsapp';
-      case 'mkt-email':
-        return 'mkt-email';
-      case 'mkt-comm-integrations':
-        return 'mkt-comm-integrations';
-      case 'mkt-affiliates':
-        return 'mkt-affiliates';
-      case 'mkt-reports':
-        return 'mkt-reports';
-      case 'mkt-hub':
-        return 'mkt-hub';
-      case 'marketing':
-      case 'mkt-dashboard':
-      default:
-        return 'mkt-dashboard';
-    }
-  };
-
-  const isMarketingPage = [
-    'marketing', 'mkt-hub', 'mkt-dashboard', 'mkt-campaigns', 'mkt-new-campaign', 
-    'mkt-automations', 'mkt-whatsapp', 'mkt-email', 'mkt-coupons', 
-    'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-comm-integrations', 'mkt-reports', 'campanhas', 
-    'pixel-meta', 'google-analytics', 'cupons'
-  ].includes(currentPage);
-
-  const getRemarketingTab = (page: NavigationPage): RemarketingSubTab => {
-    switch (page) {
-      case 'rmk-carts':
-      case 'mkt-abandoned':
-        return 'rmk-carts';
-      case 'rmk-audiences':
-        return 'rmk-audiences';
-      case 'rmk-segments':
-        return 'rmk-segments';
-      case 'rmk-flows':
-        return 'rmk-flows';
-      case 'rmk-whatsapp':
-        return 'rmk-whatsapp';
-      case 'rmk-email':
-        return 'rmk-email';
-      case 'rmk-payments':
-        return 'rmk-payments';
-      case 'rmk-inactive':
-        return 'rmk-inactive';
-      case 'rmk-postevent':
-        return 'rmk-postevent';
-      case 'rmk-automation':
-        return 'rmk-automation';
-      case 'rmk-reports':
-        return 'rmk-reports';
-      case 'rmk-hub':
-        return 'rmk-hub';
-      case 'remarketing':
-      case 'rmk-dashboard':
-      default:
-        return 'rmk-dashboard';
-    }
-  };
-
-  const isRemarketingPage = [
-    'remarketing', 'rmk-hub', 'rmk-dashboard', 'rmk-carts', 'rmk-audiences', 
-    'rmk-segments', 'rmk-flows', 'rmk-whatsapp', 'rmk-email', 'rmk-payments', 
-    'rmk-inactive', 'rmk-postevent', 'rmk-automation', 'rmk-reports', 'mkt-abandoned'
-  ].includes(currentPage);
-
-  const isSacPage = [
-    'atendimento', 'sac-hub', 'sac-dashboard', 'sac-tickets', 
-    'sac-new', 'sac-sla', 'sac-integrations', 'sac-knowledge', 'sac-reports'
-  ].includes(currentPage);
-
-  const getSupportMode = (page: NavigationPage): SupportMode => {
-    switch (page) {
-      case 'sac-dashboard':
-        return 'sac-dashboard';
-      case 'sac-tickets':
-        return 'sac-tickets';
-      case 'sac-new':
-        return 'sac-new';
-      case 'sac-sla':
-        return 'sac-sla';
-      case 'sac-integrations':
-        return 'sac-integrations';
-      case 'sac-knowledge':
-        return 'sac-knowledge';
-      case 'sac-reports':
-        return 'sac-reports';
-      case 'atendimento':
-      case 'sac-hub':
-      default:
-        return 'sac-hub';
-    }
-  };
-
-  // Event Contextual Navigation (Fase 15)
-  const isEventContextActive = [
-    'dashboard-evento', 'evento-dashboard', 'evento-ingressos', 'evento-cortesias', 
-    'evento-relatorios', 'evento-detalhes', 'evento-pixel', 'evento-utm', 
-    'evento-analytics', 'evento-trafego', 'evento-meta-ads', 'evento-remarketing', 
-    'evento-lotes', 'evento-checkin', 'evento-usuarios', 'evento-logs'
-  ].includes(currentPage);
-
-  const currentEventContext = isEventContextActive
-    ? activeEventForDashboard || selectedEventForEdit || selectedEventForLots || selectedEventForParticipants || scopedEvents[0]
-    : null;
-
-  // URL Synchronization for Contextual Navigation (Fase 15)
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (currentEventContext) {
-      const code = currentEventContext.code || currentEventContext.id;
-      const subpathMap: Record<string, string> = {
-        'evento-dashboard': 'dashboard',
-        'dashboard-evento': 'dashboard',
-        'evento-ingressos': 'tickets',
-        'evento-cortesias': 'courtesy',
-        'evento-relatorios': 'reports',
-        'evento-detalhes': 'detalhes',
-        'evento-pixel': 'pixel',
-        'evento-utm': 'utm',
-        'evento-analytics': 'ga4',
-        'evento-trafego': 'traffic',
-        'evento-meta-ads': 'meta-ads',
-        'evento-remarketing': 'remarketing',
-        'evento-lotes': 'lots',
-        'evento-checkin': 'checkin',
-        'evento-usuarios': 'users',
-        'evento-logs': 'logs',
-      };
-      const sub = subpathMap[currentPage] || 'dashboard';
-      const targetUrl = `/eventos/${code}/${sub}`;
-      if (window.location.pathname !== targetUrl) {
-        window.history.replaceState({ page: currentPage, eventCode: code }, '', targetUrl);
-      }
-    } else {
-      const pageMap: Record<string, string> = {
-        'eventos': '/eventos',
-        'dashboard': '/dashboard',
-        'produtora': '/produtora',
-        'financeiro': '/financeiro',
-        'terminais-pos': '/pos',
-        'marketing': '/marketing',
-        'remarketing': '/remarketing',
-        'atendimento': '/atendimento',
-        'administracao': '/administracao',
-      };
-      const targetUrl = pageMap[currentPage] || `/${currentPage}`;
-      if (window.location.pathname !== targetUrl) {
-        window.history.replaceState({ page: currentPage }, '', targetUrl);
-      }
-    }
-  }, [currentPage, currentEventContext]);
-
-  return (
-    <div className="min-h-screen bg-[#F1F4F8] text-[#0E1726] flex flex-col font-sans selection:bg-[#7C3AED] selection:text-white relative">
-      {/* Toast Feedback */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-btn border border-[#10B981]/40 bg-[#1E2530] px-5 py-3 text-white shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-200">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#10B981] text-white">
-            <Check size={16} />
-          </div>
-          <span className="text-xs font-semibold">{toastMessage}</span>
-        </div>
-      )}
-
-      {/* 1. Header Global com Multi-Tenant Selector */}
-      <Header
-        query={globalSearchQuery}
-        onQueryChange={(q) => {
-          setGlobalSearchQuery(q);
-          if (currentPage !== 'eventos') setCurrentPage('eventos');
-        }}
-        selectedProducer={activeProducer}
-        producers={allProducers}
-        onSelectProducer={(prod) => selectProducer(prod ? prod.id : null)}
-        onOpenNewEvent={handleNavigateToNewEvent}
-        onOpenAdvancedFilters={() => {
-          if (currentPage !== 'eventos') setCurrentPage('eventos');
-        }}
-      />
-
-      {/* 2. Main Layout Container (Sidebar Contextual + Área Principal) */}
-      <div className="flex flex-1 min-w-0">
-        {/* Sidebar Contextual */}
-        <Sidebar
-          currentPage={currentPage}
-          selectedEvent={currentEventContext}
-          onExitEventContext={() => {
-            setActiveEventForDashboard(null);
-            setCurrentPage('eventos');
-          }}
-          onNavigate={(page) => {
-            if (page === 'novo-evento') {
-              handleNavigateToNewEvent();
-            } else {
-              setCurrentPage(page);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-          }}
-          onOpenNewEvent={handleNavigateToNewEvent}
-          onBackToHome={() => {
-            setActiveEventForDashboard(null);
-            setCurrentPage('eventos');
-          }}
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-        />
-
-        {/* Área Principal (Barra de Título + Conteúdo + Footer) */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Admin Master Impersonation Scope Banner */}
-          {currentUser && (currentUser.role === 'admin-master' || currentUser.role === 'admin') && activeProducer && (
-            <div className="bg-[#1E293B] border-b border-[#334155] px-4 sm:px-6 py-2 text-xs text-white flex items-center justify-between shadow-xs">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Você está visualizando: <strong className="text-[#7DD3FC]">{activeProducer.name}</strong></span>
-              </div>
-              <button
-                onClick={() => selectProducer(null)}
-                className="px-2.5 py-1 rounded bg-[#334155] hover:bg-[#475569] text-white font-bold text-[11px] transition cursor-pointer"
-              >
-                ← Voltar para visão global
-              </button>
-            </div>
-          )}
-
-          {/* Barra de Título Independente */}
-          <ModuleTitleBar currentPage={currentPage} />
-
-          {/* Viewport de Conteúdo */}
-          <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-7 max-w-[1720px] w-full mx-auto">
-            {/* 1. Flagship Events List (Multi-Tenant Scoped) */}
-            {currentPage === 'eventos' && (
-              <EventosPage
-                events={scopedEvents}
-                setEvents={setEvents}
-                selectedProducer={activeProducer || allProducers[0]}
-                producers={allProducers}
-                searchQuery={globalSearchQuery}
-                onNavigateToNewEvent={handleNavigateToNewEvent}
-                onNavigateToEditEvent={handleNavigateToEditEvent}
-                onNavigateToLots={handleNavigateToLots}
-                onNavigateToParticipants={handleNavigateToParticipants}
-                onNavigateToEventDashboard={handleNavigateToEventDashboard}
-              />
-            )}
-
-            {/* 2. Núcleo Operacional Integrado com API (Fase 10) */}
-            {currentPage === 'nucleo-operacional' && (
-              <OperationsPage
-                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
-                producerName={activeProducer?.name || 'Todas as Produtoras (Visão Global)'}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* 3. Marketing Module (Fase 11-13) */}
-            {isMarketingPage && (
-              <MarketingHub
-                key={currentPage}
-                events={scopedEvents}
-                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
-                initialTab={getMarketingTab(currentPage)}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* 4. Remarketing Module (Fase 11-13) */}
-            {isRemarketingPage && (
-              <RemarketingHub
-                key={currentPage}
-                events={scopedEvents}
-                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
-                producerName={activeProducer?.name || 'DiskIngressos Produções'}
-                initialTab={getRemarketingTab(currentPage)}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* 4.5. Atendimento / SAC Module (Fase 14 ITIL & Service Desk) */}
-            {isSacPage && (
-              <SupportPage
-                key={currentPage}
-                mode={getSupportMode(currentPage)}
-                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
-                producerName={activeProducer?.name || 'DiskIngressos Produções'}
-                events={scopedEvents}
-                notify={triggerToast}
-                onNavigate={(mode) => setCurrentPage(mode)}
-              />
-            )}
-
-            {/* 5. Event Contextual Subpages (Fase 15) */}
-            {(currentPage === 'dashboard-evento' || currentPage === 'evento-dashboard') && (
-              <EventDashboardPage
-                event={currentEventContext || activeEventForDashboard || scopedEvents[0]}
-                participants={participants}
-                onBack={() => {
-                  setActiveEventForDashboard(null);
-                  setCurrentPage('eventos');
-                }}
-                onNavigateToParticipants={() => {
-                  setSelectedEventForParticipants(currentEventContext);
-                  setCurrentPage('evento-ingressos');
-                }}
-                onNavigateToLots={() => {
-                  setSelectedEventForLots(currentEventContext);
-                  setCurrentPage('evento-lotes');
-                }}
-                onNavigateToEdit={() => {
-                  setSelectedEventForEdit(currentEventContext);
-                  setCurrentPage('evento-detalhes');
-                }}
-                onNavigateToSubpage={(sub) => setCurrentPage(sub as any)}
-              />
-            )}
-
-            {/* Ingressos do Evento */}
-            {currentPage === 'evento-ingressos' && (
-              <ParticipantsPage
-                events={currentEventContext ? [currentEventContext] : scopedEvents}
-                participants={participants}
-                selectedEvent={currentEventContext}
-                onSelectEvent={() => {}}
-                onToggleCheckin={handleToggleCheckin}
-              />
-            )}
-
-            {/* Cortesias do Evento */}
-            {currentPage === 'evento-cortesias' && (
-              <CortesiasPage
-                event={currentEventContext || scopedEvents[0]}
-                onBack={() => setCurrentPage('evento-dashboard')}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* Relatórios de Vendas do Evento */}
-            {currentPage === 'evento-relatorios' && (
-              <FinanceiroPage
-                key={`relatorios-${currentEventContext?.id}`}
-                events={currentEventContext ? [currentEventContext] : scopedEvents}
-                initialTab="statement"
-                initialSubModule="extrato-geral"
-                notify={triggerToast}
-              />
-            )}
-
-            {/* Detalhes do Evento */}
-            {currentPage === 'evento-detalhes' && (
-              <EventFormPage
-                mode="edit"
-                event={currentEventContext || selectedEventForEdit || scopedEvents[0]}
-                selectedProducer={activeProducer || allProducers[0]}
-                producers={allProducers}
-                onCancel={() => setCurrentPage('evento-dashboard')}
-                onSave={handleSaveEvent}
-              />
-            )}
-
-            {/* Pixel GA & Meta do Evento */}
-            {currentPage === 'evento-pixel' && (
-              <PixelInheritancePage
-                events={currentEventContext ? [currentEventContext] : scopedEvents}
-                producerId={activeProducer?.id ? Number(activeProducer.id) : null}
-                producerName={activeProducer?.name}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* Links UTM do Evento - Central UTM & Conversões */}
-            {currentPage === 'evento-utm' && (
-              <UtmLinksPage event={currentEventContext || scopedEvents[0]} notify={triggerToast} />
-            )}
-
-            {/* Analytics GA4 e Tráfego do Evento */}
-            {(currentPage === 'evento-analytics' || currentPage === 'evento-trafego') && (
-              <MarketingDashboardPage
-                events={currentEventContext ? [currentEventContext] : scopedEvents}
-                selectedEventId={currentEventContext?.id || null}
-                onSelectEventId={() => {}}
-                onOpenCreateCampaign={() => setCurrentPage('evento-meta-ads')}
-                onNavigateToTab={(tab) => {
-                  if (tab === 'mkt-campaigns') setCurrentPage('evento-meta-ads');
-                  else if (tab === 'mkt-links') setCurrentPage('evento-utm');
-                  else if (tab === 'mkt-analytics') setCurrentPage('evento-pixel');
-                }}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* Campanhas Meta Ads do Evento */}
-            {currentPage === 'evento-meta-ads' && (
-              <MarketingCampaignsPage
-                events={currentEventContext ? [currentEventContext] : scopedEvents}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* Remarketing do Evento */}
-            {currentPage === 'evento-remarketing' && (
-              <RecoveryCenterPage
-                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
-                events={currentEventContext ? [currentEventContext] : scopedEvents}
-                mode="all"
-                notify={triggerToast}
-              />
-            )}
-
-            {/* Lotes do Evento */}
-            {currentPage === 'evento-lotes' && (
-              <LotsPage
-                events={currentEventContext ? [currentEventContext] : scopedEvents}
-                selectedEvent={currentEventContext}
-                onSelectEvent={() => {}}
-                onBack={() => setCurrentPage('evento-dashboard')}
-                onSaveBatches={handleSaveBatches}
-              />
-            )}
-
-            {/* Check-in ao Vivo do Evento */}
-            {currentPage === 'evento-checkin' && (
-              <OperationsPage
-                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
-                producerName={activeProducer?.name || 'DiskIngressos Produções'}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* Usuários do Evento */}
-            {currentPage === 'evento-usuarios' && (
-              <UserManagerPage />
-            )}
-
-            {/* Logs do Evento */}
-            {currentPage === 'evento-logs' && (
-              <AuditLogsPage />
-            )}
-
-            {/* 6. Create Event Dedicated Page */}
-            {currentPage === 'novo-evento' && (
-              <EventFormPage
-                mode="new"
-                selectedProducer={activeProducer || allProducers[0]}
-                producers={allProducers}
-                onCancel={() => setCurrentPage('eventos')}
-                onSave={handleSaveEvent}
-              />
-            )}
-
-            {/* 7. Edit Event Dedicated Page */}
-            {currentPage === 'editar-evento' && (
-              <EventFormPage
-                mode="edit"
-                event={selectedEventForEdit}
-                selectedProducer={activeProducer || allProducers[0]}
-                producers={allProducers}
-                onCancel={() => setCurrentPage('eventos')}
-                onSave={handleSaveEvent}
-              />
-            )}
-
-            {/* 8. Configure Lots Dedicated Page */}
-            {currentPage === 'lotes' && (
-              <LotsPage
-                events={scopedEvents}
-                selectedEvent={selectedEventForLots}
-                onSelectEvent={(ev) => setSelectedEventForLots(ev)}
-                onBack={() => setCurrentPage('eventos')}
-                onSaveBatches={handleSaveBatches}
-              />
-            )}
-
-            {/* 9. Participants Dedicated Page */}
-            {currentPage === 'participantes' && (
-              <ParticipantsPage
-                events={scopedEvents}
-                participants={participants}
-                selectedEvent={selectedEventForParticipants}
-                onSelectEvent={(ev) => setSelectedEventForParticipants(ev)}
-                onToggleCheckin={handleToggleCheckin}
-              />
-            )}
-
-            {/* 10. Executive General Dashboard */}
-            {currentPage === 'dashboard' && (
-              <DashboardPage
-                events={scopedEvents}
-                selectedProducer={activeProducer}
-                allProducers={allProducers}
-                onSelectProducer={(prodId) => {
-                  selectProducer(prodId);
-                  setCurrentPage('eventos');
-                }}
-                onNavigateToEvents={() => setCurrentPage('eventos')}
-                onOpenNewEvent={handleNavigateToNewEvent}
-              />
-            )}
-
-            {/* 11. Producer Page */}
-            {currentPage === 'produtora' && (
-              <ProdutoraPage selectedProducer={activeProducer || allProducers[0]} />
-            )}
-
-            {/* 12. Status Faciais Page */}
-            {currentPage === 'status-faciais' && (
-              <StatusFaciaisPage
-                events={scopedEvents}
-                participants={participants}
-              />
-            )}
-
-            {/* 13. Official Hub Financeiro & Modules */}
-            {isFinancePage && (
-              <FinanceiroPage
-                key={currentPage}
-                events={scopedEvents}
-                initialTab={getFinanceConfig(currentPage).tab}
-                initialSubModule={getFinanceConfig(currentPage).module}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* 14. POS / PDV Module */}
-            {(currentPage === 'terminais-pos' || currentPage === 'pos-terminals' || currentPage === 'pos-sales' || currentPage === 'pos-closing') && (
-              <POSPage
-                key={currentPage}
-                events={scopedEvents}
-                initialTab={getPOSTab(currentPage)}
-                notify={triggerToast}
-              />
-            )}
-
-            {/* 15. Administração — Central Administrativa (Fase 8) */}
-            {(currentPage === 'administracao' || currentPage === 'admin-hub') && (
-              <AdminHubPage onNavigate={(p) => setCurrentPage(p)} />
-            )}
-
-            {/* 16. Administração — Usuários e Acessos (Fase 8) */}
-            {(currentPage === 'gerenciar-usuarios' || currentPage === 'admin-users' || currentPage === 'gerenciar-acessos') && (
-              <UserManagerPage />
-            )}
-
-            {/* 17. Administração — Produtoras Cadastradas (Fase 8) */}
-            {currentPage === 'admin-producers' && (
-              <ProducersPage notify={triggerToast} />
-            )}
-
-            {/* 18. Administração — Perfis e Permissões RBAC (Fase 8) */}
-            {currentPage === 'admin-permissions' && (
-              <PermissionsPage notify={triggerToast} />
-            )}
-
-            {/* 19. Administração — Logs de Auditoria (Fase 8) */}
-            {(currentPage === 'logs-auditoria' || currentPage === 'admin-audit') && (
-              <AuditLogsPage />
-            )}
-
-            {/* 20. Administração — Configurações de Segurança (Fase 8) */}
-            {currentPage === 'admin-security' && (
-              <SecurityPage notify={triggerToast} />
-            )}
-
-            {/* 21. Generic Module Pages */}
-            {(currentPage === 'clube-beneficios' || currentPage === 'cortesias' || currentPage === 'categorias-setores' || currentPage === 'mensagens') && (
-              <GenericModulePage
-                page={currentPage}
-                onNavigateToEvents={() => setCurrentPage('eventos')}
-              />
-            )}
-          </main>
-
-          {/* Footer Global Oficial */}
-          <AppFooter />
-        </div>
-      </div>
-
-      {/* Floating Scroll to Top */}
-      <ScrollTop />
-
-      {/* Meta Pixel Modal */}
-      <MetaPixelModal
-        event={marketingModalEvent}
-        isOpen={!!marketingModalEvent}
-        onClose={() => setMarketingModalEvent(null)}
-        onSave={handleSaveMetaPixel}
-      />
-    </div>
-  );
+import { useEffect, useMemo, useState } from 'react'
+import Header from './components/Header'
+import ModuleSidebar, { type ModuleKey, type PageKey } from './components/ModuleSidebar'
+import EventContextSidebar from './components/EventContextSidebar'
+import AppFooter from './components/AppFooter'
+import ScrollTop from './components/ScrollTop'
+import { events as seedEvents, type EventItem } from './data/events'
+import { participants as seedParticipants, type Participant } from './data/participants'
+import EventsPage from './pages/EventsPage'
+import EventFormPage from './pages/EventFormPage'
+import LotsPage from './pages/LotsPage'
+import ParticipantsPage from './pages/ParticipantsPage'
+import FacialPage from './pages/FacialPage'
+import FinancePage from './pages/FinancePage'
+import FinanceHubPage from './pages/FinanceHubPage'
+import ModulePlaceholder from './pages/ModulePlaceholder'
+import POSPage from './pages/POSPage'
+import LoginPage from './pages/LoginPage'
+import UsersPage from './pages/UsersPage'
+import AdminHubPage from './pages/AdminHubPage'
+import ProducersPage from './pages/ProducersPage'
+import PermissionsPage from './pages/PermissionsPage'
+import AuditPage from './pages/AuditPage'
+import SecurityPage from './pages/SecurityPage'
+import OperationsPage from './pages/OperationsPage'
+import MarketingPage from './pages/MarketingPage'
+import RemarketingPage from './pages/RemarketingPage'
+import SupportPage from './pages/SupportPage'
+import CommunicationPage from './pages/CommunicationPage'
+import EventContextPage from './pages/EventContextPage'
+import GlobalDashboardPage from './pages/GlobalDashboardPage'
+import ProfileDashboardPage from './pages/ProfileDashboardPage'
+import { canAccess, isGlobalAdmin, producers as seedProducers, seedUsers, type AppUser } from './auth/model'
+import { login as apiLogin, setApiToken, clearApiToken, hasStoredToken, getMe, getProducers, getUsers, getEvents } from './services/api'
+
+const titleMap:Partial<Record<PageKey,string>>={
+ 'profile-dashboard':'Meu Dashboard', 'global-dashboard':'Visão Geral Administrativa', 'events':'Todos os Eventos','operations':'Núcleo Operacional','new-event':'Novo Evento','edit-event':'Editar Evento','lots':'Configurar Lotes','participants':'Participantes','facial':'Status Faciais','event-dashboard':'Dashboard do Evento','event-tickets':'Consultar Ingresso','event-courtesy':'Cortesias','event-reports':'Relatórios do Evento','event-details':'Detalhes do Evento','event-pixel':'Pixel GA','event-utm':'Central UTM & Conversões','event-ga4':'Analytics GA4','event-traffic':'Tráfego Site','event-meta-ads':'Campanhas Meta Ads','event-remarketing':'Remarketing','event-users':'Usuários do Evento','event-audit':'Logs do Evento','event-permissions':'Permissões do Evento',
+ 'finance-hub':'Hub Financeiro','finance':'Saldo Consolidado','finance-sales':'Vendas','finance-payouts':'Solicitações de Repasse','finance-cashflow':'Fluxo de Caixa','finance-statement':'Extrato Detalhado','finance-advance':'Financeiro Advanced','finance-split':'Split Financeiro','finance-intelligence':'Inteligência Financeira','finance-methods':'Métodos de Pagamento','finance-custom':'Pagamentos Customizados','finance-operators':'Operadoras de Cartão','finance-bank':'Conciliação / Contas Bancárias','finance-spread':'Financeiro Spread','finance-expenses':'Despesas','finance-bordero':'Borderô / Assinaturas','finance-negotiations':'Negociações','finance-refunds':'Devoluções / Estornos',
+ 'pos':'Hub POS / PDV','pos-terminals':'Terminais POS','pos-sales':'Vendas Presenciais','pos-closing':'Fechamento de Caixa',
+ 'marketing-hub':'Hub Marketing','marketing-dashboard':'Dashboard Marketing','marketing-campaigns':'Campanhas','marketing-create':'Criar Campanha','marketing-automations':'Automações','marketing-whatsapp':'WhatsApp','marketing-email':'E-mail Marketing','marketing-coupons':'Cupons e Promoções','marketing-links':'Links, UTMs e QR Codes','marketing-affiliates':'Afiliados e Parceiros','marketing-tracking':'Pixel & Analytics','marketing-communications':'Integrações de Comunicação','marketing-reports':'Relatórios de Marketing',
+ 'remarketing-hub':'Hub Remarketing','remarketing-dashboard':'Dashboard Remarketing','remarketing-carts':'Carrinhos Abandonados','remarketing-audiences':'Públicos','remarketing-segments':'Segmentações','remarketing-flows':'Fluxos de Recuperação','remarketing-whatsapp':'WhatsApp Remarketing','remarketing-email':'E-mail Remarketing','remarketing-payments':'Recuperação de Pagamento','remarketing-inactive':'Clientes Inativos','remarketing-postevent':'Pós-Evento','remarketing-automation':'Remarketing Automático','remarketing-reports':'Relatórios de Remarketing',
+ 'sac-hub':'Hub de Atendimento','sac-dashboard':'Dashboard SAC','sac-tickets':'Chamados','sac-new':'Abrir Chamado','sac-sla':'SLA & ITIL','sac-integrations':'Integrações do SAC','sac-knowledge':'Base de Conhecimento','sac-reports':'Relatórios SAC',
+ 'admin-hub':'Central Administrativa','admin-users':'Usuários e Acessos','admin-producers':'Produtoras','admin-permissions':'Perfis e Permissões','admin-audit':'Logs de Auditoria','admin-security':'Segurança'
 }
+function moduleFor(page:PageKey,user?:AppUser|null):ModuleKey{if(page==='profile-dashboard'){if(user?.role==='producer-finance')return 'finance';if(user?.role==='producer-marketing')return 'marketing';return 'events'}if(page==='global-dashboard'||page.startsWith('admin-'))return 'admin';if(page.startsWith('finance'))return 'finance';if(page.startsWith('pos'))return 'pos';if(page.startsWith('marketing-'))return 'marketing';if(page.startsWith('remarketing-'))return 'remarketing';if(page.startsWith('sac-'))return 'sac';if(page==='facial')return 'events';return 'events'}
+function areaFor(page:PageKey):'events'|'finance'|'pos'|'admin'|'marketing'|'remarketing'|'sac'{if(page==='global-dashboard'||page.startsWith('admin-')||['event-users','event-audit','event-permissions'].includes(page))return 'admin';if(page.startsWith('finance'))return 'finance';if(page.startsWith('pos'))return 'pos';if(page.startsWith('marketing-')||['event-pixel','event-utm','event-ga4','event-traffic','event-meta-ads'].includes(page))return 'marketing';if(page.startsWith('remarketing-')||page==='event-remarketing')return 'remarketing';if(page.startsWith('sac-'))return 'sac';return 'events'}
+function firstPageFor(user:AppUser):PageKey{if(isGlobalAdmin(user))return 'global-dashboard';return 'profile-dashboard'}
 
-export default function App() {
-  return (
-    <AuthProvider>
-      <AuthenticatedApp />
-    </AuthProvider>
-  );
+export default function App(){
+ const [users,setUsers]=useState<AppUser[]>(seedUsers)
+ const [producers,setProducers]=useState(seedProducers)
+ const [user,setUser]=useState<AppUser|null>(null)
+ const [selectedProducer,setSelectedProducer]=useState<number|'all'>('all')
+ const [query,setQuery]=useState(''); const [status,setStatus]=useState<'ativos'|'inativos'|'todos'>('todos'); const [view,setView]=useState<'horizontal'|'compact'>('horizontal'); const [page,setPage]=useState<PageKey>('events'); const [events,setEvents]=useState<EventItem[]>(seedEvents); const [participants,setParticipants]=useState<Participant[]>(seedParticipants); const [selectedEvent,setSelectedEvent]=useState<EventItem|null>(null); const [toast,setToast]=useState('')
+ const module=useMemo(()=>moduleFor(page,user),[page,user]); const notify=(m:string)=>{setToast(m);window.setTimeout(()=>setToast(''),2400)}
+ const eventContextPages=new Set<PageKey>(['event-dashboard','event-tickets','event-courtesy','event-reports','event-details','event-pixel','event-utm','event-ga4','event-traffic','event-meta-ads','event-remarketing','event-users','event-audit','event-permissions'])
+ const inEventContext=!!selectedEvent&&eventContextPages.has(page)
+ const scopedProducerId=user?(isGlobalAdmin(user)?(selectedProducer==='all'?null:selectedProducer):user.producerId):null
+ const visibleEvents=useMemo(()=>!user?[]:events.filter(e=>scopedProducerId===null||e.producerId===scopedProducerId),[events,user,scopedProducerId])
+ const visibleEventIds=useMemo(()=>new Set(visibleEvents.map(e=>e.id)),[visibleEvents])
+ const visibleParticipants=useMemo(()=>participants.filter(p=>visibleEventIds.has(p.eventId)),[participants,visibleEventIds])
+ const normalizeEvents=(rows:any[]):EventItem[]=>rows.map((e:any)=>({id:e.id,code:String(e.code),title:e.title,venue:e.venue,city:e.city,date:e.date,endDate:e.endDate||undefined,total:((e.totalCents||0)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),sales:e.sales||0,available:e.available||0,courtesy:e.courtesy||0,occupancy:`${Number(e.occupancy||0).toFixed(1)}%`,cover:e.cover||'nature',badge:e.badge||undefined,status:e.status||'ativo',description:e.description||undefined,category:e.category||undefined,producer:e.producer?.name||'',visibility:e.visibility||'publico',producerId:e.producerId}))
+ const loadScopeData=async(u:AppUser,producerSelection:number|'all')=>{const requested=isGlobalAdmin(u)?(producerSelection==='all'?undefined:producerSelection):(u.producerId||undefined);const rows=await getEvents(requested);setEvents(normalizeEvents(rows))}
+ useEffect(()=>{if(!hasStoredToken())return;let active=true;(async()=>{try{const u=await getMe();if(!active)return;setUser(u);const producerSelection:number|'all'=isGlobalAdmin(u)?'all':(u.producerId||'all');setSelectedProducer(producerSelection);setPage(firstPageFor(u));const tasks:any[]=[loadScopeData(u,producerSelection)];if(isGlobalAdmin(u))tasks.push(getProducers().then(setProducers),getUsers().then(setUsers));await Promise.all(tasks)}catch{clearApiToken();if(active)setUser(null)}})();return()=>{active=false}} ,[])
+ if(!user) return <LoginPage onLogin={async(email,password,remember)=>{const result=await apiLogin(email,password);setApiToken(result.token,remember);const u=result.user;const producerSelection:number|'all'=isGlobalAdmin(u)?'all':(u.producerId||'all');setUser(u);setSelectedProducer(producerSelection);setPage(firstPageFor(u));await loadScopeData(u,producerSelection);if(isGlobalAdmin(u)){try{const [ps,us]=await Promise.all([getProducers(),getUsers()]);setProducers(ps);setUsers(us)}catch{}}return u}}/>
+ const editEvent=(e:EventItem)=>{setSelectedEvent(e);setPage('edit-event')}; const openLots=(e:EventItem)=>{setSelectedEvent(e);setPage('lots')}; const openEventContext=(e:EventItem)=>{setSelectedEvent(e);setPage('event-dashboard');window.history.pushState({},'',`/eventos/${e.code}/dashboard`);window.scrollTo({top:0})}; const openDashboard=openEventContext
+ const saveEvent=(event:EventItem)=>{const producerId=isGlobalAdmin(user)?(scopedProducerId||producers[0].id):(user.producerId||1);const producer=producers.find(p=>p.id===producerId)?.name||event.producer;const secured={...event,producerId,producer};const exists=events.some(e=>e.id===secured.id);setEvents(prev=>exists?prev.map(e=>e.id===secured.id?secured:e):[secured,...prev]);notify(exists?'Alterações salvas com sucesso.':'Evento criado com sucesso.');setSelectedEvent(null);setPage('events')}
+ const navigate=(next:PageKey)=>{if(next!=='profile-dashboard'&&!canAccess(user,areaFor(next))){notify('Seu perfil não possui permissão para este módulo.');return}if(next==='new-event')setSelectedEvent(null);setPage(next);if(selectedEvent&&eventContextPages.has(next)){window.history.pushState({},'',`/eventos/${selectedEvent.code}/${next.replace('event-','')}`)}else if(next==='events'){window.history.pushState({},'','/eventos')}window.scrollTo({top:0})}
+ const toggleCheckin=(id:number)=>{if(!visibleParticipants.some(p=>p.id===id))return;setParticipants(prev=>prev.map(p=>p.id===id?{...p,checkin:p.checkin==='presente'?'pendente':'presente',checkinTime:p.checkin==='presente'?undefined:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),gate:p.checkin==='presente'?undefined:'Portão A'}:p));notify('Status de check-in atualizado.')}
+ const financePlaceholder=['finance-advance','finance-split','finance-intelligence','finance-methods','finance-custom','finance-operators','finance-bank','finance-spread','finance-expenses','finance-bordero','finance-negotiations','finance-refunds'] as PageKey[]
+ const logout=()=>{clearApiToken();setUser(null);setQuery('');setSelectedEvent(null);setSelectedProducer('all');window.history.replaceState({},'','/login')}
+ return <div className="app-shell phase6-shell phase7-shell">
+   <Header query={query} onQuery={setQuery} user={user} producers={producers} selectedProducer={selectedProducer} onProducer={async v=>{setSelectedProducer(v);setSelectedEvent(null);await loadScopeData(user,v);if(isGlobalAdmin(user))setPage(v==='all'?'global-dashboard':'events')}} onLogout={logout}/>
+   {inEventContext&&selectedEvent?<EventContextSidebar event={selectedEvent} page={page} onNavigate={navigate} onBack={()=>{setSelectedEvent(null);setPage('events');window.history.pushState({},'','/eventos');window.scrollTo({top:0})}} canAdmin={canAccess(user,'admin')}/>:<ModuleSidebar module={module} page={page} onNavigate={navigate} onHome={()=>navigate(isGlobalAdmin(user)?'global-dashboard':'profile-dashboard')} canAdmin={canAccess(user,'admin')} user={user}/>}
+   <div className="module-titlebar"><h1>{titleMap[page]||'DiskIngressos'}</h1><div className="scope-pill">{inEventContext&&selectedEvent?`Evento ${selectedEvent.code}`:(scopedProducerId===null?'Visão global':producers.find(p=>p.id===scopedProducerId)?.name)}</div></div>
+   <main className="content phase6-content">
+     {page==='profile-dashboard'&&!isGlobalAdmin(user)&&<ProfileDashboardPage user={user} producer={producers.find(p=>p.id===user.producerId)} events={visibleEvents} participants={visibleParticipants} onNavigate={navigate}/>}
+     {page==='global-dashboard'&&isGlobalAdmin(user)&&<GlobalDashboardPage events={events} producers={producers} users={users} onAllEvents={()=>{setSelectedProducer('all');setPage('events')}} onSelectProducer={async id=>{setSelectedProducer(id);setSelectedEvent(null);await loadScopeData(user,id);setPage('events')}}/>}
+     {page==='admin-hub'&&<AdminHubPage onNavigate={navigate}/>}
+     {page==='admin-users'&&<UsersPage users={users} setUsers={setUsers} currentUser={user} producers={producers} notify={notify}/>}
+     {page==='admin-producers'&&<ProducersPage producers={producers} setProducers={setProducers} notify={notify}/>}
+     {page==='admin-permissions'&&<PermissionsPage notify={notify}/>}
+     {page==='admin-audit'&&<AuditPage notify={notify}/>}
+     {page==='admin-security'&&<SecurityPage notify={notify}/>} 
+     {page==='finance-hub'&&<FinanceHubPage onNavigate={navigate}/>} 
+     {page==='operations'&&<OperationsPage producerId={scopedProducerId} producerName={scopedProducerId===null?'Todas as produtoras':(producers.find(p=>p.id===scopedProducerId)?.name||'Produtora')} notify={notify}/>} 
+     {page==='events'&&<EventsPage events={visibleEvents} query={query} status={status} setStatus={setStatus} view={view} setView={setView} onEdit={editEvent} onLots={openLots} onDashboard={openDashboard} onOpen={openEventContext}/>} 
+     {page==='new-event'&&<EventFormPage mode="new" onCancel={()=>setPage('events')} onSave={saveEvent}/>} {page==='edit-event'&&<EventFormPage mode="edit" event={selectedEvent} onCancel={()=>setPage('events')} onSave={saveEvent}/>} 
+     {page==='lots'&&<LotsPage events={visibleEvents} selectedEvent={selectedEvent} onSelect={setSelectedEvent} onBack={()=>setPage('events')}/>} 
+     {page==='participants'&&<ParticipantsPage events={visibleEvents} participants={visibleParticipants} onToggleCheckin={toggleCheckin}/>} {page==='facial'&&<FacialPage participants={visibleParticipants}/>} 
+     {selectedEvent&&eventContextPages.has(page)&&visibleEvents.some(e=>e.id===selectedEvent.id)&&<EventContextPage event={selectedEvent} participants={visibleParticipants} page={page} onNavigate={navigate} notify={notify}/>} 
+     {page==='finance'&&<FinancePage events={visibleEvents} initialTab="overview" notify={notify}/>} {page==='finance-sales'&&<FinancePage events={visibleEvents} initialTab="sales" notify={notify}/>} {page==='finance-payouts'&&<FinancePage events={visibleEvents} initialTab="payouts" notify={notify}/>} {page==='finance-cashflow'&&<FinancePage events={visibleEvents} initialTab="cashflow" notify={notify}/>} {page==='finance-statement'&&<FinancePage events={visibleEvents} initialTab="statement" notify={notify}/>} 
+     {financePlaceholder.includes(page)&&<ModulePlaceholder title={titleMap[page]||'Módulo Financeiro'} description="Estrutura visual já incorporada ao template global. O acesso a este módulo respeita o perfil e a produtora autenticada." onBack={()=>setPage('finance-hub')}/>} 
+
+     {page==='marketing-communications'&&<CommunicationPage producerId={scopedProducerId} producerName={scopedProducerId===null?'Todas as produtoras':(producers.find(p=>p.id===scopedProducerId)?.name||'Produtora')} notify={notify}/>}
+     {page.startsWith('marketing-')&&page!=='marketing-communications'&&<MarketingPage events={visibleEvents} producerId={scopedProducerId} producerName={scopedProducerId===null?'Todas as produtoras':(producers.find(p=>p.id===scopedProducerId)?.name||'Produtora')} mode={({
+       'marketing-hub':'hub','marketing-dashboard':'dashboard','marketing-campaigns':'campaigns','marketing-create':'create','marketing-automations':'automations','marketing-whatsapp':'whatsapp','marketing-email':'email','marketing-coupons':'coupons','marketing-links':'links','marketing-affiliates':'affiliates','marketing-tracking':'tracking','marketing-reports':'reports'
+     } as Record<string,any>)[page]} notify={notify}/>} 
+     {page.startsWith('sac-')&&<SupportPage events={visibleEvents} producerId={scopedProducerId} producerName={scopedProducerId===null?'Todas as produtoras':(producers.find(p=>p.id===scopedProducerId)?.name||'Produtora')} mode={({
+       'sac-hub':'hub','sac-dashboard':'dashboard','sac-tickets':'tickets','sac-new':'new','sac-sla':'sla','sac-integrations':'integrations','sac-knowledge':'knowledge','sac-reports':'reports'
+     } as Record<string,any>)[page]} notify={notify} onNavigate={navigate}/>} 
+     {page.startsWith('remarketing-')&&<RemarketingPage events={visibleEvents} producerId={scopedProducerId} producerName={scopedProducerId===null?'Todas as produtoras':(producers.find(p=>p.id===scopedProducerId)?.name||'Produtora')} mode={({
+       'remarketing-hub':'hub','remarketing-dashboard':'dashboard','remarketing-carts':'carts','remarketing-audiences':'audiences','remarketing-segments':'segments','remarketing-flows':'flows','remarketing-whatsapp':'whatsapp','remarketing-email':'email','remarketing-payments':'payments','remarketing-inactive':'inactive','remarketing-postevent':'postevent','remarketing-automation':'automation','remarketing-reports':'reports'
+     } as Record<string,any>)[page]} notify={notify}/>} 
+     {page==='pos'&&<POSPage events={visibleEvents} initialTab="overview" notify={notify}/>} {page==='pos-terminals'&&<POSPage events={visibleEvents} initialTab="terminals" notify={notify}/>} {page==='pos-sales'&&<POSPage events={visibleEvents} initialTab="sales" notify={notify}/>} {page==='pos-closing'&&<POSPage events={visibleEvents} initialTab="closing" notify={notify}/>} 
+   </main>
+   <AppFooter/><ScrollTop/>{toast&&<div className="toast">{toast}</div>}
+ </div>
 }

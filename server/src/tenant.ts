@@ -2,7 +2,7 @@ import type { AuthRequest } from './middleware/auth.js'
 import { globalAdmin } from './auth.js'
 
 export function requestedProducerId(req: AuthRequest): number | undefined {
-  if (!globalAdmin(req.auth!.role)) return req.auth!.producerId ?? -1
+  if (!req.auth || !globalAdmin(req.auth.role)) return req.auth?.producerId ?? -1
   const raw = req.query.producerId
   if (raw === undefined || raw === '' || raw === 'all') return undefined
   const id = Number(raw)
@@ -10,27 +10,24 @@ export function requestedProducerId(req: AuthRequest): number | undefined {
 }
 
 export function writeProducerId(req: AuthRequest, bodyProducerId?: number): number | null {
-  return globalAdmin(req.auth!.role) ? (bodyProducerId ?? null) : (req.auth!.producerId ?? null)
+  if (!req.auth) return null
+  return globalAdmin(req.auth.role) ? (bodyProducerId ?? null) : (req.auth.producerId ?? null)
 }
 
 export function ownsProducer(req: AuthRequest, producerId: number): boolean {
-  return globalAdmin(req.auth!.role) || req.auth!.producerId === producerId
+  if (!req.auth) return false
+  return globalAdmin(req.auth.role) || req.auth.producerId === producerId
 }
 
-export function tenantProducerId(reqOrUser: any, rawProducerId?: any): number | null {
-  const user = reqOrUser.auth || reqOrUser.user || reqOrUser
-  if (!user) return null
-  const isGlobal = globalAdmin(user.role)
-  if (isGlobal) {
-    const raw = rawProducerId !== undefined ? rawProducerId : reqOrUser.query?.producerId
-    if (raw === undefined || raw === '' || raw === 'all' || raw === null) return null
-    const id = Number(raw)
-    return Number.isInteger(id) && id > 0 ? id : null
-  }
-  return user.producerId ?? null
+export function tenantProducerId(user?: { role: string; producerId?: number | null }, paramProducerId?: any): number | undefined {
+  if (!user || !user.role) return undefined
+  if (!globalAdmin(user.role)) return user.producerId ?? -1
+  if (!paramProducerId || paramProducerId === 'all') return undefined
+  const id = Number(paramProducerId)
+  return Number.isInteger(id) && id > 0 ? id : undefined
 }
 
-export function tenantWhere(reqOrUser: any, rawProducerId?: any): Record<string, any> {
-  const pId = tenantProducerId(reqOrUser, rawProducerId)
-  return pId ? { producerId: pId } : {}
+export function tenantWhere(user?: { role: string; producerId?: number | null }, paramProducerId?: any): Record<string, any> {
+  const pid = tenantProducerId(user, paramProducerId)
+  return pid !== undefined ? { producerId: pid } : {}
 }
