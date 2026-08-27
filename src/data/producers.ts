@@ -2,6 +2,28 @@ import type { Producer } from '../types/producer';
 
 export const mockProducers: Producer[] = [
   {
+    id: 'prod-1',
+    name: 'DiskIngressos Produções',
+    legalName: 'DiskIngressos Serviços de Bilheteria e Eventos Ltda.',
+    cnpj: '12.345.678/0001-90',
+    logoInitial: 'DI',
+    activeEventsCount: 8,
+    totalEventsCount: 32,
+    verified: true,
+    avatarColor: 'from-blue-600 to-indigo-700',
+  },
+  {
+    id: 'prod-2',
+    name: 'FEP Eventos',
+    legalName: 'FEP Entretenimento e Promoções Ltda.',
+    cnpj: '98.765.432/0001-10',
+    logoInitial: 'FE',
+    activeEventsCount: 4,
+    totalEventsCount: 16,
+    verified: true,
+    avatarColor: 'from-emerald-600 to-teal-700',
+  },
+  {
     id: 'prod-live',
     name: 'Live Entretenimento',
     legalName: 'Live Eventos e Produções Artísticas Ltda.',

@@ -7,7 +7,7 @@ import { Input } from '../../components/ui/Input';
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('admin@diskingressos.com.br');
-  const [password, setPassword] = useState('••••••••••••');
+  const [password, setPassword] = useState('Admin@123');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
@@ -24,11 +24,11 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleQuickLogin = (demoEmail: string) => {
+  const handleQuickLogin = (demoEmail: string, demoPass: string = 'Admin@123') => {
     setEmail(demoEmail);
-    setPassword('demo123456');
+    setPassword(demoPass);
     setError(null);
-    login(demoEmail, 'demo123456');
+    login(demoEmail, demoPass);
   };
 
   const handleForgotSubmit = (e: React.FormEvent) => {
@@ -64,7 +64,7 @@ export const LoginPage: React.FC = () => {
             Acesse sua conta
           </h2>
           <p className="text-[12px] text-[#718096] mt-0.5">
-            Plataforma de Gestão de Eventos e Hub Financeiro
+            Plataforma de Gestão de Eventos e Hub Financeiro Multi-Tenant
           </p>
         </div>
 
@@ -150,39 +150,39 @@ export const LoginPage: React.FC = () => {
         {/* Quick Role Tester Bar */}
         <div className="bg-[#F8FAFC] border-t border-[#E2E8F0] p-4 text-center">
           <span className="text-[11px] font-bold uppercase tracking-wider text-[#64748B] block mb-2">
-            Perfis de Demonstração Rápidos (Multi-Tenant):
+            Acessos Rápidos de Demonstração:
           </span>
           <div className="flex flex-wrap items-center justify-center gap-1.5">
             <button
-              onClick={() => handleQuickLogin('admin@diskingressos.com.br')}
+              onClick={() => handleQuickLogin('admin@diskingressos.com.br', 'Admin@123')}
               className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-1 text-[11px] font-bold text-[#1677FF] hover:bg-blue-100 transition"
-              title="Admin Master com seletor de produtoras"
+              title="Admin Master (Visão Global)"
             >
               👑 Admin Master
             </button>
 
             <button
-              onClick={() => handleQuickLogin('carlos@liveentretenimento.com.br')}
+              onClick={() => handleQuickLogin('vinicius@diskingressos.com.br', 'Produtor@123')}
               className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-[11px] font-bold text-[#10B981] hover:bg-emerald-100 transition"
-              title="Produtor Admin (Live Entretenimento)"
+              title="Produtor Admin (DiskIngressos)"
             >
-              🏢 Produtor Admin
+              🏢 Vinicius (DiskIngressos)
             </button>
 
             <button
-              onClick={() => handleQuickLogin('marina@liveentretenimento.com.br')}
+              onClick={() => handleQuickLogin('financeiro@fep.com.br', 'Financeiro@123')}
               className="rounded-full bg-orange-50 border border-orange-200 px-2.5 py-1 text-[11px] font-bold text-[#EA580C] hover:bg-orange-100 transition"
-              title="Produtor Financeiro"
+              title="Produtor Financeiro (FEP)"
             >
-              💳 Financeiro
+              💳 Financeiro (FEP)
             </button>
 
             <button
-              onClick={() => handleQuickLogin('operador@prime.com.br')}
+              onClick={() => handleQuickLogin('operador@prime.com.br', 'demo123456')}
               className="rounded-full bg-purple-50 border border-purple-200 px-2.5 py-1 text-[11px] font-bold text-[#7C3AED] hover:bg-purple-100 transition"
-              title="Operador Bilheteria (Prime)"
+              title="Operador Evento"
             >
-              🎫 Portaria / POS
+              🎫 Operador Evento
             </button>
           </div>
         </div>

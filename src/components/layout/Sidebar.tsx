@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { 
   LayoutDashboard, Building, ScanFace, Calendar, 
   Layers3, Users, DollarSign, CreditCard, 
-  Headphones, Megaphone, RotateCw, Settings, 
+  Headphones, Megaphone, Repeat2, Settings, 
   ChevronDown, ChevronRight, PanelLeftClose, PanelLeft,
   MonitorSmartphone, ShoppingCart, LockKeyhole,
   WalletCards, Banknote, Zap, ReceiptText, FileSpreadsheet,
   Building2, FileCheck, Handshake, Cpu, Split,
   BrainCircuit, CheckCircle2, TrendingUp, LayoutGrid,
-  ArrowLeft, ChevronLeft, UserPlus, ShieldAlert, FileText
+  ArrowLeft, ChevronLeft, UserPlus, ShieldAlert, FileText,
+  ShieldCheck, ScrollText, KeyRound, Activity,
+  MessageCircle, Mail, Link, Tag, Sliders, Users2, Sparkles,
+  Plus, Target, Clock3, UserX, PartyPopper
 } from 'lucide-react';
 import type { NavigationPage } from '../../types/producer';
 import { useAuth } from '../../context/AuthContext';
@@ -32,16 +35,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { currentUser, can } = useAuth();
 
-  // Expandable submenus state
-  const [eventosOpen, setEventosOpen] = useState(true);
-  const [financeiroOpen, setFinanceiroOpen] = useState(true);
-  const [posOpen, setPosOpen] = useState(true);
-  const [adminOpen, setAdminOpen] = useState(true);
+  // Expandable submenus state — ALL CLOSED BY DEFAULT as requested
+  const [eventosOpen, setEventosOpen] = useState(false);
+  const [financeiroOpen, setFinanceiroOpen] = useState(false);
+  const [posOpen, setPosOpen] = useState(false);
+  const [marketingOpen, setMarketingOpen] = useState(false);
+  const [remarketingOpen, setRemarketingOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
 
   const isEventosActive = [
-    'eventos', 'novo-evento', 'editar-evento', 'lotes', 
+    'eventos', 'nucleo-operacional', 'novo-evento', 'editar-evento', 'lotes', 
     'participantes', 'dashboard-evento', 'categorias-setores', 
-    'cupons', 'cortesias'
+    'cortesias'
   ].includes(currentPage);
 
   const isFinanceiroActive = [
@@ -57,8 +62,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
     'terminais-pos', 'pos-terminals', 'pos-sales', 'pos-closing'
   ].includes(currentPage);
 
+  const isMarketingActive = [
+    'marketing', 'mkt-hub', 'mkt-dashboard', 'mkt-campaigns', 'mkt-new-campaign', 
+    'mkt-automations', 'mkt-whatsapp', 'mkt-email', 'mkt-coupons', 
+    'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-reports', 'campanhas', 
+    'pixel-meta', 'google-analytics', 'cupons'
+  ].includes(currentPage);
+
+  const isRemarketingActive = [
+    'remarketing', 'rmk-hub', 'rmk-dashboard', 'rmk-carts', 'rmk-audiences', 
+    'rmk-segments', 'rmk-flows', 'rmk-whatsapp', 'rmk-email', 'rmk-payments', 
+    'rmk-inactive', 'rmk-postevent', 'rmk-automation', 'rmk-reports', 'mkt-abandoned'
+  ].includes(currentPage);
+
   const isAdminActive = [
-    'administracao', 'gerenciar-usuarios', 'logs-auditoria', 'gerenciar-acessos'
+    'administracao', 'admin-hub', 'gerenciar-usuarios', 'admin-users', 
+    'admin-producers', 'admin-permissions', 'logs-auditoria', 'admin-audit', 
+    'admin-security', 'gerenciar-acessos'
   ].includes(currentPage);
 
   return (
@@ -129,19 +149,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {!collapsed && <span className="truncate">Dados da Produtora</span>}
         </button>
 
-        {/* 3. Status Faciais */}
-        <button
-          onClick={() => onNavigate('status-faciais')}
-          className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
-            currentPage === 'status-faciais'
-              ? 'bg-[#3B4553] text-white shadow-xs'
-              : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
-          }`}
-          title="Status Faciais"
-        >
-          <ScanFace size={18} className={currentPage === 'status-faciais' ? 'text-[#06B6D4]' : 'text-slate-400 group-hover:text-white'} />
-          {!collapsed && <span className="truncate">Status Faciais</span>}
-        </button>
 
         {/* 4. Eventos (Expandable Group) */}
         {can('events', 'view') && (
@@ -182,6 +189,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                   <span className={`h-1.5 w-1.5 rounded-full ${currentPage === 'eventos' || currentPage === 'dashboard-evento' ? 'bg-[#06B6D4]' : 'bg-slate-500'}`} />
                   <span>Todos os Eventos</span>
+                </button>
+
+                {/* Núcleo Operacional (Fase 10) */}
+                <button
+                  onClick={() => onNavigate('nucleo-operacional')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'nucleo-operacional'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <Activity size={13} className="text-[#10B981]" />
+                  <span>Núcleo Operacional</span>
                 </button>
 
                 {can('events', 'create') && (
@@ -468,12 +488,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       currentPage === 'pos-sales'
                         ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                    }`}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                    <span>Vendas Presenciais</span>
-                  </button>
-                )}
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Vendas Presenciais</span>
+                </button>
+              )}
 
                 {can('pos', 'closeCashier') && (
                   <button
@@ -493,7 +513,373 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         )}
 
-        {/* 7. Atendimento / SAC */}
+        {/* 7. Marketing (Fase 11 Completo) */}
+        {can('marketing', 'view') && (
+          <div>
+            <button
+              onClick={() => {
+                if (collapsed) onToggleCollapse();
+                setMarketingOpen(!marketingOpen);
+              }}
+              className={`group flex w-full items-center justify-between rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
+                isMarketingActive && !collapsed
+                  ? 'bg-[#2D3746] text-white'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+              title="Marketing"
+            >
+              <div className="flex items-center gap-3">
+                <Megaphone size={18} className={isMarketingActive ? 'text-[#7C3AED]' : 'text-slate-400 group-hover:text-white'} />
+                {!collapsed && <span>Marketing</span>}
+              </div>
+              {!collapsed && (
+                <span className="text-slate-400">
+                  {marketingOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </span>
+              )}
+            </button>
+
+            {/* Marketing Submenu */}
+            {!collapsed && marketingOpen && (
+              <div className="ml-3 pl-3 border-l border-slate-700/60 my-1 space-y-0.5">
+                <button
+                  onClick={() => onNavigate('mkt-hub')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'marketing' || currentPage === 'mkt-hub'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#7C3AED]" />
+                  <span>Hub Marketing</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-dashboard')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-dashboard'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Dashboard</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-campaigns')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-campaigns' || currentPage === 'campanhas'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Campanhas</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-new-campaign')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-new-campaign'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Criar Campanha</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-automations')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-automations'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Automações</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-whatsapp')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-whatsapp'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>WhatsApp</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-email')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-email'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>E-mail Marketing</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-coupons')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-coupons' || currentPage === 'cupons'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Cupons e Promoções</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-links')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-links'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Links, UTMs e QR Codes</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-affiliates')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-affiliates'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Afiliados e Parceiros</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-analytics')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-analytics' || currentPage === 'pixel-meta' || currentPage === 'google-analytics'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Pixel & Analytics</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('mkt-reports')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-reports'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Relatórios</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 8. Remarketing (Fase 11 Completo) */}
+        {can('marketing', 'view') && (
+          <div>
+            <button
+              onClick={() => {
+                if (collapsed) onToggleCollapse();
+                setRemarketingOpen(!remarketingOpen);
+              }}
+              className={`group flex w-full items-center justify-between rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
+                isRemarketingActive && !collapsed
+                  ? 'bg-[#2D3746] text-white'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+              title="Remarketing"
+            >
+              <div className="flex items-center gap-3">
+                <Repeat2 size={18} className={isRemarketingActive ? 'text-rose-400' : 'text-slate-400 group-hover:text-white'} />
+                {!collapsed && <span>Remarketing</span>}
+              </div>
+              {!collapsed && (
+                <span className="text-slate-400">
+                  {remarketingOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                </span>
+              )}
+            </button>
+
+            {/* Remarketing Submenu */}
+            {!collapsed && remarketingOpen && (
+              <div className="ml-3 pl-3 border-l border-slate-700/60 my-1 space-y-0.5">
+                <button
+                  onClick={() => onNavigate('rmk-hub')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'remarketing' || currentPage === 'rmk-hub'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                  <span>Hub Remarketing</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-dashboard')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-dashboard'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Dashboard</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-carts')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-carts' || currentPage === 'mkt-abandoned'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Carrinhos Abandonados</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-audiences')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-audiences'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Públicos</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-segments')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-segments'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Segmentações</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-flows')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-flows'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Fluxos de Recuperação</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-whatsapp')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-whatsapp'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>WhatsApp Remarketing</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-email')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-email'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>E-mail Remarketing</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-payments')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-payments'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Recuperação de Pagamento</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-inactive')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-inactive'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Clientes Inativos</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-postevent')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-postevent'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Pós-Evento</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-automation')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-automation'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Remarketing Automático</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('rmk-reports')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'rmk-reports'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Relatórios</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 9. Atendimento / SAC */}
         <button
           onClick={() => onNavigate('atendimento')}
           className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
@@ -507,37 +893,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {!collapsed && <span className="truncate">Atendimento / SAC</span>}
         </button>
 
-        {/* 8. Marketing */}
-        {can('marketing', 'view') && (
-          <button
-            onClick={() => onNavigate('marketing')}
-            className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
-              currentPage === 'marketing' || currentPage === 'campanhas' || currentPage === 'pixel-meta'
-                ? 'bg-[#3B4553] text-white shadow-xs'
-                : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
-            }`}
-            title="Marketing & Campanhas"
-          >
-            <Megaphone size={18} className={currentPage === 'marketing' ? 'text-[#7C3AED]' : 'text-slate-400 group-hover:text-white'} />
-            {!collapsed && <span className="truncate">Marketing</span>}
-          </button>
-        )}
-
-        {/* 9. Remarketing */}
-        <button
-          onClick={() => onNavigate('remarketing')}
-          className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
-            currentPage === 'remarketing'
-              ? 'bg-[#3B4553] text-white shadow-xs'
-              : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
-          }`}
-          title="Remarketing & Recuperação de Vendas"
-        >
-          <RotateCw size={18} className={currentPage === 'remarketing' ? 'text-[#7C3AED]' : 'text-slate-400 group-hover:text-white'} />
-          {!collapsed && <span className="truncate">Remarketing</span>}
-        </button>
-
-        {/* 10. Administração & Governança (Expandable) */}
+        {/* 10. Administração & Governança (Fase 8 Full Menu) */}
         <div>
           <button
             onClick={() => {
@@ -549,7 +905,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 ? 'bg-[#2D3746] text-white'
                 : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
             }`}
-            title="Administração e Usuários"
+            title="Administração e Governança"
           >
             <div className="flex items-center gap-3">
               <Settings size={18} className={isAdminActive ? 'text-[#1677FF]' : 'text-slate-400 group-hover:text-white'} />
@@ -564,33 +920,87 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {!collapsed && adminOpen && (
             <div className="ml-3 pl-3 border-l border-slate-700/60 my-1 space-y-0.5">
+              {/* Central Administrativa */}
+              <button
+                onClick={() => onNavigate('admin-hub')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'administracao' || currentPage === 'admin-hub'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <LayoutGrid size={13} className="text-[#06B6D4]" />
+                <span>Central Administrativa</span>
+              </button>
+
+              {/* Usuários e Acessos */}
               {can('admin', 'manageUsers') && (
                 <button
                   onClick={() => onNavigate('gerenciar-usuarios')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'gerenciar-usuarios'
+                    currentPage === 'gerenciar-usuarios' || currentPage === 'admin-users'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <UserPlus size={13} className="text-[#06B6D4]" />
-                  <span>Gerenciar Usuários</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Usuários e Acessos</span>
                 </button>
               )}
 
+              {/* Produtoras */}
+              <button
+                onClick={() => onNavigate('admin-producers')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'admin-producers'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Produtoras</span>
+              </button>
+
+              {/* Perfis e Permissões */}
+              <button
+                onClick={() => onNavigate('admin-permissions')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'admin-permissions'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Perfis e Permissões</span>
+              </button>
+
+              {/* Logs de Auditoria */}
               {can('admin', 'viewAuditLogs') && (
                 <button
                   onClick={() => onNavigate('logs-auditoria')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'logs-auditoria'
+                    currentPage === 'logs-auditoria' || currentPage === 'admin-audit'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <FileText size={13} className="text-orange-400" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
                   <span>Logs de Auditoria</span>
                 </button>
               )}
+
+              {/* Segurança */}
+              <button
+                onClick={() => onNavigate('admin-security')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'admin-security'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Segurança</span>
+              </button>
             </div>
           )}
         </div>

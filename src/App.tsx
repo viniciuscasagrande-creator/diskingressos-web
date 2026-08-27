@@ -7,11 +7,24 @@ import { mockEvents } from './data/events';
 import { mockProducers } from './data/producers';
 import { mockParticipants } from './data/participants';
 
-// Auth & Security Provider (Fase 7)
+// Auth & Security Provider
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoginPage } from './pages/auth/LoginPage';
+
+// Operational Core (Fase 10)
+import OperationsPage from './pages/OperationsPage';
+
+// Marketing & Remarketing Modules (Fase 11)
+import { MarketingHub, type MarketingSubTab } from './pages/marketing/MarketingHub';
+import { RemarketingHub, type RemarketingSubTab } from './pages/remarketing/RemarketingHub';
+
+// Administration Module (Fase 8)
+import { AdminHubPage } from './pages/admin/AdminHubPage';
 import { UserManagerPage } from './pages/admin/UserManagerPage';
+import { ProducersPage } from './pages/admin/ProducersPage';
+import { PermissionsPage } from './pages/admin/PermissionsPage';
 import { AuditLogsPage } from './pages/admin/AuditLogsPage';
+import { SecurityPage } from './pages/admin/SecurityPage';
 
 // Layout Components (Phase 6 Template)
 import { Header } from './components/layout/Header';
@@ -31,7 +44,6 @@ import { ProdutoraPage } from './pages/Produtora';
 import { StatusFaciaisPage } from './pages/StatusFaciais';
 import { FinanceiroPage, type FinanceTab } from './pages/Financeiro';
 import { POSPage, type POSTab } from './pages/POSPage';
-import { MarketingPage } from './pages/Marketing';
 import { GenericModulePage } from './pages/GenericModulePage';
 import { MetaPixelModal } from './components/events/MetaPixelModal';
 import { Check } from 'lucide-react';
@@ -49,7 +61,9 @@ function AuthenticatedApp() {
   const [participants, setParticipants] = useState<Participant[]>(mockParticipants);
   
   // Navigation & Search State
-  const [currentPage, setCurrentPage] = useState<NavigationPage>('fin-hub');
+  const [currentPage, setCurrentPage] = useState<NavigationPage>(
+    currentUser.role === 'produtor-marketing' ? 'mkt-dashboard' : 'eventos'
+  );
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -250,8 +264,90 @@ function AuthenticatedApp() {
     }
   };
 
+  const getMarketingTab = (page: NavigationPage): MarketingSubTab => {
+    switch (page) {
+      case 'mkt-campaigns':
+      case 'campanhas':
+        return 'mkt-campaigns';
+      case 'mkt-new-campaign':
+        return 'mkt-new-campaign';
+      case 'mkt-coupons':
+      case 'cupons':
+        return 'mkt-coupons';
+      case 'mkt-links':
+        return 'mkt-links';
+      case 'mkt-analytics':
+      case 'pixel-meta':
+      case 'google-analytics':
+        return 'mkt-analytics';
+      case 'mkt-automations':
+        return 'mkt-automations';
+      case 'mkt-whatsapp':
+        return 'mkt-whatsapp';
+      case 'mkt-email':
+        return 'mkt-email';
+      case 'mkt-affiliates':
+        return 'mkt-affiliates';
+      case 'mkt-reports':
+        return 'mkt-reports';
+      case 'mkt-hub':
+        return 'mkt-hub';
+      case 'marketing':
+      case 'mkt-dashboard':
+      default:
+        return 'mkt-dashboard';
+    }
+  };
+
+  const isMarketingPage = [
+    'marketing', 'mkt-hub', 'mkt-dashboard', 'mkt-campaigns', 'mkt-new-campaign', 
+    'mkt-automations', 'mkt-whatsapp', 'mkt-email', 'mkt-coupons', 
+    'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-reports', 'campanhas', 
+    'pixel-meta', 'google-analytics', 'cupons'
+  ].includes(currentPage);
+
+  const getRemarketingTab = (page: NavigationPage): RemarketingSubTab => {
+    switch (page) {
+      case 'rmk-carts':
+      case 'mkt-abandoned':
+        return 'rmk-carts';
+      case 'rmk-audiences':
+        return 'rmk-audiences';
+      case 'rmk-segments':
+        return 'rmk-segments';
+      case 'rmk-flows':
+        return 'rmk-flows';
+      case 'rmk-whatsapp':
+        return 'rmk-whatsapp';
+      case 'rmk-email':
+        return 'rmk-email';
+      case 'rmk-payments':
+        return 'rmk-payments';
+      case 'rmk-inactive':
+        return 'rmk-inactive';
+      case 'rmk-postevent':
+        return 'rmk-postevent';
+      case 'rmk-automation':
+        return 'rmk-automation';
+      case 'rmk-reports':
+        return 'rmk-reports';
+      case 'rmk-hub':
+        return 'rmk-hub';
+      case 'remarketing':
+      case 'rmk-dashboard':
+      default:
+        return 'rmk-dashboard';
+    }
+  };
+
+  const isRemarketingPage = [
+    'remarketing', 'rmk-hub', 'rmk-dashboard', 'rmk-carts', 'rmk-audiences', 
+    'rmk-segments', 'rmk-flows', 'rmk-whatsapp', 'rmk-email', 'rmk-payments', 
+    'rmk-inactive', 'rmk-postevent', 'rmk-automation', 'rmk-reports', 'mkt-abandoned'
+  ].includes(currentPage);
+
   return (
-    <div className="min-h-screen bg-[#F1F4F8] text-[#0E1726] flex flex-col font-sans selection:bg-[#1677FF] selection:text-white relative">
+    <div className="min-h-screen bg-[#F1F4F8] text-[#0E1726] flex flex-col font-sans selection:bg-[#7C3AED] selection:text-white relative">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-btn border border-[#10B981]/40 bg-[#1E2530] px-5 py-3 text-white shadow-2xl animate-in fade-in slide-in-from-bottom-5 duration-200">
@@ -320,7 +416,37 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 2. Individual Event Dashboard Page */}
+            {/* 2. Núcleo Operacional Integrado com API (Fase 10) */}
+            {currentPage === 'nucleo-operacional' && (
+              <OperationsPage
+                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
+                producerName={activeProducer?.name || 'Todas as Produtoras (Visão Global)'}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* 3. Marketing Module (Fase 11) */}
+            {isMarketingPage && (
+              <MarketingHub
+                key={currentPage}
+                events={scopedEvents}
+                initialTab={getMarketingTab(currentPage)}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* 4. Remarketing Module (Fase 11) */}
+            {isRemarketingPage && (
+              <RemarketingHub
+                key={currentPage}
+                events={scopedEvents}
+                producerName={activeProducer?.name || 'DiskIngressos Produções'}
+                initialTab={getRemarketingTab(currentPage)}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* 5. Individual Event Dashboard Page */}
             {currentPage === 'dashboard-evento' && (
               <EventDashboardPage
                 event={activeEventForDashboard}
@@ -341,7 +467,7 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 3. Create Event Dedicated Page */}
+            {/* 6. Create Event Dedicated Page */}
             {currentPage === 'novo-evento' && (
               <EventFormPage
                 mode="new"
@@ -352,7 +478,7 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 4. Edit Event Dedicated Page */}
+            {/* 7. Edit Event Dedicated Page */}
             {currentPage === 'editar-evento' && (
               <EventFormPage
                 mode="edit"
@@ -364,7 +490,7 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 5. Configure Lots Dedicated Page */}
+            {/* 8. Configure Lots Dedicated Page */}
             {currentPage === 'lotes' && (
               <LotsPage
                 events={scopedEvents}
@@ -375,7 +501,7 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 6. Participants Dedicated Page */}
+            {/* 9. Participants Dedicated Page */}
             {currentPage === 'participantes' && (
               <ParticipantsPage
                 events={scopedEvents}
@@ -386,7 +512,7 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 7. Executive General Dashboard */}
+            {/* 10. Executive General Dashboard */}
             {currentPage === 'dashboard' && (
               <DashboardPage
                 events={scopedEvents}
@@ -396,12 +522,12 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 8. Producer Page */}
+            {/* 11. Producer Page */}
             {currentPage === 'produtora' && (
               <ProdutoraPage selectedProducer={activeProducer || allProducers[0]} />
             )}
 
-            {/* 9. Status Faciais Page */}
+            {/* 12. Status Faciais Page */}
             {currentPage === 'status-faciais' && (
               <StatusFaciaisPage
                 events={scopedEvents}
@@ -409,7 +535,7 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 10. Official Hub Financeiro & Modules */}
+            {/* 13. Official Hub Financeiro & Modules */}
             {isFinancePage && (
               <FinanceiroPage
                 key={currentPage}
@@ -420,7 +546,7 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 11. POS / PDV Module */}
+            {/* 14. POS / PDV Module */}
             {(currentPage === 'terminais-pos' || currentPage === 'pos-terminals' || currentPage === 'pos-sales' || currentPage === 'pos-closing') && (
               <POSPage
                 key={currentPage}
@@ -430,26 +556,38 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 12. User Management (Fase 7) */}
-            {(currentPage === 'gerenciar-usuarios' || currentPage === 'gerenciar-acessos') && (
+            {/* 15. Administração — Central Administrativa (Fase 8) */}
+            {(currentPage === 'administracao' || currentPage === 'admin-hub') && (
+              <AdminHubPage onNavigate={(p) => setCurrentPage(p)} />
+            )}
+
+            {/* 16. Administração — Usuários e Acessos (Fase 8) */}
+            {(currentPage === 'gerenciar-usuarios' || currentPage === 'admin-users' || currentPage === 'gerenciar-acessos') && (
               <UserManagerPage />
             )}
 
-            {/* 13. Audit Logs (Fase 7) */}
-            {currentPage === 'logs-auditoria' && (
+            {/* 17. Administração — Produtoras Cadastradas (Fase 8) */}
+            {currentPage === 'admin-producers' && (
+              <ProducersPage notify={triggerToast} />
+            )}
+
+            {/* 18. Administração — Perfis e Permissões RBAC (Fase 8) */}
+            {currentPage === 'admin-permissions' && (
+              <PermissionsPage notify={triggerToast} />
+            )}
+
+            {/* 19. Administração — Logs de Auditoria (Fase 8) */}
+            {(currentPage === 'logs-auditoria' || currentPage === 'admin-audit') && (
               <AuditLogsPage />
             )}
 
-            {/* 14. Marketing Pages */}
-            {(currentPage === 'marketing' || currentPage === 'campanhas' || currentPage === 'pixel-meta' || currentPage === 'google-analytics') && (
-              <MarketingPage
-                events={scopedEvents}
-                onOpenMetaModal={(ev) => setMarketingModalEvent(ev)}
-              />
+            {/* 20. Administração — Configurações de Segurança (Fase 8) */}
+            {currentPage === 'admin-security' && (
+              <SecurityPage notify={triggerToast} />
             )}
 
-            {/* 15. Generic Module Pages */}
-            {(currentPage === 'atendimento' || currentPage === 'remarketing' || currentPage === 'administracao' || currentPage === 'clube-beneficios' || currentPage === 'cupons' || currentPage === 'cortesias' || currentPage === 'categorias-setores' || currentPage === 'mensagens') && (
+            {/* 21. Generic Module Pages */}
+            {(currentPage === 'atendimento' || currentPage === 'clube-beneficios' || currentPage === 'cortesias' || currentPage === 'categorias-setores' || currentPage === 'mensagens') && (
               <GenericModulePage
                 page={currentPage}
                 onNavigateToEvents={() => setCurrentPage('eventos')}
