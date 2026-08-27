@@ -34,8 +34,8 @@ function Campaigns({producerId,events,initialEventId,createOnly,notify}:{produce
 }
 
 function Links({events,initialEventId,notify}:{producerId:number|null;events:EventItem[];initialEventId?:number;notify:(m:string)=>void}){
- const [eventId,setEventId]=useState<number|undefined>(initialEventId)
- const selectedEvent=events.find(e=>e.id===eventId)
+ const [eventId,setEventId]=useState<number|undefined>(initialEventId || events[0]?.id)
+ const selectedEvent=events.find(e=>e.id===eventId) || events[0]
  return <section className="growth-page utm-marketing-entry">
   <div className="growth-intro growth-actions">
    <div>

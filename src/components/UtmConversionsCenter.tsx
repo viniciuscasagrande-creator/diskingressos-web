@@ -31,10 +31,10 @@ export default function UtmConversionsCenter({event,notify}:Props){
  const [form,setForm]=useState({name:'',source:'instagram',medium:'cpc',campaign:`evento-${event.code}`,term:'',content:'',destination:`https://www.diskingressos.com.br/evento/${event.code}`})
  const refs={links:useRef<HTMLElement>(null),funnel:useRef<HTMLElement>(null),orders:useRef<HTMLElement>(null),remarketing:useRef<HTMLElement>(null)}
 
- const loadLinks=async()=>{try{const rows=await getTrackingLinks(undefined,event.id);setLinks(rows);return rows}catch(e:any){notify(e.message||'Não foi possível carregar links UTM.');return [] as TrackingLink[]}}
- useEffect(()=>{setSelectedId('');setDashboard(null);setOverview({});loadLinks()},[event.id])
- useEffect(()=>{if(!links.length){setOverview({});return}let alive=true;setOverviewLoading(true);Promise.all(links.map(async l=>{try{return [l.id,(await getUtmDashboard(event.id,l.id)).summary] as const}catch{return [l.id,undefined] as const}})).then(rows=>{if(alive)setOverview(Object.fromEntries(rows.filter(([,s])=>!!s)) as Record<number,UtmSummary>)}).finally(()=>alive&&setOverviewLoading(false));return()=>{alive=false}},[links,event.id])
- useEffect(()=>{if(!selectedId){setDashboard(null);return}setLoading(true);getUtmDashboard(event.id,Number(selectedId)).then(setDashboard).catch((e:any)=>notify(e.message||'Falha ao carregar métricas UTM.')).finally(()=>setLoading(false))},[selectedId,event.id])
+  const loadLinks=async()=>{try{const rows=await getTrackingLinks(undefined,event.id);setLinks(rows);if(rows.length>0)setSelectedId(rows[0].id);return rows}catch(e:any){notify(e.message||'Não foi possível carregar links UTM.');return [] as TrackingLink[]}}
+  useEffect(()=>{setOverview({});loadLinks()},[event.id])
+  useEffect(()=>{if(!links.length){setOverview({});return}let alive=true;setOverviewLoading(true);Promise.all(links.map(async l=>{try{return [l.id,(await getUtmDashboard(event.id,l.id)).summary] as const}catch{return [l.id,undefined] as const}})).then(rows=>{if(alive)setOverview(Object.fromEntries(rows.filter(([,s])=>!!s)) as Record<number,UtmSummary>)}).finally(()=>alive&&setOverviewLoading(false));return()=>{alive=false}},[links,event.id])
+  useEffect(()=>{if(!selectedId){setDashboard(null);return}setLoading(true);getUtmDashboard(event.id,Number(selectedId)).then(setDashboard).catch((e:any)=>notify(e.message||'Falha ao carregar métricas UTM.')).finally(()=>setLoading(false))},[selectedId,event.id])
 
  const filteredActions=useMemo(()=>dashboard?.actions.filter(a=>(filter==='all'||a.action===filter)&&`${a.orderCode||''} ${a.customerName||''} ${a.customerEmail||''} ${a.ticketSummary||''}`.toLowerCase().includes(search.toLowerCase()))||[],[dashboard,filter,search])
  const sources=useMemo(()=>Array.from(new Set(links.map(l=>l.source).filter(Boolean) as string[])).sort(),[links])
