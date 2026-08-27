@@ -1589,8 +1589,8 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
               >
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
-                      {u.source}
+                    <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
+                      {u.source.toUpperCase()}
                     </span>
                     <span className={`text-[10px] font-bold ${u.status === 'ativo' ? 'text-emerald-600' : 'text-slate-400'}`}>
                       ● {u.status}
@@ -1612,7 +1612,13 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
 
                 <div className="mt-3 pt-2">
                   <button
-                    className={`w-full py-1.5 text-center rounded font-bold text-xs transition ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedUtmId(u.id);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      if (notify) notify(`URL "${u.name}" selecionada!`);
+                    }}
+                    className={`w-full py-1.5 text-center rounded font-bold text-xs transition cursor-pointer ${
                       isSelected
                         ? 'bg-[#1677FF] text-white shadow-xs'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
