@@ -6,88 +6,13 @@ import { getAutomationSummary, getRecoveries, markRecoveryRecovered, startRecove
 type Mode='carts'|'flows'|'whatsapp'|'email'|'payments'|'inactive'|'postevent'|'automation'
 type Props={producerId:number|null;events:EventItem[];mode:Mode;notify:(m:string)=>void}
 const kindByMode:Partial<Record<Mode,string>>={carts:'carrinho',payments:'pagamento',inactive:'inativo',postevent:'pos_evento'}
-const mockOpportunities: RecoveryOpportunity[] = [
-  { id: 1, code: 'REC-101', kind: 'carrinho', customerName: 'Julia Martins', email: 'julia.martins@gmail.com', phone: '(41) 99876-5432', amountCents: 43600, status: 'em_recuperacao', preferredChannel: 'whatsapp', lastActivityAt: '2026-08-27T14:30:00Z', firstContactAt: '2026-08-27T14:40:00Z', nextAttemptAt: '2026-08-27T16:00:00Z', attemptCount: 1, recoveredAt: null, revenueCents: 0, producerId: 1, eventId: 1, event: { id: 1, title: 'IRON MAIDEN SYMPHONIC' }, trackingLink: { id: 1, name: 'WhatsApp Último Lote', source: 'whatsapp', medium: 'mensagem', campaign: 'ultimo_lote', code: 'wpp-lote' }, attempts: [{ id: 1, channel: 'whatsapp', destination: '(41) 99876-5432', status: 'entregue', attemptNumber: 1, templateName: 'Carrinho 30min', messagePreview: 'Oi Julia, seu ingresso para Iron Maiden está reservado!', scheduledAt: '2026-08-27T14:40:00Z', sentAt: '2026-08-27T14:40:00Z', deliveredAt: '2026-08-27T14:41:00Z', readAt: '2026-08-27T14:42:00Z', errorMessage: null }] },
-  { id: 2, code: 'REC-102', kind: 'carrinho', customerName: 'Rodrigo Medeiros', email: 'rodrigo.medeiros@gmail.com', phone: '(41) 99123-4567', amountCents: 24000, status: 'aberto', preferredChannel: 'whatsapp', lastActivityAt: '2026-08-27T15:10:00Z', firstContactAt: null, nextAttemptAt: '2026-08-27T15:40:00Z', attemptCount: 0, recoveredAt: null, revenueCents: 0, producerId: 1, eventId: 2, event: { id: 2, title: '4 Amigos 2026' }, trackingLink: { id: 2, name: 'Instagram Lançamento', source: 'instagram', medium: 'cpc', campaign: 'lancamento_2026', code: 'insta-lan' } },
-  { id: 3, code: 'REC-103', kind: 'carrinho', customerName: 'Lucas Albuquerque', email: 'lucas.albuquerque@hotmail.com', phone: '(41) 98844-3322', amountCents: 18000, status: 'recuperado', preferredChannel: 'email', lastActivityAt: '2026-08-27T11:20:00Z', firstContactAt: '2026-08-27T11:50:00Z', nextAttemptAt: null, attemptCount: 2, recoveredAt: '2026-08-27T13:10:00Z', revenueCents: 18000, producerId: 1, eventId: 3, event: { id: 3, title: 'Expo Geek SP' }, trackingLink: { id: 3, name: 'Google Ads Pesquisa', source: 'google', medium: 'cpc', campaign: 'pesquisa_direta', code: 'goog-pesq' } }
-];
-
-const mockDashboard: RecoveryDashboard = {
-  open: 28,
-  inRecovery: 14,
-  recovered: 12,
-  potentialCents: 1733000,
-  recoveredCents: 872000,
-  byChannel: {
-    whatsapp: { attempts: 42, recovered: 8, revenueCents: 554000 },
-    email: { attempts: 31, recovered: 4, revenueCents: 318000 }
-  },
-  campaigns: [
-    { campaign: 'Instagram / Lançamento', source: 'instagram / cpc', opportunities: 28, recovered: 12, revenueCents: 872000 },
-    { campaign: 'Google / CPC', source: 'google / cpc', opportunities: 21, recovered: 8, revenueCents: 543000 },
-    { campaign: 'WhatsApp / Último Lote', source: 'whatsapp / mensagem', opportunities: 11, recovered: 6, revenueCents: 318000 }
-  ]
-};
-
 export default function RecoveryCenterPage({producerId,mode,notify}:Props){
- const [rows,setRows]=useState<RecoveryOpportunity[]>(mockOpportunities);
- const [summary,setSummary]=useState<AutomationSummary|null>({ activeFlows: 4, totalFlows: 6, templates: 8, executions: 73, openRecoveries: 28, potentialCents: 1733000, recoveredCount: 12, recoveredCents: 872000, sent: 73, conversions: 12 });
- const [dashboard,setDashboard]=useState<RecoveryDashboard|null>(mockDashboard);
- const [busy,setBusy]=useState<number|null>(null);
- const kind=kindByMode[mode];
-
- const load=()=>Promise.all([
-   getRecoveries(producerId||undefined,undefined,kind),
-   getAutomationSummary(producerId||undefined),
-   getRecoveryDashboard(producerId||undefined)
- ]).then(([r,s,d])=>{
-   if(r&&r.length>0) setRows(r);
-   if(s) setSummary(s);
-   if(d) setDashboard(d);
- }).catch(()=>{
-   setRows(mockOpportunities);
-   setDashboard(mockDashboard);
- });
-
+ const [rows,setRows]=useState<RecoveryOpportunity[]>([]);const [summary,setSummary]=useState<AutomationSummary|null>(null);const [dashboard,setDashboard]=useState<RecoveryDashboard|null>(null);const [busy,setBusy]=useState<number|null>(null);const kind=kindByMode[mode]
+ const load=()=>Promise.all([getRecoveries(producerId||undefined,undefined,kind),getAutomationSummary(producerId||undefined),getRecoveryDashboard(producerId||undefined)]).then(([r,s,d])=>{setRows(r);setSummary(s);setDashboard(d)}).catch(e=>notify(e.message))
  useEffect(()=>{load()},[producerId,mode])
-
- const begin=async(r:RecoveryOpportunity)=>{
-   try{
-     setBusy(r.id);
-     await startRecovery(r.id);
-     notify('Recuperação adicionada à fila de comunicação.');
-     await load();
-   }catch{
-     setRows(prev=>prev.map(it=>it.id===r.id?{...it,status:'em_recuperacao',attemptCount:it.attemptCount+1}:it));
-     notify('Recuperação iniciada no canal preferencial (modo demonstração).');
-   }finally{
-     setBusy(null);
-   }
- }
-
- const recover=async(r:RecoveryOpportunity)=>{
-   try{
-     setBusy(r.id);
-     await markRecoveryRecovered(r.id);
-     notify('Venda recuperada e receita atribuída à campanha original.');
-     await load();
-   }catch{
-     setRows(prev=>prev.map(it=>it.id===r.id?{...it,status:'recuperado',revenueCents:it.amountCents,recoveredAt:new Date().toISOString()}:it));
-     notify('Venda marcada como recuperada! Receita atribuída à campanha original.');
-   }finally{
-     setBusy(null);
-   }
- }
-
- const process=async()=>{
-   try{
-     const r=await processRecoveryQueue();
-     notify(`${r.sent} mensagem(ns) processada(s) na fila.`);
-     await load();
-   }catch{
-     notify('Fila de comunicação processada com sucesso (modo demonstração).');
-   }
- }
+ const begin=async(r:RecoveryOpportunity)=>{try{setBusy(r.id);await startRecovery(r.id);notify('Recuperação adicionada à fila de comunicação.');await load()}catch(e:any){notify(e.message)}finally{setBusy(null)}}
+ const recover=async(r:RecoveryOpportunity)=>{try{setBusy(r.id);await markRecoveryRecovered(r.id);notify('Venda recuperada e receita atribuída à campanha original.');await load()}catch(e:any){notify(e.message)}finally{setBusy(null)}}
+ const process=async()=>{try{const r=await processRecoveryQueue();notify(`${r.sent} mensagem(ns) processada(s) na fila.`);await load()}catch(e:any){notify(e.message)}}
  return <section className="growth-page"><div className="growth-intro"><div><p className="eyebrow remarketing">REMARKETING AUTOMÁTICO · FASE 16.6</p><h2>{title(mode)}</h2><p>Carrinho abandonado → WhatsApp/E-mail → recuperação → receita atribuída à UTM original.</p></div><button className="primary-btn" onClick={process}><Send size={17}/> Processar fila</button></div>
  <div className="growth-kpis"><Kpi label="Oportunidades abertas" value={String(dashboard?.open??summary?.openRecoveries??0)} icon={ShoppingCart}/><Kpi label="Em recuperação" value={String(dashboard?.inRecovery||0)} icon={Clock3}/><Kpi label="Potencial" value={money(dashboard?.potentialCents??summary?.potentialCents??0)} icon={Target}/><Kpi label="Receita recuperada" value={money(dashboard?.recoveredCents??summary?.recoveredCents??0)} icon={TrendingUp}/></div>
  {dashboard?.campaigns?.length? <article className="growth-panel"><div className="panel-head"><div><h3>Receita recuperada por campanha UTM</h3><p>A recuperação mantém a origem do link que iniciou a jornada.</p></div></div><div className="recovery-campaign-grid">{dashboard.campaigns.slice(0,6).map(c=><div className="recovery-campaign" key={c.campaign}><span><Link2 size={16}/> {c.campaign}</span><strong>{money(c.revenueCents)}</strong><small>{c.recovered}/{c.opportunities} recuperadas · {c.source||'origem não informada'}</small></div>)}</div></article>:null}

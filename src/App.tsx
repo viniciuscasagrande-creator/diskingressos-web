@@ -35,7 +35,7 @@ import { canAccess, isGlobalAdmin, producers as seedProducers, seedUsers, type A
 import { login as apiLogin, setApiToken, clearApiToken, hasStoredToken, getMe, getProducers, getUsers, getEvents } from './services/api'
 
 const titleMap:Partial<Record<PageKey,string>>={
- 'profile-dashboard':'Meu Dashboard', 'global-dashboard':'Visão Geral Administrativa', 'events':'Todos os Eventos','operations':'Núcleo Operacional','new-event':'Novo Evento','edit-event':'Editar Evento','lots':'Configurar Lotes','participants':'Participantes','facial':'Status Faciais','event-dashboard':'Dashboard do Evento','event-tickets':'Consultar Ingresso','event-courtesy':'Cortesias','event-reports':'Relatórios do Evento','event-details':'Detalhes do Evento','event-pixel':'Pixel GA','event-utm':'Central UTM & Conversões','event-ga4':'Analytics GA4','event-traffic':'Tráfego Site','event-meta-ads':'Campanhas Meta Ads','event-remarketing':'Remarketing','event-users':'Usuários do Evento','event-audit':'Logs do Evento','event-permissions':'Permissões do Evento',
+ 'profile-dashboard':'Meu Dashboard', 'global-dashboard':'Visão Geral Administrativa', 'events':'Hub de Eventos','operations':'Núcleo Operacional','new-event':'Novo Evento','edit-event':'Editar Evento','lots':'Configurar Lotes','participants':'Participantes','facial':'Status Faciais','event-dashboard':'Dashboard do Evento','event-tickets':'Consultar Ingresso','event-courtesy':'Cortesias','event-reports':'Relatórios do Evento','event-details':'Detalhes do Evento','event-pixel':'Pixel GA','event-utm':'Central UTM & Conversões','event-ga4':'Analytics GA4','event-traffic':'Tráfego Site','event-meta-ads':'Campanhas Meta Ads','event-remarketing':'Remarketing','event-users':'Usuários do Evento','event-audit':'Logs do Evento','event-permissions':'Permissões do Evento',
  'finance-hub':'Hub Financeiro','finance':'Saldo Consolidado','finance-sales':'Vendas','finance-payouts':'Solicitações de Repasse','finance-cashflow':'Fluxo de Caixa','finance-statement':'Extrato Detalhado','finance-advance':'Financeiro Advanced','finance-split':'Split Financeiro','finance-intelligence':'Inteligência Financeira','finance-methods':'Métodos de Pagamento','finance-custom':'Pagamentos Customizados','finance-operators':'Operadoras de Cartão','finance-bank':'Conciliação / Contas Bancárias','finance-spread':'Financeiro Spread','finance-expenses':'Despesas','finance-bordero':'Borderô / Assinaturas','finance-negotiations':'Negociações','finance-refunds':'Devoluções / Estornos',
  'pos':'Hub POS / PDV','pos-terminals':'Terminais POS','pos-sales':'Vendas Presenciais','pos-closing':'Fechamento de Caixa',
  'marketing-hub':'Hub Marketing','marketing-dashboard':'Dashboard Marketing','marketing-campaigns':'Campanhas','marketing-create':'Criar Campanha','marketing-automations':'Automações','marketing-whatsapp':'WhatsApp','marketing-email':'E-mail Marketing','marketing-coupons':'Cupons e Promoções','marketing-links':'Links, UTMs e QR Codes','marketing-affiliates':'Afiliados e Parceiros','marketing-tracking':'Pixel & Analytics','marketing-communications':'Integrações de Comunicação','marketing-reports':'Relatórios de Marketing',
@@ -63,7 +63,7 @@ export default function App(){
  const normalizeEvents=(rows:any[]):EventItem[]=>rows.map((e:any)=>({id:e.id,code:String(e.code),title:e.title,venue:e.venue,city:e.city,date:e.date,endDate:e.endDate||undefined,total:((e.totalCents||0)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}),sales:e.sales||0,available:e.available||0,courtesy:e.courtesy||0,occupancy:`${Number(e.occupancy||0).toFixed(1)}%`,cover:e.cover||'nature',badge:e.badge||undefined,status:e.status||'ativo',description:e.description||undefined,category:e.category||undefined,producer:e.producer?.name||'',visibility:e.visibility||'publico',producerId:e.producerId}))
  const loadScopeData=async(u:AppUser,producerSelection:number|'all')=>{const requested=isGlobalAdmin(u)?(producerSelection==='all'?undefined:producerSelection):(u.producerId||undefined);const rows=await getEvents(requested);setEvents(normalizeEvents(rows))}
  useEffect(()=>{if(!hasStoredToken())return;let active=true;(async()=>{try{const u=await getMe();if(!active)return;setUser(u);const producerSelection:number|'all'=isGlobalAdmin(u)?'all':(u.producerId||'all');setSelectedProducer(producerSelection);setPage(firstPageFor(u));const tasks:any[]=[loadScopeData(u,producerSelection)];if(isGlobalAdmin(u))tasks.push(getProducers().then(setProducers),getUsers().then(setUsers));await Promise.all(tasks)}catch{clearApiToken();if(active)setUser(null)}})();return()=>{active=false}} ,[])
- if(!user) return <LoginPage onLogin={async(email,password,remember)=>{
+  if(!user) return <LoginPage onLogin={async(email,password,remember)=>{
     try {
       const result=await apiLogin(email,password);
       setApiToken(result.token,remember);
@@ -76,47 +76,41 @@ export default function App(){
       if(isGlobalAdmin(u)){try{const [ps,us]=await Promise.all([getProducers(),getUsers()]);setProducers(ps);setUsers(us)}catch{}}
       return u;
     } catch {
-      const cleanEmail = email.toLowerCase().trim();
-      const u = seedUsers.find(x => x.email.toLowerCase() === cleanEmail) ||
-        (cleanEmail.includes('prime') || cleanEmail.includes('vinicius') ? seedUsers.find(x => x.email === 'vinicius@diskingressos.com.br') : null) ||
-        (cleanEmail.includes('admin') ? seedUsers.find(x => x.email === 'admin@diskingressos.com.br') : null) ||
-        (cleanEmail.includes('finan') ? seedUsers.find(x => x.email === 'financeiro@fep.com.br') : null) ||
-        (cleanEmail.includes('mkt') || cleanEmail.includes('marketing') ? seedUsers.find(x => x.email === 'marketing@diskingressos.com.br') : null) ||
-        seedUsers[0];
-      const producerSelection:number|'all'=isGlobalAdmin(u)?'all':(u.producerId||'all');
-      setUser(u);
-      setSelectedProducer(producerSelection);
-      setPage(firstPageFor(u));
-      return u;
+      const fallback = seedUsers.find(su => su.email.toLowerCase() === email.toLowerCase()) || seedUsers[0];
+      setApiToken('demo-token-16-6', remember);
+      setUser(fallback);
+      setSelectedProducer(isGlobalAdmin(fallback) ? 'all' : (fallback.producerId || 'all'));
+      setPage(firstPageFor(fallback));
+      return fallback;
     }
   }}/>
- const editEvent=(e:EventItem)=>{setSelectedEvent(e);setPage('edit-event')}; const openLots=(e:EventItem)=>{setSelectedEvent(e);setPage('lots')}; const openEventContext=(e:EventItem)=>{setSelectedEvent(e);setPage('event-dashboard');window.history.pushState({},'',`/eventos/${e.code}/dashboard`);window.scrollTo({top:0})}; const openDashboard=openEventContext
- const saveEvent=(event:EventItem)=>{const producerId=isGlobalAdmin(user)?(scopedProducerId||producers[0].id):(user.producerId||1);const producer=producers.find(p=>p.id===producerId)?.name||event.producer;const secured={...event,producerId,producer};const exists=events.some(e=>e.id===secured.id);setEvents(prev=>exists?prev.map(e=>e.id===secured.id?secured:e):[secured,...prev]);notify(exists?'Alterações salvas com sucesso.':'Evento criado com sucesso.');setSelectedEvent(null);setPage('events')}
- const navigate=(next:PageKey)=>{if(next!=='profile-dashboard'&&!canAccess(user,areaFor(next))){notify('Seu perfil não possui permissão para este módulo.');return}if(next==='new-event')setSelectedEvent(null);setPage(next);if(selectedEvent&&eventContextPages.has(next)){window.history.pushState({},'',`/eventos/${selectedEvent.code}/${next.replace('event-','')}`)}else if(next==='events'){window.history.pushState({},'','/eventos')}window.scrollTo({top:0})}
- const toggleCheckin=(id:number)=>{if(!visibleParticipants.some(p=>p.id===id))return;setParticipants(prev=>prev.map(p=>p.id===id?{...p,checkin:p.checkin==='presente'?'pendente':'presente',checkinTime:p.checkin==='presente'?undefined:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),gate:p.checkin==='presente'?undefined:'Portão A'}:p));notify('Status de check-in atualizado.')}
- const financePlaceholder=['finance-advance','finance-split','finance-intelligence','finance-methods','finance-custom','finance-operators','finance-bank','finance-spread','finance-expenses','finance-bordero','finance-negotiations','finance-refunds'] as PageKey[]
- const logout=()=>{clearApiToken();setUser(null);setQuery('');setSelectedEvent(null);setSelectedProducer('all');window.history.replaceState({},'','/login')}
- return <div className="app-shell phase6-shell phase7-shell">
-   <Header query={query} onQuery={setQuery} user={user} producers={producers} selectedProducer={selectedProducer} onProducer={async v=>{setSelectedProducer(v);setSelectedEvent(null);await loadScopeData(user,v);if(isGlobalAdmin(user))setPage(v==='all'?'global-dashboard':'events')}} onLogout={logout}/>
-   {inEventContext&&selectedEvent?<EventContextSidebar event={selectedEvent} page={page} onNavigate={navigate} onBack={()=>{setSelectedEvent(null);setPage('events');window.history.pushState({},'','/eventos');window.scrollTo({top:0})}} canAdmin={canAccess(user,'admin')}/>:<ModuleSidebar module={module} page={page} onNavigate={navigate} onHome={()=>navigate(isGlobalAdmin(user)?'global-dashboard':'profile-dashboard')} canAdmin={canAccess(user,'admin')} user={user}/>}
-   <div className="module-titlebar"><h1>{titleMap[page]||'DiskIngressos'}</h1><div className="scope-pill">{inEventContext&&selectedEvent?`Evento ${selectedEvent.code}`:(scopedProducerId===null?'Visão global':producers.find(p=>p.id===scopedProducerId)?.name)}</div></div>
-   <main className="content phase6-content">
-     {page==='profile-dashboard'&&!isGlobalAdmin(user)&&<ProfileDashboardPage user={user} producer={producers.find(p=>p.id===user.producerId)} events={visibleEvents} participants={visibleParticipants} onNavigate={navigate}/>}
-     {page==='global-dashboard'&&isGlobalAdmin(user)&&<GlobalDashboardPage events={events} producers={producers} users={users} onAllEvents={()=>{setSelectedProducer('all');setPage('events')}} onSelectProducer={async id=>{setSelectedProducer(id);setSelectedEvent(null);await loadScopeData(user,id);setPage('events')}}/>}
-     {page==='admin-hub'&&<AdminHubPage onNavigate={navigate}/>}
-     {page==='admin-users'&&<UsersPage users={users} setUsers={setUsers} currentUser={user} producers={producers} notify={notify}/>}
-     {page==='admin-producers'&&<ProducersPage producers={producers} setProducers={setProducers} notify={notify}/>}
-     {page==='admin-permissions'&&<PermissionsPage notify={notify}/>}
-     {page==='admin-audit'&&<AuditPage notify={notify}/>}
-     {page==='admin-security'&&<SecurityPage notify={notify}/>} 
-     {page==='finance-hub'&&<FinanceHubPage onNavigate={navigate}/>} 
-     {page==='operations'&&<OperationsPage producerId={scopedProducerId} producerName={scopedProducerId===null?'Todas as produtoras':(producers.find(p=>p.id===scopedProducerId)?.name||'Produtora')} notify={notify}/>} 
-     {page==='events'&&<EventsPage events={visibleEvents} query={query} status={status} setStatus={setStatus} view={view} setView={setView} onEdit={editEvent} onLots={openLots} onDashboard={openDashboard} onOpen={openEventContext}/>} 
-     {page==='new-event'&&<EventFormPage mode="new" onCancel={()=>setPage('events')} onSave={saveEvent}/>} {page==='edit-event'&&<EventFormPage mode="edit" event={selectedEvent} onCancel={()=>setPage('events')} onSave={saveEvent}/>} 
-     {page==='lots'&&<LotsPage events={visibleEvents} selectedEvent={selectedEvent} onSelect={setSelectedEvent} onBack={()=>setPage('events')}/>} 
-     {page==='participants'&&<ParticipantsPage events={visibleEvents} participants={visibleParticipants} onToggleCheckin={toggleCheckin}/>} {page==='facial'&&<FacialPage participants={visibleParticipants}/>} 
-     {page==='event-utm'&&<UtmConversionsCenter event={(selectedEvent || visibleEvents[0] || seedEvents[0]) as any} notify={notify}/>}
-     {selectedEvent&&eventContextPages.has(page)&&page!=='event-utm'&&visibleEvents.some(e=>e.id===selectedEvent.id)&&<EventContextPage event={selectedEvent} participants={visibleParticipants} page={page} onNavigate={navigate} notify={notify}/>} 
+  const editEvent=(e:EventItem)=>{setSelectedEvent(e);setPage('edit-event')}; const openLots=(e:EventItem)=>{setSelectedEvent(e);setPage('lots')}; const openEventContext=(e:EventItem)=>{setSelectedEvent(e);setPage('event-dashboard');window.history.pushState({},'',`/eventos/${e.code}/dashboard`);window.scrollTo({top:0})}; const openDashboard=openEventContext
+  const saveEvent=(event:EventItem)=>{const producerId=isGlobalAdmin(user)?(scopedProducerId||producers[0].id):(user.producerId||1);const producer=producers.find(p=>p.id===producerId)?.name||event.producer;const secured={...event,producerId,producer};const exists=events.some(e=>e.id===secured.id);setEvents(prev=>exists?prev.map(e=>e.id===secured.id?secured:e):[secured,...prev]);notify(exists?'Alterações salvas com sucesso.':'Evento criado com sucesso.');setSelectedEvent(null);setPage('events')}
+  const navigate=(next:PageKey)=>{if(next!=='profile-dashboard'&&!canAccess(user,areaFor(next))){notify('Seu perfil não possui permissão para este módulo.');return}if(next==='new-event')setSelectedEvent(null);setPage(next);if(selectedEvent&&eventContextPages.has(next)){window.history.pushState({},'',`/eventos/${selectedEvent.code}/${next.replace('event-','')}`)}else if(next==='events'){window.history.pushState({},'','/eventos')}window.scrollTo({top:0})}
+  const toggleCheckin=(id:number)=>{if(!visibleParticipants.some(p=>p.id===id))return;setParticipants(prev=>prev.map(p=>p.id===id?{...p,checkin:p.checkin==='presente'?'pendente':'presente',checkinTime:p.checkin==='presente'?undefined:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),gate:p.checkin==='presente'?undefined:'Portão A'}:p));notify('Status de check-in atualizado.')}
+  const financePlaceholder=['finance-advance','finance-split','finance-intelligence','finance-methods','finance-custom','finance-operators','finance-bank','finance-spread','finance-expenses','finance-bordero','finance-negotiations','finance-refunds'] as PageKey[]
+  const logout=()=>{clearApiToken();setUser(null);setQuery('');setSelectedEvent(null);setSelectedProducer('all');window.history.replaceState({},'','/login')}
+  return <div className="app-shell phase6-shell phase7-shell">
+    <Header query={query} onQuery={setQuery} user={user} producers={producers} selectedProducer={selectedProducer} onProducer={async v=>{setSelectedProducer(v);setSelectedEvent(null);await loadScopeData(user,v);if(isGlobalAdmin(user))setPage(v==='all'?'global-dashboard':'events')}} onLogout={logout}/>
+    {inEventContext&&selectedEvent?<EventContextSidebar event={selectedEvent} page={page} onNavigate={navigate} onBack={()=>{setSelectedEvent(null);setPage('events');window.history.pushState({},'','/eventos');window.scrollTo({top:0})}} canAdmin={canAccess(user,'admin')}/>:<ModuleSidebar module={module} page={page} onNavigate={navigate} onHome={()=>navigate(isGlobalAdmin(user)?'global-dashboard':'profile-dashboard')} canAdmin={canAccess(user,'admin')} user={user}/>}
+    <div className="module-titlebar"><h1>{titleMap[page]||'DiskIngressos'}</h1><div className="scope-pill">{inEventContext&&selectedEvent?`Evento ${selectedEvent.code}`:(scopedProducerId===null?'Visão global':producers.find(p=>p.id===scopedProducerId)?.name)}</div></div>
+    <main className="content phase6-content">
+      {page==='profile-dashboard'&&!isGlobalAdmin(user)&&<ProfileDashboardPage user={user} producer={producers.find(p=>p.id===user.producerId)} events={visibleEvents} participants={visibleParticipants} onNavigate={navigate}/>}
+      {page==='global-dashboard'&&isGlobalAdmin(user)&&<GlobalDashboardPage events={events} producers={producers} users={users} onAllEvents={()=>{setSelectedProducer('all');setPage('events')}} onSelectProducer={async id=>{setSelectedProducer(id);setSelectedEvent(null);await loadScopeData(user,id);setPage('events')}}/>}
+      {page==='admin-hub'&&<AdminHubPage onNavigate={navigate}/>}
+      {page==='admin-users'&&<UsersPage users={users} setUsers={setUsers} currentUser={user} producers={producers} notify={notify}/>}
+      {page==='admin-producers'&&<ProducersPage producers={producers} setProducers={setProducers} notify={notify}/>}
+      {page==='admin-permissions'&&<PermissionsPage notify={notify}/>}
+      {page==='admin-audit'&&<AuditPage notify={notify}/>}
+      {page==='admin-security'&&<SecurityPage notify={notify}/>} 
+      {page==='finance-hub'&&<FinanceHubPage onNavigate={navigate}/>} 
+      {page==='operations'&&<OperationsPage producerId={scopedProducerId} producerName={scopedProducerId===null?'Todas as produtoras':(producers.find(p=>p.id===scopedProducerId)?.name||'Produtora')} notify={notify}/>} 
+      {page==='events'&&<EventsPage events={visibleEvents} query={query} status={status} setStatus={setStatus} view={view} setView={setView} onEdit={editEvent} onLots={openLots} onDashboard={openDashboard} onOpen={openEventContext}/>} 
+      {page==='new-event'&&<EventFormPage mode="new" onCancel={()=>setPage('events')} onSave={saveEvent}/>} {page==='edit-event'&&<EventFormPage mode="edit" event={selectedEvent} onCancel={()=>setPage('events')} onSave={saveEvent}/>} 
+      {page==='lots'&&<LotsPage events={visibleEvents} selectedEvent={selectedEvent} onSelect={setSelectedEvent} onBack={()=>setPage('events')}/>} 
+      {page==='participants'&&<ParticipantsPage events={visibleEvents} participants={visibleParticipants} onToggleCheckin={toggleCheckin}/>} {page==='facial'&&<FacialPage participants={visibleParticipants}/>} 
+      {page==='event-utm'&&<UtmConversionsCenter event={(selectedEvent || visibleEvents[0] || seedEvents[0]) as any} notify={notify}/>}
+      {selectedEvent&&eventContextPages.has(page)&&page!=='event-utm'&&visibleEvents.some(e=>e.id===selectedEvent.id)&&<EventContextPage event={selectedEvent} participants={visibleParticipants} page={page} onNavigate={navigate} notify={notify}/>} 
      {page==='finance'&&<FinancePage events={visibleEvents} initialTab="overview" notify={notify}/>} {page==='finance-sales'&&<FinancePage events={visibleEvents} initialTab="sales" notify={notify}/>} {page==='finance-payouts'&&<FinancePage events={visibleEvents} initialTab="payouts" notify={notify}/>} {page==='finance-cashflow'&&<FinancePage events={visibleEvents} initialTab="cashflow" notify={notify}/>} {page==='finance-statement'&&<FinancePage events={visibleEvents} initialTab="statement" notify={notify}/>} 
      {financePlaceholder.includes(page)&&<ModulePlaceholder title={titleMap[page]||'Módulo Financeiro'} description="Estrutura visual já incorporada ao template global. O acesso a este módulo respeita o perfil e a produtora autenticada." onBack={()=>setPage('finance-hub')}/>} 
 

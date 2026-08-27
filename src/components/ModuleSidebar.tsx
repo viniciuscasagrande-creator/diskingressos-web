@@ -37,18 +37,13 @@ const financeAdvanced:Item[]=[
  {key:'finance-custom',label:'Pagam. Customizados',icon:Settings},{key:'finance-operators',label:'Operadoras de Cartão',icon:ShieldCheck},
 ]
 const eventMain:Item[]=[
- {key:'profile-dashboard',label:'Meu Dashboard',icon:LayoutDashboard},
- {key:'events',label:'Todos os Eventos',icon:Ticket},
- {key:'event-utm',label:'Central UTM & Conversões',icon:Link2},
- {key:'operations',label:'Núcleo Operacional',icon:ChartNoAxesCombined},
+ {key:'profile-dashboard',label:'Meu Dashboard',icon:LayoutDashboard}, {key:'events',label:'Hub de Eventos',icon:LayoutDashboard},{key:'operations',label:'Núcleo Operacional',icon:ChartNoAxesCombined},{key:'events',label:'Todos os Eventos',icon:Ticket},
  {key:'new-event',label:'Novo Evento',icon:PlusSquare},{key:'lots',label:'Configurar Lotes',icon:SlidersHorizontal},
  {key:'participants',label:'Participantes',icon:Users},{key:'facial',label:'Status Faciais',icon:ScanFace},
 ]
 const eventAdvanced:Item[]=[]
 const adminMain:Item[]=[
  {key:'global-dashboard',label:'Visão Geral',icon:LayoutDashboard},
- {key:'events',label:'Todos os Eventos',icon:Ticket},
- {key:'event-utm',label:'Central UTM & Conversões',icon:Link2},
  {key:'admin-hub',label:'Central Administrativa',icon:LayoutDashboard},{key:'admin-users',label:'Usuários e Acessos',icon:UserCog},
  {key:'admin-producers',label:'Produtoras',icon:Building2},{key:'admin-permissions',label:'Perfis e Permissões',icon:ShieldCheck},
  {key:'admin-audit',label:'Logs de Auditoria',icon:ScrollText},{key:'admin-security',label:'Segurança',icon:LockKeyhole},
