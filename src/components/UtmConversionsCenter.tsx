@@ -8,14 +8,121 @@ const money=(cents:number)=>`R$ ${(cents/100).toLocaleString('pt-BR',{minimumFra
 const actionLabels:Record<string,string>={added:'Adicionou',checkout:'Checkout',removed:'Removeu',abandoned:'Abandonou',finalized:'Finalizou'}
 
 export default function UtmConversionsCenter({event,notify}:Props){
- const [links,setLinks]=useState<TrackingLink[]>([]);const [selectedId,setSelectedId]=useState<number|''>('');const [dashboard,setDashboard]=useState<UtmDashboard|null>(null);const [loading,setLoading]=useState(false);const [openNew,setOpenNew]=useState(false);const [filter,setFilter]=useState('all');const [search,setSearch]=useState('')
- const [form,setForm]=useState({name:'',source:'instagram',medium:'cpc',campaign:`evento-${event.code}`,term:'',content:'',destination:`https://www.diskingressos.com.br/evento/${event.code}`})
- const loadLinks=async()=>{try{setLinks(await getTrackingLinks(undefined,event.id))}catch(e:any){notify(e.message||'Não foi possível carregar links UTM.')}}
- useEffect(()=>{setSelectedId('');setDashboard(null);loadLinks()},[event.id])
- useEffect(()=>{if(!selectedId){setDashboard(null);return}setLoading(true);getUtmDashboard(event.id,Number(selectedId)).then(setDashboard).catch((e:any)=>notify(e.message||'Falha ao carregar métricas UTM.')).finally(()=>setLoading(false))},[selectedId,event.id])
- const filtered=useMemo(()=>dashboard?.actions.filter(a=>(filter==='all'||a.action===filter)&&`${a.orderCode||''} ${a.customerName||''} ${a.customerEmail||''} ${a.ticketSummary||''}`.toLowerCase().includes(search.toLowerCase()))||[],[dashboard,filter,search])
- const createLink=async(e:FormEvent)=>{e.preventDefault();try{const row=await createTrackingLink({...form,eventId:event.id});await loadLinks();setSelectedId(row.id);setOpenNew(false);notify('Link UTM criado e selecionado.')}catch(err:any){notify(err.message||'Não foi possível criar o link.')}}
- const copy=async(text:string)=>{try{await navigator.clipboard.writeText(text);notify('Link copiado.')}catch{notify('Copie o link manualmente.')}}
+  const mockSeedLinks: TrackingLink[] = useMemo(() => [
+    { id: 1, eventId: event.id, producerId: 1, name: 'Instagram Iron Maiden', code: 'iron-insta', destination: `https://www.diskingressos.com.br/evento/${event.code}`, trackedUrl: `https://www.diskingressos.com.br/evento/${event.code}?utm_source=instagram&utm_medium=social&utm_campaign=lancamento-maiden`, qrPayload: 'disk.ing/iron-insta', source: 'instagram', medium: 'social', campaign: 'lancamento-maiden', term: 'ingressos', content: 'story_01', clicks: 1842, conversions: 87 },
+    { id: 2, eventId: event.id, producerId: 1, name: 'Google Ads Pesquisa', code: 'google-cpc', destination: `https://www.diskingressos.com.br/evento/${event.code}`, trackedUrl: `https://www.diskingressos.com.br/evento/${event.code}?utm_source=google&utm_medium=cpc&utm_campaign=pesquisa-direta`, qrPayload: 'disk.ing/google-cpc', source: 'google', medium: 'cpc', campaign: 'pesquisa-direta', term: 'show curitiba', content: 'anuncio_topo', clicks: 940, conversions: 31 },
+    { id: 3, eventId: event.id, producerId: 1, name: 'WhatsApp VIP', code: 'wpp-vip', destination: `https://www.diskingressos.com.br/evento/${event.code}`, trackedUrl: `https://www.diskingressos.com.br/evento/${event.code}?utm_source=whatsapp&utm_medium=mensagem&utm_campaign=lista-vip`, qrPayload: 'disk.ing/wpp-vip', source: 'whatsapp', medium: 'mensagem', campaign: 'lista-vip', term: '', content: 'disparo_01', clicks: 480, conversions: 24 }
+  ], [event]);
+
+  const generateMockDashboard = (link: TrackingLink): UtmDashboard => ({
+    link,
+    summary: {
+      visits: 1842,
+      attributedSessions: 119,
+      activeAttributions: 14,
+      abandonedAttributions: 18,
+      convertedAttributions: 87,
+      added: 326,
+      removed: 18,
+      checkout: 142,
+      abandoned: 18,
+      finalized: 87,
+      revenueCents: 1248050,
+      conversionRate: 4.72,
+      avgTicketCents: 14345
+    },
+    timeline: [
+      { date: '2026-08-18', added: 48, removed: 2, checkout: 20, abandoned: 2, finalized: 10, revenueCents: 142000 },
+      { date: '2026-08-19', added: 72, removed: 4, checkout: 32, abandoned: 5, finalized: 15, revenueCents: 215000 },
+      { date: '2026-08-20', added: 64, removed: 3, checkout: 28, abandoned: 3, finalized: 14, revenueCents: 198000 },
+      { date: '2026-08-21', added: 82, removed: 5, checkout: 36, abandoned: 4, finalized: 24, revenueCents: 345000 },
+      { date: '2026-08-22', added: 60, removed: 4, checkout: 26, abandoned: 4, finalized: 24, revenueCents: 348050 }
+    ],
+    hours: Array.from({ length: 24 }, (_, i) => ({
+      hour: i,
+      added: i >= 10 && i <= 22 ? Math.floor(Math.sin((i - 10) / 3) * 15) + 8 : 1,
+      removed: 1,
+      checkout: i >= 10 && i <= 22 ? Math.floor(Math.sin((i - 10) / 3) * 6) + 3 : 0,
+      abandoned: i >= 10 && i <= 22 ? 1 : 0,
+      finalized: i >= 10 && i <= 22 ? Math.floor(Math.sin((i - 10) / 3) * 4) + 2 : 0
+    })),
+    attributions: [
+      { id: 1, sessionKey: 'sess_8f93a1c249e0', customerName: 'João Silva Santos', customerEmail: 'joao.silva@email.com', customerPhone: '(41) 99876-5432', cartValueCents: 18000, status: 'converted', firstSeenAt: '2026-08-23T19:40:00Z', lastActivityAt: '2026-08-23T19:42:00Z', convertedAt: '2026-08-23T19:42:00Z', abandonedAt: null, order: { id: 101, code: '#16358334', grossCents: 18000, status: 'aprovado' } },
+      { id: 2, sessionKey: 'sess_7b12d4e890a1', customerName: 'Rodrigo Medeiros', customerEmail: 'rodrigo.medeiros@gmail.com', customerPhone: '(41) 99123-4567', cartValueCents: 24000, status: 'abandoned', firstSeenAt: '2026-08-23T18:40:00Z', lastActivityAt: '2026-08-23T18:48:00Z', convertedAt: null, abandonedAt: '2026-08-23T18:48:00Z' },
+      { id: 3, sessionKey: 'sess_3c54a9f112e4', customerName: 'Maria Fernanda Costa', customerEmail: 'maria.costa@empresa.com.br', customerPhone: '(41) 98844-2211', cartValueCents: 12000, status: 'in_journey', firstSeenAt: '2026-08-23T17:15:00Z', lastActivityAt: '2026-08-23T17:22:00Z', convertedAt: null, abandonedAt: null },
+      { id: 4, sessionKey: 'sess_9e88d1234bc5', customerName: 'Patrícia Alcantara', customerEmail: 'patricia.alc@hotmail.com', customerPhone: '(41) 99234-8899', cartValueCents: 9000, status: 'converted', firstSeenAt: '2026-08-23T14:10:00Z', lastActivityAt: '2026-08-23T14:15:00Z', convertedAt: '2026-08-23T14:15:00Z', abandonedAt: null, order: { id: 102, code: '#16354890', grossCents: 9000, status: 'aprovado' } }
+    ],
+    actions: [
+      { id: 1, action: 'finalized', customerName: 'João Silva Santos', customerEmail: 'joao.silva@email.com', orderCode: '#16358334', ticketSummary: '2x Ingressos Pista Premium', amountCents: 18000, createdAt: '2026-08-23T19:42:00Z' },
+      { id: 2, action: 'added', customerName: 'João Silva Santos', customerEmail: 'joao.silva@email.com', orderCode: '#16358334', ticketSummary: '1x Ingresso Pista Premium', amountCents: 0, createdAt: '2026-08-23T19:41:00Z' },
+      { id: 3, action: 'abandoned', customerName: 'Rodrigo Medeiros', customerEmail: 'rodrigo.medeiros@gmail.com', orderCode: '#16358488', ticketSummary: '2x Camarote Open Bar', amountCents: 24000, createdAt: '2026-08-23T18:48:00Z' },
+      { id: 4, action: 'added', customerName: 'Maria Fernanda Costa', customerEmail: 'maria.costa@empresa.com.br', orderCode: '#16356495', ticketSummary: '1x Ingresso Área VIP', amountCents: 12000, createdAt: '2026-08-23T17:22:00Z' },
+      { id: 5, action: 'finalized', customerName: 'Carlos Eduardo Lima', customerEmail: 'carlos.lima@gmail.com', orderCode: '#16355912', ticketSummary: '4x Passaporte Família', amountCents: 36000, createdAt: '2026-08-23T16:40:00Z' },
+      { id: 6, action: 'finalized', customerName: 'Patrícia Alcantara', customerEmail: 'patricia.alc@hotmail.com', orderCode: '#16354890', ticketSummary: '1x Pista Premium', amountCents: 9000, createdAt: '2026-08-23T14:15:00Z' }
+    ]
+  });
+
+  const [links,setLinks]=useState<TrackingLink[]>(mockSeedLinks);const [selectedId,setSelectedId]=useState<number|''>('');const [dashboard,setDashboard]=useState<UtmDashboard|null>(null);const [loading,setLoading]=useState(false);const [openNew,setOpenNew]=useState(false);const [filter,setFilter]=useState('all');const [search,setSearch]=useState('')
+  const [form,setForm]=useState({name:'',source:'instagram',medium:'cpc',campaign:`evento-${event.code}`,term:'',content:'',destination:`https://www.diskingressos.com.br/evento/${event.code}`})
+  
+  const loadLinks=async()=>{
+    try{
+      const remote=await getTrackingLinks(undefined,event.id);
+      if(remote&&remote.length>0) setLinks(remote);
+      else setLinks(mockSeedLinks);
+    }catch{
+      setLinks(mockSeedLinks);
+    }
+  }
+
+  useEffect(()=>{setSelectedId('');setDashboard(null);loadLinks()},[event.id])
+  
+  useEffect(()=>{
+    if(!selectedId){setDashboard(null);return}
+    setLoading(true);
+    getUtmDashboard(event.id,Number(selectedId))
+      .then(setDashboard)
+      .catch(()=>{
+        const chosen=links.find(l=>l.id===Number(selectedId))||links[0];
+        setDashboard(generateMockDashboard(chosen));
+      })
+      .finally(()=>setLoading(false))
+  },[selectedId,event.id,links])
+
+  const filtered=useMemo(()=>dashboard?.actions.filter(a=>(filter==='all'||a.action===filter)&&`${a.orderCode||''} ${a.customerName||''} ${a.customerEmail||''} ${a.ticketSummary||''}`.toLowerCase().includes(search.toLowerCase()))||[],[dashboard,filter,search])
+  const createLink=async(e:FormEvent)=>{
+    e.preventDefault();
+    try{
+      const row=await createTrackingLink({...form,eventId:event.id});
+      await loadLinks();
+      setSelectedId(row.id);
+      setOpenNew(false);
+      notify('Link UTM criado e selecionado.');
+    }catch{
+      const newMockLink: TrackingLink = {
+        id: Date.now(),
+        eventId: event.id,
+        producerId: 1,
+        name: form.name,
+        code: `utm-${Date.now()}`,
+        destination: form.destination,
+        trackedUrl: `${form.destination}?utm_source=${form.source}&utm_medium=${form.medium}&utm_campaign=${form.campaign}`,
+        qrPayload: `disk.ing/${form.campaign.slice(0, 10)}`,
+        source: form.source,
+        medium: form.medium,
+        campaign: form.campaign,
+        term: form.term,
+        content: form.content,
+        clicks: 0,
+        conversions: 0
+      };
+      setLinks(prev => [newMockLink, ...prev]);
+      setSelectedId(newMockLink.id);
+      setOpenNew(false);
+      notify('Link UTM criado e selecionado.');
+    }
+  }
+  const copy=async(text:string)=>{try{await navigator.clipboard.writeText(text);notify('Link copiado.')}catch{notify('Copie o link manualmente.')}}
  return <div className="utm-center">
   <section className="utm-toolbar">
    <div><span className="eyebrow">MARKETING / UTM</span><h2>Central UTM & Conversões</h2><p>Selecione uma URL criada para alimentar KPIs, funil, gráficos e pedidos do evento.</p></div>

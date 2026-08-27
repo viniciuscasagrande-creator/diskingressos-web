@@ -8,7 +8,7 @@ import {
 import type { EventItem } from '../data/events'
 import type { Participant } from '../data/participants'
 import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
-import { EventUtmCentralPage } from './marketing/EventUtmCentralPage'
+import UtmConversionsCenter from '../components/UtmConversionsCenter'
 import type { PageKey } from '../components/ModuleSidebar'
 
 type Props={event:EventItem;participants:Participant[];page:PageKey;onNavigate:(p:PageKey)=>void;notify:(message:string)=>void}
@@ -21,7 +21,7 @@ export default function EventContextPage({event,participants,page,onNavigate,not
  if(page==='event-reports') return <Reports event={event} people={people} notify={notify}/>
  if(page==='event-details') return <Details event={event} notify={notify}/>
  if(page==='event-pixel') return <Tracking event={event} notify={notify}/>
- if(page==='event-utm') return <EventUtmCentralPage event={event as any} notify={notify}/>
+ if(page==='event-utm') return <UtmConversionsCenter event={event} notify={notify}/>
  if(page==='event-ga4') return <Ga4 event={event}/>
  if(page==='event-traffic') return <Traffic event={event}/>
  if(page==='event-meta-ads') return <MetaAds event={event} notify={notify}/>
