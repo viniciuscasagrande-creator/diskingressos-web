@@ -182,3 +182,10 @@
     border-right-color: var(--border);
   }
 }
+
+/* Fase 16.8.1 — entrada única para a Central UTM */
+.utm-event-picker{display:flex;flex-direction:column;gap:6px;min-width:min(100%,360px);font-size:12px;color:#64748b;font-weight:700}
+.utm-event-picker select{min-height:42px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;padding:0 12px;color:#0f172a;font:inherit}
+.utm-event-picker select:focus{outline:none;border-color:#1677ff;box-shadow:0 0 0 3px rgba(22,119,255,.10)}
+.utm-event-empty{min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+@media(max-width:760px){.utm-event-picker{width:100%;min-width:0}.growth-intro.growth-actions{align-items:stretch}}

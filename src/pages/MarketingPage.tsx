@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowUpRight, BarChart3, Copy, Download, Link2, Megaphone, MousePointerClick, Plus, QrCode, Save, Settings2, TrendingUp, WalletCards } from 'lucide-react'
+import { ArrowUpRight, BarChart3, Download, Link2, Megaphone, MousePointerClick, Plus, Save, Settings2, TrendingUp, WalletCards } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import AutomationCenterPage from './AutomationCenterPage'
-import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
 import UtmConversionsCenter from '../components/UtmConversionsCenter'
-import { createMarketingCampaign, createTrackingLink, getMarketingCampaigns, getResolvedTracking, getTrackingConfigs, getTrackingLinks, saveTrackingConfig, updateMarketingCampaign, type MarketingCampaign, type ResolvedTracking, type TrackingConfig, type TrackingLink } from '../services/api'
+import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
+import { createMarketingCampaign, getMarketingCampaigns, getResolvedTracking, getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign, type MarketingCampaign, type ResolvedTracking, type TrackingConfig } from '../services/api'
 
 type Mode='hub'|'dashboard'|'campaigns'|'create'|'automations'|'whatsapp'|'email'|'coupons'|'links'|'affiliates'|'tracking'|'reports'
 type Props={events:EventItem[];producerName:string;producerId:number|null;mode:Mode;notify:(m:string)=>void}
@@ -18,7 +18,7 @@ export default function MarketingPage({events,producerName,producerId,mode,notif
  if(mode==='hub')return <section className="growth-page"><Context producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod}/><div className="growth-intro"><div><p className="eyebrow">MARKETING & GROWTH</p><h2>Hub Marketing</h2><p>Centralize aquisição, campanhas, automações, promoções e mensuração.</p></div></div><div className="module-card-grid">{modules.map(([title,desc])=><button key={title} className="finance-module-card marketing-card" onClick={()=>notify(`${title}: disponível no menu lateral.`)}><span className="module-card-icon"><Megaphone size={24}/></span><span><strong>{title}</strong><small>{desc}</small></span><ArrowUpRight size={18}/></button>)}</div></section>
  if(mode==='dashboard')return <Dashboard producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} eventName={eventName} notify={notify}/>
  if(mode==='campaigns'||mode==='create')return <Campaigns producerId={producerId} events={events} initialEventId={selectedEventId} createOnly={mode==='create'} notify={notify}/>
- if(mode==='links')return <UtmConversionsCenter event={events.find(e=>String(e.id)===eventId) || events[0]} notify={notify}/>
+ if(mode==='links')return <Links producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify}/>
  if(mode==='tracking')return <Tracking producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify}/>
  if(mode==='automations'||mode==='whatsapp'||mode==='email')return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify}/>
  return <FeaturePage title={featureTitle(mode)} eventName={eventName} producerName={producerName} notify={notify}/>
@@ -33,11 +33,34 @@ function Campaigns({producerId,events,initialEventId,createOnly,notify}:{produce
  return <section className="growth-page"><div className="growth-intro"><div><p className="eyebrow">MARKETING & GROWTH</p><h2>{createOnly?'Criar Campanha':'Campanhas'}</h2><p>Campanhas persistidas na API, isoladas por produtora e evento.</p></div></div><div className="phase12-split"><form className="growth-panel phase12-form" onSubmit={submit}><h3>Nova campanha</h3><label>Evento<select value={eventId||''} onChange={e=>setEventId(e.target.value?Number(e.target.value):undefined)}><option value="">Sem evento específico</option>{events.map(ev=><option key={ev.id} value={ev.id}>{ev.title}</option>)}</select></label><label>Nome<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Ex.: Último Lote"/></label><div className="phase12-form-grid"><label>Canal<select value={form.channel} onChange={e=>setForm({...form,channel:e.target.value})}><option value="instagram">Instagram</option><option value="google">Google</option><option value="whatsapp">WhatsApp</option><option value="email">E-mail</option><option value="afiliados">Afiliados</option></select></label><label>Orçamento (R$)<input type="number" min="0" step="0.01" value={form.budget} onChange={e=>setForm({...form,budget:e.target.value})}/></label></div><button className="btn primary" type="submit"><Plus size={17}/> Criar campanha</button></form>{!createOnly&&<article className="growth-panel"><div className="panel-head"><div><h3>Campanhas cadastradas</h3><p>{loading?'Carregando...':`${rows.length} campanha(s)`}</p></div></div><div className="table-scroll"><table className="growth-table"><thead><tr><th>Campanha</th><th>Canal</th><th>Status</th><th>Evento</th><th>Receita</th><th>Conversões</th><th>Ação</th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td><strong>{r.name}</strong></td><td>{r.channel}</td><td><span className={`status-badge ${r.status==='ativa'?'green':'orange'}`}>{r.status}</span></td><td>{r.event?.title||'Todos'}</td><td>{money(r.revenueCents)}</td><td>{r.conversions}</td><td><button className="icon-action" onClick={async()=>{await updateMarketingCampaign(r.id,{status:r.status==='ativa'?'pausada':'ativa'});notify('Status atualizado.');load()}}>{r.status==='ativa'?'Pausar':'Ativar'}</button></td></tr>)}</tbody></table></div></article>}</div></section>
 }
 
-function Links({producerId,events,initialEventId,notify}:{producerId:number|null;events:EventItem[];initialEventId?:number;notify:(m:string)=>void}){
- const [rows,setRows]=useState<TrackingLink[]>([]);const [eventId,setEventId]=useState<number|undefined>(initialEventId);const [form,setForm]=useState({name:'',destination:'https://www.diskingressos.com.br/',source:'instagram',medium:'social',campaign:''})
- const load=()=>getTrackingLinks(producerId||undefined,eventId).then(setRows).catch(e=>notify(e.message));useEffect(()=>{load();},[producerId,eventId])
- const submit=async(e:React.FormEvent)=>{e.preventDefault();try{await createTrackingLink({...form,producerId:producerId||undefined,eventId:eventId||undefined});setForm({...form,name:'',campaign:''});notify('Link rastreável criado.');load()}catch(err:any){notify(err.message)}}
- return <section className="growth-page"><div className="growth-intro"><div><p className="eyebrow">TRACKING</p><h2>Links, UTMs e QR Codes</h2><p>Crie URLs rastreáveis por produtora e evento.</p></div></div><form className="growth-panel phase12-form" onSubmit={submit}><div className="phase12-form-grid"><label>Evento<select value={eventId||''} onChange={e=>setEventId(e.target.value?Number(e.target.value):undefined)}><option value="">Todos / institucional</option>{events.map(ev=><option value={ev.id} key={ev.id}>{ev.title}</option>)}</select></label><label>Nome<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label></div><label>URL de destino<input required type="url" value={form.destination} onChange={e=>setForm({...form,destination:e.target.value})}/></label><div className="phase12-form-grid three"><label>utm_source<input value={form.source} onChange={e=>setForm({...form,source:e.target.value})}/></label><label>utm_medium<input value={form.medium} onChange={e=>setForm({...form,medium:e.target.value})}/></label><label>utm_campaign<input value={form.campaign} onChange={e=>setForm({...form,campaign:e.target.value})}/></label></div><button className="btn primary" type="submit"><Link2 size={17}/> Gerar link</button></form><div className="phase12-link-grid">{rows.map(r=><article className="growth-panel tracking-link-card" key={r.id}><div className="tracking-link-title"><div><strong>{r.name}</strong><small>{r.event?.title||'Todos os eventos'}</small></div><QrCode size={30}/></div><code>{r.trackedUrl}</code><div className="tracking-link-stats"><span>{r.clicks} cliques</span><span>{r.conversions} conversões</span></div><div className="page-actions"><button className="btn secondary" onClick={()=>{navigator.clipboard?.writeText(r.trackedUrl);notify('URL copiada.')}}><Copy size={16}/> Copiar URL</button><button className="btn secondary" onClick={()=>{navigator.clipboard?.writeText(r.qrPayload);notify('Destino do QR copiado.')}}><QrCode size={16}/> QR destino</button></div></article>)}</div></section>
+function Links({events,initialEventId,notify}:{producerId:number|null;events:EventItem[];initialEventId?:number;notify:(m:string)=>void}){
+ const [eventId,setEventId]=useState<number|undefined>(initialEventId)
+ const selectedEvent=events.find(e=>e.id===eventId)
+ return <section className="growth-page utm-marketing-entry">
+  <div className="growth-intro growth-actions">
+   <div>
+    <p className="eyebrow">TRACKING / CENTRAL UTM</p>
+    <h2>Links, UTMs & Conversões</h2>
+    <p>Selecione primeiro o evento. Dentro dele, uma URL UTM selecionada alimenta toda a análise em uma única tela.</p>
+   </div>
+   <label className="utm-event-picker">
+    <span>Evento em análise</span>
+    <select value={eventId||''} onChange={e=>setEventId(e.target.value?Number(e.target.value):undefined)}>
+     <option value="">Selecione um evento</option>
+     {events.map(ev=><option key={ev.id} value={ev.id}>{ev.code} · {ev.title}</option>)}
+    </select>
+   </label>
+  </div>
+  {!selectedEvent
+   ? <article className="growth-panel feature-empty utm-event-empty">
+      <Link2 size={36}/>
+      <h3>A Central UTM começa pelo evento</h3>
+      <p>Escolha um evento acima. A próxima etapa será selecionar uma URL rastreável; somente então KPIs, funil, gráficos e pedidos serão carregados.</p>
+      <div className="feature-badges"><span>Sem números fictícios</span><span>URL controla os gráficos</span><span>Atribuição por evento</span><span>Remarketing conectado</span></div>
+     </article>
+   : <UtmConversionsCenter event={selectedEvent} notify={notify}/>
+  }
+ </section>
 }
 
 function Tracking({producerId,events,initialEventId,notify}:{producerId:number|null;events:EventItem[];initialEventId?:number;notify:(m:string)=>void}){

@@ -1,7 +1,7 @@
 {
-  "name": "diskingressos-fase16-8-utm-focused",
+  "name": "diskingressos-fase16-8-1-utm-corrected",
   "private": true,
-  "version": "16.8.0",
+  "version": "16.8.1",
   "type": "module",
   "scripts": {
     "dev": "concurrently -n WEB,API -c auto \"vite\" \"tsx watch server/src/index.ts\"",

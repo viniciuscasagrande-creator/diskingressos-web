@@ -1,14 +1,14 @@
-import React from 'react';
-import type { EventItem } from '../../types/event';
-import { EventUtmCentralPage } from './EventUtmCentralPage';
+import type { EventItem } from '../../data/events'
+import EventUtmCentralPage from './EventUtmCentralPage'
 
 interface UtmLinksPageProps {
-  event?: EventItem;
-  notify?: (msg: string) => void;
+  event?: EventItem
+  notify?: (message: string) => void
 }
 
-export const UtmLinksPage: React.FC<UtmLinksPageProps> = ({ event, notify }) => {
-  return <EventUtmCentralPage event={event} notify={notify} />;
-};
+/** Mantido para compatibilidade com módulos antigos do MarketingHub. */
+export function UtmLinksPage({ event, notify }: UtmLinksPageProps) {
+  return <EventUtmCentralPage event={event} notify={notify} />
+}
 
-export { EventUtmCentralPage };
+export { EventUtmCentralPage }
