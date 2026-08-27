@@ -104,22 +104,251 @@ function DashboardContent({data,eventId,linkId,refresh,filter,setFilter,search,s
  const s=data.summary
  const [sweeping,setSweeping]=useState(false)
  const runSweep=async()=>{setSweeping(true);try{const r=await sweepUtmAbandonments(eventId,linkId,30);notify(`${r.processed} sessão(ões) processada(s); ${r.recoveries} oportunidade(s) criada(s).`);await refresh()}catch(e:any){notify(e.message||'Falha ao detectar abandonos.')}finally{setSweeping(false)}}
- const funnel=[['Visitas',s.visits,'visits'],['Adicionou',s.added,'added'],['Checkout',s.checkout,'checkout'],['Abandonou',s.abandoned,'abandoned'],['Compra',s.finalized,'finalized']] as const
+ const funnel=[
+   ['Visitas',s.visits,'visits',<MousePointerClick size={16}/>],
+   ['Adicionou',s.added,'added',<ShoppingCart size={16}/>],
+   ['Checkout',s.checkout,'checkout',<Sparkles size={16}/>],
+   ['Abandonou',s.abandoned,'abandoned',<AlertTriangle size={16}/>],
+   ['Compra',s.finalized,'finalized',<CheckCircle2 size={16}/>]
+ ] as const
+ const maxFunnel=Math.max(1,s.visits)
  const maxTimeline=Math.max(1,...data.timeline.map(d=>d.added+d.removed+d.abandoned+d.finalized))
  const maxHour=Math.max(1,...data.hours.map(d=>d.added+d.removed+d.abandoned+d.finalized))
+ const peakHour=data.hours.reduce((max,h)=>{const tot=h.added+h.checkout+h.finalized;return tot>(max.tot||0)?{hour:h.hour,tot}:max},{hour:19,tot:0})
+
  return <>
-  <section className="utm-selected-card"><div className="utm-selected-main"><span className="utm-mini-label">URL SELECIONADA — TODA A TELA ABAIXO USA ESTE LINK</span><h3>{data.link.name}</h3><div className="utm-full-url">{data.link.trackedUrl}</div><div className="utm-tags"><span>src: {data.link.source||'-'}</span><span>med: {data.link.medium||'-'}</span><span>cam: {data.link.campaign||'-'}</span>{data.link.content&&<span>content: {data.link.content}</span>}</div></div><div className="utm-selected-actions"><button onClick={()=>copy(data.link.trackedUrl)}><Copy size={16}/> Copiar</button><button onClick={()=>notify(`QR Code preparado para: ${data.link.qrPayload}`)}><QrCode size={16}/> QR Code</button><a href={data.link.trackedUrl} target="_blank" rel="noreferrer"><ExternalLink size={16}/> Abrir</a></div></section>
-  <section className="utm-kpis utm-kpis-168"><Metric icon={<MousePointerClick size={17}/>} label="Visitas" value={s.visits.toLocaleString('pt-BR')} note="Cliques atribuídos"/><Metric icon={<Radar size={17}/>} label="Sessões UTM" value={String(s.attributedSessions)} note={`${s.activeAttributions} em jornada`}/><Metric icon={<ShoppingCart size={17}/>} label="Adicionou" value={String(s.added)} note={rate(s.added,s.visits)}/><Metric icon={<Sparkles size={17}/>} label="Checkout" value={String(s.checkout)} note={rate(s.checkout,s.added)}/><Metric icon={<CheckCircle2 size={17}/>} label="Finalizou" value={String(s.finalized)} note={rate(s.finalized,s.visits)}/><Metric icon={<CircleDollarSign size={17}/>} label="Receita" value={money(s.revenueCents)} note={`Ticket ${money(s.avgTicketCents)}`}/></section>
+  <section className="utm-selected-card">
+    <div className="utm-selected-main">
+      <span className="utm-mini-label">URL SELECIONADA — TODA A TELA ABAIXO USA ESTE LINK</span>
+      <h3>{data.link.name}</h3>
+      <div className="utm-full-url">{data.link.trackedUrl}</div>
+      <div className="utm-tags">
+        <span>src: {data.link.source||'-'}</span>
+        <span>med: {data.link.medium||'-'}</span>
+        <span>cam: {data.link.campaign||'-'}</span>
+        {data.link.content&&<span>content: {data.link.content}</span>}
+      </div>
+    </div>
+    <div className="utm-selected-actions">
+      <button onClick={()=>copy(data.link.trackedUrl)}><Copy size={15}/> Copiar</button>
+      <button onClick={()=>notify(`QR Code preparado para: ${data.link.qrPayload}`)}><QrCode size={15}/> QR Code</button>
+      <a href={data.link.trackedUrl} target="_blank" rel="noreferrer"><ExternalLink size={15}/> Abrir</a>
+    </div>
+  </section>
 
-  <section className="utm-section" ref={refs.funnel}><div className="utm-section-head"><div><span className="eyebrow">FUNIL & GRÁFICOS</span><h3>Funil de conversão da URL selecionada</h3></div><div className="utm-conversion-pill">Conversão geral <strong>{s.conversionRate.toFixed(2).replace('.',',')}%</strong></div></div><div className="utm-funnel">{funnel.map(([label,value,key],i)=><div className={`utm-funnel-step ${key}`} key={key}><div className="utm-funnel-box"><strong>{value.toLocaleString('pt-BR')}</strong><span>{label}</span><small>{i===0?'Topo do funil':rate(value,funnel[i-1][1])}</small></div>{i<funnel.length-1&&<div className="utm-funnel-arrow">→</div>}</div>)}</div></section>
+  <section className="utm-kpis utm-kpis-168">
+    <Metric icon={<MousePointerClick size={17}/>} label="Visitas" value={s.visits.toLocaleString('pt-BR')} note="Cliques atribuídos"/>
+    <Metric icon={<Radar size={17}/>} label="Sessões UTM" value={String(s.attributedSessions)} note={`${s.activeAttributions} em jornada`}/>
+    <Metric icon={<ShoppingCart size={17}/>} label="Adicionou" value={String(s.added)} note={rate(s.added,s.visits)}/>
+    <Metric icon={<Sparkles size={17}/>} label="Checkout" value={String(s.checkout)} note={rate(s.checkout,s.added)}/>
+    <Metric icon={<CheckCircle2 size={17}/>} label="Finalizou" value={String(s.finalized)} note={rate(s.finalized,s.visits)}/>
+    <Metric icon={<CircleDollarSign size={17}/>} label="Receita" value={money(s.revenueCents)} note={`Ticket ${money(s.avgTicketCents)}`}/>
+  </section>
 
-  <section className="utm-chart-grid"><div className="utm-section"><div className="utm-section-head"><div><span className="eyebrow">DESEMPENHO</span><h3>Volume de ações por data</h3></div></div>{data.timeline.length?<div className="utm-bars">{data.timeline.map(d=>{const total=d.added+d.removed+d.abandoned+d.finalized;return <div key={d.date} className="utm-bar-col"><div className="utm-bar" style={{height:`${Math.max(8,(total/maxTimeline)*150)}px`}} title={`${total} ações`}><span>{total}</span></div><small>{formatDate(d.date)}</small></div>})}</div>:<NoData/>}</div><div className="utm-section"><div className="utm-section-head"><div><span className="eyebrow">HORÁRIOS</span><h3>Distribuição por hora</h3></div></div><div className="utm-hour-bars">{data.hours.map(h=>{const total=h.added+h.removed+h.abandoned+h.finalized;return <div className="utm-hour-col" key={h.hour} title={`${h.hour}h · ${total} ações`}><div style={{height:`${Math.max(total?4:1,(total/maxHour)*120)}px`}}/><small>{h.hour%3===0?`${String(h.hour).padStart(2,'0')}h`:''}</small></div>})}</div></div></section>
+  <section className="utm-section utm-funnel-section" ref={refs.funnel}>
+    <div className="utm-section-head">
+      <div>
+        <span className="eyebrow">FUNIL & CONVERSÕES</span>
+        <h3>Funil de Conversão da URL Selecionada</h3>
+      </div>
+      <div className="utm-conversion-pill">
+        Taxa de conversão geral: <strong>{s.conversionRate.toFixed(2).replace('.',',')}%</strong>
+      </div>
+    </div>
+    <div className="utm-funnel-grid">
+      {funnel.map(([label,value,key,icon],i)=>{
+        const pctOfTop=Math.min(100,Math.max(8,(Number(value)/maxFunnel)*100));
+        const prevValue=i===0?Number(value):Number(funnel[i-1][1]);
+        const stepRate=i===0?'100%':rate(Number(value),prevValue);
+        return (
+          <div className={`utm-funnel-card ${key}`} key={key}>
+            <div className="utm-funnel-card-head">
+              <span className="utm-funnel-icon">{icon}</span>
+              <span className="utm-funnel-step-label">{label}</span>
+            </div>
+            <strong className="utm-funnel-value">{Number(value).toLocaleString('pt-BR')}</strong>
+            <div className="utm-funnel-progress-wrap">
+              <div className="utm-funnel-progress-bar" style={{width:`${pctOfTop}%`}}/>
+            </div>
+            <div className="utm-funnel-card-foot">
+              <small>{i===0?'Origem do tráfego':`${stepRate} da etapa anterior`}</small>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
 
-  <section className="utm-section" ref={refs.orders}><div className="utm-section-head utm-table-head"><div><span className="eyebrow">PEDIDOS & CONVERSÕES</span><h3>Jornada dos pedidos desta URL</h3></div><div className="utm-search"><Search size={14}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Pedido, cliente ou ingresso..."/></div></div><div className="utm-filter-tabs">{['all','added','checkout','removed','abandoned','finalized'].map(k=><button key={k} className={`${filter===k?'active ':''}${k}`} onClick={()=>setFilter(k)}>{k==='all'?'Todos':actionLabels[k]} ({k==='all'?data.actions.length:data.actions.filter(a=>a.action===k).length})</button>)}</div><div className="utm-table-wrap"><table className="utm-table"><thead><tr><th>Pedido</th><th>Etapa / Status</th><th>Cliente</th><th>Parâmetros UTM</th><th>Ingressos / Modalidades</th><th>Valor</th><th>Data / Hora</th></tr></thead><tbody>{filtered.map(a=><tr key={a.id}><td><b>{a.orderCode||'—'}</b></td><td><span className={`utm-action-badge ${a.action}`}>{actionLabels[a.action]}</span></td><td><b>{a.customerName||'Visitante'}</b><small>{a.customerEmail||'Sem e-mail'}</small></td><td><div className="utm-inline-tags"><span>src: {data.link.source||'-'}</span><span>med: {data.link.medium||'-'}</span><span>cam: {data.link.campaign||'-'}</span></div></td><td>{a.ticketSummary||'Sem modalidade'}</td><td><b>{money(a.amountCents)}</b></td><td>{new Date(a.createdAt).toLocaleString('pt-BR')}</td></tr>)}{!filtered.length&&<tr><td colSpan={7}><NoData/></td></tr>}</tbody></table></div></section>
+  <section className="utm-chart-grid">
+    <div className="utm-section utm-chart-panel">
+      <div className="utm-section-head">
+        <div>
+          <span className="eyebrow">DESEMPENHO POR PERÍODO</span>
+          <h3>Volume de Ações por Data</h3>
+        </div>
+        <div className="utm-chart-legend">
+          <span className="legend-dot green">Finalizou</span>
+          <span className="legend-dot purple">Checkout</span>
+          <span className="legend-dot blue">Adicionou</span>
+          <span className="legend-dot red">Abandonou</span>
+        </div>
+      </div>
+      {data.timeline.length ? (
+        <div className="utm-bars-modern">
+          {data.timeline.map(d=>{
+            const total=d.added+d.removed+d.abandoned+d.finalized;
+            const barHeight=Math.max(16,(total/maxTimeline)*140);
+            return (
+              <div key={d.date} className="utm-bar-col-modern" title={`${formatDate(d.date)}: ${total} ações (${d.finalized} vendas)`}>
+                <div className="utm-bar-total-label">{total}</div>
+                <div className="utm-bar-stack" style={{height:`${barHeight}px`}}>
+                  {d.finalized>0&&<div className="bar-seg final" style={{flex:d.finalized}} title={`${d.finalized} vendas`}/>}
+                  {d.checkout>0&&<div className="bar-seg check" style={{flex:d.checkout}} title={`${d.checkout} checkout`}/>}
+                  {d.added>0&&<div className="bar-seg add" style={{flex:d.added}} title={`${d.added} adicionou`}/>}
+                  {d.abandoned>0&&<div className="bar-seg aban" style={{flex:d.abandoned}} title={`${d.abandoned} abandonou`}/>}
+                </div>
+                <small className="utm-bar-date">{formatDate(d.date)}</small>
+              </div>
+            );
+          })}
+        </div>
+      ) : <NoData/>}
+    </div>
 
-  <section className="utm-section"><div className="utm-section-head"><div><span className="eyebrow">ATRIBUIÇÃO REAL</span><h3>Sessões originadas por esta URL</h3></div><button className="btn secondary" onClick={runSweep} disabled={sweeping}><RefreshCw size={15} className={sweeping?'spin':''}/>{sweeping?' Processando...':' Detectar abandonos'}</button></div><div className="utm-attribution-summary"><div><Radar size={18}/><span><b>{s.activeAttributions}</b> em jornada</span></div><div><ShoppingCart size={18}/><span><b>{s.abandonedAttributions}</b> abandonadas</span></div><div><UserRoundCheck size={18}/><span><b>{s.convertedAttributions}</b> convertidas</span></div></div><div className="utm-attribution-list">{data.attributions.slice(0,8).map(a=><div key={a.id} className="utm-attribution-row"><span className={`utm-attribution-status ${a.status}`}>{a.status==='converted'?'Convertida':a.status==='abandoned'?'Abandonada':'Em jornada'}</span><div><strong>{a.customerName||a.customerEmail||'Visitante identificado pela sessão'}</strong><small>{a.customerEmail||`Sessão ${a.sessionKey.slice(0,12)}…`}</small></div><div><small>Valor do carrinho</small><strong>{money(a.cartValueCents)}</strong></div><div><small>Última atividade</small><strong>{new Date(a.lastActivityAt).toLocaleString('pt-BR')}</strong></div><div><small>Pedido</small><strong>{a.order?.code||'—'}</strong></div></div>)}{!data.attributions.length&&<NoData/>}</div></section>
+    <div className="utm-section utm-chart-panel">
+      <div className="utm-section-head">
+        <div>
+          <span className="eyebrow">DISTRIBUIÇÃO DE HORÁRIOS</span>
+          <h3>Pico de Ações ao Longo do Dia</h3>
+        </div>
+        <div className="utm-peak-badge">
+          Pico: <b>{String(peakHour.hour).padStart(2,'0')}h:00</b>
+        </div>
+      </div>
+      <div className="utm-hour-bars-modern">
+        {data.hours.map(h=>{
+          const total=h.added+h.removed+h.abandoned+h.finalized;
+          const isPeak=h.hour===peakHour.hour;
+          const barHeight=Math.max(total?6:2,(total/maxHour)*120);
+          return (
+            <div className={`utm-hour-col-modern ${isPeak?'peak':''}`} key={h.hour} title={`${String(h.hour).padStart(2,'0')}h:00 · ${total} ações`}>
+              <div className="utm-hour-bar-inner" style={{height:`${barHeight}px`}}/>
+              <small className="utm-hour-label">{h.hour%4===0?`${String(h.hour).padStart(2,'0')}h`:''}</small>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
 
-  <section className="utm-section" ref={refs.remarketing}><div className="utm-section-head"><div><span className="eyebrow">REMARKETING</span><h3>Abandono conectado à recuperação</h3></div></div><div className="utm-remarketing-note"><AlertTriangle size={24}/><div><strong>{s.abandonedAttributions} sessão(ões) abandonada(s) nesta URL podem alimentar o Remarketing</strong><p>A origem UTM permanece vinculada ao cliente. Se a venda for recuperada por WhatsApp ou e-mail, a receita retorna para esta campanha original.</p></div><button className="btn secondary" onClick={()=>notify('Abra Remarketing do evento para operar as oportunidades desta UTM.')}><RefreshCw size={15}/> Abrir recuperação</button></div></section>
+  <section className="utm-section" ref={refs.orders}>
+    <div className="utm-section-head utm-table-head">
+      <div>
+        <span className="eyebrow">PEDIDOS & CONVERSÕES</span>
+        <h3>Jornada dos Pedidos Desta URL</h3>
+      </div>
+      <div className="utm-search">
+        <Search size={14}/>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Pesquisar pedido, cliente ou ingresso..."/>
+      </div>
+    </div>
+    <div className="utm-filter-tabs">
+      {['all','added','checkout','removed','abandoned','finalized'].map(k=>(
+        <button key={k} className={`${filter===k?'active ':''}${k}`} onClick={()=>setFilter(k)}>
+          {k==='all'?'Todos':actionLabels[k]} ({k==='all'?data.actions.length:data.actions.filter(a=>a.action===k).length})
+        </button>
+      ))}
+    </div>
+    <div className="utm-table-wrap">
+      <table className="utm-table">
+        <thead>
+          <tr>
+            <th>Pedido</th>
+            <th>Etapa / Status</th>
+            <th>Cliente</th>
+            <th>Parâmetros UTM</th>
+            <th>Ingressos / Modalidades</th>
+            <th>Valor</th>
+            <th>Data / Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filtered.map(a=>(
+            <tr key={a.id}>
+              <td><b>{a.orderCode||'—'}</b></td>
+              <td><span className={`utm-action-badge ${a.action}`}>{actionLabels[a.action]}</span></td>
+              <td><b>{a.customerName||'Visitante'}</b><small>{a.customerEmail||'Sem e-mail'}</small></td>
+              <td>
+                <div className="utm-inline-tags">
+                  <span>src: {data.link.source||'-'}</span>
+                  <span>med: {data.link.medium||'-'}</span>
+                  <span>cam: {data.link.campaign||'-'}</span>
+                </div>
+              </td>
+              <td>{a.ticketSummary||'Sem modalidade'}</td>
+              <td><b>{money(a.amountCents)}</b></td>
+              <td>{new Date(a.createdAt).toLocaleString('pt-BR')}</td>
+            </tr>
+          ))}
+          {!filtered.length&&<tr><td colSpan={7}><NoData/></td></tr>}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section className="utm-section">
+    <div className="utm-section-head">
+      <div>
+        <span className="eyebrow">ATRIBUIÇÃO REAL</span>
+        <h3>Sessões Originadas por Esta URL</h3>
+      </div>
+      <button className="btn secondary" onClick={runSweep} disabled={sweeping}>
+        <RefreshCw size={15} className={sweeping?'spin':''}/>
+        {sweeping?' Processando...':' Detectar abandonos'}
+      </button>
+    </div>
+    <div className="utm-attribution-summary">
+      <div><Radar size={18}/><span><b>{s.activeAttributions}</b> em jornada</span></div>
+      <div><ShoppingCart size={18}/><span><b>{s.abandonedAttributions}</b> abandonadas</span></div>
+      <div><UserRoundCheck size={18}/><span><b>{s.convertedAttributions}</b> convertidas</span></div>
+    </div>
+    <div className="utm-attribution-list">
+      {data.attributions.slice(0,8).map(a=>(
+        <div key={a.id} className="utm-attribution-row">
+          <span className={`utm-attribution-status ${a.status}`}>
+            {a.status==='converted'?'Convertida':a.status==='abandoned'?'Abandonada':'Em jornada'}
+          </span>
+          <div>
+            <strong>{a.customerName||a.customerEmail||'Visitante identificado pela sessão'}</strong>
+            <small>{a.customerEmail||`Sessão ${a.sessionKey.slice(0,12)}…`}</small>
+          </div>
+          <div><small>Valor do carrinho</small><strong>{money(a.cartValueCents)}</strong></div>
+          <div><small>Última atividade</small><strong>{new Date(a.lastActivityAt).toLocaleString('pt-BR')}</strong></div>
+          <div><small>Pedido</small><strong>{a.order?.code||'—'}</strong></div>
+        </div>
+      ))}
+      {!data.attributions.length&&<NoData/>}
+    </div>
+  </section>
+
+  <section className="utm-section" ref={refs.remarketing}>
+    <div className="utm-section-head">
+      <div>
+        <span className="eyebrow">REMARKETING INTEGRADO</span>
+        <h3>Abandono Conectado à Recuperação</h3>
+      </div>
+    </div>
+    <div className="utm-remarketing-note">
+      <AlertTriangle size={24}/>
+      <div>
+        <strong>{s.abandonedAttributions} sessão(ões) abandonada(s) nesta URL podem alimentar o Remarketing</strong>
+        <p>A origem UTM permanece vinculada ao cliente. Se a venda for recuperada por WhatsApp ou e-mail, a receita retorna para esta campanha original.</p>
+      </div>
+      <button className="btn secondary" onClick={()=>notify('Abra Remarketing do evento para operar as oportunidades desta UTM.')}>
+        <RefreshCw size={15}/> Abrir recuperação
+      </button>
+    </div>
+  </section>
  </>
 }
 
