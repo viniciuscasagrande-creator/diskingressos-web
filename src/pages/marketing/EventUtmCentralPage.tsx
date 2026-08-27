@@ -1563,7 +1563,7 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
       )}
 
       {/* 7. Lista Rápida de Links da Campanha */}
-      <div className="bg-white rounded-card border border-[#E2E8F0] p-5 shadow-xs space-y-3">
+      <div className="utm-cards-panel bg-white rounded-card border border-[#E2E8F0] p-5 shadow-xs space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-[15px] font-extrabold text-[#0E1726] flex items-center gap-2">
             <Layers size={18} className="text-[#1677FF]" />
@@ -1574,37 +1574,41 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+        <div className="utm-cards-grid grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
           {utmList.map(u => {
             const isSelected = u.id === selectedUtmId;
             return (
               <div
                 key={u.id}
-                onClick={() => setSelectedUtmId(u.id)}
-                className={`p-4 rounded-btn border transition cursor-pointer flex flex-col justify-between ${
+                onClick={() => {
+                  setSelectedUtmId(u.id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  if (notify) notify(`URL "${u.name}" selecionada!`);
+                }}
+                className={`utm-card-box p-4 rounded-btn border transition cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'border-[#1677FF] bg-blue-50/40 shadow-xs'
+                    ? 'selected border-[#1677FF] bg-blue-50/40 shadow-xs'
                     : 'border-[#E2E8F0] bg-white hover:border-slate-300'
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
+                  <div className="utm-card-top flex items-center justify-between mb-1.5">
+                    <span className="utm-card-badge text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
                       {u.source.toUpperCase()}
                     </span>
-                    <span className={`text-[10px] font-bold ${u.status === 'ativo' ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <span className={`utm-card-status text-[10px] font-bold ${u.status === 'ativo' ? 'text-emerald-600' : 'text-slate-400'}`}>
                       ● {u.status}
                     </span>
                   </div>
 
-                  <strong className="text-xs font-extrabold text-[#0E1726] block">
+                  <strong className="utm-card-title text-xs font-extrabold text-[#0E1726] block">
                     {u.name}
                   </strong>
-                  <span className="text-[11px] text-slate-500 font-mono block mt-0.5 truncate">
+                  <span className="utm-card-url text-[11px] text-slate-500 font-mono block mt-0.5 truncate">
                     {u.shortUrl}
                   </span>
 
-                  <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs">
+                  <div className="utm-card-stats mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between text-xs">
                     <span className="text-slate-600 font-medium">{u.metrics.visitors} visitas</span>
                     <span className="font-bold text-emerald-700">{u.metrics.purchased} vendas ({formatBrl(u.metrics.revenue)})</span>
                   </div>
@@ -1618,10 +1622,10 @@ export const EventUtmCentralPage: React.FC<EventUtmCentralPageProps> = ({ event,
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                       if (notify) notify(`URL "${u.name}" selecionada!`);
                     }}
-                    className={`w-full py-1.5 text-center rounded font-bold text-xs transition cursor-pointer ${
+                    className={`utm-card-btn w-full py-1.5 text-center rounded font-bold text-xs transition cursor-pointer ${
                       isSelected
-                        ? 'bg-[#1677FF] text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                        ? 'active bg-[#1677FF] text-white shadow-xs'
+                        : 'default bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
                     {isSelected ? '✓ Selecionado' : 'Selecionar'}

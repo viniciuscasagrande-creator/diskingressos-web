@@ -29,14 +29,17 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/cors": "latest",
     "@types/express": "latest",
     "@types/jsonwebtoken": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "autoprefixer": "^10.5.4",
     "concurrently": "latest",
     "prisma": "latest",
+    "tailwindcss": "^4.3.3",
     "tsx": "latest",
     "typescript": "latest"
   },
