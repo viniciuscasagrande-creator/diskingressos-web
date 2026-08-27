@@ -11,7 +11,7 @@ const blank={name:'',pixelId:'',apiToken:'',applyToAllEvents:true,eventIds:[] as
 export default function TrackingIntegrationsManager({producerId,events,fixedEventId,notify}:Props){
  const [rows,setRows]=useState<TrackingIntegration[]>([]);const [open,setOpen]=useState(false);const [editing,setEditing]=useState<TrackingIntegration|null>(null);const [form,setForm]=useState(blank);const [showToken,setShowToken]=useState(false);const [busy,setBusy]=useState(false)
  const contextEvent=useMemo(()=>events.find(e=>e.id===fixedEventId),[events,fixedEventId])
- const load=()=>{getTrackingIntegrations(producerId||undefined,fixedEventId).then(setRows).catch(e=>notify(e.message))};useEffect(()=>{load()},[producerId,fixedEventId])
+ const load=()=>getTrackingIntegrations(producerId||undefined,fixedEventId).then(setRows).catch(e=>notify(e.message));useEffect(()=>{load();},[producerId,fixedEventId])
  const startNew=()=>{setEditing(null);setForm({...blank,applyToAllEvents:fixedEventId?false:true,eventIds:fixedEventId?[fixedEventId]:[]});setShowToken(false);setOpen(true)}
  const startEdit=(r:TrackingIntegration)=>{setEditing(r);setForm({name:r.name,pixelId:r.pixelId,apiToken:'',applyToAllEvents:r.applyToAllEvents,eventIds:r.events.map(x=>x.eventId),enabledEvents:r.enabledEvents});setShowToken(false);setOpen(true)}
  const toggleEvent=(id:number)=>setForm(f=>({...f,eventIds:f.eventIds.includes(id)?f.eventIds.filter(x=>x!==id):[...f.eventIds,id]}))

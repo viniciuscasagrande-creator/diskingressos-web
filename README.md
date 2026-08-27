@@ -112,3 +112,20 @@ Veja `PHASE16_5_UTM_ATTRIBUTION.md` para o fluxo de atribuição UTM persistente
 ## Fase 16.6
 
 Inclui remarketing automático ligado à origem UTM, fila de recuperação por WhatsApp/E-mail, consentimento por canal, tentativas/retries, dashboard de receita recuperada por campanha e fechamento da atribuição ao marcar uma venda como recuperada. Consulte `PHASE16_6_AUTOMATIC_REMARKETING.md`.
+
+---
+
+## Fase 16.7 — Deploy Web
+
+O projeto agora inclui configuração de homologação para frontend estático + API Node + PostgreSQL.
+
+Arquivos principais:
+- `PHASE16_7_DEPLOY_WEB.md`
+- `DEPLOY_CHECKLIST.md`
+- `.env.production.example`
+- `prisma/schema.postgresql.prisma`
+- `render.yaml`
+- `Dockerfile.api`
+- `public/_redirects`
+
+Para desenvolvimento local, o `prisma/schema.prisma` continua usando SQLite. Para hospedagem, use o schema PostgreSQL de produção.

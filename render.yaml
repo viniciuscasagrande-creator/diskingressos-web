@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: diskingressos-api-homolog
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run db:generate:prod
+    startCommand: npm run db:push:prod && npm run start:api
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: TRACKING_TOKEN_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: PUBLIC_APP_URL
+        sync: false

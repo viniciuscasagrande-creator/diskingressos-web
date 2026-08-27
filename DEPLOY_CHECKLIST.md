@@ -1,0 +1,23 @@
+# Checklist de Deploy — DiskIngressos
+
+- [ ] Criar banco PostgreSQL de homologação
+- [ ] Copiar `DATABASE_URL`
+- [ ] Criar `JWT_SECRET` forte
+- [ ] Criar `TRACKING_TOKEN_SECRET` forte
+- [ ] Publicar backend
+- [ ] Executar `db:push:prod`
+- [ ] Executar seed somente se desejar dados demo
+- [ ] Testar `/api/health`
+- [ ] Definir `VITE_API_URL`
+- [ ] Gerar frontend com `npm run build:web`
+- [ ] Publicar pasta `dist`
+- [ ] Configurar `FRONTEND_URL` da API
+- [ ] Testar login Admin Master
+- [ ] Testar login Produtor
+- [ ] Confirmar isolamento entre produtoras
+- [ ] Testar navegação contextual por evento
+- [ ] Testar Financeiro
+- [ ] Testar Marketing / UTM
+- [ ] Testar Remarketing
+- [ ] Testar SAC
+- [ ] Configurar domínio de homologação (opcional)

@@ -1,7 +1,7 @@
 {
-  "name": "diskingressos-fase16-6-react-backend",
+  "name": "diskingressos-fase16-8-utm-focused",
   "private": true,
-  "version": "16.6.0",
+  "version": "16.8.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -n WEB,API -c auto \"vite\" \"tsx watch server/src/index.ts\"",
@@ -12,7 +12,13 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:setup": "prisma generate && prisma db push && tsx prisma/seed.ts"
+    "db:setup": "prisma generate && prisma db push && tsx prisma/seed.ts",
+    "build:web": "tsc -b && vite build",
+    "start:api": "tsx server/src/index.ts",
+    "db:generate:prod": "prisma generate --schema prisma/schema.postgresql.prisma",
+    "db:push:prod": "prisma db push --schema prisma/schema.postgresql.prisma",
+    "db:seed:prod": "tsx prisma/seed.ts",
+    "deploy:prepare": "npm run db:generate:prod && npm run build:web"
   },
   "dependencies": {
     "@prisma/client": "latest",
@@ -29,17 +35,14 @@
     "zod": "latest"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
     "@types/cors": "latest",
     "@types/express": "latest",
     "@types/jsonwebtoken": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "autoprefixer": "^10.5.4",
     "concurrently": "latest",
     "prisma": "latest",
-    "tailwindcss": "^4.3.3",
     "tsx": "latest",
     "typescript": "latest"
   },

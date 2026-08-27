@@ -22,10 +22,19 @@ import { trackingPublicRouter } from './routes/trackingPublic.js'
 
 const app=express()
 app.use(helmet())
-app.use(cors({origin:true,credentials:false}))
+const allowedOrigins=(process.env.FRONTEND_URL||process.env.PUBLIC_APP_URL||'')
+  .split(',').map(v=>v.trim()).filter(Boolean)
+app.set('trust proxy',1)
+app.use(cors({
+  origin:(origin,cb)=>{
+    if(!origin || allowedOrigins.length===0 || allowedOrigins.includes(origin)) return cb(null,true)
+    return cb(new Error('Origem não autorizada pelo CORS'))
+  },
+  credentials:false
+}))
 app.use(express.json({limit:'1mb'}))
 
-app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'16.6'}))
+app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'16.7'}))
 app.use('/api/tracking',trackingPublicRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/producers',producersRouter)
@@ -46,5 +55,5 @@ app.use('/api/communication',communicationRouter)
 app.use('/api/audit',auditRouter)
 app.use((_req,res)=>res.status(404).json({message:'Rota não encontrada.'}))
 
-const port=Number(process.env.API_PORT||3333)
-app.listen(port,()=>console.log(`DiskIngressos API Fase 16.6: http://localhost:${port}/api`))
+const port=Number(process.env.PORT||process.env.API_PORT||3333)
+app.listen(port,()=>console.log(`DiskIngressos API Fase 16.7: http://localhost:${port}/api`))
