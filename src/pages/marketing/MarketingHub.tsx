@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   LayoutDashboard, Megaphone, ShoppingCart, Link, 
   Tag, Sliders, MessageCircle, Mail, Users, 
-  TrendingUp, Layers3, Sparkles, Plus, FileText, ArrowUpRight
+  TrendingUp, Layers3, Sparkles, Plus, FileText, ArrowUpRight,
+  Radio
 } from 'lucide-react';
 import type { EventItem } from '../../types/event';
 import { MarketingDashboardPage } from './MarketingDashboardPage';
@@ -10,6 +11,8 @@ import { MarketingCampaignsPage } from './MarketingCampaignsPage';
 import { UtmLinksPage } from './UtmLinksPage';
 import { PixelInheritancePage } from './PixelInheritancePage';
 import { CouponsPromoPage } from './CouponsPromoPage';
+import { AutomationCenterPage } from '../automation/AutomationCenterPage';
+import { CommunicationPage } from './CommunicationPage';
 
 export type MarketingSubTab = 
   | 'mkt-hub'
@@ -23,16 +26,21 @@ export type MarketingSubTab =
   | 'mkt-links'
   | 'mkt-affiliates'
   | 'mkt-analytics'
+  | 'mkt-comm-integrations'
   | 'mkt-reports';
 
 interface MarketingHubProps {
   events: EventItem[];
+  producerId?: number | null;
+  producerName?: string;
   initialTab?: MarketingSubTab;
   notify?: (msg: string) => void;
 }
 
 export const MarketingHub: React.FC<MarketingHubProps> = ({
   events,
+  producerId = null,
+  producerName = 'DiskIngressos Produções',
   initialTab = 'mkt-dashboard',
   notify,
 }) => {
@@ -49,6 +57,7 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
     { id: 'mkt-links', title: 'Links, UTMs e QR Codes', desc: 'Rastreamento de origem, totens e atribuição.', icon: Link, color: 'text-amber-500' },
     { id: 'mkt-affiliates', title: 'Afiliados e Parceiros', desc: 'Performance de parceiros e comissionamento.', icon: Users, color: 'text-indigo-600' },
     { id: 'mkt-analytics', title: 'Pixel & Analytics', desc: 'Sistema de herança: Meta, GA4, GTM e TikTok.', icon: Sliders, color: 'text-pink-600' },
+    { id: 'mkt-comm-integrations', title: 'Integrações de Comunicação', desc: 'WhatsApp Business API, E-mail, Filas e LGPD.', icon: Radio, color: 'text-purple-600' },
     { id: 'mkt-reports', title: 'Relatórios', desc: 'ROI, ROAS, canais e exportação de dados.', icon: FileText, color: 'text-slate-600' },
   ];
 
@@ -93,6 +102,18 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('mkt-automations')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-btn text-xs font-bold transition-all shrink-0 ${
+            activeTab === 'mkt-automations'
+              ? 'bg-[#7C3AED] text-white shadow-xs'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Sparkles size={15} />
+          <span>Automações</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('mkt-coupons')}
           className={`flex items-center gap-2 px-3.5 py-2 rounded-btn text-xs font-bold transition-all shrink-0 ${
             activeTab === 'mkt-coupons'
@@ -114,6 +135,18 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
         >
           <Link size={15} />
           <span>Links & UTMs</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('mkt-comm-integrations')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-btn text-xs font-bold transition-all shrink-0 ${
+            activeTab === 'mkt-comm-integrations'
+              ? 'bg-[#7C3AED] text-white shadow-xs'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Radio size={15} />
+          <span>Integrações (Fase 14)</span>
         </button>
 
         <button
@@ -151,11 +184,7 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
               <button
                 key={id}
                 onClick={() => {
-                  if (['mkt-dashboard', 'mkt-campaigns', 'mkt-coupons', 'mkt-links', 'mkt-analytics'].includes(id)) {
-                    setActiveTab(id as MarketingSubTab);
-                  } else if (notify) {
-                    notify(`Módulo ${title} selecionado.`);
-                  }
+                  setActiveTab(id as MarketingSubTab);
                 }}
                 className="flex items-start justify-between p-4 rounded-card bg-white border border-[#E2E8F0] hover:border-purple-400 hover:shadow-md transition-all text-left group"
               >
@@ -196,32 +225,39 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
         <MarketingCampaignsPage events={events} notify={notify} />
       )}
 
-      {/* 4. Links & UTMs */}
+      {/* 4. Automations View (Fase 13) */}
+      {activeTab === 'mkt-automations' && (
+        <AutomationCenterPage producerId={producerId} events={events} mode="automations" notify={notify} />
+      )}
+
+      {/* 5. WhatsApp View (Fase 13) */}
+      {activeTab === 'mkt-whatsapp' && (
+        <AutomationCenterPage producerId={producerId} events={events} mode="whatsapp" notify={notify} />
+      )}
+
+      {/* 6. E-mail View (Fase 13) */}
+      {activeTab === 'mkt-email' && (
+        <AutomationCenterPage producerId={producerId} events={events} mode="email" notify={notify} />
+      )}
+
+      {/* 7. Links & UTMs */}
       {activeTab === 'mkt-links' && (
         <UtmLinksPage notify={notify} />
       )}
 
-      {/* 5. Coupons */}
+      {/* 8. Coupons */}
       {activeTab === 'mkt-coupons' && (
         <CouponsPromoPage events={events} notify={notify} />
       )}
 
-      {/* 6. Pixel & Analytics */}
+      {/* 9. Pixel & Analytics */}
       {activeTab === 'mkt-analytics' && (
-        <PixelInheritancePage events={events} notify={notify} />
+        <PixelInheritancePage events={events} producerId={producerId} producerName={producerName} notify={notify} />
       )}
 
-      {/* 7. Other views placeholder */}
-      {activeTab !== 'mkt-hub' && activeTab !== 'mkt-dashboard' && activeTab !== 'mkt-campaigns' && activeTab !== 'mkt-links' && activeTab !== 'mkt-coupons' && activeTab !== 'mkt-analytics' && (
-        <div className="bg-white p-8 rounded-card border border-[#E2E8F0] text-center space-y-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50 text-[#7C3AED] mx-auto">
-            <Megaphone size={24} />
-          </div>
-          <h3 className="text-base font-bold text-slate-900">Módulo de Marketing Integrado</h3>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Estrutura configurada com escopo multi-produtor e relatórios em tempo real.
-          </p>
-        </div>
+      {/* 10. Communication Integrations (Fase 14) */}
+      {activeTab === 'mkt-comm-integrations' && (
+        <CommunicationPage producerId={producerId} producerName={producerName} notify={notify} />
       )}
     </div>
   );

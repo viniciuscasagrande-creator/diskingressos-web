@@ -17,6 +17,7 @@ import OperationsPage from './pages/OperationsPage';
 // Marketing & Remarketing Modules (Fase 11)
 import { MarketingHub, type MarketingSubTab } from './pages/marketing/MarketingHub';
 import { RemarketingHub, type RemarketingSubTab } from './pages/remarketing/RemarketingHub';
+import { SupportPage, type SupportMode } from './pages/support/SupportPage';
 
 // Administration Module (Fase 8)
 import { AdminHubPage } from './pages/admin/AdminHubPage';
@@ -45,7 +46,13 @@ import { StatusFaciaisPage } from './pages/StatusFaciais';
 import { FinanceiroPage, type FinanceTab } from './pages/Financeiro';
 import { POSPage, type POSTab } from './pages/POSPage';
 import { GenericModulePage } from './pages/GenericModulePage';
+import { CortesiasPage } from './pages/CortesiasPage';
 import { MetaPixelModal } from './components/events/MetaPixelModal';
+import { UtmLinksPage } from './pages/marketing/UtmLinksPage';
+import { PixelInheritancePage } from './pages/marketing/PixelInheritancePage';
+import { MarketingCampaignsPage } from './pages/marketing/MarketingCampaignsPage';
+import { MarketingDashboardPage } from './pages/marketing/MarketingDashboardPage';
+import { RecoveryCenterPage } from './pages/remarketing/RecoveryCenterPage';
 import { Check } from 'lucide-react';
 
 function AuthenticatedApp() {
@@ -61,14 +68,23 @@ function AuthenticatedApp() {
   const [participants, setParticipants] = useState<Participant[]>(mockParticipants);
   
   // Navigation & Search State
-  const [currentPage, setCurrentPage] = useState<NavigationPage>(
-    currentUser.role === 'produtor-marketing' ? 'mkt-dashboard' : 'eventos'
-  );
+  const [currentPage, setCurrentPage] = useState<NavigationPage>(() => {
+    if (currentUser.role === 'admin-master' || currentUser.role === 'admin') {
+      return 'dashboard';
+    }
+    if (currentUser.role === 'produtor-marketing') {
+      return 'mkt-dashboard';
+    }
+    if (currentUser.role === 'produtor-operacional') {
+      return 'nucleo-operacional';
+    }
+    return 'eventos';
+  });
   const [globalSearchQuery, setGlobalSearchQuery] = useState('');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Subpage Contexts
-  const [activeEventForDashboard, setActiveEventForDashboard] = useState<EventItem>(mockEvents[0]);
+  const [activeEventForDashboard, setActiveEventForDashboard] = useState<EventItem | null>(null);
   const [selectedEventForEdit, setSelectedEventForEdit] = useState<EventItem | null>(null);
   const [selectedEventForLots, setSelectedEventForLots] = useState<EventItem | null>(null);
   const [selectedEventForParticipants, setSelectedEventForParticipants] = useState<EventItem | null>(null);
@@ -118,7 +134,8 @@ function AuthenticatedApp() {
 
   const handleNavigateToEventDashboard = (event: EventItem) => {
     setActiveEventForDashboard(event);
-    setCurrentPage('dashboard-evento');
+    setCurrentPage('evento-dashboard');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Toggle Checkin Handler
@@ -286,6 +303,8 @@ function AuthenticatedApp() {
         return 'mkt-whatsapp';
       case 'mkt-email':
         return 'mkt-email';
+      case 'mkt-comm-integrations':
+        return 'mkt-comm-integrations';
       case 'mkt-affiliates':
         return 'mkt-affiliates';
       case 'mkt-reports':
@@ -302,7 +321,7 @@ function AuthenticatedApp() {
   const isMarketingPage = [
     'marketing', 'mkt-hub', 'mkt-dashboard', 'mkt-campaigns', 'mkt-new-campaign', 
     'mkt-automations', 'mkt-whatsapp', 'mkt-email', 'mkt-coupons', 
-    'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-reports', 'campanhas', 
+    'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-comm-integrations', 'mkt-reports', 'campanhas', 
     'pixel-meta', 'google-analytics', 'cupons'
   ].includes(currentPage);
 
@@ -346,6 +365,93 @@ function AuthenticatedApp() {
     'rmk-inactive', 'rmk-postevent', 'rmk-automation', 'rmk-reports', 'mkt-abandoned'
   ].includes(currentPage);
 
+  const isSacPage = [
+    'atendimento', 'sac-hub', 'sac-dashboard', 'sac-tickets', 
+    'sac-new', 'sac-sla', 'sac-integrations', 'sac-knowledge', 'sac-reports'
+  ].includes(currentPage);
+
+  const getSupportMode = (page: NavigationPage): SupportMode => {
+    switch (page) {
+      case 'sac-dashboard':
+        return 'sac-dashboard';
+      case 'sac-tickets':
+        return 'sac-tickets';
+      case 'sac-new':
+        return 'sac-new';
+      case 'sac-sla':
+        return 'sac-sla';
+      case 'sac-integrations':
+        return 'sac-integrations';
+      case 'sac-knowledge':
+        return 'sac-knowledge';
+      case 'sac-reports':
+        return 'sac-reports';
+      case 'atendimento':
+      case 'sac-hub':
+      default:
+        return 'sac-hub';
+    }
+  };
+
+  // Event Contextual Navigation (Fase 15)
+  const isEventContextActive = [
+    'dashboard-evento', 'evento-dashboard', 'evento-ingressos', 'evento-cortesias', 
+    'evento-relatorios', 'evento-detalhes', 'evento-pixel', 'evento-utm', 
+    'evento-analytics', 'evento-trafego', 'evento-meta-ads', 'evento-remarketing', 
+    'evento-lotes', 'evento-checkin', 'evento-usuarios', 'evento-logs'
+  ].includes(currentPage);
+
+  const currentEventContext = isEventContextActive
+    ? activeEventForDashboard || selectedEventForEdit || selectedEventForLots || selectedEventForParticipants || scopedEvents[0]
+    : null;
+
+  // URL Synchronization for Contextual Navigation (Fase 15)
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (currentEventContext) {
+      const code = currentEventContext.code || currentEventContext.id;
+      const subpathMap: Record<string, string> = {
+        'evento-dashboard': 'dashboard',
+        'dashboard-evento': 'dashboard',
+        'evento-ingressos': 'tickets',
+        'evento-cortesias': 'courtesy',
+        'evento-relatorios': 'reports',
+        'evento-detalhes': 'detalhes',
+        'evento-pixel': 'pixel',
+        'evento-utm': 'utm',
+        'evento-analytics': 'ga4',
+        'evento-trafego': 'traffic',
+        'evento-meta-ads': 'meta-ads',
+        'evento-remarketing': 'remarketing',
+        'evento-lotes': 'lots',
+        'evento-checkin': 'checkin',
+        'evento-usuarios': 'users',
+        'evento-logs': 'logs',
+      };
+      const sub = subpathMap[currentPage] || 'dashboard';
+      const targetUrl = `/eventos/${code}/${sub}`;
+      if (window.location.pathname !== targetUrl) {
+        window.history.replaceState({ page: currentPage, eventCode: code }, '', targetUrl);
+      }
+    } else {
+      const pageMap: Record<string, string> = {
+        'eventos': '/eventos',
+        'dashboard': '/dashboard',
+        'produtora': '/produtora',
+        'financeiro': '/financeiro',
+        'terminais-pos': '/pos',
+        'marketing': '/marketing',
+        'remarketing': '/remarketing',
+        'atendimento': '/atendimento',
+        'administracao': '/administracao',
+      };
+      const targetUrl = pageMap[currentPage] || `/${currentPage}`;
+      if (window.location.pathname !== targetUrl) {
+        window.history.replaceState({ page: currentPage }, '', targetUrl);
+      }
+    }
+  }, [currentPage, currentEventContext]);
+
   return (
     <div className="min-h-screen bg-[#F1F4F8] text-[#0E1726] flex flex-col font-sans selection:bg-[#7C3AED] selection:text-white relative">
       {/* Toast Feedback */}
@@ -379,6 +485,11 @@ function AuthenticatedApp() {
         {/* Sidebar Contextual */}
         <Sidebar
           currentPage={currentPage}
+          selectedEvent={currentEventContext}
+          onExitEventContext={() => {
+            setActiveEventForDashboard(null);
+            setCurrentPage('eventos');
+          }}
           onNavigate={(page) => {
             if (page === 'novo-evento') {
               handleNavigateToNewEvent();
@@ -388,13 +499,32 @@ function AuthenticatedApp() {
             }
           }}
           onOpenNewEvent={handleNavigateToNewEvent}
-          onBackToHome={() => setCurrentPage('eventos')}
+          onBackToHome={() => {
+            setActiveEventForDashboard(null);
+            setCurrentPage('eventos');
+          }}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
 
         {/* Área Principal (Barra de Título + Conteúdo + Footer) */}
         <div className="flex-1 flex flex-col min-w-0">
+          {/* Admin Master Impersonation Scope Banner */}
+          {currentUser && (currentUser.role === 'admin-master' || currentUser.role === 'admin') && activeProducer && (
+            <div className="bg-[#1E293B] border-b border-[#334155] px-4 sm:px-6 py-2 text-xs text-white flex items-center justify-between shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Você está visualizando: <strong className="text-[#7DD3FC]">{activeProducer.name}</strong></span>
+              </div>
+              <button
+                onClick={() => selectProducer(null)}
+                className="px-2.5 py-1 rounded bg-[#334155] hover:bg-[#475569] text-white font-bold text-[11px] transition cursor-pointer"
+              >
+                ← Voltar para visão global
+              </button>
+            </div>
+          )}
+
           {/* Barra de Título Independente */}
           <ModuleTitleBar currentPage={currentPage} />
 
@@ -425,46 +555,187 @@ function AuthenticatedApp() {
               />
             )}
 
-            {/* 3. Marketing Module (Fase 11) */}
+            {/* 3. Marketing Module (Fase 11-13) */}
             {isMarketingPage && (
               <MarketingHub
                 key={currentPage}
                 events={scopedEvents}
+                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
                 initialTab={getMarketingTab(currentPage)}
                 notify={triggerToast}
               />
             )}
 
-            {/* 4. Remarketing Module (Fase 11) */}
+            {/* 4. Remarketing Module (Fase 11-13) */}
             {isRemarketingPage && (
               <RemarketingHub
                 key={currentPage}
                 events={scopedEvents}
+                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
                 producerName={activeProducer?.name || 'DiskIngressos Produções'}
                 initialTab={getRemarketingTab(currentPage)}
                 notify={triggerToast}
               />
             )}
 
-            {/* 5. Individual Event Dashboard Page */}
-            {currentPage === 'dashboard-evento' && (
+            {/* 4.5. Atendimento / SAC Module (Fase 14 ITIL & Service Desk) */}
+            {isSacPage && (
+              <SupportPage
+                key={currentPage}
+                mode={getSupportMode(currentPage)}
+                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
+                producerName={activeProducer?.name || 'DiskIngressos Produções'}
+                events={scopedEvents}
+                notify={triggerToast}
+                onNavigate={(mode) => setCurrentPage(mode)}
+              />
+            )}
+
+            {/* 5. Event Contextual Subpages (Fase 15) */}
+            {(currentPage === 'dashboard-evento' || currentPage === 'evento-dashboard') && (
               <EventDashboardPage
-                event={activeEventForDashboard}
+                event={currentEventContext || activeEventForDashboard || scopedEvents[0]}
                 participants={participants}
-                onBack={() => setCurrentPage('eventos')}
+                onBack={() => {
+                  setActiveEventForDashboard(null);
+                  setCurrentPage('eventos');
+                }}
                 onNavigateToParticipants={() => {
-                  setSelectedEventForParticipants(activeEventForDashboard);
-                  setCurrentPage('participantes');
+                  setSelectedEventForParticipants(currentEventContext);
+                  setCurrentPage('evento-ingressos');
                 }}
                 onNavigateToLots={() => {
-                  setSelectedEventForLots(activeEventForDashboard);
-                  setCurrentPage('lotes');
+                  setSelectedEventForLots(currentEventContext);
+                  setCurrentPage('evento-lotes');
                 }}
                 onNavigateToEdit={() => {
-                  setSelectedEventForEdit(activeEventForDashboard);
-                  setCurrentPage('editar-evento');
+                  setSelectedEventForEdit(currentEventContext);
+                  setCurrentPage('evento-detalhes');
                 }}
+                onNavigateToSubpage={(sub) => setCurrentPage(sub as any)}
               />
+            )}
+
+            {/* Ingressos do Evento */}
+            {currentPage === 'evento-ingressos' && (
+              <ParticipantsPage
+                events={currentEventContext ? [currentEventContext] : scopedEvents}
+                participants={participants}
+                selectedEvent={currentEventContext}
+                onSelectEvent={() => {}}
+                onToggleCheckin={handleToggleCheckin}
+              />
+            )}
+
+            {/* Cortesias do Evento */}
+            {currentPage === 'evento-cortesias' && (
+              <CortesiasPage
+                event={currentEventContext || scopedEvents[0]}
+                onBack={() => setCurrentPage('evento-dashboard')}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* Relatórios de Vendas do Evento */}
+            {currentPage === 'evento-relatorios' && (
+              <FinanceiroPage
+                key={`relatorios-${currentEventContext?.id}`}
+                events={currentEventContext ? [currentEventContext] : scopedEvents}
+                initialTab="statement"
+                initialSubModule="extrato-geral"
+                notify={triggerToast}
+              />
+            )}
+
+            {/* Detalhes do Evento */}
+            {currentPage === 'evento-detalhes' && (
+              <EventFormPage
+                mode="edit"
+                event={currentEventContext || selectedEventForEdit || scopedEvents[0]}
+                selectedProducer={activeProducer || allProducers[0]}
+                producers={allProducers}
+                onCancel={() => setCurrentPage('evento-dashboard')}
+                onSave={handleSaveEvent}
+              />
+            )}
+
+            {/* Pixel GA & Meta do Evento */}
+            {currentPage === 'evento-pixel' && (
+              <PixelInheritancePage
+                events={currentEventContext ? [currentEventContext] : scopedEvents}
+                producerId={activeProducer?.id ? Number(activeProducer.id) : null}
+                producerName={activeProducer?.name}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* Links UTM do Evento - Central UTM & Conversões */}
+            {currentPage === 'evento-utm' && (
+              <UtmLinksPage event={currentEventContext || scopedEvents[0]} notify={triggerToast} />
+            )}
+
+            {/* Analytics GA4 e Tráfego do Evento */}
+            {(currentPage === 'evento-analytics' || currentPage === 'evento-trafego') && (
+              <MarketingDashboardPage
+                events={currentEventContext ? [currentEventContext] : scopedEvents}
+                selectedEventId={currentEventContext?.id || null}
+                onSelectEventId={() => {}}
+                onOpenCreateCampaign={() => setCurrentPage('evento-meta-ads')}
+                onNavigateToTab={(tab) => {
+                  if (tab === 'mkt-campaigns') setCurrentPage('evento-meta-ads');
+                  else if (tab === 'mkt-links') setCurrentPage('evento-utm');
+                  else if (tab === 'mkt-analytics') setCurrentPage('evento-pixel');
+                }}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* Campanhas Meta Ads do Evento */}
+            {currentPage === 'evento-meta-ads' && (
+              <MarketingCampaignsPage
+                events={currentEventContext ? [currentEventContext] : scopedEvents}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* Remarketing do Evento */}
+            {currentPage === 'evento-remarketing' && (
+              <RecoveryCenterPage
+                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
+                events={currentEventContext ? [currentEventContext] : scopedEvents}
+                mode="all"
+                notify={triggerToast}
+              />
+            )}
+
+            {/* Lotes do Evento */}
+            {currentPage === 'evento-lotes' && (
+              <LotsPage
+                events={currentEventContext ? [currentEventContext] : scopedEvents}
+                selectedEvent={currentEventContext}
+                onSelectEvent={() => {}}
+                onBack={() => setCurrentPage('evento-dashboard')}
+                onSaveBatches={handleSaveBatches}
+              />
+            )}
+
+            {/* Check-in ao Vivo do Evento */}
+            {currentPage === 'evento-checkin' && (
+              <OperationsPage
+                producerId={activeProducer ? (activeProducer.id === 'prod-1' ? 1 : activeProducer.id === 'prod-2' ? 2 : 1) : null}
+                producerName={activeProducer?.name || 'DiskIngressos Produções'}
+                notify={triggerToast}
+              />
+            )}
+
+            {/* Usuários do Evento */}
+            {currentPage === 'evento-usuarios' && (
+              <UserManagerPage />
+            )}
+
+            {/* Logs do Evento */}
+            {currentPage === 'evento-logs' && (
+              <AuditLogsPage />
             )}
 
             {/* 6. Create Event Dedicated Page */}
@@ -516,7 +787,12 @@ function AuthenticatedApp() {
             {currentPage === 'dashboard' && (
               <DashboardPage
                 events={scopedEvents}
-                selectedProducer={activeProducer || allProducers[0]}
+                selectedProducer={activeProducer}
+                allProducers={allProducers}
+                onSelectProducer={(prodId) => {
+                  selectProducer(prodId);
+                  setCurrentPage('eventos');
+                }}
                 onNavigateToEvents={() => setCurrentPage('eventos')}
                 onOpenNewEvent={handleNavigateToNewEvent}
               />
@@ -587,7 +863,7 @@ function AuthenticatedApp() {
             )}
 
             {/* 21. Generic Module Pages */}
-            {(currentPage === 'atendimento' || currentPage === 'clube-beneficios' || currentPage === 'cortesias' || currentPage === 'categorias-setores' || currentPage === 'mensagens') && (
+            {(currentPage === 'clube-beneficios' || currentPage === 'cortesias' || currentPage === 'categorias-setores' || currentPage === 'mensagens') && (
               <GenericModulePage
                 page={currentPage}
                 onNavigateToEvents={() => setCurrentPage('eventos')}

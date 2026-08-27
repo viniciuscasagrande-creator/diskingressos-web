@@ -3,13 +3,18 @@ import { Lock, Mail, ArrowRight, ShieldCheck, Eye, EyeOff, Sparkles, KeyRound, X
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { DiskIngressosLogo } from '../../components/layout/DiskIngressosLogo';
 
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
-  const [email, setEmail] = useState('admin@diskingressos.com.br');
-  const [password, setPassword] = useState('Admin@123');
+  const [email, setEmail] = useState(() => {
+    return localStorage.getItem('safesaff_remember_email') || '';
+  });
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(() => {
+    return localStorage.getItem('safesaff_remember_access') === 'true';
+  });
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
@@ -18,6 +23,13 @@ export const LoginPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (rememberMe) {
+      localStorage.setItem('safesaff_remember_email', email);
+      localStorage.setItem('safesaff_remember_access', 'true');
+    } else {
+      localStorage.removeItem('safesaff_remember_email');
+      localStorage.removeItem('safesaff_remember_access');
+    }
     const success = login(email, password);
     if (!success) {
       setError('Credenciais inválidas ou conta desativada.');
@@ -52,13 +64,8 @@ export const LoginPage: React.FC = () => {
       <div className="w-full max-w-[460px] bg-white rounded-card border border-[#E2E8F0] shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200">
         {/* Brand Header */}
         <div className="pt-8 pb-4 text-center px-6">
-          <div className="inline-flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-btn bg-[#1677FF] text-white shadow-md">
-              <span className="font-extrabold text-[20px] tracking-tight">Di</span>
-            </div>
-            <span className="text-[26px] font-black tracking-tight text-[#0E1726]">
-              DiskIngressos
-            </span>
+          <div className="inline-flex items-center justify-center px-6 py-4 rounded-card bg-[#222831] shadow-md">
+            <DiskIngressosLogo height={44} />
           </div>
           <h2 className="text-[17px] font-bold text-[#0E1726] mt-4">
             Acesse sua conta

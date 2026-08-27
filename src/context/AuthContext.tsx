@@ -25,22 +25,41 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Default to Admin Master for initial preview or allow quick login switch
-  const [currentUser, setCurrentUser] = useState<User | null>(mockUsers[0]);
+  // Session storage & localStorage restoration
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    try {
+      const session = sessionStorage.getItem('safesaff_session');
+      if (session) return JSON.parse(session);
+      const rememberAccess = localStorage.getItem('safesaff_remember_access');
+      const remembered = localStorage.getItem('safesaff_remembered_user');
+      if (rememberAccess === 'true' && remembered) {
+        return JSON.parse(remembered);
+      }
+    } catch (e) {
+      console.error('Failed to parse session:', e);
+    }
+    return null; // Public route first: Login page!
+  });
+
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>(initialAuditLogs);
-  const [selectedProducerId, setSelectedProducerId] = useState<string | null>(null);
+  const [selectedProducerId, setSelectedProducerId] = useState<string | null>(() => {
+    if (currentUser && currentUser.role !== 'admin-master' && currentUser.role !== 'admin') {
+      return currentUser.producerId;
+    }
+    return null;
+  });
 
   // Determine active producer based on user role and selection
   const activeProducer = React.useMemo(() => {
     if (!currentUser) return null;
     
-    // For non-admin-master, producer is strictly fixed by their assigned producerId
+    // For regular producers, producer is strictly locked to their assigned producerId
     if (currentUser.role !== 'admin-master' && currentUser.role !== 'admin') {
       return mockProducers.find((p) => p.id === currentUser.producerId) || mockProducers[0];
     }
     
-    // For admin-master, respect the dropdown selection (or null for All Producers)
+    // For Admin Master, respect the dropdown selection (or null for All Producers)
     if (!selectedProducerId) return null;
     return mockProducers.find((p) => p.id === selectedProducerId) || null;
   }, [currentUser, selectedProducerId]);
@@ -79,11 +98,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...foundUser,
         lastLogin: new Date().toLocaleString('pt-BR'),
       };
+      
+      try {
+        sessionStorage.setItem('safesaff_session', JSON.stringify(updated));
+        if (localStorage.getItem('safesaff_remember_access') === 'true') {
+          localStorage.setItem('safesaff_remembered_user', JSON.stringify(updated));
+        }
+      } catch (e) {
+        console.error('Failed to save session:', e);
+      }
+
       setCurrentUser(updated);
       setUsers((prev) => prev.map((u) => (u.id === foundUser.id ? updated : u)));
       
       // Auto-set producer selection
-      if (updated.role !== 'admin-master') {
+      if (updated.role !== 'admin-master' && updated.role !== 'admin') {
         setSelectedProducerId(updated.producerId);
       } else {
         setSelectedProducerId(null);
@@ -98,6 +127,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     if (currentUser) {
       recordAuditLog('Encerramento de Sessão', 'Segurança', `Logout realizado (${currentUser.email})`);
+    }
+    try {
+      sessionStorage.removeItem('safesaff_session');
+      localStorage.removeItem('safesaff_remembered_user');
+      localStorage.removeItem('safesaff_remember_access');
+    } catch (e) {
+      console.error('Failed to clear session:', e);
     }
     setCurrentUser(null);
     setSelectedProducerId(null);
@@ -129,33 +165,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     recordAuditLog(
       'Criação de Usuário',
       'Administração',
-      `Usuário ${newUser.name} (${newUser.email}) criado com perfil ${newUser.roleLabel}`
+      `Novo usuário criado: ${newUser.name} (${newUser.email}) com perfil ${newUser.role}`
     );
   };
 
   const updateUser = (id: string, updates: Partial<User>) => {
     setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, ...updates } : u))
-    );
-    if (currentUser && currentUser.id === id) {
-      setCurrentUser((prev) => (prev ? { ...prev, ...updates } : prev));
-    }
-    recordAuditLog(
-      'Atualização de Usuário/Permissões',
-      'Administração',
-      `Usuário #${id} atualizado no sistema`
+      prev.map((u) => {
+        if (u.id === id) {
+          const updated = { ...u, ...updates };
+          recordAuditLog(
+            'Atualização de Usuário',
+            'Administração',
+            `Usuário ${u.name} atualizado. Alterações: ${Object.keys(updates).join(', ')}`
+          );
+          return updated;
+        }
+        return u;
+      })
     );
   };
 
   const deleteUser = (id: string) => {
-    const target = users.find((u) => u.id === id);
-    setUsers((prev) => prev.filter((u) => u.id !== id));
-    if (target) {
+    const userToDelete = users.find((u) => u.id === id);
+    if (userToDelete) {
+      setUsers((prev) => prev.filter((u) => u.id !== id));
       recordAuditLog(
         'Exclusão de Usuário',
         'Administração',
-        `Usuário ${target.name} (${target.email}) removido do sistema`,
-        'Alerta'
+        `Usuário removido: ${userToDelete.name} (${userToDelete.email})`,
+        'Concluído'
       );
     }
   };
@@ -187,7 +226,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   }
   return context;
 };

@@ -26,20 +26,34 @@ model Producer {
   posTransactions       PosTransaction[]
   financialTransactions FinancialTransaction[]
   payouts               Payout[]
+  marketingCampaigns    MarketingCampaign[]
+  trackingConfigs       TrackingConfig[]
+  trackingLinks         TrackingLink[]
+  automationFlows       AutomationFlow[]
+  messageTemplates      MessageTemplate[]
+  automationExecutions  AutomationExecution[]
+  recoveryOpportunities RecoveryOpportunity[]
+  serviceTickets        ServiceTicket[]
+  ticketMessages        TicketMessage[]
+  slaPolicies           SlaPolicy[]
+  supportIntegrations   SupportIntegration[]
+  communicationChannels CommunicationChannel[]
+  contactConsents       ContactConsent[]
+  trackingIntegrations  TrackingIntegration[]
 }
 
 model User {
-  id           Int        @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   name         String
-  email        String     @unique
+  email        String    @unique
   passwordHash String
   role         String
-  status       String     @default("ativo")
+  status       String    @default("ativo")
   producerId   Int?
-  producer     Producer?  @relation(fields: [producerId], references: [id])
+  producer     Producer? @relation(fields: [producerId], references: [id])
   lastLogin    DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   audits       AuditLog[]
 }
 
@@ -74,28 +88,37 @@ model Event {
   posTerminals          PosTerminal[]
   posTransactions       PosTransaction[]
   financialTransactions FinancialTransaction[]
+  marketingCampaigns    MarketingCampaign[]
+  trackingConfigs       TrackingConfig[]
+  trackingLinks         TrackingLink[]
+  automationFlows       AutomationFlow[]
+  messageTemplates      MessageTemplate[]
+  automationExecutions  AutomationExecution[]
+  recoveryOpportunities RecoveryOpportunity[]
+  serviceTickets        ServiceTicket[]
+  trackingIntegrationEvents TrackingIntegrationEvent[]
 
   @@index([producerId])
   @@index([producerId, status])
 }
 
 model Lot {
-  id         Int       @id @default(autoincrement())
-  name       String
-  sector     String?
-  priceCents Int
-  capacity   Int
-  sold       Int       @default(0)
-  status     String    @default("ativo")
-  startsAt   DateTime?
-  endsAt     DateTime?
-  producerId Int
-  eventId    Int
-  producer   Producer  @relation(fields: [producerId], references: [id])
-  event      Event     @relation(fields: [eventId], references: [id])
-  tickets    Ticket[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String
+  sector      String?
+  priceCents  Int
+  capacity    Int
+  sold        Int      @default(0)
+  status      String   @default("ativo")
+  startsAt    DateTime?
+  endsAt      DateTime?
+  producerId  Int
+  eventId     Int
+  producer    Producer @relation(fields: [producerId], references: [id])
+  event       Event    @relation(fields: [eventId], references: [id])
+  tickets     Ticket[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([producerId])
   @@index([eventId])
@@ -103,27 +126,27 @@ model Lot {
 }
 
 model Order {
-  id             Int                    @id @default(autoincrement())
-  code           String                 @unique
+  id             Int       @id @default(autoincrement())
+  code           String    @unique
   buyerName      String
   buyerEmail     String
   buyerDocument  String?
-  channel        String                 @default("online")
+  channel        String    @default("online")
   paymentMethod  String
-  status         String                 @default("pago")
-  quantity       Int                    @default(1)
+  status         String    @default("pago")
+  quantity       Int       @default(1)
   grossCents     Int
-  feeCents       Int                    @default(0)
+  feeCents       Int       @default(0)
   netCents       Int
   producerId     Int
   eventId        Int
-  producer       Producer               @relation(fields: [producerId], references: [id])
-  event          Event                  @relation(fields: [eventId], references: [id])
+  producer       Producer  @relation(fields: [producerId], references: [id])
+  event          Event     @relation(fields: [eventId], references: [id])
   tickets        Ticket[]
   posTransaction PosTransaction?
   financialTx    FinancialTransaction[]
-  createdAt      DateTime               @default(now())
-  updatedAt      DateTime               @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@index([producerId])
   @@index([eventId])
@@ -132,20 +155,20 @@ model Order {
 }
 
 model Participant {
-  id           Int       @id @default(autoincrement())
-  name         String
-  email        String?
-  document     String?
-  phone        String?
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String?
+  document    String?
+  phone       String?
   facialStatus String    @default("nao-cadastrado")
-  producerId   Int
-  eventId      Int
-  producer     Producer  @relation(fields: [producerId], references: [id])
-  event        Event     @relation(fields: [eventId], references: [id])
-  tickets      Ticket[]
-  checkIns     CheckIn[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  producerId  Int
+  eventId     Int
+  producer    Producer  @relation(fields: [producerId], references: [id])
+  event       Event     @relation(fields: [eventId], references: [id])
+  tickets     Ticket[]
+  checkIns    CheckIn[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([producerId])
   @@index([eventId])
@@ -242,19 +265,19 @@ model PosTransaction {
 }
 
 model Payout {
-  id           Int                    @id @default(autoincrement())
-  code         String                 @unique
-  amountCents  Int
-  status       String                 @default("solicitado")
-  bankAccount  String?
-  notes        String?
-  requestedAt  DateTime               @default(now())
-  paidAt       DateTime?
-  producerId   Int
-  producer     Producer               @relation(fields: [producerId], references: [id])
-  transactions FinancialTransaction[]
-  createdAt    DateTime               @default(now())
-  updatedAt    DateTime               @updatedAt
+  id             Int                    @id @default(autoincrement())
+  code           String                 @unique
+  amountCents    Int
+  status         String                 @default("solicitado")
+  bankAccount    String?
+  notes          String?
+  requestedAt    DateTime               @default(now())
+  paidAt         DateTime?
+  producerId     Int
+  producer       Producer               @relation(fields: [producerId], references: [id])
+  transactions   FinancialTransaction[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
 
   @@index([producerId])
   @@index([producerId, status])
@@ -302,4 +325,335 @@ model AuditLog {
 
   @@index([userId])
   @@index([producerId])
+}
+
+
+model MarketingCampaign {
+  id              Int      @id @default(autoincrement())
+  name            String
+  channel         String
+  objective       String   @default("conversao")
+  status          String   @default("rascunho")
+  budgetCents     Int      @default(0)
+  spentCents      Int      @default(0)
+  revenueCents    Int      @default(0)
+  impressions     Int      @default(0)
+  clicks          Int      @default(0)
+  conversions     Int      @default(0)
+  startsAt        DateTime?
+  endsAt          DateTime?
+  producerId      Int
+  eventId         Int?
+  producer        Producer @relation(fields: [producerId], references: [id])
+  event           Event?   @relation(fields: [eventId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, status])
+}
+
+model TrackingConfig {
+  id          Int       @id @default(autoincrement())
+  provider    String
+  scope       String
+  mode        String    @default("inherit")
+  externalId  String?
+  configJson  String?
+  producerId  Int?
+  eventId     Int?
+  producer    Producer? @relation(fields: [producerId], references: [id])
+  event       Event?    @relation(fields: [eventId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([provider])
+  @@index([producerId])
+  @@index([eventId])
+}
+
+model TrackingLink {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique
+  name         String
+  destination  String
+  source       String?
+  medium       String?
+  campaign     String?
+  content      String?
+  term         String?
+  clicks       Int      @default(0)
+  conversions  Int      @default(0)
+  producerId   Int
+  eventId      Int?
+  producer     Producer @relation(fields: [producerId], references: [id])
+  event        Event?   @relation(fields: [eventId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, campaign])
+}
+
+
+model AutomationFlow {
+  id             Int      @id @default(autoincrement())
+  name           String
+  trigger        String
+  channel        String
+  audience       String   @default("compradores")
+  status         String   @default("rascunho")
+  delayMinutes   Int      @default(0)
+  sentCount      Int      @default(0)
+  convertedCount Int      @default(0)
+  revenueCents   Int      @default(0)
+  producerId     Int
+  eventId        Int?
+  producer       Producer @relation(fields: [producerId], references: [id])
+  event          Event?   @relation(fields: [eventId], references: [id])
+  executions     AutomationExecution[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, status])
+}
+
+model MessageTemplate {
+  id         Int      @id @default(autoincrement())
+  name       String
+  channel    String
+  category   String   @default("marketing")
+  subject    String?
+  body       String
+  status     String   @default("ativo")
+  producerId Int
+  eventId    Int?
+  producer   Producer @relation(fields: [producerId], references: [id])
+  event      Event?   @relation(fields: [eventId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, channel])
+}
+
+model AutomationExecution {
+  id             Int            @id @default(autoincrement())
+  channel        String
+  destination    String?
+  status         String         @default("agendado")
+  scheduledAt    DateTime       @default(now())
+  executedAt     DateTime?
+  messagePreview String?
+  revenueCents   Int            @default(0)
+  producerId     Int
+  eventId        Int?
+  flowId         Int
+  producer       Producer       @relation(fields: [producerId], references: [id])
+  event          Event?         @relation(fields: [eventId], references: [id])
+  flow           AutomationFlow @relation(fields: [flowId], references: [id])
+  createdAt      DateTime       @default(now())
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([flowId])
+  @@index([producerId, status])
+}
+
+model RecoveryOpportunity {
+  id             Int       @id @default(autoincrement())
+  code           String    @unique
+  kind           String    @default("carrinho")
+  customerName   String
+  email          String?
+  phone          String?
+  amountCents    Int
+  status         String    @default("aberto")
+  preferredChannel String  @default("whatsapp")
+  lastActivityAt DateTime  @default(now())
+  recoveredAt    DateTime?
+  revenueCents   Int       @default(0)
+  producerId     Int
+  eventId        Int?
+  producer       Producer  @relation(fields: [producerId], references: [id])
+  event          Event?    @relation(fields: [eventId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, status])
+  @@index([producerId, kind])
+}
+
+model ServiceTicket {
+  id               Int       @id @default(autoincrement())
+  code             String    @unique
+  subject          String
+  description      String
+  category         String    @default("incidente")
+  impact           String    @default("medio")
+  urgency          String    @default("media")
+  priority         String    @default("P3")
+  status           String    @default("aberto")
+  channel          String    @default("portal")
+  requesterName    String
+  requesterEmail   String?
+  requesterPhone   String?
+  assignedTo       String?
+  firstResponseAt  DateTime?
+  responseDueAt    DateTime
+  resolutionDueAt  DateTime
+  resolvedAt       DateTime?
+  closedAt         DateTime?
+  slaBreached      Boolean   @default(false)
+  producerId       Int
+  eventId          Int?
+  producer         Producer  @relation(fields: [producerId], references: [id])
+  event            Event?    @relation(fields: [eventId], references: [id])
+  messages         TicketMessage[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  @@index([producerId, status])
+  @@index([producerId, priority])
+  @@index([eventId])
+}
+
+model TicketMessage {
+  id         Int           @id @default(autoincrement())
+  author     String
+  body       String
+  channel    String        @default("interno")
+  internal   Boolean       @default(false)
+  producerId Int
+  ticketId   Int
+  producer   Producer      @relation(fields: [producerId], references: [id])
+  ticket     ServiceTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  createdAt  DateTime      @default(now())
+  @@index([ticketId])
+  @@index([producerId])
+}
+
+model SlaPolicy {
+  id                Int      @id @default(autoincrement())
+  name              String
+  priority          String
+  responseMinutes   Int
+  resolutionMinutes Int
+  businessHours     String   @default("24x7")
+  active            Boolean  @default(true)
+  producerId        Int
+  producer          Producer @relation(fields: [producerId], references: [id])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  @@unique([producerId, priority])
+}
+
+model SupportIntegration {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  status      String   @default("configurado")
+  description String?
+  producerId  Int
+  producer    Producer @relation(fields: [producerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([producerId, type])
+}
+
+model CommunicationChannel {
+  id          Int      @id @default(autoincrement())
+  type        String
+  provider    String
+  sender      String?
+  status      String   @default("pendente")
+  webhookMode String   @default("receber_e_enviar")
+  producerId  Int
+  producer    Producer @relation(fields: [producerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@unique([producerId, type])
+}
+
+model ContactConsent {
+  id         Int      @id @default(autoincrement())
+  contact    String
+  channel    String
+  status     String   @default("optin")
+  source     String   @default("sistema")
+  producerId Int
+  producer   Producer @relation(fields: [producerId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@unique([producerId, contact, channel])
+  @@index([producerId, status])
+}
+
+model TrackingIntegration {
+  id                  Int                        @id @default(autoincrement())
+  name                String
+  provider            String                     @default("meta") // meta, google, tiktok, gtm, custom
+  type                String                     @default("meta-capi") // meta-capi, ga4, gtm, tiktok
+  pixelId             String
+  encryptedApiToken   String?
+  testEventCode       String?
+  status              String                     @default("ativo") // ativo, pausado, atencao, erro
+  inheritanceMode     String                     @default("all_events") // all_events, selected_events, current_event
+  lastEventName       String?
+  lastFiredAt         DateTime?
+  lastResponseStatus  String?                    @default("200 OK")
+  lastErrorMessage    String?
+  eventsSentToday     Int                        @default(0)
+  producerId          Int
+  producer            Producer                   @relation(fields: [producerId], references: [id])
+  events              TrackingIntegrationEvent[]
+  eventConfigs        TrackingEventConfig[]
+  logs                TrackingEventLog[]
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+
+  @@index([producerId, status])
+  @@index([producerId, provider])
+}
+
+model TrackingIntegrationEvent {
+  id            Int                 @id @default(autoincrement())
+  integrationId Int
+  eventId       Int
+  integration   TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  event         Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([integrationId, eventId])
+  @@index([eventId])
+}
+
+model TrackingEventConfig {
+  id            Int                 @id @default(autoincrement())
+  integrationId Int
+  eventName     String              // PageView, ViewContent, AddToCart, InitiateCheckout, AddPaymentInfo, Purchase, Lead, CompleteRegistration
+  enabled       Boolean             @default(true)
+  integration   TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@unique([integrationId, eventName])
+}
+
+model TrackingEventLog {
+  id            Int                 @id @default(autoincrement())
+  integrationId Int
+  eventId       Int?
+  eventName     String
+  status        String              @default("success") // success, error
+  responseCode  Int                 @default(200)
+  responseBody  String?
+  payloadSample String?
+  createdAt     DateTime            @default(now())
+  integration   TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([integrationId, createdAt])
 }

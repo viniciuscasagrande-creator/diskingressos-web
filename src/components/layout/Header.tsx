@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { 
   Search, Bell, Plus, ChevronDown, Building2, 
   User as UserIcon, LogOut, ShieldCheck, Check, 
-  ExternalLink, KeyRound, Globe
+  ExternalLink, KeyRound, Globe, Grid, Sparkles
 } from 'lucide-react';
 import type { Producer } from '../../types/producer';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
+import { DiskIngressosLogo } from './DiskIngressosLogo';
 
 interface HeaderProps {
   query: string;
@@ -36,41 +37,30 @@ export const Header: React.FC<HeaderProps> = ({
   const isAdminMaster = currentUser?.role === 'admin-master' || currentUser?.role === 'admin';
 
   return (
-    <header className="sticky top-0 z-40 flex h-[74px] w-full items-center justify-between border-b border-white/[0.08] bg-[#222A36] px-4 sm:px-6 lg:px-7 select-none">
+    <header className="sticky top-0 z-40 flex h-[72px] w-full items-center justify-between border-b border-white/[0.08] bg-[#222831] px-4 sm:px-6 lg:px-7 select-none shadow-md">
       {/* 1. Left: Brand Logo & Producer Selector */}
       <div className="flex items-center gap-4 sm:gap-6 min-w-0">
-        {/* Logo DiskIngressos */}
-        <div className="flex items-center gap-2.5 cursor-pointer">
-          <div className="flex h-9 w-9 items-center justify-center rounded-btn bg-[#1677FF] text-white shadow-md">
-            <span className="font-extrabold text-[17px] tracking-tight">Di</span>
-          </div>
-          <div className="hidden sm:block">
-            <span className="font-black text-[18px] tracking-tight text-white block leading-none">
-              DiskIngressos
-            </span>
-            <span className="text-[10px] font-semibold text-[#8F9BAD] uppercase tracking-widest mt-0.5 block">
-              Painel do Produtor
-            </span>
-          </div>
+        {/* Logo DiskIngressos Oficial */}
+        <div className="flex items-center gap-3 cursor-pointer group hover:opacity-95 transition-opacity">
+          <DiskIngressosLogo height={36} />
         </div>
 
         {/* Vertical Divider */}
         <div className="h-6 w-px bg-white/[0.12] hidden md:block" />
 
-        {/* Multi-Tenant Producer Indicator / Selector */}
+        {/* Multi-Tenant Producer Indicator / Selector (Limitless Styled) */}
         {isAdminMaster ? (
-          /* Admin Master Dropdown: Pode ver "Todas as Produtoras" ou escolher uma */
           <div className="relative">
             <button
               onClick={() => setProducerDropdownOpen(!producerDropdownOpen)}
-              className="flex items-center gap-2 rounded-btn border border-white/[0.12] bg-[#2A3442] px-3 py-1.5 text-xs text-white hover:bg-[#344052] transition shadow-xs"
+              className="flex items-center gap-2 rounded-btn border border-white/[0.12] bg-[#2D3748] px-3 py-1.5 text-xs text-white hover:bg-[#374357] transition shadow-xs"
               title="Alternar Produtora (Acesso Global Admin Master)"
             >
               <Building2 size={15} className="text-[#1677FF]" />
               <span className="font-bold max-w-[160px] truncate">
                 {activeProducer ? activeProducer.name : 'Todas as Produtoras'}
               </span>
-              <ChevronDown size={14} className="text-slate-400" />
+              <ChevronDown size={13} className="text-slate-400" />
             </button>
 
             {producerDropdownOpen && (
@@ -126,8 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </div>
         ) : (
-          /* Regular Producer: Fixo na própria produtora (Sem dropdown) */
-          <div className="flex items-center gap-2 rounded-btn bg-[#2A3442] border border-white/[0.12] px-3 py-1.5 text-xs text-white">
+          <div className="flex items-center gap-2 rounded-btn bg-[#2D3748] border border-white/[0.12] px-3 py-1.5 text-xs text-white">
             <Building2 size={14} className="text-[#10B981]" />
             <span className="font-bold">{activeProducer?.name || 'Sua Produtora'}</span>
             <span className="text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded font-mono">
@@ -146,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Buscar eventos, pedidos, participantes ou transações..."
-            className="w-full h-[40px] pl-10 pr-4 rounded-input border border-white/[0.08] bg-[#2A3442] text-xs font-medium text-white placeholder-slate-400 outline-none transition focus:border-[#1677FF] focus:bg-[#323E4F]"
+            className="w-full h-[38px] pl-10 pr-4 rounded-input border border-white/[0.08] bg-[#2D3748] text-xs font-medium text-white placeholder-slate-400 outline-none transition focus:border-[#1677FF] focus:bg-[#374357]"
           />
         </div>
       </div>
@@ -162,37 +151,44 @@ export const Header: React.FC<HeaderProps> = ({
           <span>Novo Evento</span>
         </button>
 
-        {/* Notifications Icon */}
+        {/* Notifications Icon with Badge Pill */}
         <button
           onClick={() => setNotificationsOpen(!notificationsOpen)}
-          className="relative flex h-9 w-9 items-center justify-center rounded-btn text-slate-300 hover:bg-[#2D3746] hover:text-white transition"
+          className="relative flex h-9 w-9 items-center justify-center rounded-btn text-slate-300 hover:bg-[#2D3748] hover:text-white transition"
           title="Notificações do Sistema"
         >
           <Bell size={18} />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-[#EF4444]" />
+          <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#EF4444] text-[9px] font-bold text-white shadow-xs">
+            3
+          </span>
         </button>
 
-        {/* User Profile Dropdown */}
+        {/* Limitless User Profile with Online Status Dot */}
         <div className="relative">
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-            className="flex items-center gap-2.5 p-1 rounded-btn hover:bg-[#2D3746] transition"
+            className="flex items-center gap-2.5 p-1 rounded-btn hover:bg-[#2D3748] transition"
           >
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-full text-white font-bold text-xs shadow-inner"
-              style={{ backgroundColor: currentUser?.avatarColor || '#1677FF' }}
-            >
-              {currentUser ? currentUser.name.slice(0, 2).toUpperCase() : 'VI'}
+            <div className="relative">
+              <div
+                className="flex h-9 w-9 items-center justify-center rounded-full text-white font-bold text-xs shadow-inner"
+                style={{ backgroundColor: currentUser?.avatarColor || '#1677FF' }}
+              >
+                {currentUser ? currentUser.name.slice(0, 2).toUpperCase() : 'VI'}
+              </div>
+              {/* Online Indicator Dot (Limitless signature style) */}
+              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-[#10B981] ring-2 ring-[#222831]" />
             </div>
+
             <div className="hidden lg:block text-left">
               <span className="text-xs font-bold text-white block leading-tight truncate max-w-[130px]">
                 {currentUser?.name || 'Vinícius Admin'}
               </span>
-              <span className="text-[10px] text-[#06B6D4] font-medium block">
+              <span className="text-[10px] text-[#06B6D4] font-semibold block">
                 {currentUser?.roleLabel || 'Admin Master'}
               </span>
             </div>
-            <ChevronDown size={14} className="text-slate-400 hidden sm:block" />
+            <ChevronDown size={13} className="text-slate-400 hidden sm:block" />
           </button>
 
           {/* Profile Dropdown Menu */}

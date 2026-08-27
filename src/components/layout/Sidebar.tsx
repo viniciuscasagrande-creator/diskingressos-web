@@ -14,7 +14,9 @@ import {
   Plus, Target, Clock3, UserX, PartyPopper
 } from 'lucide-react';
 import type { NavigationPage } from '../../types/producer';
+import type { EventItem } from '../../types/event';
 import { useAuth } from '../../context/AuthContext';
+import { EventCoverVisual } from '../events/EventCoverVisual';
 
 interface SidebarProps {
   currentPage: NavigationPage;
@@ -23,6 +25,8 @@ interface SidebarProps {
   onBackToHome?: () => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
+  selectedEvent?: EventItem | null;
+  onExitEventContext?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -32,6 +36,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onBackToHome,
   collapsed,
   onToggleCollapse,
+  selectedEvent,
+  onExitEventContext,
 }) => {
   const { currentUser, can } = useAuth();
 
@@ -41,7 +47,269 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [posOpen, setPosOpen] = useState(false);
   const [marketingOpen, setMarketingOpen] = useState(false);
   const [remarketingOpen, setRemarketingOpen] = useState(false);
+  const [sacOpen, setSacOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+
+  // 1. EVENT-SPECIFIC CONTEXTUAL SIDEBAR (FASE 15)
+  if (selectedEvent) {
+    return (
+      <aside className={`relative flex flex-col border-r border-white/[0.08] bg-[#222A36] text-[#CAD3DF] transition-all duration-300 select-none z-20 shrink-0 ${
+        collapsed ? 'w-[72px]' : 'w-[264px]'
+      } min-h-[calc(100vh-74px)]`}>
+        {/* Top Back Action to Global Events List */}
+        <button
+          onClick={onExitEventContext || (() => onNavigate('eventos'))}
+          className="w-full h-[52px] px-4 border-b border-white/[0.06] bg-[#1E2530] text-white flex items-center justify-between font-bold text-[13px] hover:bg-[#2A3442] transition-colors"
+          title="Voltar para Todos os Eventos (Painel Geral)"
+        >
+          <div className="flex items-center gap-2">
+            <ArrowLeft size={16} className="text-[#1677FF]" />
+            {!collapsed && <span>← Voltar aos Eventos</span>}
+          </div>
+          {!collapsed && (
+            <span className="text-[10px] uppercase font-bold text-slate-400 bg-white/10 px-2 py-0.5 rounded">
+              Geral
+            </span>
+          )}
+        </button>
+
+        {/* Selected Event Mini-Card / Header */}
+        {!collapsed && (
+          <div className="p-3 border-b border-white/[0.08] bg-[#1E2530]/80">
+            <div className="flex items-center gap-3">
+              {/* Square Event Image on Left */}
+              <div className="h-14 w-14 min-w-[56px] min-h-[56px] aspect-square rounded-md overflow-hidden border border-white/20 bg-slate-900 shrink-0 shadow-sm relative">
+                <EventCoverVisual event={selectedEvent} className="h-full w-full" />
+              </div>
+
+              {/* Event Info Details */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-[10px] font-black text-[#7DD3FC] font-mono tracking-tight bg-sky-950/60 px-1.5 py-0.5 rounded border border-sky-800/40">
+                    #{selectedEvent.code}
+                  </span>
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                </div>
+                <h4 className="text-[12px] font-extrabold text-white truncate leading-tight" title={selectedEvent.title}>
+                  {selectedEvent.title}
+                </h4>
+                <div className="flex items-center gap-1 text-[10px] text-slate-300 truncate mt-0.5" title={selectedEvent.venue}>
+                  <span className="truncate">{selectedEvent.venue || 'Local não informado'}</span>
+                </div>
+                {selectedEvent.date && (
+                  <span className="text-[9.5px] font-semibold text-slate-400 block truncate">
+                    {selectedEvent.date}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Event-Specific Navigation Scroll */}
+        <div className="flex-1 overflow-y-auto py-2.5 px-2 space-y-3 sidebar-scroll">
+          {/* Section: EVENTO */}
+          <div className="space-y-1">
+            {!collapsed && (
+              <span className="px-3 text-[10px] font-bold tracking-widest text-[#8F9BAD] uppercase block">
+                Evento
+              </span>
+            )}
+            
+            {/* Dashboard Evento */}
+            <button
+              onClick={() => onNavigate('evento-dashboard')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-dashboard' || currentPage === 'dashboard-evento'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <LayoutDashboard size={16} className={currentPage === 'evento-dashboard' || currentPage === 'dashboard-evento' ? 'text-[#7DD3FC]' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && <span>Dashboard</span>}
+            </button>
+
+            {/* Ingressos */}
+            <button
+              onClick={() => onNavigate('evento-ingressos')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-ingressos'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Users size={16} className={currentPage === 'evento-ingressos' ? 'text-[#7DD3FC]' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && <span>Consultar Ingressos</span>}
+            </button>
+
+            {/* Cortesias */}
+            <button
+              onClick={() => onNavigate('evento-cortesias')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-cortesias'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Tag size={16} className={currentPage === 'evento-cortesias' ? 'text-[#7DD3FC]' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && <span>Cortesias</span>}
+            </button>
+
+            {/* Relatórios */}
+            <button
+              onClick={() => onNavigate('evento-relatorios')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-relatorios'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <FileText size={16} className={currentPage === 'evento-relatorios' ? 'text-[#7DD3FC]' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && <span>Relatórios de Vendas</span>}
+            </button>
+
+            {/* Detalhes / Edição */}
+            <button
+              onClick={() => onNavigate('evento-detalhes')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-detalhes' || currentPage === 'editar-evento'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Settings size={16} className={currentPage === 'evento-detalhes' || currentPage === 'editar-evento' ? 'text-[#7DD3FC]' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && <span>Detalhes do Evento</span>}
+            </button>
+          </div>
+
+          {/* Section: MARKETING & CONFIGURAÇÕES */}
+          <div className="space-y-1 pt-2 border-t border-white/[0.06]">
+            {!collapsed && (
+              <span className="px-3 text-[10px] font-bold tracking-widest text-[#8F9BAD] uppercase block">
+                Marketing & Configurações
+              </span>
+            )}
+
+            {/* Pixel GA */}
+            <button
+              onClick={() => onNavigate('evento-pixel')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-pixel'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Sliders size={16} className={currentPage === 'evento-pixel' ? 'text-[#7DD3FC]' : 'text-pink-400 group-hover:text-white'} />
+              {!collapsed && <span>Pixel GA & Meta</span>}
+            </button>
+
+            {/* Links UTM */}
+            <button
+              onClick={() => onNavigate('evento-utm')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-utm'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Link size={16} className={currentPage === 'evento-utm' ? 'text-[#7DD3FC]' : 'text-amber-400 group-hover:text-white'} />
+              {!collapsed && <span>Links UTM & Conversões</span>}
+            </button>
+
+            {/* Analytics GA4 */}
+            <button
+              onClick={() => onNavigate('evento-analytics')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-analytics'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <TrendingUp size={16} className={currentPage === 'evento-analytics' ? 'text-[#7DD3FC]' : 'text-blue-400 group-hover:text-white'} />
+              {!collapsed && <span>Analytics GA4</span>}
+            </button>
+
+            {/* Tráfego Site */}
+            <button
+              onClick={() => onNavigate('evento-trafego')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-trafego'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Activity size={16} className={currentPage === 'evento-trafego' ? 'text-[#7DD3FC]' : 'text-teal-400 group-hover:text-white'} />
+              {!collapsed && <span>Tráfego Site</span>}
+            </button>
+
+            {/* Campanhas Meta Ads */}
+            <button
+              onClick={() => onNavigate('evento-meta-ads')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-meta-ads'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Megaphone size={16} className={currentPage === 'evento-meta-ads' ? 'text-[#7DD3FC]' : 'text-purple-400 group-hover:text-white'} />
+              {!collapsed && <span>Campanhas Meta Ads</span>}
+            </button>
+
+            {/* Remarketing */}
+            <button
+              onClick={() => onNavigate('evento-remarketing')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-remarketing'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Repeat2 size={16} className={currentPage === 'evento-remarketing' ? 'text-[#7DD3FC]' : 'text-rose-400 group-hover:text-white'} />
+              {!collapsed && <span>Remarketing do Evento</span>}
+            </button>
+          </div>
+
+          {/* Section: OPERAÇÃO & ADMINISTRAÇÃO */}
+          <div className="space-y-1 pt-2 border-t border-white/[0.06]">
+            {!collapsed && (
+              <span className="px-3 text-[10px] font-bold tracking-widest text-[#8F9BAD] uppercase block">
+                Operação & Lotes
+              </span>
+            )}
+
+            {/* Lotes & Setores */}
+            <button
+              onClick={() => onNavigate('evento-lotes')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-lotes' || currentPage === 'lotes'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <Layers3 size={16} className={currentPage === 'evento-lotes' || currentPage === 'lotes' ? 'text-[#7DD3FC]' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && <span>Lotes & Setores</span>}
+            </button>
+
+            {/* Check-in */}
+            <button
+              onClick={() => onNavigate('evento-checkin')}
+              className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[12px] font-semibold transition-all ${
+                currentPage === 'evento-checkin'
+                  ? 'bg-[#173A52] text-[#7DD3FC] shadow-xs'
+                  : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+              }`}
+            >
+              <ScanFace size={16} className={currentPage === 'evento-checkin' ? 'text-[#7DD3FC]' : 'text-emerald-400 group-hover:text-white'} />
+              {!collapsed && <span>Check-in ao Vivo</span>}
+            </button>
+          </div>
+        </div>
+      </aside>
+    );
+  }
 
   const isEventosActive = [
     'eventos', 'nucleo-operacional', 'novo-evento', 'editar-evento', 'lotes', 
@@ -65,7 +333,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const isMarketingActive = [
     'marketing', 'mkt-hub', 'mkt-dashboard', 'mkt-campaigns', 'mkt-new-campaign', 
     'mkt-automations', 'mkt-whatsapp', 'mkt-email', 'mkt-coupons', 
-    'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-reports', 'campanhas', 
+    'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-comm-integrations', 'mkt-reports', 'campanhas', 
     'pixel-meta', 'google-analytics', 'cupons'
   ].includes(currentPage);
 
@@ -73,6 +341,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     'remarketing', 'rmk-hub', 'rmk-dashboard', 'rmk-carts', 'rmk-audiences', 
     'rmk-segments', 'rmk-flows', 'rmk-whatsapp', 'rmk-email', 'rmk-payments', 
     'rmk-inactive', 'rmk-postevent', 'rmk-automation', 'rmk-reports', 'mkt-abandoned'
+  ].includes(currentPage);
+
+  const isSacActive = [
+    'atendimento', 'sac-hub', 'sac-dashboard', 'sac-tickets', 
+    'sac-new', 'sac-sla', 'sac-integrations', 'sac-knowledge', 'sac-reports'
   ].includes(currentPage);
 
   const isAdminActive = [
@@ -675,6 +948,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </button>
 
                 <button
+                  onClick={() => onNavigate('mkt-comm-integrations')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'mkt-comm-integrations'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Integrações de Comunicação</span>
+                </button>
+
+                <button
                   onClick={() => onNavigate('mkt-reports')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
                     currentPage === 'mkt-reports'
@@ -879,19 +1164,132 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         )}
 
-        {/* 9. Atendimento / SAC */}
-        <button
-          onClick={() => onNavigate('atendimento')}
-          className={`group flex w-full items-center gap-3 rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
-            currentPage === 'atendimento'
-              ? 'bg-[#3B4553] text-white shadow-xs'
-              : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
-          }`}
-          title="Atendimento e SAC"
-        >
-          <Headphones size={18} className={currentPage === 'atendimento' ? 'text-[#1677FF]' : 'text-slate-400 group-hover:text-white'} />
-          {!collapsed && <span className="truncate">Atendimento / SAC</span>}
-        </button>
+        {/* 9. Atendimento / SAC (Fase 14 ITIL & Service Desk) */}
+        <div>
+          <button
+            onClick={() => {
+              if (collapsed) onToggleCollapse();
+              setSacOpen(!sacOpen);
+            }}
+            className={`group flex w-full items-center justify-between rounded-btn px-3 py-2 text-[13px] font-semibold transition-all ${
+              isSacActive && !collapsed
+                ? 'bg-[#2D3746] text-white'
+                : 'text-[#CAD3DF] hover:bg-[#2D3746] hover:text-white'
+            }`}
+            title="Atendimento / SAC"
+          >
+            <div className="flex items-center gap-3">
+              <Headphones size={18} className={isSacActive ? 'text-[#1677FF]' : 'text-slate-400 group-hover:text-white'} />
+              {!collapsed && <span>Atendimento / SAC</span>}
+            </div>
+            {!collapsed && (
+              <span className="text-slate-400">
+                {sacOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </span>
+            )}
+          </button>
+
+          {/* SAC Submenu */}
+          {!collapsed && sacOpen && (
+            <div className="ml-3 pl-3 border-l border-slate-700/60 my-1 space-y-0.5">
+              <button
+                onClick={() => onNavigate('sac-hub')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'atendimento' || currentPage === 'sac-hub'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-[#1677FF]" />
+                <span>Hub de Atendimento</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('sac-dashboard')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'sac-dashboard'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Dashboard SAC</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('sac-tickets')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'sac-tickets'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Chamados</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('sac-new')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'sac-new'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Abrir Chamado</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('sac-sla')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'sac-sla'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>SLA & ITIL</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('sac-integrations')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'sac-integrations'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Integrações</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('sac-knowledge')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'sac-knowledge'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Base de Conhecimento</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('sac-reports')}
+                className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                  currentPage === 'sac-reports'
+                    ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                    : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                }`}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                <span>Relatórios</span>
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* 10. Administração & Governança (Fase 8 Full Menu) */}
         <div>

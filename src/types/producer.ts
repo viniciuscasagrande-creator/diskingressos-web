@@ -24,6 +24,22 @@ export type NavigationPage =
   | 'categorias-setores'
   | 'cupons'
   | 'cortesias'
+  // Navegação Contextual por Evento (Fase 15)
+  | 'evento-dashboard'
+  | 'evento-ingressos'
+  | 'evento-cortesias'
+  | 'evento-relatorios'
+  | 'evento-detalhes'
+  | 'evento-pixel'
+  | 'evento-utm'
+  | 'evento-analytics'
+  | 'evento-trafego'
+  | 'evento-meta-ads'
+  | 'evento-remarketing'
+  | 'evento-lotes'
+  | 'evento-checkin'
+  | 'evento-usuarios'
+  | 'evento-logs'
   // Hub Financeiro & Modules
   | 'financeiro'
   | 'fin-hub'
@@ -52,7 +68,7 @@ export type NavigationPage =
   | 'pos-terminals'
   | 'pos-sales'
   | 'pos-closing'
-  // Marketing (Fase 11)
+  // Marketing (Fase 11-14)
   | 'marketing'
   | 'mkt-hub'
   | 'mkt-dashboard'
@@ -65,11 +81,12 @@ export type NavigationPage =
   | 'mkt-links'
   | 'mkt-affiliates'
   | 'mkt-analytics'
+  | 'mkt-comm-integrations'
   | 'mkt-reports'
   | 'campanhas'
   | 'pixel-meta'
   | 'google-analytics'
-  // Remarketing (Fase 11)
+  // Remarketing (Fase 11-14)
   | 'remarketing'
   | 'rmk-hub'
   | 'rmk-dashboard'
@@ -85,8 +102,16 @@ export type NavigationPage =
   | 'rmk-automation'
   | 'rmk-reports'
   | 'mkt-abandoned'
-  // Atendimento & Outros
+  // Atendimento / SAC (Fase 14 ITIL & Service Desk)
   | 'atendimento'
+  | 'sac-hub'
+  | 'sac-dashboard'
+  | 'sac-tickets'
+  | 'sac-new'
+  | 'sac-sla'
+  | 'sac-integrations'
+  | 'sac-knowledge'
+  | 'sac-reports'
   | 'mensagens'
   // Administração & Governança (Fase 8)
   | 'administracao'

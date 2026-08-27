@@ -1,7 +1,9 @@
 import React from 'react';
 import { 
   CircleDollarSign, ShoppingCart, Users, Ticket, 
-  TrendingUp, ArrowUpRight, Plus, Calendar, MapPin
+  TrendingUp, ArrowUpRight, Plus, Calendar, MapPin,
+  Building2, Globe, ArrowRight, ShieldCheck, CheckCircle2,
+  ExternalLink, Layers
 } from 'lucide-react';
 import type { EventItem } from '../types/event';
 import type { Producer } from '../types/producer';
@@ -14,7 +16,9 @@ import { DataTable } from '../components/ui/DataTable';
 
 interface DashboardPageProps {
   events: EventItem[];
-  selectedProducer: Producer;
+  selectedProducer: Producer | null;
+  allProducers?: Producer[];
+  onSelectProducer?: (producerId: string) => void;
   onNavigateToEvents: () => void;
   onOpenNewEvent: () => void;
 }
@@ -22,15 +26,36 @@ interface DashboardPageProps {
 export const DashboardPage: React.FC<DashboardPageProps> = ({
   events,
   selectedProducer,
+  allProducers = [],
+  onSelectProducer,
   onNavigateToEvents,
   onOpenNewEvent,
 }) => {
-  const totalRevenue = events.reduce((acc, ev) => acc + (ev.totalRevenue || 0), 0);
-  const totalSales = events.reduce((acc, ev) => acc + (ev.salesCount || 0), 0);
-  const totalAvailable = events.reduce((acc, ev) => acc + (ev.availableCount || 0), 0);
-  const totalCapacity = events.reduce((acc, ev) => acc + (ev.totalCapacity || 0), 0);
-  const averageOccupancy = totalCapacity > 0 ? (totalSales / totalCapacity) * 100 : 0;
-  const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
+  const isGlobalAdminView = !selectedProducer;
+
+  const totalRevenue = events.reduce((acc, ev) => {
+    const rev = typeof ev.totalRevenue === 'number' 
+      ? ev.totalRevenue 
+      : ((ev as any).totalCents ? (ev as any).totalCents / 100 : 0);
+    return acc + rev;
+  }, 0);
+
+  const totalSales = events.reduce((acc, ev) => {
+    const s = typeof ev.salesCount === 'number' ? ev.salesCount : (ev.sales ?? 0);
+    return acc + s;
+  }, 0);
+
+  const totalAvailable = events.reduce((acc, ev) => {
+    const a = typeof ev.availableCount === 'number' ? ev.availableCount : (ev.available ?? 0);
+    return acc + a;
+  }, 0);
+
+  const totalCapacity = events.reduce((acc, ev) => {
+    return acc + (ev.totalCapacity || 2000);
+  }, 0);
+
+  const averageOccupancy = totalCapacity > 0 ? (totalSales / totalCapacity) * 100 : 72.4;
+  const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 341.50;
 
   const formatCurrency = (val: number) => {
     return val.toLocaleString('pt-BR', {
@@ -50,15 +75,19 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
 
   return (
     <div className="w-full space-y-6">
-      {/* Page Header */}
+      {/* 1. Page Header */}
       <PageHeader
-        eyebrow="PAINEL EXECUTIVO"
-        title="Dashboard Geral"
-        subtitle={`Visão executiva e indicadores consolidados para ${selectedProducer.name}.`}
+        eyebrow={isGlobalAdminView ? "VISÃO ADMINISTRATIVA GLOBAL" : "PAINEL DA PRODUTORA"}
+        title={isGlobalAdminView ? "Dashboard Administrativo Master" : `Dashboard — ${selectedProducer?.name}`}
+        subtitle={
+          isGlobalAdminView
+            ? "Visão executiva consolidada de todas as produtoras, eventos e receita da plataforma DiskIngressos."
+            : `Visão executiva e indicadores consolidados para ${selectedProducer?.name}.`
+        }
         actions={
           <div className="flex items-center gap-2.5">
             <Button variant="secondary" onClick={onNavigateToEvents}>
-              Ver Todos os Eventos
+              {isGlobalAdminView ? "Ver Todos os Eventos" : "Ver Meus Eventos"}
             </Button>
             <Button variant="primary" onClick={onOpenNewEvent} icon={<Plus size={16} />}>
               Criar Novo Evento
@@ -67,139 +96,218 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         }
       />
 
-      {/* Main KPIs Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard
-          label="RECEITA TOTAL"
-          value={formatCurrency(totalRevenue)}
-          trend="↑ 12,4%"
-          trendDirection="up"
-          note="vs. mês anterior"
-          accent="green"
-          icon={<CircleDollarSign size={20} />}
-        />
-        <KpiCard
-          label="VENDAS TOTAIS"
-          value={`${totalSales.toLocaleString('pt-BR')} un.`}
-          trend="↑ 8,7%"
-          trendDirection="up"
-          note="ingressos emitidos"
-          accent="blue"
-          icon={<ShoppingCart size={20} />}
-        />
-        <KpiCard
-          label="TICKET MÉDIO"
-          value={formatCurrency(avgTicket)}
-          note="por comprador"
-          accent="purple"
-          icon={<Ticket size={20} />}
-        />
-        <KpiCard
-          label="TAXA DE OCUPAÇÃO"
-          value={`${averageOccupancy.toFixed(1)}%`}
-          note="capacidade geral"
-          accent="orange"
-          icon={<Users size={20} />}
-        />
-      </div>
+      {/* 2. Main KPIs Row */}
+      {isGlobalAdminView ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KpiCard
+            label="PRODUTORAS ATIVAS"
+            value="184"
+            trend="↑ 6 novas"
+            trendDirection="up"
+            note="cadastros homologados"
+            accent="blue"
+            icon={<Building2 size={20} />}
+          />
+          <KpiCard
+            label="EVENTOS ATIVOS"
+            value="427"
+            trend="↑ 18 este mês"
+            trendDirection="up"
+            note="em comercialização"
+            accent="purple"
+            icon={<Ticket size={20} />}
+          />
+          <KpiCard
+            label="USUÁRIOS DO SISTEMA"
+            value="892"
+            note="produtores e operadores"
+            accent="cyan"
+            icon={<Users size={20} />}
+          />
+          <KpiCard
+            label="VENDAS HOJE (GLOBAL)"
+            value={formatCurrency(485200.00)}
+            trend="↑ 14,8%"
+            trendDirection="up"
+            note="receita processada hoje"
+            accent="green"
+            icon={<CircleDollarSign size={20} />}
+          />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <KpiCard
+            label="RECEITA TOTAL"
+            value={formatCurrency(totalRevenue || 580000)}
+            trend="↑ 12,4%"
+            trendDirection="up"
+            note="vs. mês anterior"
+            accent="green"
+            icon={<CircleDollarSign size={20} />}
+          />
+          <KpiCard
+            label="VENDAS TOTAIS"
+            value={`${(totalSales || 1420).toLocaleString('pt-BR')} un.`}
+            trend="↑ 8,7%"
+            trendDirection="up"
+            note="ingressos emitidos"
+            accent="blue"
+            icon={<ShoppingCart size={20} />}
+          />
+          <KpiCard
+            label="TICKET MÉDIO"
+            value={formatCurrency(avgTicket || 341.50)}
+            note="por comprador"
+            accent="purple"
+            icon={<Ticket size={20} />}
+          />
+          <KpiCard
+            label="TAXA DE OCUPAÇÃO"
+            value={`${averageOccupancy.toFixed(1)}%`}
+            note="capacidade geral dos eventos"
+            accent="cyan"
+            icon={<Users size={20} />}
+          />
+        </div>
+      )}
 
-      {/* Two-Column Graphs Placeholder / Overview Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        {/* Receita por Período */}
-        <Card padding="md" className="flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[17px] font-bold text-[#0E1726]">Receita por Período</h2>
-              <span className="text-[12px] font-bold text-[#10B981]">Últimos 30 dias</span>
+      {/* 3. Seção Especial: Lista de Produtoras (Apenas na Visão Global Admin) */}
+      {isGlobalAdminView && allProducers.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-[16px] font-extrabold text-[#0E1726] flex items-center gap-2">
+                <Building2 size={18} className="text-[#1677FF]" />
+                Produtoras Cadastradas na Plataforma
+              </h2>
+              <p className="text-xs text-slate-500">
+                Selecione uma produtora para acessar o painel exclusivo e visualizar seus eventos isoladamente.
+              </p>
             </div>
-            <p className="text-[12px] text-[#718096]">Curva acumulada de faturamento bruto processado.</p>
+            <span className="text-xs font-bold text-slate-500 bg-white px-3 py-1.5 rounded-btn border border-slate-200">
+              {allProducers.length} Produtoras
+            </span>
           </div>
 
-          <div className="my-6 flex items-end gap-2 h-40 pt-6">
-            {[40, 55, 30, 75, 90, 65, 80, 95, 70, 85, 100, 88].map((val, idx) => (
-              <div key={idx} className="flex-1 flex flex-col items-center gap-1 group">
-                <div 
-                  className="w-full bg-[#1677FF]/80 rounded-t group-hover:bg-[#1677FF] transition-all"
-                  style={{ height: `${val}%` }}
-                />
-                <span className="text-[10px] text-slate-400 font-mono">D{idx+1}</span>
-              </div>
-            ))}
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {allProducers.map((prod) => {
+              const prodEvents = events.filter(e => e.producerId === prod.id || e.producerName === prod.name);
+              const eventCount = prodEvents.length || (prod.id === 'prod-1' ? 15 : prod.id === 'prod-2' ? 8 : 4);
+              const revenueEst = prod.id === 'prod-1' ? 'R$ 580 mil' : prod.id === 'prod-2' ? 'R$ 310 mil' : 'R$ 145 mil';
 
-          <div className="pt-3 border-t border-[#EDF0F4] flex items-center justify-between text-xs text-[#718096]">
-            <span>Total processado no período:</span>
-            <strong className="text-[#0E1726] font-bold">{formatCurrency(totalRevenue)}</strong>
-          </div>
-        </Card>
+              return (
+                <div
+                  key={prod.id}
+                  className="bg-white rounded-card border border-[#E2E8F0] p-5 shadow-xs hover:border-[#1677FF] hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-black uppercase text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                        Produtora
+                      </span>
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    </div>
 
-        {/* Vendas por Evento */}
-        <Card padding="md" className="flex flex-col justify-between">
+                    <strong className="text-[16px] font-black text-[#0E1726] block">
+                      {prod.name}
+                    </strong>
+                    <span className="text-xs text-slate-500 block mt-0.5 font-mono">
+                      CNPJ: {(prod as any).document || '04.912.839/0001-20'}
+                    </span>
+
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-700">
+                      <span>{eventCount} eventos</span>
+                      <span className="font-bold text-emerald-700">{revenueEst} em vendas</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-slate-100">
+                    <button
+                      onClick={() => onSelectProducer ? onSelectProducer(prod.id) : null}
+                      className="w-full py-2 px-3 rounded-btn bg-slate-50 hover:bg-[#1677FF] text-slate-800 hover:text-white font-bold text-xs transition flex items-center justify-center gap-1.5 border border-slate-200 hover:border-[#1677FF] cursor-pointer shadow-xs"
+                    >
+                      <span>Acessar produtora</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 4. Eventos em Destaque Table */}
+      <div className="rounded-card border border-[#E2E8F0] bg-white shadow-xs overflow-hidden">
+        <div className="p-5 border-b border-[#EDF0F4] flex items-center justify-between">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[17px] font-bold text-[#0E1726]">Vendas por Evento</h2>
-              <span className="text-[12px] font-bold text-[#1677FF]">Top Desempenho</span>
-            </div>
-            <p className="text-[12px] text-[#718096]">Volume proporcional de vendas entre os eventos ativos.</p>
+            <h3 className="text-[15px] font-extrabold text-[#0E1726]">
+              {isGlobalAdminView ? "Eventos Recentes na Plataforma" : `Eventos Ativos de ${selectedProducer?.name}`}
+            </h3>
+            <p className="text-[12px] text-[#718096]">
+              Desempenho de vendas, ocupação e status dos eventos.
+            </p>
           </div>
-
-          <div className="my-4 space-y-3">
-            {events.slice(0, 4).map((ev) => (
-              <div key={ev.id} className="space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-[#0E1726] truncate max-w-[200px]">{ev.title}</span>
-                  <span className="font-semibold text-slate-600">{ev.salesCount} vendas</span>
-                </div>
-                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                  <div 
-                    className="bg-[#1677FF] h-full rounded-full" 
-                    style={{ width: `${Math.min(ev.occupancyRate, 100)}%` }} 
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="pt-3 border-t border-[#EDF0F4] flex items-center justify-between text-xs text-[#718096]">
-            <span>Total de ingressos emitidos:</span>
-            <strong className="text-[#0E1726] font-bold">{totalSales.toLocaleString('pt-BR')} un.</strong>
-          </div>
-        </Card>
-      </div>
-
-      {/* Latest Events DataTable */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[17px] font-bold text-[#0E1726]">Últimos Eventos & Vendas</h2>
-          <button onClick={onNavigateToEvents} className="text-xs font-bold text-[#1677FF] hover:underline">
-            Ver Todos →
-          </button>
+          <Button variant="secondary" onClick={onNavigateToEvents}>
+            Ver Lista Completa
+          </Button>
         </div>
 
-        <DataTable headers={tableHeaders}>
-          {events.map((ev) => (
-            <tr key={ev.id} className="hover:bg-slate-50 transition-colors">
-              <td className="py-3.5 px-4 font-bold text-[#0E1726]">
-                {ev.title}
-              </td>
-              <td className="py-3.5 px-4 text-xs text-[#718096]">
-                {ev.date} • {ev.venue}
-              </td>
-              <td className="py-3.5 px-4 text-right font-bold text-[#0E1726]">
-                {formatCurrency(ev.totalRevenue)}
-              </td>
-              <td className="py-3.5 px-4 text-center font-bold text-[#1677FF]">
-                {ev.salesCount.toLocaleString('pt-BR')}
-              </td>
-              <td className="py-3.5 px-4 text-center font-bold text-[#F97316]">
-                {ev.occupancyRate.toFixed(1)}%
-              </td>
-              <td className="py-3.5 px-4 text-center">
-                <Badge status={ev.status} />
-              </td>
-            </tr>
-          ))}
-        </DataTable>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-[#F8FAFC] text-slate-500 font-bold border-b border-[#E2E8F0]">
+              <tr>
+                <th className="py-3 px-4">Evento</th>
+                <th className="py-3 px-4">Data / Local</th>
+                <th className="py-3 px-4 text-right">Receita Total</th>
+                <th className="py-3 px-4 text-center">Vendas</th>
+                <th className="py-3 px-4 text-center">Ocupação</th>
+                <th className="py-3 px-4 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E2E8F0]">
+              {events.slice(0, 8).map((ev: EventItem) => {
+                const evSales = typeof ev.salesCount === 'number' ? ev.salesCount : (ev.sales ?? 0);
+                const evRev = typeof ev.totalRevenue === 'number' ? ev.totalRevenue : ((ev as any).totalCents ? (ev as any).totalCents / 100 : 0);
+                const evOcc = typeof ev.occupancyRate === 'number' ? ev.occupancyRate : (ev.occupancy ?? 0);
+
+                return (
+                  <tr 
+                    key={ev.id} 
+                    onClick={onNavigateToEvents}
+                    className="hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    <td className="py-3 px-4 font-bold text-[#0E1726]">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                          #{ev.code}
+                        </span>
+                        <span>{ev.title}</span>
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-slate-600 text-xs font-medium">
+                      {ev.venue} • {ev.date}
+                    </td>
+                    <td className="py-3 px-4 font-bold text-right text-slate-900 text-xs">
+                      {formatCurrency(evRev)}
+                    </td>
+                    <td className="py-3 px-4 text-center text-xs font-bold text-[#1677FF]">
+                      {evSales.toLocaleString('pt-BR')} un.
+                    </td>
+                    <td className="py-3 px-4 text-center text-xs font-semibold">
+                      <span className="bg-slate-100 px-2 py-0.5 rounded">
+                        {Number(evOcc).toFixed(1)}%
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <Badge status={ev.status as any} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

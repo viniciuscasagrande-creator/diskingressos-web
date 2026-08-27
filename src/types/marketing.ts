@@ -2,6 +2,23 @@ export type MarketingChannel = 'instagram' | 'facebook' | 'google' | 'whatsapp' 
 
 export type TrackingInheritanceMode = 'inherit' | 'custom' | 'disabled';
 
+export interface PixelIntegration {
+  id: string;
+  name: string;
+  platform: 'meta' | 'google' | 'tiktok' | 'gtm' | 'custom';
+  pixelId: string;
+  conversionApiToken?: string;
+  testEventCode?: string;
+  scope: 'producer_global' | 'event_specific';
+  targetEventIds?: number[];
+  targetEventName?: string;
+  status: 'ativo' | 'pausado';
+  trackedEvents: string[];
+  createdAt: string;
+  lastFiredAt?: string;
+  fireCount?: number;
+}
+
 export interface TrackingTagConfig {
   id: string;
   name: string;
