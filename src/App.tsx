@@ -14,6 +14,9 @@ import FacialPage from './pages/FacialPage'
 import FinancePage from './pages/FinancePage'
 import FinanceHubPage from './pages/FinanceHubPage'
 import FinanceDashboardPage from './pages/FinanceDashboardPage'
+import FinanceBalancesPage from './pages/FinanceBalancesPage'
+import FinanceStatementPage from './pages/FinanceStatementPage'
+import FinancePayoutsPage from './pages/FinancePayoutsPage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -514,12 +517,20 @@ export default function App() {
           <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
+        {/* FASE 17.3: SALDOS, EXTRATO E REPASSES */}
+        {page === 'finance' && (
+          <FinanceBalancesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-statement' && (
+          <FinanceStatementPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-payouts' && (
+          <FinancePayoutsPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+
         {/* OUTRAS TELAS FINANCEIRAS */}
-        {page === 'finance' && <FinancePage events={visibleEvents} initialTab="overview" notify={notify} />}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-payouts' && <FinancePage events={visibleEvents} initialTab="payouts" notify={notify} />}
         {page === 'finance-cashflow' && <FinancePage events={visibleEvents} initialTab="cashflow" notify={notify} />}
-        {page === 'finance-statement' && <FinancePage events={visibleEvents} initialTab="statement" notify={notify} />}
         {page === 'finance-bank-accounts' && <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
         {page === 'finance-advance' && <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
 

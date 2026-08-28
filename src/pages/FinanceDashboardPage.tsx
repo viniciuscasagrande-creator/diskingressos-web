@@ -4,11 +4,11 @@ import {
   CircleDollarSign, Clock, Copy, CreditCard, Download, ExternalLink, Eye, Filter,
   HelpCircle, Landmark, Layers, Lock, Percent, Plus, RefreshCw, Search, ShieldCheck,
   Sparkles, TrendingDown, TrendingUp, Wallet, WalletCards, X, Zap, FileSpreadsheet,
-  Check, AlertCircle, ArrowRight
+  Check, AlertCircle, ArrowRight, Banknote as BanknoteIcon, ReceiptText, CalendarRange
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
-  bankAccountsSeed, cashFlow, integratedPipelineSeed, payouts, transactions,
+  bankAccountsSeed, monthlyCashFlow, integratedPipelineSeed, payouts, transactions, financeSummary,
   type BankAccount, type FinancialTransaction, type FlowPipelineStep, type Payout, type SystemTier
 } from '../data/finance'
 
@@ -18,7 +18,7 @@ type Props = {
   onNavigate?: (page: any) => void
 }
 
-const money = (v: number) =>
+const brl = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
 export default function FinanceDashboardPage({ events, notify, onNavigate }: Props) {
@@ -53,13 +53,15 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
   const [txList, setTxList] = useState<FinancialTransaction[]>(transactions)
   const [bankAccounts] = useState<BankAccount[]>(bankAccountsSeed)
 
-  // Metrics calculations
-  const availableBalance = 248960.00
-  const blockedBalance = 15420.00
-  const nextPayoutDate = '29/08/2026'
+  // Metrics from centralized financeSummary
+  const availableBalance = financeSummary.availableBalance
+  const receivableBalance = financeSummary.receivable
+  const payableBalance = financeSummary.payable
+  const transfersMonth = financeSummary.transfers
+  const feesMonth = financeSummary.fees
+  const blockedBalance = financeSummary.blockedBalance
+  const nextPayoutDate = '30/08/2026'
   const pendingRequestsCount = payoutList.filter(p => p.status === 'Em Análise' || p.status === 'Processando').length
-  const totalSales = 443346.90
-  const netProfit = 386562.21
 
   const filteredTx = useMemo(() => {
     return txList.filter(t => {
@@ -88,6 +90,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
     const newPayout: Payout = {
       id: payoutList.length + 1,
       event: selectedEvent ? selectedEvent.title : 'Todos os eventos',
+      producer: selectedEvent?.producer || 'Produtora Parceira',
       requestedAt: new Date().toLocaleDateString('pt-BR'),
       scheduledFor: new Date(Date.now() + 48 * 3600 * 1000).toLocaleDateString('pt-BR'),
       gross: value,
@@ -100,7 +103,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
 
     setPayoutList([newPayout, ...payoutList])
     setShowPayoutModal(false)
-    notify(`Solicitação de repasse no valor de ${money(value)} enviada com sucesso para auditoria!`)
+    notify(`Solicitação de repasse no valor de ${brl(value)} enviada com sucesso para auditoria!`)
   }
 
   const exportFinancialReport = () => {
@@ -129,6 +132,8 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
     URL.revokeObjectURL(url)
     notify('Relatório Financeiro exportado com sucesso em CSV!')
   }
+
+  const maxCashFlow = Math.max(...monthlyCashFlow.flatMap(i => [i.receita, i.despesa, i.repasse]))
 
   return (
     <div className="finance-dashboard-wrapper">
@@ -167,12 +172,23 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               </div>
             </div>
             <p className="page-subtitle">
-              Gestão de saldos, fluxo de caixa em tempo real, liquidação bancária, conciliação e repasses automáticos.
+              Visão consolidada de saldos, receitas, despesas, repasses e movimentações em tempo real.
             </p>
           </div>
         </div>
 
         <div className="finance-header-controls">
+          <div className="finance-select-group">
+            <span>Período</span>
+            <select value={period} onChange={e => setPeriod(e.target.value)}>
+              <option value="today">Hoje (24h)</option>
+              <option value="7d">Últimos 7 dias</option>
+              <option value="30d">Agosto 2026</option>
+              <option value="month">Mês Atual (Julho/2026)</option>
+              <option value="year">Ano de 2026</option>
+            </select>
+          </div>
+
           <div className="finance-select-group">
             <span>Evento</span>
             <select value={selectedEventId} onChange={e => setSelectedEventId(e.target.value)}>
@@ -180,17 +196,6 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               {events.map(ev => (
                 <option key={ev.id} value={ev.id}>{ev.title}</option>
               ))}
-            </select>
-          </div>
-
-          <div className="finance-select-group">
-            <span>Período</span>
-            <select value={period} onChange={e => setPeriod(e.target.value)}>
-              <option value="today">Hoje (24h)</option>
-              <option value="7d">Últimos 7 dias</option>
-              <option value="30d">Últimos 30 dias</option>
-              <option value="month">Mês Atual (Julho/2026)</option>
-              <option value="year">Ano de 2026</option>
             </select>
           </div>
 
@@ -202,7 +207,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               <Zap size={15} /> Antecipar
             </button>
             <button className="primary-btn" onClick={() => setShowPayoutModal(true)}>
-              <Banknote size={16} /> Solicitar Repasse
+              <Plus size={16} /> Solicitar Repasse
             </button>
           </div>
         </div>
@@ -230,7 +235,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               <div className="step-content">
                 <strong>{step.title}</strong>
                 <span>{step.subtitle}</span>
-                <b>{money(step.amountCents / 100)}</b>
+                <b>{brl(step.amountCents / 100)}</b>
               </div>
               {idx < integratedPipelineSeed.length - 1 && (
                 <div className="step-arrow">
@@ -242,63 +247,74 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
         </div>
       </section>
 
-      {/* Top Main KPIs */}
-      <section className="finance-kpis-grid">
+      {/* Top 5 KPIs Grid (Fase 17.2 Pattern) */}
+      <section className="finance-kpis-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
         <article className="finance-kpi-card card-surface kpi-blue">
           <div className="kpi-icon-wrap">
-            <Wallet size={24} />
+            <WalletCards size={22} />
           </div>
           <div className="kpi-body">
-            <span className="kpi-label">Saldo Disponível</span>
-            <strong className="kpi-value">{money(availableBalance)}</strong>
+            <span className="kpi-label">Saldo disponível</span>
+            <strong className="kpi-value">{brl(availableBalance)}</strong>
             <div className="kpi-footer">
-              <span className="kpi-tag positive">100% Liberado</span>
-              <small>Disponível para saque imediato</small>
-            </div>
-          </div>
-          <button className="kpi-quick-btn" onClick={() => setShowPayoutModal(true)} title="Solicitar Repasse">
-            Sacar <ChevronRight size={14} />
-          </button>
-        </article>
-
-        <article className="finance-kpi-card card-surface kpi-orange">
-          <div className="kpi-icon-wrap">
-            <Lock size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Valor Bloqueado / Garantia</span>
-            <strong className="kpi-value">{money(blockedBalance)}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag neutral">Reserva Legal</span>
-              <small>Garantia de chargeback e estornos</small>
+              <span className="kpi-tag positive">+8.4%</span>
+              <small>Disponível p/ repasse</small>
             </div>
           </div>
         </article>
 
         <article className="finance-kpi-card card-surface kpi-green">
           <div className="kpi-icon-wrap">
-            <Calendar size={24} />
+            <ArrowDownLeft size={22} />
           </div>
           <div className="kpi-body">
-            <span className="kpi-label">Próximo Payout Agendado</span>
-            <strong className="kpi-value">{nextPayoutDate}</strong>
+            <span className="kpi-label">A receber</span>
+            <strong className="kpi-value">{brl(receivableBalance)}</strong>
             <div className="kpi-footer">
-              <span className="kpi-tag active">Via PIX Automático</span>
-              <small>Processamento em D+2</small>
+              <span className="kpi-tag positive">+12.1%</span>
+              <small>Liquidações futuras</small>
+            </div>
+          </div>
+        </article>
+
+        <article className="finance-kpi-card card-surface kpi-orange">
+          <div className="kpi-icon-wrap">
+            <ArrowUpRight size={22} />
+          </div>
+          <div className="kpi-body">
+            <span className="kpi-label">A pagar</span>
+            <strong className="kpi-value">{brl(payableBalance)}</strong>
+            <div className="kpi-footer">
+              <span className="kpi-tag neutral">-3.2%</span>
+              <small>Compromissos em aberto</small>
             </div>
           </div>
         </article>
 
         <article className="finance-kpi-card card-surface kpi-purple">
           <div className="kpi-icon-wrap">
-            <Clock size={24} />
+            <Landmark size={22} />
           </div>
           <div className="kpi-body">
-            <span className="kpi-label">Solicitações Pendentes</span>
-            <strong className="kpi-value">{pendingRequestsCount} pendente(s)</strong>
+            <span className="kpi-label">Repasses no mês</span>
+            <strong className="kpi-value">{brl(transfersMonth)}</strong>
             <div className="kpi-footer">
-              <span className="kpi-tag warning">Em Auditoria</span>
-              <small>{money(35000.00)} em análise</small>
+              <span className="kpi-tag active">+6.8%</span>
+              <small>Processados em agosto</small>
+            </div>
+          </div>
+        </article>
+
+        <article className="finance-kpi-card card-surface kpi-blue">
+          <div className="kpi-icon-wrap">
+            <ReceiptText size={22} />
+          </div>
+          <div className="kpi-body">
+            <span className="kpi-label">Taxas</span>
+            <strong className="kpi-value">{brl(feesMonth)}</strong>
+            <div className="kpi-footer">
+              <span className="kpi-tag neutral">-1.5%</span>
+              <small>Gateway + operação</small>
             </div>
           </div>
         </article>
@@ -306,161 +322,106 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
 
       {/* Main Charts & Analytics Grid */}
       <section className="finance-analytics-grid">
-        {/* Cashflow Previsto x Realizado */}
+        {/* Monthly Cashflow Evolution Chart */}
         <article className="finance-chart-box card-surface">
           <div className="card-heading">
             <div>
-              <h3>Fluxo de Caixa Previsto x Realizado</h3>
-              <p>Comparativo de entradas de faturamento versus saídas e liquidações</p>
+              <h3>Evolução Financeira</h3>
+              <p>Receitas, despesas e repasses nos últimos 6 meses</p>
             </div>
             <div className="chart-legend-row">
-              <span className="legend-item entry"><i /> Entradas (Vendas)</span>
-              <span className="legend-item exit"><i /> Saídas (Repasses & Custos)</span>
+              <span className="legend-item" style={{ color: '#10B981' }}><i style={{ background: '#10B981' }} /> Receita</span>
+              <span className="legend-item" style={{ color: '#F43F5E' }}><i style={{ background: '#F43F5E' }} /> Despesa</span>
+              <span className="legend-item" style={{ color: '#3B82F6' }}><i style={{ background: '#3B82F6' }} /> Repasse</span>
             </div>
           </div>
 
-          <div className="cashflow-bars-container">
-            {cashFlow.map(d => {
-              const max = 50000
-              const entryH = Math.max(12, (d.entry / max) * 140)
-              const exitH = Math.max(8, (d.exit / max) * 140)
-              return (
-                <div key={d.day} className="cashflow-col">
-                  <div className="cashflow-pair">
-                    <div
-                      className="bar-entry"
-                      style={{ height: `${entryH}px` }}
-                      title={`Entradas: ${money(d.entry)}`}
-                    />
-                    <div
-                      className="bar-exit"
-                      style={{ height: `${exitH}px` }}
-                      title={`Saídas: ${money(d.exit)}`}
-                    />
-                  </div>
-                  <span className="day-label">{d.day}</span>
+          <div className="cashflow-bars-container" style={{ height: '220px' }}>
+            {monthlyCashFlow.map(item => (
+              <div key={item.month} className="cashflow-col">
+                <div className="cashflow-pair" style={{ gap: '6px' }}>
+                  <div
+                    className="bar-entry"
+                    style={{ height: `${Math.max(12, (item.receita / maxCashFlow) * 160)}px`, background: '#10B981', width: '12px' }}
+                    title={`Receita: ${brl(item.receita)}`}
+                  />
+                  <div
+                    className="bar-exit"
+                    style={{ height: `${Math.max(8, (item.despesa / maxCashFlow) * 160)}px`, background: '#F43F5E', width: '12px' }}
+                    title={`Despesa: ${brl(item.despesa)}`}
+                  />
+                  <div
+                    className="bar-entry"
+                    style={{ height: `${Math.max(8, (item.repasse / maxCashFlow) * 160)}px`, background: '#3B82F6', width: '12px' }}
+                    title={`Repasse: ${brl(item.repasse)}`}
+                  />
                 </div>
-              )
-            })}
+                <span className="day-label">{item.month}</span>
+              </div>
+            ))}
           </div>
 
           <div className="cashflow-summary-footer">
             <div className="summary-item">
               <ArrowDownLeft size={16} className="text-green" />
               <div>
-                <span>Total Entradas no Período</span>
-                <strong>{money(totalSales)}</strong>
+                <span>Total Receita no Período</span>
+                <strong>{brl(financeSummary.grossRevenue)}</strong>
               </div>
             </div>
             <div className="summary-item">
               <ArrowUpRight size={16} className="text-red" />
               <div>
-                <span>Total Saídas & Repasses</span>
-                <strong>{money(56784.69)}</strong>
+                <span>Total Repasses no Mês</span>
+                <strong>{brl(transfersMonth)}</strong>
               </div>
             </div>
             <div className="summary-item highlight">
               <TrendingUp size={16} className="text-blue" />
               <div>
-                <span>Resultado Líquido Operacional</span>
-                <strong>{money(netProfit)}</strong>
+                <span>Resultado Líquido</span>
+                <strong>{brl(financeSummary.netRevenue)}</strong>
               </div>
             </div>
           </div>
         </article>
 
-        {/* Balance Composition & Methods Share */}
+        {/* Upcoming Payouts Card */}
         <aside className="finance-side-panels">
-          {/* Carteira */}
           <article className="card-surface side-card">
             <div className="card-heading">
               <div>
-                <h3>Composição da Carteira</h3>
-                <p>Distribuição do saldo acumulado</p>
+                <h3>Próximos Repasses</h3>
+                <p>Pagamentos programados para produtoras</p>
               </div>
-              <CircleDollarSign size={20} className="text-muted" />
+              <Landmark size={20} className="text-muted" />
             </div>
 
-            <div className="wallet-total-box">
-              <span>Patrimônio Total sob Custódia</span>
-              <strong>{money(availableBalance + blockedBalance + 72410.80)}</strong>
+            <div className="payment-shares" style={{ gap: '12px' }}>
+              {payoutList.slice(0, 3).map((item) => (
+                <div key={item.id} className="share-item" style={{ padding: '12px' }}>
+                  <div className="share-info">
+                    <strong style={{ fontSize: '13px' }}>{item.producer || 'Produtora Parceira'}</strong>
+                    <span style={{ color: '#64748B' }}>{item.event}</span>
+                    <small style={{ color: '#94A3B8', marginTop: '2px', display: 'block' }}>Previsão: {item.scheduledFor}</small>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <b style={{ color: '#0F172A', fontSize: '13px' }}>{brl(item.net)}</b>
+                    <span className="kpi-tag active" style={{ display: 'block', marginTop: '4px', textAlign: 'center' }}>
+                      {item.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div className="wallet-bars-list">
-              <div className="wallet-row">
-                <div className="wallet-meta">
-                  <span>Disponível para Saque</span>
-                  <b>{money(availableBalance)}</b>
-                </div>
-                <div className="wallet-track"><i style={{ width: '74%', background: '#10B981' }} /></div>
-              </div>
-
-              <div className="wallet-row">
-                <div className="wallet-meta">
-                  <span>A Receber (Cartão / Lotes)</span>
-                  <b>{money(72410.80)}</b>
-                </div>
-                <div className="wallet-track"><i style={{ width: '21%', background: '#1c79ef' }} /></div>
-              </div>
-
-              <div className="wallet-row">
-                <div className="wallet-meta">
-                  <span>Bloqueado (Garantia de Estorno)</span>
-                  <b>{money(blockedBalance)}</b>
-                </div>
-                <div className="wallet-track"><i style={{ width: '5%', background: '#F59E0B' }} /></div>
-              </div>
-            </div>
-
-            <div className="wallet-rates-info">
-              <span>Taxa de Intermediação Média: <b>6.8%</b></span>
-              <span>Spread Adquirente Médio: <b>2.31%</b></span>
-            </div>
-          </article>
-
-          {/* Métodos de Pagamento */}
-          <article className="card-surface side-card">
-            <div className="card-heading">
-              <div>
-                <h3>Share por Meio de Pagamento</h3>
-                <p>Volume capturado no período</p>
-              </div>
-              <CreditCard size={20} className="text-muted" />
-            </div>
-
-            <div className="payment-shares">
-              <div className="share-item">
-                <div className="share-info">
-                  <strong>PIX Instantâneo</strong>
-                  <span>62% do volume (Liquidação em D+0)</span>
-                </div>
-                <b>{money(totalSales * 0.62)}</b>
-              </div>
-
-              <div className="share-item">
-                <div className="share-info">
-                  <strong>Cartão de Crédito</strong>
-                  <span>31% do volume (Parcelado até 12x)</span>
-                </div>
-                <b>{money(totalSales * 0.31)}</b>
-              </div>
-
-              <div className="share-item">
-                <div className="share-info">
-                  <strong>Cartão de Débito</strong>
-                  <span>5% do volume (PDVs Físicos)</span>
-                </div>
-                <b>{money(totalSales * 0.05)}</b>
-              </div>
-
-              <div className="share-item">
-                <div className="share-info">
-                  <strong>Boleto Bancário</strong>
-                  <span>2% do volume</span>
-                </div>
-                <b>{money(totalSales * 0.02)}</b>
-              </div>
-            </div>
+            <button
+              className="tool-btn"
+              style={{ width: '100%', justifyContent: 'center', marginTop: '6px' }}
+              onClick={() => onNavigate?.('finance-payouts')}
+            >
+              Ver Todos os Repasses <ChevronRight size={14} />
+            </button>
           </article>
         </aside>
       </section>
@@ -473,7 +434,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               className={`tab-btn ${activeTab === 'transactions' ? 'active' : ''}`}
               onClick={() => setActiveTab('transactions')}
             >
-              <CreditCard size={15} /> Extrato & Transações ({txList.length})
+              <CreditCard size={15} /> Últimas Movimentações ({txList.length})
             </button>
             <button
               className={`tab-btn ${activeTab === 'payouts' ? 'active' : ''}`}
@@ -521,12 +482,6 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
             {activeTab === 'payouts' && (
               <button className="primary-btn compact-btn" onClick={() => setShowPayoutModal(true)}>
                 <Plus size={14} /> Solicitar Novo Repasse
-              </button>
-            )}
-
-            {activeTab === 'accounts' && (
-              <button className="tool-btn" onClick={() => notify('Formulário de nova conta bancária aberto.')}>
-                <Plus size={14} /> Cadastrar Nova Conta
               </button>
             )}
           </div>
@@ -577,7 +532,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                       </span>
                     </td>
                     <td style={{ textAlign: 'right' }} className={t.value >= 0 ? 'money-positive' : 'money-negative'}>
-                      <strong>{t.value >= 0 ? '+ ' : ''}{money(t.value)}</strong>
+                      <strong>{t.value >= 0 ? '+ ' : ''}{brl(t.value)}</strong>
                     </td>
                   </tr>
                 ))}
@@ -616,6 +571,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                     <td><b>#{p.id}</b></td>
                     <td className="event-name-cell">
                       <strong>{p.event}</strong>
+                      <small style={{ color: '#64748B', display: 'block' }}>{p.producer}</small>
                     </td>
                     <td>
                       <span className="bank-account-tag">{p.bankAccount}</span>
@@ -626,7 +582,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                       <span className="badge-method">{p.method}</span>
                     </td>
                     <td>
-                      <strong style={{ color: '#10B981' }}>{money(p.net)}</strong>
+                      <strong style={{ color: '#10B981' }}>{brl(p.net)}</strong>
                     </td>
                     <td>
                       <span className={`finance-status ${p.status.toLowerCase().replace(/\s+/g, '-')}`}>
@@ -789,7 +745,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                     />
                   </div>
                   <small style={{ color: '#64748b', marginTop: '4px', display: 'block' }}>
-                    Saldo disponível para este saque: <b>{money(availableBalance)}</b>
+                    Saldo disponível para este saque: <b>{brl(availableBalance)}</b>
                   </small>
                 </label>
               </div>
@@ -797,7 +753,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               <div className="payout-summary-box">
                 <div className="payout-summary-row">
                   <span>Valor Solicitado (Bruto)</span>
-                  <strong>{money(parseFloat(payoutForm.amount) || 0)}</strong>
+                  <strong>{brl(parseFloat(payoutForm.amount) || 0)}</strong>
                 </div>
                 <div className="payout-summary-row">
                   <span>Taxa de Transferência Bancária</span>
@@ -805,7 +761,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                 </div>
                 <div className="payout-summary-row total">
                   <span>Valor Líquido a Receber</span>
-                  <strong>{money(parseFloat(payoutForm.amount) || 0)}</strong>
+                  <strong>{brl(parseFloat(payoutForm.amount) || 0)}</strong>
                 </div>
               </div>
 
@@ -849,21 +805,21 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                   onChange={e => setAdvanceAmount(Number(e.target.value))}
                   style={{ width: '100%', margin: '12px 0' }}
                 />
-                <strong className="advance-big-val">{money(advanceAmount)}</strong>
+                <strong className="advance-big-val">{brl(advanceAmount)}</strong>
               </label>
 
               <div className="advance-breakdown-card">
                 <div className="breakdown-line">
                   <span>Valor Bruto Solicitado</span>
-                  <strong>{money(advanceAmount)}</strong>
+                  <strong>{brl(advanceAmount)}</strong>
                 </div>
                 <div className="breakdown-line">
                   <span>Taxa Administrativa de Antecipação (3,5%)</span>
-                  <strong style={{ color: '#EF4444' }}>- {money(advanceFee)}</strong>
+                  <strong style={{ color: '#EF4444' }}>- {brl(advanceFee)}</strong>
                 </div>
                 <div className="breakdown-line total">
                   <span>Valor Líquido Creditado na Conta</span>
-                  <strong style={{ color: '#10B981' }}>{money(advanceNet)}</strong>
+                  <strong style={{ color: '#10B981' }}>{brl(advanceNet)}</strong>
                 </div>
               </div>
             </div>
@@ -876,7 +832,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                 className="btn primary"
                 onClick={() => {
                   setShowAdvanceModal(false)
-                  notify(`Proposta de antecipação no valor de ${money(advanceNet)} enviada para aprovação!`)
+                  notify(`Proposta de antecipação no valor de ${brl(advanceNet)} enviada para aprovação!`)
                 }}
               >
                 <Zap size={15} /> Contratar Antecipação
@@ -930,7 +886,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               </div>
               <div className="utm-order-detail-item">
                 <span>Valor Líquido Transferido</span>
-                <strong style={{ color: '#10B981', fontSize: '18px' }}>{money(selectedPayout.net)}</strong>
+                <strong style={{ color: '#10B981', fontSize: '18px' }}>{brl(selectedPayout.net)}</strong>
               </div>
             </div>
 
