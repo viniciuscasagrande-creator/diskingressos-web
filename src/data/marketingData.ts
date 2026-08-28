@@ -34,68 +34,101 @@ export const mockDailyRevenue = [
   { day: 'Sex', date: '25/08', revenue: 43830, sales: 1000 },
 ];
 
-// 8 Modelos Prontos de Campanhas Multicanais (Templates)
+// 8 Modelos Prontos de Campanhas Multicanais (Fase 16.10.2)
 export const mockCampaignTemplates: CampaignTemplate[] = [
   {
     id: 'TMPL-001',
-    name: 'Lançamento Oficial do Evento',
-    tagline: 'Estratégia completa de topo e meio de funil com 8 canais integrados.',
-    description: 'Campanha 360° para abertura de vendas e lote promocional. Mobiliza tráfego pago, influenciadores parceiros, base de e-mail e grupos de WhatsApp simultaneamente.',
-    category: 'lancamento',
-    recommendedBudget: 15000,
-    channelsCount: 8,
-    targetAudience: 'Público amplo de Curitiba/Região, seguidores e fãs de música ao vivo.',
-    expectedRoi: '320% a 450%',
-    badge: 'Mais Utilizado • 360°',
+    name: 'Acelerar Vendas',
+    tagline: 'Pico promocional de 48 horas com oferta relâmpago e múltiplos canais.',
+    description: 'Campanha de alta tração para acelerar vendas em períodos mornos. Mobiliza WhatsApp VIP, anúncios no Instagram Stories com cupom relâmpago e e-mail marketing direto.',
+    category: 'urgencia',
+    recommendedBudget: 6000,
+    channelsCount: 4,
+    targetAudience: 'Base de leads mornos, seguidores engajados e visitantes dos últimos 30 dias.',
+    expectedRoi: '450% a 700%',
+    badge: '⚡ Aceleração Rápida',
     channels: [
-      { id: 'ch-1', channel: 'instagram', channelName: 'Instagram (Feed & Reels)', subchannel: 'Feed & Reels', utmSource: 'instagram', utmMedium: 'feed_reels', utmCampaign: 'lancamento_oficial', budget: 4000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=feed_reels&utm_campaign=lancamento_oficial' },
-      { id: 'ch-2', channel: 'instagram', channelName: 'Instagram Stories Ads', subchannel: 'Stories Ads', utmSource: 'instagram', utmMedium: 'stories_ads', utmCampaign: 'lancamento_oficial', budget: 2500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 5.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=stories_ads&utm_campaign=lancamento_oficial' },
-      { id: 'ch-3', channel: 'google', channelName: 'Google Ads (Search & Discovery)', subchannel: 'Search & Discovery', utmSource: 'google', utmMedium: 'search_cpc', utmCampaign: 'lancamento_oficial', budget: 3000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=search_cpc&utm_campaign=lancamento_oficial' },
-      { id: 'ch-4', channel: 'tiktok', channelName: 'TikTok Ads (In-Feed Video)', subchannel: 'In-Feed Video', utmSource: 'tiktok', utmMedium: 'video_views', utmCampaign: 'lancamento_oficial', budget: 2000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=tiktok&utm_medium=video_views&utm_campaign=lancamento_oficial' },
-      { id: 'ch-5', channel: 'whatsapp', channelName: 'WhatsApp Disparo Base Ativa', subchannel: 'Transacional VIP', utmSource: 'whatsapp', utmMedium: 'disparo_vip', utmCampaign: 'lancamento_oficial', budget: 800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 11.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=disparo_vip&utm_campaign=lancamento_oficial' },
-      { id: 'ch-6', channel: 'email', channelName: 'E-mail Marketing Lançamento', subchannel: 'Newsletter Segmentada', utmSource: 'email', utmMedium: 'newsletter_lancamento', utmCampaign: 'lancamento_oficial', budget: 500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 7.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=newsletter_lancamento&utm_campaign=lancamento_oficial' },
-      { id: 'ch-7', channel: 'influencer', channelName: 'Influenciadores & Embaixadores', subchannel: 'Stories & Cupom', utmSource: 'influencer', utmMedium: 'embaixador_stories', utmCampaign: 'lancamento_oficial', budget: 1500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 6.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=influencer&utm_medium=embaixador_stories&utm_campaign=lancamento_oficial' },
-      { id: 'ch-8', channel: 'affiliate', channelName: 'Promoters & Comissários Oficiais', subchannel: 'Links de Venda Direta', utmSource: 'affiliate', utmMedium: 'promoter_link', utmCampaign: 'lancamento_oficial', budget: 700, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 8.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=affiliate&utm_medium=promoter_link&utm_campaign=lancamento_oficial' }
+      { id: 'ch-101', channel: 'whatsapp', channelName: 'WhatsApp Disparo VIP', subchannel: 'Oferta Relâmpago', utmSource: 'whatsapp', utmMedium: 'acelerar_vendas', utmCampaign: 'acelerar_vendas', budget: 1500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 12.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=acelerar_vendas&utm_campaign=acelerar_vendas' },
+      { id: 'ch-102', channel: 'instagram', channelName: 'Instagram Stories Promoted', subchannel: 'Stories Cupom', utmSource: 'instagram', utmMedium: 'stories_cupom', utmCampaign: 'acelerar_vendas', budget: 2200, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 5.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=stories_cupom&utm_campaign=acelerar_vendas' },
+      { id: 'ch-103', channel: 'facebook', channelName: 'Meta Ads Retargeting', subchannel: 'Carrossel Dinâmico', utmSource: 'facebook', utmMedium: 'retargeting_feed', utmCampaign: 'acelerar_vendas', budget: 1500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=facebook&utm_medium=retargeting_feed&utm_campaign=acelerar_vendas' },
+      { id: 'ch-104', channel: 'email', channelName: 'E-mail Marketing Urgência', subchannel: 'Disparo Especial', utmSource: 'email', utmMedium: 'email_acelerar', utmCampaign: 'acelerar_vendas', budget: 800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 8.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=email_acelerar&utm_campaign=acelerar_vendas' }
     ]
   },
   {
     id: 'TMPL-002',
-    name: 'Últimos Ingressos & Virada de Lote',
-    tagline: 'Foco total em gatilhos de urgência e escassez para acelerar fechamentos.',
-    description: 'Campanha tática de alta conversão para os últimos dias do lote atual. Combina remarketing em Meta Ads, alertas de contagem regressiva por WhatsApp e e-mail marketing direto.',
+    name: 'Lançamento do Evento',
+    tagline: 'Estratégia 360° de topo e meio de funil com 6 canais integrados.',
+    description: 'Campanha completa para abertura oficial de vendas e lote promocional. Mobiliza tráfego pago, influenciadores parceiros, base de e-mail e grupos de WhatsApp simultaneamente.',
+    category: 'lancamento',
+    recommendedBudget: 15000,
+    channelsCount: 6,
+    targetAudience: 'Público amplo de Curitiba/Região, seguidores e fãs do artista/estilo.',
+    expectedRoi: '320% a 480%',
+    badge: 'Mais Utilizado • 360°',
+    channels: [
+      { id: 'ch-201', channel: 'instagram', channelName: 'Instagram (Feed & Reels)', subchannel: 'Feed & Reels', utmSource: 'instagram', utmMedium: 'feed_reels', utmCampaign: 'lancamento_evento', budget: 4500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=feed_reels&utm_campaign=lancamento_evento' },
+      { id: 'ch-202', channel: 'google', channelName: 'Google Ads (Search & Discovery)', subchannel: 'Search CPC', utmSource: 'google', utmMedium: 'search_cpc', utmCampaign: 'lancamento_evento', budget: 3500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=search_cpc&utm_campaign=lancamento_evento' },
+      { id: 'ch-203', channel: 'tiktok', channelName: 'TikTok Ads (In-Feed Video)', subchannel: 'In-Feed Video', utmSource: 'tiktok', utmMedium: 'video_views', utmCampaign: 'lancamento_evento', budget: 2500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=tiktok&utm_medium=video_views&utm_campaign=lancamento_evento' },
+      { id: 'ch-204', channel: 'whatsapp', channelName: 'WhatsApp Disparo Base Ativa', subchannel: 'Transacional VIP', utmSource: 'whatsapp', utmMedium: 'disparo_vip', utmCampaign: 'lancamento_evento', budget: 1500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 11.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=disparo_vip&utm_campaign=lancamento_evento' },
+      { id: 'ch-205', channel: 'email', channelName: 'E-mail Marketing Lançamento', subchannel: 'Newsletter Segmentada', utmSource: 'email', utmMedium: 'newsletter_lancamento', utmCampaign: 'lancamento_evento', budget: 1000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 7.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=newsletter_lancamento&utm_campaign=lancamento_evento' },
+      { id: 'ch-206', channel: 'influencer', channelName: 'Influenciadores & Embaixadores', subchannel: 'Stories & Cupom', utmSource: 'influencer', utmMedium: 'embaixador_stories', utmCampaign: 'lancamento_evento', budget: 2000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 6.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=influencer&utm_medium=embaixador_stories&utm_campaign=lancamento_evento' }
+    ]
+  },
+  {
+    id: 'TMPL-003',
+    name: 'Virada de Lote',
+    tagline: 'Gatilho de urgência e escassez com contagem regressiva de 24 horas.',
+    description: 'Campanha de alta conversão para os últimos dias do lote atual. Combina remarketing em Meta Ads, alertas de contagem regressiva por WhatsApp e e-mail marketing direto.',
     category: 'urgencia',
     recommendedBudget: 6500,
     channelsCount: 4,
     targetAudience: 'Visitantes recentes que não compraram e clientes de eventos similares.',
     expectedRoi: '500% a 750%',
-    badge: 'Alta Conversão',
+    badge: 'Alta Conversão 🔥',
     channels: [
-      { id: 'ch-201', channel: 'instagram', channelName: 'Instagram Stories (Contagem Regressiva)', subchannel: 'Stories Urgência', utmSource: 'instagram', utmMedium: 'stories_virada', utmCampaign: 'virada_de_lote', budget: 2200, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 6.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=stories_virada&utm_campaign=virada_de_lote' },
-      { id: 'ch-202', channel: 'facebook', channelName: 'Meta Ads (Remarketing Checkout)', subchannel: 'Custom Audience', utmSource: 'facebook', utmMedium: 'remarketing_ultimos', utmCampaign: 'virada_de_lote', budget: 2000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 7.1, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=facebook&utm_medium=remarketing_ultimos&utm_campaign=virada_de_lote' },
-      { id: 'ch-203', channel: 'whatsapp', channelName: 'WhatsApp Alerta de Lote', subchannel: 'Disparo Urgente', utmSource: 'whatsapp', utmMedium: 'alerta_virada', utmCampaign: 'virada_de_lote', budget: 1300, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 14.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=alerta_virada&utm_campaign=virada_de_lote' },
-      { id: 'ch-204', channel: 'email', channelName: 'E-mail Últimas 24 Horas', subchannel: 'Automação Urgência', utmSource: 'email', utmMedium: 'ultimas_24h', utmCampaign: 'virada_de_lote', budget: 1000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 9.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=ultimas_24h&utm_campaign=virada_de_lote' }
-    ]
-  },
-  {
-    id: 'TMPL-003',
-    name: 'Pesquisa & Intenção de Compra',
-    tagline: 'Captura de demanda ativa nos mecanismos de busca do Google e YouTube.',
-    description: 'Campanha de intenção direta para capturar usuários pesquisando o nome do artista, teatro, datas e palavras-chave de ingressos em Curitiba e cidades vizinhas.',
-    category: 'midia_paga',
-    recommendedBudget: 5500,
-    channelsCount: 3,
-    targetAudience: 'Usuários com alta intenção de busca no Google ("ingressos {artista}", "show curitiba").',
-    expectedRoi: '380% a 520%',
-    badge: 'Tráfego Qualificado',
-    channels: [
-      { id: 'ch-301', channel: 'google', channelName: 'Google Search (Termos Exatos)', subchannel: 'Search CPC', utmSource: 'google', utmMedium: 'search_exato', utmCampaign: 'intencao_compra', budget: 3500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 8.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=search_exato&utm_campaign=intencao_compra' },
-      { id: 'ch-302', channel: 'google', channelName: 'Google Display & Discovery', subchannel: 'Banners Rede de Display', utmSource: 'google', utmMedium: 'display_banners', utmCampaign: 'intencao_compra', budget: 1200, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 2.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=display_banners&utm_campaign=intencao_compra' },
-      { id: 'ch-303', channel: 'google', channelName: 'YouTube Ads (Vídeo Teaser)', subchannel: 'In-Stream Vídeo', utmSource: 'google', utmMedium: 'youtube_video', utmCampaign: 'intencao_compra', budget: 800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 3.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=youtube_video&utm_campaign=intencao_compra' }
+      { id: 'ch-301', channel: 'instagram', channelName: 'Instagram Stories (Contagem Regressiva)', subchannel: 'Stories Urgência', utmSource: 'instagram', utmMedium: 'stories_virada', utmCampaign: 'virada_de_lote', budget: 2200, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 6.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=stories_virada&utm_campaign=virada_de_lote' },
+      { id: 'ch-302', channel: 'facebook', channelName: 'Meta Ads (Remarketing Checkout)', subchannel: 'Custom Audience', utmSource: 'facebook', utmMedium: 'remarketing_ultimos', utmCampaign: 'virada_de_lote', budget: 2000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 7.1, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=facebook&utm_medium=remarketing_ultimos&utm_campaign=virada_de_lote' },
+      { id: 'ch-303', channel: 'whatsapp', channelName: 'WhatsApp Alerta de Lote', subchannel: 'Disparo Urgente', utmSource: 'whatsapp', utmMedium: 'alerta_virada', utmCampaign: 'virada_de_lote', budget: 1300, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 14.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=alerta_virada&utm_campaign=virada_de_lote' },
+      { id: 'ch-304', channel: 'email', channelName: 'E-mail Últimas 24 Horas', subchannel: 'Automação Urgência', utmSource: 'email', utmMedium: 'ultimas_24h', utmCampaign: 'virada_de_lote', budget: 1000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 9.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=ultimas_24h&utm_campaign=virada_de_lote' }
     ]
   },
   {
     id: 'TMPL-004',
-    name: 'Remarketing de Checkout & Abandono',
+    name: 'Últimas Vagas',
+    tagline: 'Reta final de esgotamento com aviso dos últimos 100 ingressos disponíveis.',
+    description: 'Campanha de encerramento de vendas focada em esgotar os últimos setores do evento. Usa gatilhos visuais de setor quase cheio e remarketing pesado.',
+    category: 'urgencia',
+    recommendedBudget: 4500,
+    channelsCount: 3,
+    targetAudience: 'Público morno, indecisos que simularam assento e visitantes das últimas 48h.',
+    expectedRoi: '600% a 900%',
+    badge: 'Esgotamento Final',
+    channels: [
+      { id: 'ch-401', channel: 'instagram', channelName: 'Instagram Stories (Últimos Ingressos)', subchannel: 'Stories Esgotando', utmSource: 'instagram', utmMedium: 'stories_ultimas_vagas', utmCampaign: 'ultimas_vagas', budget: 2000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 6.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=stories_ultimas_vagas&utm_campaign=ultimas_vagas' },
+      { id: 'ch-402', channel: 'whatsapp', channelName: 'WhatsApp Disparo Últimos Lugares', subchannel: 'Disparo Urgente', utmSource: 'whatsapp', utmMedium: 'ultimos_lugares', utmCampaign: 'ultimas_vagas', budget: 1500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 15.6, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=ultimos_lugares&utm_campaign=ultimas_vagas' },
+      { id: 'ch-403', channel: 'crm', channelName: 'Notificação Push & Alerta App', subchannel: 'Push App', utmSource: 'crm', utmMedium: 'push_ultimas_vagas', utmCampaign: 'ultimas_vagas', budget: 1000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 11.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=crm&utm_medium=push_ultimas_vagas&utm_campaign=ultimas_vagas' }
+    ]
+  },
+  {
+    id: 'TMPL-005',
+    name: 'Evento nesta Semana',
+    tagline: 'Tração máxima nos últimos 5 dias que antecedem a data do show.',
+    description: 'Campanha de conversão imediata para o público que decide a programação do final de semana na última hora. Foco em Google Search, Reels e WhatsApp.',
+    category: 'midia_paga',
+    recommendedBudget: 5000,
+    channelsCount: 3,
+    targetAudience: 'Moradores locais buscando lazer e eventos para a semana e final de semana.',
+    expectedRoi: '480% a 680%',
+    badge: 'Reta Final',
+    channels: [
+      { id: 'ch-501', channel: 'google', channelName: 'Google Search (Programação Fim de Semana)', subchannel: 'Search Imediato', utmSource: 'google', utmMedium: 'search_nesta_semana', utmCampaign: 'evento_nesta_semana', budget: 2500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 7.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=search_nesta_semana&utm_campaign=evento_nesta_semana' },
+      { id: 'ch-502', channel: 'instagram', channelName: 'Instagram Reels & Stories (É Esta Semana!)', subchannel: 'Reels Local', utmSource: 'instagram', utmMedium: 'reels_nesta_semana', utmCampaign: 'evento_nesta_semana', budget: 1800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 5.6, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=reels_nesta_semana&utm_campaign=evento_nesta_semana' },
+      { id: 'ch-503', channel: 'whatsapp', channelName: 'WhatsApp Mensagem Final', subchannel: 'Lembrete Show', utmSource: 'whatsapp', utmMedium: 'lembrete_semana', utmCampaign: 'evento_nesta_semana', budget: 700, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 13.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=lembrete_semana&utm_campaign=evento_nesta_semana' }
+    ]
+  },
+  {
+    id: 'TMPL-006',
+    name: 'Recuperar Carrinhos',
     tagline: 'Resgate cirúrgico de usuários que iniciaram a compra mas não pagaram.',
     description: 'Campanha de máxima eficiência operacional. Conecta o pixel do Meta Ads com recuperação ativa via WhatsApp em tempo real e régua de e-mails de resgate.',
     category: 'remarketing',
@@ -105,77 +138,43 @@ export const mockCampaignTemplates: CampaignTemplate[] = [
     expectedRoi: '800% a 1400%',
     badge: 'ROI Máximo ⚡',
     channels: [
-      { id: 'ch-401', channel: 'whatsapp', channelName: 'WhatsApp 1-a-1 Recuperação Imediata', subchannel: 'Mensagem Automática', utmSource: 'whatsapp', utmMedium: 'resgate_carrinho', utmCampaign: 'recuperacao_checkout', budget: 1000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 16.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=resgate_carrinho&utm_campaign=recuperacao_checkout' },
-      { id: 'ch-402', channel: 'facebook', channelName: 'Meta Ads Retargeting Dinâmico', subchannel: 'Carrossel Dinâmico', utmSource: 'facebook', utmMedium: 'retargeting_pixel', utmCampaign: 'recuperacao_checkout', budget: 1800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 5.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=facebook&utm_medium=retargeting_pixel&utm_campaign=recuperacao_checkout' },
-      { id: 'ch-403', channel: 'email', channelName: 'E-mail Régua de Abandono (1h / 24h)', subchannel: 'Régua de Resgate', utmSource: 'email', utmMedium: 'regua_abandono', utmCampaign: 'recuperacao_checkout', budget: 700, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 11.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=regua_abandono&utm_campaign=recuperacao_checkout' }
-    ]
-  },
-  {
-    id: 'TMPL-005',
-    name: 'Vídeo Lineup & Teaser Viral',
-    tagline: 'Engajamento massivo com vídeos curtos no TikTok, Reels e Shorts.',
-    description: 'Campanha de forte apelo audiovisual focada em visualizações de vídeo e cliques no link. Ideal para atrações de humor, festivais de música e musicais.',
-    category: 'engajamento',
-    recommendedBudget: 4800,
-    channelsCount: 3,
-    targetAudience: 'Jovens e adultos 18-40 anos consumidores de vídeos e entretenimento.',
-    expectedRoi: '260% a 380%',
-    badge: 'Engajamento Audiovisual',
-    channels: [
-      { id: 'ch-501', channel: 'tiktok', channelName: 'TikTok Spark Ads & Feed', subchannel: 'Spark Ads', utmSource: 'tiktok', utmMedium: 'spark_ads', utmCampaign: 'video_teaser', budget: 2400, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 5.1, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=tiktok&utm_medium=spark_ads&utm_campaign=video_teaser' },
-      { id: 'ch-502', channel: 'instagram', channelName: 'Instagram Reels Promoted', subchannel: 'Reels Boost', utmSource: 'instagram', utmMedium: 'reels_boost', utmCampaign: 'video_teaser', budget: 1600, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.6, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=reels_boost&utm_campaign=video_teaser' },
-      { id: 'ch-503', channel: 'google', channelName: 'YouTube Shorts Ads', subchannel: 'Shorts Video', utmSource: 'google', utmMedium: 'youtube_shorts', utmCampaign: 'video_teaser', budget: 800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 3.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=youtube_shorts&utm_campaign=video_teaser' }
-    ]
-  },
-  {
-    id: 'TMPL-006',
-    name: 'Disparo Base Ativa & Clientes VIP',
-    tagline: 'Comunicação direta de altíssima conversão com a base proprietária.',
-    description: 'Campanha de relacionamento para comunicar novidades, assentos preferenciais e pré-vendas aos clientes mais fiéis da produtora e de edições anteriores.',
-    category: 'engajamento',
-    recommendedBudget: 2200,
-    channelsCount: 3,
-    targetAudience: 'Compradores históricos cadastrados no banco de dados da produtora.',
-    expectedRoi: '900% a 1600%',
-    badge: 'Custo Baixo • Alto Retorno',
-    channels: [
-      { id: 'ch-601', channel: 'whatsapp', channelName: 'WhatsApp Transacional VIP', subchannel: 'Direct VIP', utmSource: 'whatsapp', utmMedium: 'base_vip', utmCampaign: 'clientes_vip', budget: 1100, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 15.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=base_vip&utm_campaign=clientes_vip' },
-      { id: 'ch-602', channel: 'email', channelName: 'E-mail Marketing Exclusivo VIP', subchannel: 'Email VIP', utmSource: 'email', utmMedium: 'email_vip', utmCampaign: 'clientes_vip', budget: 700, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 8.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=email_vip&utm_campaign=clientes_vip' },
-      { id: 'ch-603', channel: 'crm', channelName: 'CRM Push & Notificação App', subchannel: 'Push App', utmSource: 'crm', utmMedium: 'push_notif', utmCampaign: 'clientes_vip', budget: 400, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 12.0, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=crm&utm_medium=push_notif&utm_campaign=clientes_vip' }
+      { id: 'ch-601', channel: 'whatsapp', channelName: 'WhatsApp 1-a-1 Recuperação Imediata', subchannel: 'Mensagem Automática', utmSource: 'whatsapp', utmMedium: 'resgate_carrinho', utmCampaign: 'recuperar_carrinhos', budget: 1200, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 16.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=resgate_carrinho&utm_campaign=recuperar_carrinhos' },
+      { id: 'ch-602', channel: 'facebook', channelName: 'Meta Ads Retargeting Dinâmico', subchannel: 'Carrossel Dinâmico', utmSource: 'facebook', utmMedium: 'retargeting_pixel', utmCampaign: 'recuperar_carrinhos', budget: 1600, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 5.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=facebook&utm_medium=retargeting_pixel&utm_campaign=recuperar_carrinhos' },
+      { id: 'ch-603', channel: 'email', channelName: 'E-mail Régua de Abandono (1h / 24h)', subchannel: 'Régua de Resgate', utmSource: 'email', utmMedium: 'regua_abandono', utmCampaign: 'recuperar_carrinhos', budget: 700, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 11.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=regua_abandono&utm_campaign=recuperar_carrinhos' }
     ]
   },
   {
     id: 'TMPL-007',
-    name: 'Influenciadores & Afiliados VIP',
-    tagline: 'Rede descentralizada de promoters com comissionamento e UTM exclusiva.',
-    description: 'Campanha de marketing de influência onde cada influenciador ou promoter recebe um link rastreável com sua própria UTM e cupom exclusivo para acompanhar o retorno.',
-    category: 'influencia',
-    recommendedBudget: 7500,
+    name: 'Remarketing de Visitantes',
+    tagline: 'Reimpacte quem visitou a página do evento mas ainda não iniciou checkout.',
+    description: 'Campanha de meio de funil para lembrar e convencer pessoas interessadas. Utiliza Meta CAPI Custom Audiences e Google Display com banners comemorativos.',
+    category: 'remarketing',
+    recommendedBudget: 4000,
     channelsCount: 3,
-    targetAudience: 'Seguidores de nicho dos influenciadores selecionados e círculos sociais dos promoters.',
-    expectedRoi: '350% a 500%',
-    badge: 'Comissionamento Rastreável',
+    targetAudience: 'Visitantes da página do evento nos últimos 7 a 14 dias sem conversão.',
+    expectedRoi: '550% a 850%',
+    badge: 'Meio de Funil',
     channels: [
-      { id: 'ch-701', channel: 'influencer', channelName: 'Influenciadores de Cultura & Entretenimento', subchannel: 'Stories & Reels', utmSource: 'influencer', utmMedium: 'stories_parceria', utmCampaign: 'rede_influenciadores', budget: 4500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 6.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=influencer&utm_medium=stories_parceria&utm_campaign=rede_influenciadores' },
-      { id: 'ch-702', channel: 'affiliate', channelName: 'Promoters & Embaixadores Universitários', subchannel: 'WhatsApp & Direct', utmSource: 'affiliate', utmMedium: 'promoter_comissao', utmCampaign: 'rede_influenciadores', budget: 2000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 9.4, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=affiliate&utm_medium=promoter_comissao&utm_campaign=rede_influenciadores' },
-      { id: 'ch-703', channel: 'coupon', channelName: 'Cupons de Desconto dos Parceiros', subchannel: 'Cupom Trackeado', utmSource: 'coupon', utmMedium: 'cupom_parceiro', utmCampaign: 'rede_influenciadores', budget: 1000, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 8.1, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=coupon&utm_medium=cupom_parceiro&utm_campaign=rede_influenciadores' }
+      { id: 'ch-701', channel: 'instagram', channelName: 'Instagram Stories Remarketing', subchannel: 'Stories Lembrança', utmSource: 'instagram', utmMedium: 'stories_remarketing', utmCampaign: 'remarketing_visitantes', budget: 1800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 5.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=stories_remarketing&utm_campaign=remarketing_visitantes' },
+      { id: 'ch-702', channel: 'google', channelName: 'Google Display & Discovery', subchannel: 'Banners Rede Display', utmSource: 'google', utmMedium: 'display_visitantes', utmCampaign: 'remarketing_visitantes', budget: 1400, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 3.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=display_visitantes&utm_campaign=remarketing_visitantes' },
+      { id: 'ch-703', channel: 'facebook', channelName: 'Facebook Feed Retargeting', subchannel: 'Feed Depoimentos', utmSource: 'facebook', utmMedium: 'feed_visitantes', utmCampaign: 'remarketing_visitantes', budget: 800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.1, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=facebook&utm_medium=feed_visitantes&utm_campaign=remarketing_visitantes' }
     ]
   },
   {
     id: 'TMPL-008',
-    name: 'Pós-Evento & Reativação para Próximo Show',
-    tagline: 'Fidelização de quem já assistiu para garantir vendas antecipadas.',
-    description: 'Campanha de agradecimento e pesquisa de satisfação com oferta de cupom de desconto exclusivo e pré-venda antecipada para o próximo espetáculo da temporada.',
+    name: 'Reativar Compradores',
+    tagline: 'Fidelização e recompra com base de compradores de edições anteriores.',
+    description: 'Campanha de relacionamento para comunicar novidades, assentos preferenciais e pré-vendas aos clientes mais fiéis da produtora e de edições anteriores.',
     category: 'engajamento',
-    recommendedBudget: 1800,
+    recommendedBudget: 2800,
     channelsCount: 3,
-    targetAudience: 'Participantes com check-in realizado ou ingressos validados no evento anterior.',
-    expectedRoi: '1100% a 1800%',
-    badge: 'Fidelização & LTV',
+    targetAudience: 'Compradores históricos cadastrados no banco de dados da produtora.',
+    expectedRoi: '900% a 1600%',
+    badge: 'Fidelização VIP 💎',
     channels: [
-      { id: 'ch-801', channel: 'email', channelName: 'E-mail Obrigado & Pré-Venda Próximo Show', subchannel: 'Email Pós-Evento', utmSource: 'email', utmMedium: 'pos_evento', utmCampaign: 'reativacao_pos_show', budget: 700, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 9.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=pos_evento&utm_campaign=reativacao_pos_show' },
-      { id: 'ch-802', channel: 'whatsapp', channelName: 'WhatsApp Convite Exclusivo Próxima Temporada', subchannel: 'Mensagem Fidelidade', utmSource: 'whatsapp', utmMedium: 'pos_show_vip', utmCampaign: 'reativacao_pos_show', budget: 800, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 16.0, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=pos_show_vip&utm_campaign=reativacao_pos_show' },
-      { id: 'ch-803', channel: 'coupon', channelName: 'Cupom de Fidelidade Pós-Show', subchannel: 'Cupom 15% OFF', utmSource: 'coupon', utmMedium: 'cupom_fidelidade', utmCampaign: 'reativacao_pos_show', budget: 300, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 12.8, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=coupon&utm_medium=cupom_fidelidade&utm_campaign=reativacao_pos_show' }
+      { id: 'ch-801', channel: 'whatsapp', channelName: 'WhatsApp Transacional VIP', subchannel: 'Direct VIP', utmSource: 'whatsapp', utmMedium: 'base_vip', utmCampaign: 'reativar_compradores', budget: 1400, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 15.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=whatsapp&utm_medium=base_vip&utm_campaign=reativar_compradores' },
+      { id: 'ch-802', channel: 'email', channelName: 'E-mail Marketing Exclusivo VIP', subchannel: 'Email VIP', utmSource: 'email', utmMedium: 'email_vip', utmCampaign: 'reativar_compradores', budget: 900, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 8.9, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=email&utm_medium=email_vip&utm_campaign=reativar_compradores' },
+      { id: 'ch-803', channel: 'coupon', channelName: 'Cupom de Reativação VIP', subchannel: 'Cupom Fidelidade', utmSource: 'coupon', utmMedium: 'cupom_reativacao', utmCampaign: 'reativar_compradores', budget: 500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 12.0, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=coupon&utm_medium=cupom_reativacao&utm_campaign=reativar_compradores' }
     ]
   }
 ];

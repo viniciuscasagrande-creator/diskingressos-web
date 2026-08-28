@@ -6,10 +6,12 @@ import {
   TrendingUp, BarChart3, Users, MousePointerClick,
   Sparkles, Layers3, Copy, CheckCircle2, ChevronRight,
   Sliders, MessageSquare, Mail, Share2, Target,
-  ExternalLink, Eye, ArrowRight, ShieldCheck, Zap
+  ExternalLink, Eye, ArrowRight, ShieldCheck, Zap,
+  Clock, Award, RefreshCw, FileSpreadsheet, CopyCheck,
+  ChevronLeft, CheckCircle, Flame, Gift, Building
 } from 'lucide-react'
 import type { EventItem } from '../../data/events'
-import type { MarketingCampaign, CampaignTemplate, CampaignChannelDetail, MarketingChannel } from '../../types/marketing'
+import type { MarketingCampaign, CampaignTemplate, CampaignChannelDetail, MarketingChannel, CampaignStatus } from '../../types/marketing'
 import { mockMarketingCampaigns, mockCampaignTemplates } from '../../data/marketingData'
 
 interface MarketingCampaignsPageProps {
@@ -18,7 +20,7 @@ interface MarketingCampaignsPageProps {
 }
 
 const channelMeta: Record<MarketingChannel, { label: string; color: string; bg: string; border: string }> = {
-  instagram: { label: 'Instagram', color: '#E1306C', bg: '#FDF2F8', border: '#FBCFE8' },
+  instagram: { label: 'Instagram Ads', color: '#E1306C', bg: '#FDF2F8', border: '#FBCFE8' },
   facebook: { label: 'Meta Ads', color: '#1877F2', bg: '#EFF6FF', border: '#BFDBFE' },
   google: { label: 'Google Ads', color: '#2563EB', bg: '#EFF6FF', border: '#BFDBFE' },
   whatsapp: { label: 'WhatsApp', color: '#16A34A', bg: '#F0FDF4', border: '#BBF7D0' },
@@ -33,6 +35,15 @@ const channelMeta: Record<MarketingChannel, { label: string; color: string; bg: 
   direct: { label: 'Direto / Orgânico', color: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' },
 }
 
+const statusMeta: Record<CampaignStatus, { label: string; bg: string; color: string; border: string }> = {
+  draft: { label: 'Rascunho', bg: '#F1F5F9', color: '#475569', border: '#CBD5E1' },
+  configured: { label: 'Configurada', bg: '#EFF6FF', color: '#1E40AF', border: '#BFDBFE' },
+  scheduled: { label: 'Agendada', bg: '#FEF3C7', color: '#92400E', border: '#FDE68A' },
+  active: { label: 'Ativa', bg: '#DCFCE7', color: '#166534', border: '#86EFAC' },
+  paused: { label: 'Pausada', bg: '#FFF7ED', color: '#9A3412', border: '#FED7AA' },
+  finished: { label: 'Finalizada', bg: '#F3F4F6', color: '#374151', border: '#E5E7EB' }
+}
+
 export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ events, notify }) => {
   const [activeTab, setActiveTab] = useState<'campaigns' | 'templates'>('campaigns')
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>(mockMarketingCampaigns)
@@ -41,22 +52,26 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
   // Filters
   const [search, setSearch] = useState('')
   const [selectedEventId, setSelectedEventId] = useState<string>('all')
-  const [selectedStatus, setSelectedStatus] = useState<'all' | 'active' | 'scheduled' | 'paused'>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [selectedTemplateCategory, setSelectedTemplateCategory] = useState<string>('all')
 
   // Modals & Drawers
   const [selectedCampaignForDrilldown, setSelectedCampaignForDrilldown] = useState<MarketingCampaign | null>(null)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isWizardOpen, setIsWizardOpen] = useState(false)
+  const [wizardSelectedTemplate, setWizardSelectedTemplate] = useState<CampaignTemplate | null>(null)
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
 
-  // Creation Form State
-  const [formName, setFormName] = useState('')
-  const [formObjective, setFormObjective] = useState<MarketingCampaign['objective']>('vendas')
-  const [formEventId, setFormEventId] = useState<number>(events[0]?.id || 1)
-  const [formBudget, setFormBudget] = useState('10000')
-  const [formUtmCampaign, setFormUtmCampaign] = useState('')
-  const [enabledChannels, setEnabledChannels] = useState<MarketingChannel[]>([
-    'instagram', 'facebook', 'google', 'whatsapp', 'email', 'influencer'
+  // Wizard Step State
+  const [wizardStep, setWizardStep] = useState<number>(1)
+  const [wizardEventId, setWizardEventId] = useState<number>(events[0]?.id || 1)
+  const [wizardName, setWizardName] = useState('')
+  const [wizardBudget, setWizardBudget] = useState('6000')
+  const [wizardObjective, setWizardObjective] = useState<MarketingCampaign['objective']>('vendas')
+  const [wizardStartDate, setWizardStartDate] = useState(new Date().toLocaleDateString('pt-BR'))
+  const [wizardEndDate, setWizardEndDate] = useState('30/09/2026')
+  const [wizardAudience, setWizardAudience] = useState('Público Amplo de Curitiba / Região Metropolitana')
+  const [wizardChannels, setWizardChannels] = useState<MarketingChannel[]>([
+    'instagram', 'facebook', 'google', 'whatsapp', 'email'
   ])
 
   const formatBrl = (val: number) =>
@@ -98,459 +113,479 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
   const totalSpent = useMemo(() => filteredCampaigns.reduce((acc, c) => acc + (c.spent || 0), 0), [filteredCampaigns])
   const totalRevenue = useMemo(() => filteredCampaigns.reduce((acc, c) => acc + (c.revenue || 0), 0), [filteredCampaigns])
   const totalSales = useMemo(() => filteredCampaigns.reduce((acc, c) => acc + (c.salesCount || 0), 0), [filteredCampaigns])
-  const avgRoi = totalSpent > 0 ? ((totalRevenue - totalSpent) / totalSpent) * 100 : 0
+  const totalVisitors = useMemo(() => filteredCampaigns.reduce((acc, c) => acc + (c.visitors || 1200), 0), [filteredCampaigns])
+  const avgRoas = totalSpent > 0 ? (totalRevenue / totalSpent).toFixed(1) : '5.2'
 
-  // Apply Template as New Campaign
-  const handleUseTemplate = (template: CampaignTemplate) => {
-    const selectedEvent = events.find(e => String(e.id) === selectedEventId) || events[0]
-    setFormName(`${template.name} — ${selectedEvent?.title.split('•')[0].trim() || 'Evento'}`)
-    setFormBudget(String(template.recommendedBudget))
-    setFormEventId(selectedEvent?.id || 1)
-    setFormUtmCampaign(template.name.toLowerCase().replace(/[^a-z0-9]/g, '_'))
-    setEnabledChannels(template.channels.map(c => c.channel))
-    setIsCreateModalOpen(true)
+  // Campaign Lifecycle Actions
+  const toggleCampaignStatus = (campaignId: string) => {
+    setCampaigns(prev => prev.map(c => {
+      if (c.id === campaignId) {
+        const nextStatus: CampaignStatus = c.status === 'active' ? 'paused' : 'active'
+        if (notify) notify(`Campanha ${c.name} ${nextStatus === 'active' ? 'ativada' : 'pausada'} com sucesso!`)
+        return { ...c, status: nextStatus }
+      }
+      return c
+    }))
+    if (selectedCampaignForDrilldown?.id === campaignId) {
+      setSelectedCampaignForDrilldown(prev => prev ? { ...prev, status: prev.status === 'active' ? 'paused' : 'active' } : null)
+    }
   }
 
-  // Create Campaign Action
-  const handleCreateCampaignSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formName.trim()) return
-
-    const eventObj = events.find(ev => ev.id === formEventId)
-    const budgetNum = Number(formBudget) || 10000
-    const utmCamp = formUtmCampaign || formName.toLowerCase().replace(/[^a-z0-9]/g, '_')
-
-    // Generate channels for this campaign
-    const channelBudgetPortion = Math.round(budgetNum / (enabledChannels.length || 1))
-    const generatedChannels: CampaignChannelDetail[] = enabledChannels.map((ch, idx) => {
-      const meta = channelMeta[ch] || { label: ch }
-      return {
-        id: `ch-${Date.now()}-${idx}`,
-        channel: ch,
-        channelName: meta.label,
-        subchannel: 'Principal',
-        utmSource: ch,
-        utmMedium: ch === 'google' ? 'search_cpc' : ch === 'instagram' ? 'stories_ads' : ch === 'whatsapp' ? 'direct_msg' : 'cpc',
-        utmCampaign: utmCamp,
-        budget: channelBudgetPortion,
-        spent: 0,
-        salesCount: 0,
-        revenue: 0,
-        roi: 0,
-        cpa: 0,
-        ctr: 4.5,
-        status: 'active',
-        trackingUrl: `https://diskingressos.com.br/evento/${eventObj?.code || eventObj?.id || 1}?utm_source=${ch}&utm_medium=${ch === 'google' ? 'search_cpc' : 'cpc'}&utm_campaign=${utmCamp}`
+  const finishCampaign = (campaignId: string) => {
+    setCampaigns(prev => prev.map(c => {
+      if (c.id === campaignId) {
+        if (notify) notify(`Campanha ${c.name} finalizada e arquivada!`)
+        return { ...c, status: 'finished' as CampaignStatus }
       }
-    })
+      return c
+    }))
+    if (selectedCampaignForDrilldown?.id === campaignId) {
+      setSelectedCampaignForDrilldown(prev => prev ? { ...prev, status: 'finished' as CampaignStatus } : null)
+    }
+  }
 
-    const newCamp: MarketingCampaign = {
-      id: `CMP-00${campaigns.length + 1}`,
-      code: `CMP-00${campaigns.length + 1}`,
-      name: formName,
-      objective: formObjective,
-      objectiveLabel: formObjective === 'lancamento' ? 'Lançamento & Pré-Venda' : formObjective === 'urgencia' ? 'Virada de Lote / Escassez' : formObjective === 'remarketing' ? 'Recuperação de Vendas' : 'Vendas Gerais',
-      eventId: formEventId === 0 ? null : formEventId,
-      eventName: formEventId === 0 ? 'Campanha Global' : (eventObj?.title || 'Evento'),
-      status: 'active',
-      budget: budgetNum,
+  const duplicateCampaign = (campaign: MarketingCampaign) => {
+    const newCode = `CMP-00${campaigns.length + 1}`
+    const duplicated: MarketingCampaign = {
+      ...campaign,
+      id: newCode,
+      code: newCode,
+      name: `${campaign.name} (Cópia)`,
+      status: 'configured',
+      spent: 0,
+      salesCount: 0,
+      revenue: 0,
+      roi: 0,
+      visitors: 0,
+      carts: 0,
+      checkouts: 0,
+      utmCampaign: `${campaign.utmCampaign}_copia`
+    }
+    setCampaigns([duplicated, ...campaigns])
+    if (notify) notify(`Campanha duplicada como "${duplicated.name}"!`)
+  }
+
+  // Open Wizard with Template Preloaded
+  const handleOpenWizard = (template?: CampaignTemplate) => {
+    if (template) {
+      setWizardSelectedTemplate(template)
+      const targetEvent = events.find(e => String(e.id) === selectedEventId) || events[0]
+      setWizardEventId(targetEvent?.id || 1)
+      setWizardName(`${template.name} — ${targetEvent?.title || 'Evento'}`)
+      setWizardBudget(String(template.recommendedBudget))
+      setWizardAudience(template.targetAudience)
+      setWizardChannels(template.channels.map(ch => ch.channel))
+    } else {
+      setWizardSelectedTemplate(null)
+      const targetEvent = events.find(e => String(e.id) === selectedEventId) || events[0]
+      setWizardEventId(targetEvent?.id || 1)
+      setWizardName(`Campanha Multicanal — ${targetEvent?.title || 'Evento'}`)
+      setWizardBudget('8000')
+      setWizardAudience('Público Amplo de Curitiba / Região Metropolitana')
+      setWizardChannels(['instagram', 'facebook', 'google', 'whatsapp', 'email'])
+    }
+    setWizardStep(1)
+    setIsWizardOpen(true)
+  }
+
+  // Complete Activation via Wizard
+  const handleFinishWizard = () => {
+    const targetEvent = events.find(e => e.id === Number(wizardEventId)) || events[0]
+    const utmSlug = wizardName.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 30)
+    const newCode = `CMP-00${campaigns.length + 1}`
+    const budgetVal = Number(wizardBudget) || 6000
+    const perChannelBudget = Math.round(budgetVal / (wizardChannels.length || 1))
+
+    const generatedChannels: CampaignChannelDetail[] = wizardChannels.map((ch, idx) => ({
+      id: `gen-ch-${idx + 1}`,
+      channel: ch,
+      channelName: channelMeta[ch]?.label || ch,
+      subchannel: ch === 'whatsapp' ? 'Disparo VIP' : ch === 'instagram' ? 'Stories & Reels' : ch === 'google' ? 'Search CPC' : 'Canal Ativo',
+      utmSource: ch,
+      utmMedium: ch === 'whatsapp' ? 'disparo_vip' : ch === 'instagram' ? 'stories_ads' : 'cpc',
+      utmCampaign: utmSlug,
+      budget: perChannelBudget,
       spent: 0,
       salesCount: 0,
       revenue: 0,
       roi: 0,
       cpa: 0,
-      ctr: 0,
-      startDate: new Date().toLocaleDateString('pt-BR'),
-      utmCampaign: utmCamp,
+      ctr: 4.5,
+      status: 'active',
+      trackingUrl: `https://diskingressos.com.br/evento/${targetEvent?.id || 1}?utm_source=${ch}&utm_medium=cpc&utm_campaign=${utmSlug}`
+    }))
+
+    const newCampaign: MarketingCampaign = {
+      id: newCode,
+      code: newCode,
+      name: wizardName,
+      objective: wizardObjective,
+      objectiveLabel: wizardSelectedTemplate?.name || 'Vendas & Conversão',
+      eventId: targetEvent?.id || null,
+      eventName: targetEvent?.title || 'Todos os Eventos',
+      status: 'active',
+      budget: budgetVal,
+      spent: 0,
+      reach: 0,
+      visitors: 0,
+      carts: 0,
+      checkouts: 0,
+      salesCount: 0,
+      revenue: 0,
+      conversionRate: 0,
+      roi: 0,
+      roas: 0,
+      cpa: 0,
+      ctr: 4.8,
+      startDate: wizardStartDate,
+      endDate: wizardEndDate,
+      utmCampaign: utmSlug,
+      audienceName: wizardAudience,
       channels: generatedChannels
     }
 
-    setCampaigns([newCamp, ...campaigns])
-    setIsCreateModalOpen(false)
-    setActiveTab('campaigns')
-    if (notify) notify(`Campanha Multicanal "${newCamp.name}" criada com ${newCamp.channels.length} canais ativos!`)
-  }
-
-  const toggleStatus = (cmpId: string) => {
-    setCampaigns(prev => prev.map(c => {
-      if (c.id === cmpId) {
-        const nextStatus = c.status === 'active' ? 'paused' : 'active'
-        if (notify) notify(`Campanha "${c.name}" ${nextStatus === 'active' ? 'reativada' : 'pausada'}.`)
-        return { ...c, status: nextStatus }
-      }
-      return c
-    }))
+    setCampaigns([newCampaign, ...campaigns])
+    setIsWizardOpen(false)
+    if (notify) notify(`🚀 Campanha "${newCampaign.name}" ativada com sucesso com ${generatedChannels.length} canais e UTMs integradas!`)
   }
 
   return (
-    <div className="growth-page campaigns-multichannel-page">
-      {/* Standard Header */}
-      <section className="page-head">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      
+      {/* HEADER & ACTIONS */}
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '16px' }}>
         <div>
-          <p className="eyebrow">MARKETING & GROWTH • ARQUITETURA MULTICANAL</p>
-          <h1>Campanhas de Marketing</h1>
-          <p className="head-subtitle">
-            Gerencie campanhas multicanais integradas (Meta, Google, WhatsApp, E-mail, TikTok e Afiliados) com rastreamento UTM individual e ROI consolidado.
+          <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>
+            MARKETING & ATIVAÇÃO MULTICANAL • FASE 16.10.2
+          </p>
+          <h2 style={{ color: '#0F172A', fontSize: '24px', fontWeight: 800, margin: '2px 0 4px' }}>
+            Campanhas Prontas & Gestão de Performance
+          </h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>
+            Escolha entre 8 modelos pré-configurados de alta conversão ou crie e acompanhe campanhas multicanais com atribuição UTM real.
           </p>
         </div>
-        <div className="toolbar">
+
+        <div className="page-actions" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button 
             type="button" 
-            className="tool-btn" 
-            onClick={() => notify ? notify('Relatório consolidado de campanhas multicanais exportado.') : null}
+            className="btn secondary"
+            onClick={() => notify('Exportando relatório consolidado de campanhas em Excel/PDF...')}
+            style={{ fontSize: '12px' }}
           >
-            <Download size={16} />
-            Exportar
+            <Download size={15} /> Exportar Relatório
           </button>
+
           <button 
             type="button" 
-            className="primary-btn" 
-            onClick={() => {
-              setFormName('')
-              setFormBudget('10000')
-              setFormUtmCampaign('')
-              setIsCreateModalOpen(true)
+            className="btn primary"
+            onClick={() => handleOpenWizard()}
+            style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}
+          >
+            <Zap size={15} /> Ativar Campanha Pronta
+          </button>
+        </div>
+      </div>
+
+      {/* CONTEXT BAR (EVENT FILTER + DATE) */}
+      <div className="growth-context" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        <div style={{ minWidth: '220px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Evento Selecionado</span>
+          <select 
+            value={selectedEventId} 
+            onChange={e => setSelectedEventId(e.target.value)}
+            style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px', color: '#0F172A', fontWeight: 600 }}
+          >
+            <option value="all">Todos os eventos ({events.length})</option>
+            {events.map(ev => (
+              <option key={ev.id} value={ev.id}>{ev.title}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ minWidth: '180px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Status da Campanha</span>
+          <select 
+            value={selectedStatus} 
+            onChange={e => setSelectedStatus(e.target.value)}
+            style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px', color: '#0F172A', fontWeight: 600 }}
+          >
+            <option value="all">Todos os Status ({campaigns.length})</option>
+            <option value="active">● Ativas</option>
+            <option value="scheduled">⏱ Agendadas</option>
+            <option value="configured">⚙️ Configuradas</option>
+            <option value="paused">⏸ Pausadas</option>
+            <option value="finished">🏁 Finalizadas</option>
+          </select>
+        </div>
+
+        <div style={{ flex: 1, minWidth: '240px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Buscar Campanha</span>
+          <div style={{ position: 'relative' }}>
+            <Search size={15} style={{ position: 'absolute', left: '10px', top: '12px', color: '#94A3B8' }} />
+            <input 
+              type="text" 
+              placeholder="Buscar por nome, evento ou utm_campaign..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', paddingLeft: '32px', paddingRight: '10px', fontSize: '13px' }}
+            />
+          </div>
+        </div>
+
+        {/* Tab Switcher Buttons */}
+        <div style={{ display: 'flex', gap: '4px', background: '#F1F5F9', padding: '3px', borderRadius: '8px' }}>
+          <button
+            type="button"
+            onClick={() => setActiveTab('campaigns')}
+            style={{
+              padding: '7px 14px',
+              borderRadius: '6px',
+              border: 0,
+              fontSize: '12px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              background: activeTab === 'campaigns' ? '#FFFFFF' : 'transparent',
+              color: activeTab === 'campaigns' ? '#0F172A' : '#64748B',
+              boxShadow: activeTab === 'campaigns' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
             }}
-            style={{ background: '#2563EB', borderColor: '#2563EB' }}
           >
-            <Plus size={16} />
-            Nova Campanha Multicanal
+            📊 Campanhas Ativas ({filteredCampaigns.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('templates')}
+            style={{
+              padding: '7px 14px',
+              borderRadius: '6px',
+              border: 0,
+              fontSize: '12px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              background: activeTab === 'templates' ? '#FFFFFF' : 'transparent',
+              color: activeTab === 'templates' ? '#2563EB' : '#64748B',
+              boxShadow: activeTab === 'templates' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Sparkles size={14} />
+            ⚡ Modelos Prontos (8)
           </button>
         </div>
-      </section>
+      </div>
 
-      {/* Primary KPI Strip */}
-      <section className="summary-strip" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
-        <div>
-          <span>Orçamento Total Planejado</span>
-          <strong style={{ color: '#0F172A' }}>{formatBrl(totalBudget)}</strong>
-        </div>
-        <div>
-          <span>Total Investido em Mídia</span>
-          <strong style={{ color: '#2563EB' }}>{formatBrl(totalSpent)}</strong>
-        </div>
-        <div>
-          <span>Receita Atribuída Total</span>
-          <strong style={{ color: '#16A34A' }}>{formatBrl(totalRevenue)}</strong>
-        </div>
-        <div>
-          <span>Vendas Atribuídas</span>
-          <strong style={{ color: '#0F172A' }}>{totalSales} <small style={{ fontSize: '11px', color: '#64748B', fontWeight: 'normal' }}>pedidos</small></strong>
-        </div>
-        <div>
-          <span>ROI Multicanal Médio</span>
-          <strong style={{ color: avgRoi >= 0 ? '#16A34A' : '#DC2626' }}>
-            {avgRoi >= 0 ? `+${avgRoi.toFixed(1)}%` : `${avgRoi.toFixed(1)}%`}
+      {/* 6 EXECUTIVE KPIS OF MARKETING CAMPAIGNS */}
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px' }}>
+          <div className="kpi-top">
+            <span>Investimento Total</span>
+            <WalletCards size={18} style={{ color: '#64748B' }} />
+          </div>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>{formatBrl(totalSpent)}</strong>
+          <small style={{ color: '#64748B' }}>Orçado: {formatBrl(totalBudget)}</small>
+        </article>
+
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px' }}>
+          <div className="kpi-top">
+            <span>Receita Gerada</span>
+            <TrendingUp size={18} style={{ color: '#16A34A' }} />
+          </div>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>{formatBrl(totalRevenue)}</strong>
+          <small style={{ color: '#16A34A' }}>↑ Atribuição ponta a ponta</small>
+        </article>
+
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px' }}>
+          <div className="kpi-top">
+            <span>Ingressos Vendidos</span>
+            <MousePointerClick size={18} style={{ color: '#2563EB' }} />
+          </div>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>{totalSales}</strong>
+          <small style={{ color: '#64748B' }}>{totalVisitors} visitas registradas</small>
+        </article>
+
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px' }}>
+          <div className="kpi-top">
+            <span>ROAS Médio</span>
+            <BarChart3 size={18} style={{ color: '#16A34A' }} />
+          </div>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>{avgRoas}x</strong>
+          <small style={{ color: '#16A34A' }}>Retorno sobre investimento</small>
+        </article>
+
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px' }}>
+          <div className="kpi-top">
+            <span>CPA Médio</span>
+            <Target size={18} style={{ color: '#D97706' }} />
+          </div>
+          <strong style={{ color: '#D97706', fontSize: '20px' }}>
+            {totalSales > 0 ? formatBrl(totalSpent / totalSales) : 'R$ 28,50'}
           </strong>
-        </div>
-      </section>
+          <small style={{ color: '#64748B' }}>Custo por ingresso vendido</small>
+        </article>
 
-      {/* View Selector Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #E2E8F0', paddingBottom: '12px' }}>
-        <button
-          type="button"
-          onClick={() => setActiveTab('campaigns')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            borderRadius: '6px',
-            border: '1px solid',
-            borderColor: activeTab === 'campaigns' ? '#2563EB' : '#CBD5E1',
-            background: activeTab === 'campaigns' ? '#EFF6FF' : '#FFFFFF',
-            color: activeTab === 'campaigns' ? '#1D4ED8' : '#64748B',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer'
-          }}
-        >
-          <Layers3 size={16} />
-          Campanhas Cadastradas ({campaigns.length})
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('templates')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            borderRadius: '6px',
-            border: '1px solid',
-            borderColor: activeTab === 'templates' ? '#2563EB' : '#CBD5E1',
-            background: activeTab === 'templates' ? '#EFF6FF' : '#FFFFFF',
-            color: activeTab === 'templates' ? '#1D4ED8' : '#64748B',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer'
-          }}
-        >
-          <Sparkles size={16} style={{ color: '#F59E0B' }} />
-          Modelos Prontos de Campanhas ({templates.length})
-        </button>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px' }}>
+          <div className="kpi-top">
+            <span>Taxa de Conversão</span>
+            <Flame size={18} style={{ color: '#EA580C' }} />
+          </div>
+          <strong style={{ color: '#EA580C', fontSize: '20px' }}>
+            {totalVisitors > 0 ? `${((totalSales / totalVisitors) * 100).toFixed(2)}%` : '4,85%'}
+          </strong>
+          <small style={{ color: '#16A34A' }}>↑ 1,2% vs média de eventos</small>
+        </article>
       </div>
 
       {/* TAB 1: CAMPANHAS CADASTRADAS */}
       {activeTab === 'campaigns' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Filters Bar */}
-          <div className="growth-panel" style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className="utm-search" style={{ flex: 1, minWidth: '280px', maxWidth: '460px' }}>
-                <Search size={16} style={{ color: '#94A3B8' }} />
-                <input 
-                  type="text" 
-                  placeholder="Buscar por nome da campanha, canal ou UTM..." 
-                  value={search} 
-                  onChange={e => setSearch(e.target.value)} 
-                />
-                {search && (
-                  <button 
-                    type="button" 
-                    onClick={() => setSearch('')} 
-                    style={{ border: 0, background: 'transparent', cursor: 'pointer', color: '#94A3B8' }}
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-
-              {/* Event Filter */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Evento:</span>
-                <select 
-                  value={selectedEventId} 
-                  onChange={e => setSelectedEventId(e.target.value)}
-                  style={{
-                    height: '38px',
-                    border: '1px solid #CBD5E1',
-                    borderRadius: '6px',
-                    background: '#FFFFFF',
-                    padding: '0 10px',
-                    fontSize: '12px',
-                    color: '#0F172A',
-                    fontWeight: 600,
-                    outline: 0
-                  }}
-                >
-                  <option value="all">Todos os Eventos ({events.length})</option>
-                  {events.map(ev => (
-                    <option key={ev.id} value={String(ev.id)}>{ev.title}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Status Filter */}
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                {(['all', 'active', 'scheduled', 'paused'] as const).map(st => {
-                  const labelMap = { all: 'Todas', active: 'Ativas', scheduled: 'Agendadas', paused: 'Pausadas' }
-                  const active = selectedStatus === st
-                  return (
-                    <button
-                      key={st}
-                      type="button"
-                      onClick={() => setSelectedStatus(st)}
-                      style={{
-                        height: '32px',
-                        padding: '0 12px',
-                        borderRadius: '999px',
-                        border: '1px solid',
-                        borderColor: active ? '#2563EB' : '#E2E8F0',
-                        background: active ? '#EFF6FF' : '#FFFFFF',
-                        color: active ? '#1D4ED8' : '#64748B',
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {labelMap[st]}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Multichannel Table */}
-          <div className="growth-panel" style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '0' }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '15px', color: '#0F172A', fontWeight: 700 }}>
+                <h3 style={{ margin: 0, fontSize: '16px', color: '#0F172A', fontWeight: 800 }}>
                   Campanhas Multicanais em Execução
                 </h3>
-                <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#64748B' }}>
-                  Cada campanha agrupa múltiplos canais de tráfego, links UTM dedicados e atribuição de receita.
+                <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748B' }}>
+                  {filteredCampaigns.length} campanha(s) encontrada(s) com dados de atribuição em tempo real.
                 </p>
               </div>
-              <span style={{ fontSize: '11px', color: '#64748B' }}>
-                Exibindo {filteredCampaigns.length} de {campaigns.length} campanhas
-              </span>
+
+              <button 
+                type="button" 
+                className="btn primary" 
+                onClick={() => handleOpenWizard()}
+                style={{ fontSize: '11px', height: '32px' }}
+              >
+                <Plus size={14} /> Nova Campanha
+              </button>
             </div>
 
-            <div className="utm-table-wrap" style={{ border: 0, borderRadius: 0 }}>
-              <table className="utm-table" style={{ width: '100%' }}>
+            <div className="table-scroll">
+              <table className="growth-table" style={{ margin: 0 }}>
                 <thead>
                   <tr>
-                    <th style={{ width: '28%' }}>Campanha / Objetivo</th>
-                    <th style={{ width: '24%' }}>Canais Ativos na Campanha</th>
-                    <th style={{ width: '16%' }}>Evento Alvo</th>
-                    <th style={{ width: '12%', textAlign: 'right' }}>Orçamento / Gasto</th>
-                    <th style={{ width: '12%', textAlign: 'right' }}>Vendas & Receita</th>
-                    <th style={{ width: '8%', textAlign: 'center' }}>Ações</th>
+                    <th>Campanha & Evento</th>
+                    <th>Canais Ativos</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: 'right' }}>Investido</th>
+                    <th style={{ textAlign: 'right' }}>Vendas</th>
+                    <th style={{ textAlign: 'right' }}>Receita Gerada</th>
+                    <th style={{ textAlign: 'right' }}>ROAS / ROI</th>
+                    <th style={{ textAlign: 'center' }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCampaigns.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#64748B' }}>
-                        <Megaphone size={32} style={{ margin: '0 auto 8px', color: '#CBD5E1' }} />
-                        <strong style={{ display: 'block', fontSize: '13px', color: '#334155' }}>Nenhuma campanha encontrada</strong>
-                        <span style={{ fontSize: '11px' }}>Crie uma nova campanha ou ative um dos modelos prontos abaixo.</span>
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredCampaigns.map((cmp) => {
-                      const spentPercent = cmp.budget > 0 ? Math.min(100, Math.round((cmp.spent / cmp.budget) * 100)) : 0
+                  {filteredCampaigns.map((cmp) => {
+                    const st = statusMeta[cmp.status] || statusMeta.active
+                    return (
+                      <tr 
+                        key={cmp.id} 
+                        style={{ cursor: 'pointer', transition: 'background 0.1s' }}
+                        onClick={() => setSelectedCampaignForDrilldown(cmp)}
+                      >
+                        <td>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            <strong style={{ color: '#0F172A', fontSize: '13px' }}>{cmp.name}</strong>
+                            <small style={{ color: '#2563EB', fontWeight: 600 }}>
+                              {cmp.eventName || 'Todos os Eventos'} • <code>utm_campaign={cmp.utmCampaign}</code>
+                            </small>
+                          </div>
+                        </td>
 
-                      return (
-                        <tr key={cmp.id} style={{ transition: 'background 0.15s', cursor: 'pointer' }} onClick={() => setSelectedCampaignForDrilldown(cmp)}>
-                          {/* Name, Code & Objective */}
-                          <td>
-                            <strong style={{ fontSize: '13px', color: '#0F172A', display: 'block' }}>
-                              {cmp.name}
-                            </strong>
-                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '3px' }}>
-                              <span style={{ fontSize: '10px', color: '#64748B', fontFamily: 'monospace', background: '#F1F5F9', padding: '1px 5px', borderRadius: '4px' }}>
-                                {cmp.code}
-                              </span>
-                              <span style={{ fontSize: '10px', color: '#2563EB', fontWeight: 600 }}>
-                                {cmp.objectiveLabel}
-                              </span>
-                              <span style={{ fontSize: '10px', color: '#64748B' }}>
-                                • Início: {cmp.startDate}
-                              </span>
-                            </div>
-                          </td>
+                        <td>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                            {cmp.channels.map(ch => {
+                              const meta = channelMeta[ch.channel] || { label: ch.channel, color: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' }
+                              return (
+                                <span 
+                                  key={ch.id} 
+                                  style={{ 
+                                    fontSize: '9px', 
+                                    fontWeight: 700, 
+                                    padding: '2px 6px', 
+                                    borderRadius: '4px', 
+                                    background: meta.bg, 
+                                    color: meta.color, 
+                                    border: `1px solid ${meta.border}` 
+                                  }}
+                                >
+                                  {meta.label}
+                                </span>
+                              )
+                            })}
+                          </div>
+                        </td>
 
-                          {/* Active Channels Strip */}
-                          <td>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
-                              {cmp.channels.map(ch => {
-                                const meta = channelMeta[ch.channel] || { label: ch.channel, color: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' }
-                                return (
-                                  <span
-                                    key={ch.id}
-                                    style={{
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      gap: '4px',
-                                      fontSize: '10px',
-                                      fontWeight: 700,
-                                      padding: '2px 6px',
-                                      borderRadius: '4px',
-                                      background: meta.bg,
-                                      border: `1px solid ${meta.border}`,
-                                      color: meta.color
-                                    }}
-                                  >
-                                    <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: meta.color }} />
-                                    {meta.label}
-                                  </span>
-                                )
-                              })}
-                            </div>
-                            <span style={{ display: 'block', fontSize: '10px', color: '#64748B', marginTop: '4px' }}>
-                              {cmp.channels.length} canais com links UTM dedicados
-                            </span>
-                          </td>
+                        <td>
+                          <span style={{ 
+                            fontSize: '10px', 
+                            fontWeight: 800, 
+                            padding: '3px 8px', 
+                            borderRadius: '999px', 
+                            background: st.bg, 
+                            color: st.color, 
+                            border: `1px solid ${st.border}` 
+                          }}>
+                            {st.label}
+                          </span>
+                        </td>
 
-                          {/* Event */}
-                          <td>
-                            <strong style={{ fontSize: '12px', color: '#334155', display: 'block' }}>
-                              {cmp.eventName}
-                            </strong>
-                            <span style={{ fontSize: '10px', color: '#94A3B8' }}>
-                              utm_campaign={cmp.utmCampaign}
-                            </span>
-                          </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <strong style={{ color: '#0F172A', display: 'block', fontSize: '13px' }}>{formatBrl(cmp.spent)}</strong>
+                          <small style={{ color: '#64748B' }}>de {formatBrl(cmp.budget)}</small>
+                        </td>
 
-                          {/* Budget vs Spent */}
-                          <td style={{ textAlign: 'right' }}>
-                            <strong style={{ fontSize: '13px', color: '#0F172A', display: 'block' }}>
-                              {formatBrl(cmp.budget)}
-                            </strong>
-                            <span style={{ fontSize: '11px', color: '#64748B' }}>
-                              Gasto: {formatBrl(cmp.spent)} ({spentPercent}%)
-                            </span>
-                            <div style={{ height: '4px', background: '#E2E8F0', borderRadius: '999px', overflow: 'hidden', marginTop: '4px' }}>
-                              <div style={{ width: `${spentPercent}%`, height: '100%', background: spentPercent > 90 ? '#EF4444' : '#2563EB' }} />
-                            </div>
-                          </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <strong style={{ color: '#2563EB', display: 'block', fontSize: '13px' }}>{cmp.salesCount}</strong>
+                          <small style={{ color: '#64748B' }}>CPA {formatBrl(cmp.cpa || 35)}</small>
+                        </td>
 
-                          {/* Sales & Revenue */}
-                          <td style={{ textAlign: 'right' }}>
-                            <strong style={{ fontSize: '13px', color: '#16A34A', display: 'block' }}>
-                              {formatBrl(cmp.revenue)}
-                            </strong>
-                            <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', justifyContent: 'flex-end', gap: '6px', marginTop: '2px' }}>
-                              <span><strong>{cmp.salesCount}</strong> vendas</span>
-                              {cmp.roi > 0 && (
-                                <span style={{ color: '#16A34A', fontWeight: 700 }}>ROI {cmp.roi}%</span>
-                              )}
-                            </div>
-                          </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <strong style={{ color: '#16A34A', fontSize: '13px' }}>{formatBrl(cmp.revenue)}</strong>
+                        </td>
 
-                          {/* Actions */}
-                          <td style={{ textAlign: 'center' }} onClick={e => e.stopPropagation()}>
-                            <div style={{ display: 'inline-flex', gap: '6px' }}>
-                              <button
-                                type="button"
-                                onClick={() => setSelectedCampaignForDrilldown(cmp)}
-                                title="Ver Detalhamento dos Canais"
-                                style={{
-                                  padding: '5px 8px',
-                                  border: '1px solid #CBD5E1',
-                                  borderRadius: '6px',
-                                  background: '#FFFFFF',
-                                  color: '#2563EB',
-                                  fontSize: '11px',
-                                  fontWeight: 700,
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <Eye size={12} />
-                                Canais
-                              </button>
+                        <td style={{ textAlign: 'right' }}>
+                          <strong style={{ color: '#16A34A', display: 'block', fontSize: '13px' }}>
+                            {cmp.roas ? `${cmp.roas}x` : `${((cmp.revenue / (cmp.spent || 1))).toFixed(1)}x`}
+                          </strong>
+                          <small style={{ color: '#16A34A', fontWeight: 700 }}>+{cmp.roi}% ROI</small>
+                        </td>
 
-                              <button
-                                type="button"
-                                onClick={() => toggleStatus(cmp.id)}
-                                title={cmp.status === 'active' ? 'Pausar Campanha' : 'Ativar Campanha'}
-                                style={{
-                                  width: '28px',
-                                  height: '28px',
-                                  border: '1px solid #CBD5E1',
-                                  borderRadius: '6px',
-                                  background: '#FFFFFF',
-                                  color: cmp.status === 'active' ? '#64748B' : '#16A34A',
-                                  display: 'inline-grid',
-                                  placeItems: 'center',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                {cmp.status === 'active' ? <Pause size={12} /> : <Play size={12} />}
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    })
-                  )}
+                        <td style={{ textAlign: 'center' }} onClick={e => e.stopPropagation()}>
+                          <div style={{ display: 'inline-flex', gap: '4px' }}>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedCampaignForDrilldown(cmp)}
+                              title="Abrir Dashboard Detalhado"
+                              style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#2563EB', fontSize: '11px', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <Eye size={12} /> Dashboard
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => toggleCampaignStatus(cmp.id)}
+                              title={cmp.status === 'active' ? 'Pausar Campanha' : 'Ativar Campanha'}
+                              style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: cmp.status === 'active' ? '#64748B' : '#16A34A', display: 'grid', placeItems: 'center', cursor: 'pointer' }}
+                            >
+                              {cmp.status === 'active' ? <Pause size={12} /> : <Play size={12} />}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => duplicateCampaign(cmp)}
+                              title="Duplicar Campanha"
+                              style={{ width: '28px', height: '28px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#7C3AED', display: 'grid', placeItems: 'center', cursor: 'pointer' }}
+                            >
+                              <Copy size={12} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -558,17 +593,16 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
         </div>
       )}
 
-      {/* TAB 2: MODELOS PRONTOS DE CAMPANHAS */}
+      {/* TAB 2: CATÁLOGO DE 8 MODELOS PRONTOS */}
       {activeTab === 'templates' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Filter Row for Templates */}
-          <div className="growth-panel" style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h3 style={{ margin: 0, fontSize: '16px', color: '#0F172A', fontWeight: 800 }}>
-                Biblioteca de Modelos Prontos (Presets Multicanais)
+                Catálogo dos 8 Modelos de Campanhas Prontas
               </h3>
               <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B' }}>
-                Selecione uma estratégia pronta para ativar instantaneamente canais, orçamentos sugeridos e parâmetros UTM.
+                Selecione uma estratégia pronta para ativar instantaneamente canais, público sugerido, orçamento e links UTM.
               </p>
             </div>
 
@@ -577,99 +611,65 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
               <select
                 value={selectedTemplateCategory}
                 onChange={e => setSelectedTemplateCategory(e.target.value)}
-                style={{
-                  height: '36px',
-                  border: '1px solid #CBD5E1',
-                  borderRadius: '6px',
-                  background: '#FFFFFF',
-                  padding: '0 10px',
-                  fontSize: '12px',
-                  color: '#0F172A',
-                  fontWeight: 600,
-                  outline: 0
-                }}
+                style={{ height: '36px', border: '1px solid #CBD5E1', borderRadius: '6px', background: '#FFFFFF', padding: '0 10px', fontSize: '12px', color: '#0F172A', fontWeight: 600 }}
               >
-                <option value="all">Todas as Estratégias ({templates.length})</option>
-                <option value="lancamento">Lançamento de Vendas</option>
+                <option value="all">Todos os Modelos ({templates.length})</option>
                 <option value="urgencia">Urgência & Virada de Lote</option>
-                <option value="remarketing">Remarketing de Checkout</option>
-                <option value="midia_paga">Mídia Paga & Google</option>
-                <option value="engajamento">Engajamento & Base Ativa</option>
-                <option value="influencia">Influenciadores & Afiliados</option>
+                <option value="lancamento">Lançamento de Vendas</option>
+                <option value="remarketing">Remarketing & Carrinhos</option>
+                <option value="midia_paga">Mídia Paga & Busca</option>
+                <option value="engajamento">Fidelização & Reativação</option>
               </select>
             </div>
           </div>
 
-          {/* Template Cards Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px' }}>
             {filteredTemplates.map((tmpl) => (
               <div 
                 key={tmpl.id} 
                 className="growth-panel" 
                 style={{ 
+                  background: '#FFFFFF', 
+                  border: '1px solid #CBD5E1', 
                   padding: '20px', 
                   display: 'flex', 
                   flexDirection: 'column', 
                   justifyContent: 'space-between',
-                  gap: '16px',
-                  border: '1px solid #E2E8F0',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-                  transition: 'all 0.15s ease-in-out'
+                  gap: '14px',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
                 }}
               >
                 <div>
-                  {/* Top Badge & Channels Count */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <span style={{
-                      fontSize: '10px',
-                      fontWeight: 800,
-                      textTransform: 'uppercase',
-                      padding: '2px 8px',
-                      borderRadius: '999px',
-                      background: '#FEF3C7',
-                      color: '#B45309',
-                      border: '1px solid #FDE68A'
-                    }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '2px 8px', borderRadius: '999px', background: '#FEF3C7', color: '#B45309', border: '1px solid #FDE68A' }}>
                       {tmpl.badge}
                     </span>
-
                     <span style={{ fontSize: '11px', fontWeight: 700, color: '#2563EB', background: '#EFF6FF', padding: '2px 8px', borderRadius: '999px' }}>
                       {tmpl.channelsCount} canais integrados
                     </span>
                   </div>
 
-                  {/* Title & Tagline */}
-                  <h4 style={{ margin: 0, fontSize: '15px', color: '#0F172A', fontWeight: 800 }}>
+                  <h4 style={{ margin: '4px 0 2px', fontSize: '16px', color: '#0F172A', fontWeight: 800 }}>
                     {tmpl.name}
                   </h4>
-                  <p style={{ margin: '4px 0 10px', fontSize: '12px', color: '#2563EB', fontWeight: 600 }}>
+                  <p style={{ margin: '0 0 8px', fontSize: '12px', color: '#2563EB', fontWeight: 600 }}>
                     {tmpl.tagline}
                   </p>
-
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748B', lineHeight: '1.5' }}>
+                  <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748B', lineHeight: '1.45' }}>
                     {tmpl.description}
                   </p>
 
-                  {/* Channels Included */}
-                  <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #F1F5F9' }}>
+                  <div style={{ paddingTop: '10px', borderTop: '1px solid #F1F5F9' }}>
                     <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', display: 'block', marginBottom: '6px' }}>
-                      Canais Inclusos neste Modelo:
+                      Canais Inclusos no Pacote:
                     </span>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                       {tmpl.channels.map(ch => {
                         const meta = channelMeta[ch.channel] || { label: ch.channel, color: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' }
                         return (
-                          <span
-                            key={ch.id}
-                            style={{
-                              fontSize: '10px',
-                              fontWeight: 700,
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              background: meta.bg,
-                              border: `1px solid ${meta.border}`,
-                              color: meta.color
-                            }}
+                          <span 
+                            key={ch.id} 
+                            style={{ fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', background: meta.bg, border: `1px solid ${meta.border}`, color: meta.color }}
                           >
                             {meta.label}
                           </span>
@@ -678,8 +678,7 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
                     </div>
                   </div>
 
-                  {/* Metrics preview */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '14px', background: '#F8FAFC', padding: '10px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '12px', background: '#F8FAFC', padding: '8px 10px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
                     <div>
                       <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>Orçamento Sugerido</span>
                       <strong style={{ fontSize: '13px', color: '#0F172A' }}>{formatBrl(tmpl.recommendedBudget)}</strong>
@@ -691,10 +690,9 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
                   </div>
                 </div>
 
-                {/* CTA Button */}
                 <button
                   type="button"
-                  onClick={() => handleUseTemplate(tmpl)}
+                  onClick={() => handleOpenWizard(tmpl)}
                   style={{
                     width: '100%',
                     padding: '10px',
@@ -713,7 +711,7 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
                   }}
                 >
                   <Zap size={14} />
-                  Usar este Modelo no Evento
+                  Ativar no Evento com 1 Clique
                 </button>
               </div>
             ))}
@@ -721,21 +719,360 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
         </div>
       )}
 
-      {/* DRILLDOWN DRAWER / MODAL: PERFORMANCE POR CANAL */}
+      {/* MODAL 1: FLUXO OPERACIONAL COMPLETO DE ATIVAÇÃO (WIZARD 7 PASSOS) */}
+      {isWizardOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsWizardOpen(false)}>
+          <div 
+            className="utm-modal-card-v2" 
+            style={{ width: 'min(760px, 95vw)', maxHeight: '92vh', overflowY: 'auto', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Wizard Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>
+                  WIZARD OPERACIONAL • PASSO {wizardStep} DE 5
+                </span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>
+                  {wizardSelectedTemplate ? `Ativar Modelo: ${wizardSelectedTemplate.name}` : 'Criar e Ativar Campanha Multicanal'}
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B' }}>
+                  Geração automática de URLs UTM integradas à Central de Conversões.
+                </p>
+              </div>
+              <button 
+                type="button" 
+                className="drawer-close-btn" 
+                onClick={() => setIsWizardOpen(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Stepper Progress Bar */}
+            <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+              {['1. Evento & Modelo', '2. Canais', '3. Público & Orçamento', '4. Período', '5. Revisão & Ativar'].map((st, i) => (
+                <div 
+                  key={i} 
+                  style={{ 
+                    flex: 1, 
+                    height: '4px', 
+                    borderRadius: '2px', 
+                    background: wizardStep >= i + 1 ? '#2563EB' : '#E2E8F0',
+                    transition: 'all 0.2s'
+                  }} 
+                />
+              ))}
+            </div>
+
+            {/* STEP 1: EVENTO & MODELO */}
+            {wizardStep === 1 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                    1. Selecione o Evento de Destino *
+                  </label>
+                  <select 
+                    value={wizardEventId} 
+                    onChange={e => setWizardEventId(Number(e.target.value))}
+                    style={{ width: '100%', height: '40px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 12px', fontSize: '13px', color: '#0F172A', fontWeight: 600 }}
+                  >
+                    {events.map(e => (
+                      <option key={e.id} value={e.id}>{e.title} ({e.date} - {e.venue})</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                    2. Nome da Campanha
+                  </label>
+                  <input 
+                    type="text" 
+                    value={wizardName} 
+                    onChange={e => setWizardName(e.target.value)}
+                    placeholder="Ex: Virada de Lote Oficial — Marcos & Belutti"
+                    style={{ width: '100%', height: '40px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 12px', fontSize: '13px' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                    3. Escolher Modelo / Estratégia
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
+                    {templates.map(t => {
+                      const isSelected = wizardSelectedTemplate?.id === t.id
+                      return (
+                        <div 
+                          key={t.id}
+                          onClick={() => {
+                            setWizardSelectedTemplate(t)
+                            setWizardName(`${t.name} — ${events.find(e => e.id === wizardEventId)?.title || 'Evento'}`)
+                            setWizardBudget(String(t.recommendedBudget))
+                            setWizardChannels(t.channels.map(ch => ch.channel))
+                          }}
+                          style={{
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            border: `2px solid ${isSelected ? '#2563EB' : '#E2E8F0'}`,
+                            background: isSelected ? '#EFF6FF' : '#FFFFFF',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <strong style={{ fontSize: '13px', color: isSelected ? '#1E40AF' : '#0F172A' }}>{t.name}</strong>
+                            {isSelected && <CheckCircle size={14} style={{ color: '#2563EB' }} />}
+                          </div>
+                          <span style={{ fontSize: '11px', color: '#64748B', display: 'block', marginTop: '2px' }}>{t.tagline}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: CANAIS MULTICANAIS */}
+            {wizardStep === 2 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '14px', color: '#0F172A', fontWeight: 800 }}>
+                    Selecione os Canais Ativos para esta Campanha
+                  </h4>
+                  <p style={{ margin: '2px 0 12px', fontSize: '12px', color: '#64748B' }}>
+                    Cada canal selecionado terá sua própria UTM gerada e mensuração individual no dashboard.
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                    {(['instagram', 'facebook', 'google', 'whatsapp', 'email', 'tiktok', 'influencer', 'affiliate'] as MarketingChannel[]).map(ch => {
+                      const isChecked = wizardChannels.includes(ch)
+                      const meta = channelMeta[ch]
+                      return (
+                        <label 
+                          key={ch}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            padding: '10px 12px',
+                            borderRadius: '8px',
+                            border: `1px solid ${isChecked ? meta.color : '#CBD5E1'}`,
+                            background: isChecked ? meta.bg : '#FFFFFF',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s'
+                          }}
+                        >
+                          <input 
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {
+                              if (isChecked) {
+                                setWizardChannels(wizardChannels.filter(c => c !== ch))
+                              } else {
+                                setWizardChannels([...wizardChannels, ch])
+                              }
+                            }}
+                          />
+                          <span style={{ fontSize: '13px', fontWeight: 700, color: isChecked ? meta.color : '#0F172A' }}>
+                            {meta.label}
+                          </span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: PÚBLICO & ORÇAMENTO */}
+            {wizardStep === 3 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                    Público-Alvo & Segmentação
+                  </label>
+                  <select 
+                    value={wizardAudience} 
+                    onChange={e => setWizardAudience(e.target.value)}
+                    style={{ width: '100%', height: '40px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 12px', fontSize: '13px' }}
+                  >
+                    <option value="Público Amplo de Curitiba / Região Metropolitana">Público Amplo de Curitiba / Região Metropolitana</option>
+                    <option value="Compradores VIP (Ticket Médio acima de R$ 300)">Compradores VIP (Ticket Médio acima de R$ 300)</option>
+                    <option value="Abandonos de Checkout nos últimos 14 dias">Abandonos de Checkout nos últimos 14 dias</option>
+                    <option value="Compradores de Edições Anteriores 2025">Compradores de Edições Anteriores 2025</option>
+                    <option value="Visitantes da Página nos últimos 7 dias">Visitantes da Página nos últimos 7 dias</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                      Orçamento Total Previsto (R$)
+                    </label>
+                    <input 
+                      type="number"
+                      value={wizardBudget}
+                      onChange={e => setWizardBudget(e.target.value)}
+                      placeholder="Ex: 6000"
+                      style={{ width: '100%', height: '40px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 12px', fontSize: '13px' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                      Meta de Ingressos Vendidos
+                    </label>
+                    <input 
+                      type="number"
+                      defaultValue={180}
+                      style={{ width: '100%', height: '40px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 12px', fontSize: '13px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: PERÍODO & AGENDAMENTO */}
+            {wizardStep === 4 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                      Data de Início
+                    </label>
+                    <input 
+                      type="text"
+                      value={wizardStartDate}
+                      onChange={e => setWizardStartDate(e.target.value)}
+                      style={{ width: '100%', height: '40px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 12px', fontSize: '13px' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                      Data de Término
+                    </label>
+                    <input 
+                      type="text"
+                      value={wizardEndDate}
+                      onChange={e => setWizardEndDate(e.target.value)}
+                      style={{ width: '100%', height: '40px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 12px', fontSize: '13px' }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                    ⚡ Ativação Imediata
+                  </span>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#64748B' }}>
+                    Ao clicar em Ativar, a campanha entrará em status <strong>Ativa</strong> e os links UTM começarão a registrar cliques imediatamente.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 5: REVISÃO & GERAÇÃO DE UTMS */}
+            {wizardStep === 5 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ background: '#DCFCE7', border: '1px solid #86EFAC', padding: '12px', borderRadius: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#166534', fontWeight: 800, fontSize: '13px' }}>
+                    <CheckCircle size={16} /> Links UTM Prontos para Ativação
+                  </div>
+                  <p style={{ margin: '3px 0 0', fontSize: '11px', color: '#166534' }}>
+                    Foram configurados {wizardChannels.length} canais com parâmetros exclusivos de atribuição.
+                  </p>
+                </div>
+
+                <div style={{ border: '1px solid #CBD5E1', borderRadius: '8px', overflow: 'hidden' }}>
+                  <table className="growth-table" style={{ margin: 0 }}>
+                    <thead>
+                      <tr><th>Canal</th><th>Link UTM Gerado</th></tr>
+                    </thead>
+                    <tbody>
+                      {wizardChannels.map((ch, idx) => {
+                        const slug = wizardName.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 25)
+                        const sampleUrl = `https://diskingressos.com.br/evento/${wizardEventId}?utm_source=${ch}&utm_medium=cpc&utm_campaign=${slug}`
+                        return (
+                          <tr key={idx}>
+                            <td><strong>{channelMeta[ch]?.label || ch}</strong></td>
+                            <td><code style={{ fontSize: '10px', background: '#F1F5F9', padding: '2px 6px', borderRadius: '4px', color: '#2563EB' }}>{sampleUrl}</code></td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Wizard Navigation Footer */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', paddingTop: '14px', borderTop: '1px solid #E2E8F0' }}>
+              {wizardStep > 1 ? (
+                <button 
+                  type="button" 
+                  className="btn secondary" 
+                  onClick={() => setWizardStep(wizardStep - 1)}
+                  style={{ fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                >
+                  <ChevronLeft size={14} /> Voltar
+                </button>
+              ) : <div />}
+
+              {wizardStep < 5 ? (
+                <button 
+                  type="button" 
+                  className="btn primary" 
+                  onClick={() => setWizardStep(wizardStep + 1)}
+                  style={{ fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                >
+                  Próximo <ChevronRight size={14} />
+                </button>
+              ) : (
+                <button 
+                  type="button" 
+                  className="btn primary" 
+                  onClick={handleFinishWizard}
+                  style={{ background: '#16A34A', borderColor: '#16A34A', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <Zap size={14} /> Ativar Campanha Operacional
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: DASHBOARD COMPLETO DA CAMPANHA (DRILLDOWN 10 KPIS) */}
       {selectedCampaignForDrilldown && (
         <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setSelectedCampaignForDrilldown(null)}>
           <div 
             className="utm-modal-card-v2" 
-            style={{ width: 'min(900px, 95vw)', maxHeight: '92vh', overflowY: 'auto' }}
+            style={{ width: 'min(920px, 95vw)', maxHeight: '92vh', overflowY: 'auto', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }}
             onClick={e => e.stopPropagation()}
           >
-            {/* Header */}
+            {/* Drilldown Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
               <div>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>
-                  {selectedCampaignForDrilldown.code} • DETALHAMENTO DE PERFORMANCE POR CANAL
-                </span>
-                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>
+                    {selectedCampaignForDrilldown.code} • DASHBOARD OPERACIONAL DA CAMPANHA
+                  </span>
+                  <span style={{
+                    fontSize: '10px',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '999px',
+                    background: statusMeta[selectedCampaignForDrilldown.status]?.bg || '#DCFCE7',
+                    color: statusMeta[selectedCampaignForDrilldown.status]?.color || '#166534',
+                    border: `1px solid ${statusMeta[selectedCampaignForDrilldown.status]?.border || '#86EFAC'}`
+                  }}>
+                    {statusMeta[selectedCampaignForDrilldown.status]?.label || 'Ativa'}
+                  </span>
+                </div>
+                <h3 style={{ margin: '3px 0 0', fontSize: '20px', color: '#0F172A', fontWeight: 800 }}>
                   {selectedCampaignForDrilldown.name}
                 </h3>
                 <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B' }}>
@@ -751,40 +1088,67 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
               </button>
             </div>
 
-            {/* Campaign Metrics Strip */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
+            {/* 10 Operational KPIs Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', background: '#F8FAFC', padding: '14px', borderRadius: '8px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
               <div>
-                <span style={{ fontSize: '11px', color: '#64748B', display: 'block' }}>Orçamento Total</span>
-                <strong style={{ fontSize: '14px', color: '#0F172A' }}>{formatBrl(selectedCampaignForDrilldown.budget)}</strong>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>1. Investimento</span>
+                <strong style={{ fontSize: '14px', color: '#0F172A' }}>{formatBrl(selectedCampaignForDrilldown.spent)}</strong>
               </div>
               <div>
-                <span style={{ fontSize: '11px', color: '#64748B', display: 'block' }}>Total Gasto</span>
-                <strong style={{ fontSize: '14px', color: '#2563EB' }}>{formatBrl(selectedCampaignForDrilldown.spent)}</strong>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>2. Visitas</span>
+                <strong style={{ fontSize: '14px', color: '#2563EB' }}>{selectedCampaignForDrilldown.visitors || 3840}</strong>
               </div>
               <div>
-                <span style={{ fontSize: '11px', color: '#64748B', display: 'block' }}>Receita Total Atribuída</span>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>3. Carrinhos</span>
+                <strong style={{ fontSize: '14px', color: '#0F172A' }}>{selectedCampaignForDrilldown.carts || 642}</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>4. Vendas</span>
+                <strong style={{ fontSize: '14px', color: '#16A34A' }}>{selectedCampaignForDrilldown.salesCount}</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>5. Receita Total</span>
                 <strong style={{ fontSize: '14px', color: '#16A34A' }}>{formatBrl(selectedCampaignForDrilldown.revenue)}</strong>
               </div>
               <div>
-                <span style={{ fontSize: '11px', color: '#64748B', display: 'block' }}>ROI Multicanal</span>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>6. Taxa Conversão</span>
+                <strong style={{ fontSize: '14px', color: '#EA580C' }}>{selectedCampaignForDrilldown.conversionRate || '4,82%'}</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>7. CPA Médio</span>
+                <strong style={{ fontSize: '14px', color: '#D97706' }}>{formatBrl(selectedCampaignForDrilldown.cpa || 39.74)}</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>8. ROAS Real</span>
+                <strong style={{ fontSize: '14px', color: '#16A34A' }}>
+                  {selectedCampaignForDrilldown.roas ? `${selectedCampaignForDrilldown.roas}x` : `${((selectedCampaignForDrilldown.revenue / (selectedCampaignForDrilldown.spent || 1))).toFixed(1)}x`}
+                </strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>9. ROI %</span>
                 <strong style={{ fontSize: '14px', color: '#16A34A' }}>+{selectedCampaignForDrilldown.roi}%</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>10. Orçado</span>
+                <strong style={{ fontSize: '14px', color: '#64748B' }}>{formatBrl(selectedCampaignForDrilldown.budget)}</strong>
               </div>
             </div>
 
-            {/* Channels Detailed Table */}
-            <div style={{ border: '1px solid #E2E8F0', borderRadius: '8px', overflow: 'hidden' }}>
+            {/* Channels Table with Copy UTM */}
+            <div style={{ border: '1px solid #E2E8F0', borderRadius: '8px', overflow: 'hidden', marginBottom: '16px' }}>
               <div style={{ padding: '10px 14px', background: '#F1F5F9', borderBottom: '1px solid #E2E8F0', fontWeight: 700, fontSize: '12px', color: '#334155' }}>
-                Desempenho Individual por Canal & Links Rastreáveis
+                Desempenho Discriminado por Canal & Links Rastreáveis
               </div>
 
-              <table className="utm-table" style={{ width: '100%' }}>
+              <table className="growth-table" style={{ margin: 0 }}>
                 <thead>
                   <tr>
-                    <th style={{ width: '25%' }}>Canal & Subcanal</th>
-                    <th style={{ width: '30%' }}>Link Rastreável (UTM)</th>
-                    <th style={{ width: '15%', textAlign: 'right' }}>Orçamento / Gasto</th>
-                    <th style={{ width: '15%', textAlign: 'right' }}>Receita / ROI</th>
-                    <th style={{ width: '15%', textAlign: 'right' }}>Vendas & CPA</th>
+                    <th>Canal</th>
+                    <th>Link Rastreável (UTM)</th>
+                    <th style={{ textAlign: 'right' }}>Gasto</th>
+                    <th style={{ textAlign: 'right' }}>Vendas</th>
+                    <th style={{ textAlign: 'right' }}>Receita</th>
+                    <th style={{ textAlign: 'right' }}>ROI</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -795,93 +1159,34 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
                     return (
                       <tr key={ch.id}>
                         <td>
-                          <span style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                            fontSize: '11px',
-                            fontWeight: 700,
-                            padding: '3px 8px',
-                            borderRadius: '999px',
-                            background: meta.bg,
-                            border: `1px solid ${meta.border}`,
-                            color: meta.color
-                          }}>
-                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: meta.color }} />
+                          <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '999px', background: meta.bg, border: `1px solid ${meta.border}`, color: meta.color }}>
                             {ch.channelName}
-                          </span>
-                          <span style={{ display: 'block', fontSize: '11px', color: '#64748B', marginTop: '2px' }}>
-                            {ch.subchannel || 'Canal Ativo'}
                           </span>
                         </td>
 
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <input
-                              type="text"
-                              readOnly
-                              value={url}
-                              style={{
-                                width: '100%',
-                                fontSize: '10px',
-                                fontFamily: 'monospace',
-                                background: '#F8FAFC',
-                                border: '1px solid #CBD5E1',
-                                borderRadius: '4px',
-                                padding: '4px 6px',
-                                color: '#1E3A8A'
-                              }}
+                            <input 
+                              type="text" 
+                              readOnly 
+                              value={url} 
+                              style={{ width: '100%', fontSize: '10px', fontFamily: 'monospace', background: '#F8FAFC', border: '1px solid #CBD5E1', borderRadius: '4px', padding: '4px 6px', color: '#1E3A8A' }} 
                             />
                             <button
                               type="button"
                               onClick={() => copyToClipboard(url)}
-                              title="Copiar URL"
-                              style={{
-                                padding: '5px 8px',
-                                border: '1px solid #CBD5E1',
-                                borderRadius: '4px',
-                                background: '#FFFFFF',
-                                color: copiedUrl === url ? '#16A34A' : '#2563EB',
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '3px',
-                                fontSize: '10px',
-                                fontWeight: 700
-                              }}
+                              style={{ padding: '4px 8px', border: '1px solid #CBD5E1', borderRadius: '4px', background: '#FFFFFF', color: copiedUrl === url ? '#16A34A' : '#2563EB', cursor: 'pointer', fontSize: '10px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '3px' }}
                             >
-                              {copiedUrl === url ? <Check size={12} /> : <Copy size={12} />}
+                              {copiedUrl === url ? <Check size={11} /> : <Copy size={11} />}
                               {copiedUrl === url ? 'Copiado' : 'Copiar'}
                             </button>
                           </div>
                         </td>
 
-                        <td style={{ textAlign: 'right' }}>
-                          <strong style={{ fontSize: '12px', color: '#0F172A', display: 'block' }}>
-                            {formatBrl(ch.budget)}
-                          </strong>
-                          <span style={{ fontSize: '10px', color: '#64748B' }}>
-                            Gasto: {formatBrl(ch.spent)}
-                          </span>
-                        </td>
-
-                        <td style={{ textAlign: 'right' }}>
-                          <strong style={{ fontSize: '12px', color: '#16A34A', display: 'block' }}>
-                            {formatBrl(ch.revenue)}
-                          </strong>
-                          <span style={{ fontSize: '10px', color: '#16A34A', fontWeight: 700 }}>
-                            {ch.roi > 0 ? `+${ch.roi}% ROI` : '—'}
-                          </span>
-                        </td>
-
-                        <td style={{ textAlign: 'right' }}>
-                          <strong style={{ fontSize: '12px', color: '#0F172A', display: 'block' }}>
-                            {ch.salesCount} vendas
-                          </strong>
-                          <span style={{ fontSize: '10px', color: '#64748B' }}>
-                            {ch.cpa > 0 ? `CPA ${formatBrl(ch.cpa)}` : '—'}
-                          </span>
-                        </td>
+                        <td style={{ textAlign: 'right' }}>{formatBrl(ch.spent)}</td>
+                        <td style={{ textAlign: 'right' }}><strong>{ch.salesCount}</strong></td>
+                        <td style={{ textAlign: 'right', color: '#16A34A', fontWeight: 700 }}>{formatBrl(ch.revenue)}</td>
+                        <td style={{ textAlign: 'right', color: '#16A34A', fontWeight: 700 }}>+{ch.roi}%</td>
                       </tr>
                     )
                   })}
@@ -889,201 +1194,50 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
               </table>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-              <button
-                type="button"
-                className="primary-btn"
-                onClick={() => setSelectedCampaignForDrilldown(null)}
-                style={{ background: '#2563EB', borderColor: '#2563EB' }}
-              >
-                Fechar Detalhamento
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* CREATE / USE TEMPLATE MODAL */}
-      {isCreateModalOpen && (
-        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsCreateModalOpen(false)}>
-          <div 
-            className="utm-modal-card-v2" 
-            style={{ width: 'min(620px, 94vw)', maxHeight: '90vh', overflowY: 'auto' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>
-                  Criar Campanha de Marketing Multicanal
-                </h3>
-                <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B' }}>
-                  A campanha gerará links UTM individualizados para cada canal selecionado.
-                </p>
-              </div>
-              <button 
-                type="button" 
-                className="drawer-close-btn" 
-                onClick={() => setIsCreateModalOpen(false)}
-              >
-                <X size={15} />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateCampaignSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div className="utm-form-field">
-                <span>Nome da Campanha Multicanal *</span>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ex: Lançamento Oficial — Marcos & Belutti 18 Anos"
-                  value={formName}
-                  onChange={e => {
-                    setFormName(e.target.value)
-                    if (!formUtmCampaign) {
-                      setFormUtmCampaign(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, '_'))
-                    }
-                  }}
-                />
-              </div>
-
-              <div className="utm-form-two-cols">
-                <div className="utm-form-field">
-                  <span>Objetivo da Campanha *</span>
-                  <select
-                    value={formObjective}
-                    onChange={e => setFormObjective(e.target.value as any)}
-                  >
-                    <option value="lancamento">Lançamento de Vendas / Pré-Venda</option>
-                    <option value="urgencia">Virada de Lote & Urgência</option>
-                    <option value="remarketing">Remarketing de Checkout & Abandono</option>
-                    <option value="vendas">Vendas & Conversão Direta</option>
-                    <option value="reconhecimento">Branding & Alcance</option>
-                    <option value="reativacao">Reativação de Base / Pós-Evento</option>
-                  </select>
-                </div>
-
-                <div className="utm-form-field">
-                  <span>Evento Vinculado *</span>
-                  <select
-                    value={formEventId}
-                    onChange={e => setFormEventId(Number(e.target.value))}
-                  >
-                    <option value={0}>Campanha Global (Todos os Eventos)</option>
-                    {events.map((ev) => (
-                      <option key={ev.id} value={ev.id}>
-                        {ev.title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="utm-form-two-cols">
-                <div className="utm-form-field">
-                  <span>Orçamento Total Planejado (R$) *</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="100"
-                    required
-                    value={formBudget}
-                    onChange={e => setFormBudget(e.target.value)}
-                  />
-                </div>
-
-                <div className="utm-form-field">
-                  <span>Parâmetro UTM Campaign *</span>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: lancamento_marcos_belutti"
-                    value={formUtmCampaign}
-                    onChange={e => setFormUtmCampaign(e.target.value)}
-                    style={{ fontFamily: 'monospace' }}
-                  />
-                </div>
-              </div>
-
-              {/* Channels Selector (Checkboxes) */}
-              <div style={{ marginTop: '6px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#334155', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                  Canais Ativos nesta Campanha ({enabledChannels.length} selecionados):
-                </span>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                  {(['instagram', 'facebook', 'google', 'whatsapp', 'email', 'tiktok', 'influencer', 'affiliate'] as MarketingChannel[]).map((ch) => {
-                    const meta = channelMeta[ch] || { label: ch, color: '#64748B' }
-                    const isChecked = enabledChannels.includes(ch)
-                    return (
-                      <label
-                        key={ch}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          padding: '8px 10px',
-                          borderRadius: '6px',
-                          border: '1px solid',
-                          borderColor: isChecked ? '#2563EB' : '#E2E8F0',
-                          background: isChecked ? '#EFF6FF' : '#FFFFFF',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: isChecked ? 700 : 500,
-                          color: isChecked ? '#1E3A8A' : '#475569'
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={e => {
-                            if (e.target.checked) {
-                              setEnabledChannels([...enabledChannels, ch])
-                            } else {
-                              setEnabledChannels(enabledChannels.filter(c => c !== ch))
-                            }
-                          }}
-                        />
-                        <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: meta.color }} />
-                        {meta.label}
-                      </label>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Preview */}
-              <div className="utm-live-preview-box" style={{ marginTop: '8px' }}>
-                <span style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, color: '#1E40AF', display: 'block', marginBottom: '4px' }}>
-                  Estrutura de Rastreamento que será criada:
-                </span>
-                <code style={{ fontSize: '11px', color: '#1E3A8A', wordBreak: 'break-all' }}>
-                  {enabledChannels.length} links rastreáveis com utm_campaign={formUtmCampaign || 'campanha'} e utm_source individual por canal.
-                </code>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px', borderTop: '1px solid #E2E8F0', paddingTop: '14px' }}>
+            {/* Drilldown Actions */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #E2E8F0', paddingTop: '14px' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   type="button"
-                  className="secondary-btn"
-                  onClick={() => setIsCreateModalOpen(false)}
+                  className="btn secondary"
+                  onClick={() => toggleCampaignStatus(selectedCampaignForDrilldown.id)}
+                  style={{ fontSize: '12px' }}
                 >
-                  Cancelar
+                  {selectedCampaignForDrilldown.status === 'active' ? <Pause size={14} /> : <Play size={14} />}
+                  {selectedCampaignForDrilldown.status === 'active' ? 'Pausar Campanha' : 'Ativar Campanha'}
                 </button>
+
                 <button
-                  type="submit"
-                  className="primary-btn"
-                  style={{ background: '#2563EB', borderColor: '#2563EB' }}
+                  type="button"
+                  className="btn secondary"
+                  onClick={() => duplicateCampaign(selectedCampaignForDrilldown)}
+                  style={{ fontSize: '12px' }}
                 >
-                  <Plus size={16} />
-                  Ativar Campanha Multicanal
+                  <Copy size={14} /> Duplicar Campanha
+                </button>
+
+                <button
+                  type="button"
+                  className="btn secondary"
+                  onClick={() => finishCampaign(selectedCampaignForDrilldown.id)}
+                  style={{ fontSize: '12px', color: '#EF4444' }}
+                >
+                  <CheckCircle size={14} /> Finalizar & Arquivar
                 </button>
               </div>
-            </form>
+
+              <button
+                type="button"
+                className="btn primary"
+                onClick={() => setSelectedCampaignForDrilldown(null)}
+                style={{ fontSize: '12px' }}
+              >
+                Fechar Dashboard
+              </button>
+            </div>
           </div>
         </div>
       )}
     </div>
   )
 }
-
-export default MarketingCampaignsPage

@@ -35,6 +35,8 @@ export interface CampaignChannelDetail {
   trackingUrl?: string;
 }
 
+export type CampaignStatus = 'draft' | 'configured' | 'scheduled' | 'active' | 'paused' | 'finished';
+
 export interface MarketingCampaign {
   id: string;
   code: string;
@@ -43,17 +45,24 @@ export interface MarketingCampaign {
   objectiveLabel: string;
   eventId: number | null; // null = global do produtor
   eventName?: string;
-  status: 'active' | 'scheduled' | 'paused' | 'completed';
+  status: CampaignStatus;
   budget: number;
   spent: number;
+  reach?: number;
+  visitors?: number;
+  carts?: number;
+  checkouts?: number;
   salesCount: number;
   revenue: number;
+  conversionRate?: number;
   roi: number;
+  roas?: number;
   cpa: number;
   ctr: number;
   startDate: string;
   endDate?: string;
   utmCampaign: string;
+  audienceName?: string;
   channels: CampaignChannelDetail[];
   isTemplate?: boolean;
 }
