@@ -300,7 +300,7 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
             ))}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #1E2D3D' }}>
+          <div style={{ textAlign: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #E2E8F0' }}>
             <button className="utm-view-all-btn" onClick={() => notify('Todas as 8 URLs ativas já estão listadas acima.')}>
               Ver todas as URLs
             </button>
@@ -420,10 +420,10 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
                 <div className="utm-svg-chart-wrap">
                   <svg viewBox="0 0 460 120" className="utm-spline-svg" preserveAspectRatio="none">
                     {/* Grid lines */}
-                    <line x1="0" y1="20" x2="460" y2="20" stroke="#1E293B" strokeDasharray="3,3" />
-                    <line x1="0" y1="50" x2="460" y2="50" stroke="#1E293B" strokeDasharray="3,3" />
-                    <line x1="0" y1="80" x2="460" y2="80" stroke="#1E293B" strokeDasharray="3,3" />
-                    <line x1="0" y1="110" x2="460" y2="110" stroke="#1E293B" />
+                    <line x1="0" y1="20" x2="460" y2="20" stroke="#E2E8F0" strokeDasharray="3,3" />
+                    <line x1="0" y1="50" x2="460" y2="50" stroke="#E2E8F0" strokeDasharray="3,3" />
+                    <line x1="0" y1="80" x2="460" y2="80" stroke="#E2E8F0" strokeDasharray="3,3" />
+                    <line x1="0" y1="110" x2="460" y2="110" stroke="#CBD5E1" />
 
                     {/* Adicionaram curve (Green) */}
                     <path
@@ -568,7 +568,7 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
                       </div>
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <strong style={{ color: '#F8FAFC', fontSize: '13px' }}>{o.value}</strong>
+                      <strong style={{ color: '#0F172A', fontSize: '13px' }}>{o.value}</strong>
                     </td>
                     <td>
                       <span className="order-date-time">{o.dateTime}</span>

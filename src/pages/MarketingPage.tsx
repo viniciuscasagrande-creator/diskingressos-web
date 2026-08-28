@@ -110,31 +110,19 @@ function Campaigns({producerId,events,initialEventId,createOnly,notify}:{produce
 function Links({events,initialEventId,notify}:{producerId:number|null;events:EventItem[];initialEventId?:number;notify:(m:string)=>void}){
  const [eventId,setEventId]=useState<number|undefined>(initialEventId || events[0]?.id)
  const selectedEvent=events.find(e=>e.id===eventId) || events[0]
- return <section className="growth-page utm-marketing-entry">
-  <div className="growth-intro growth-actions">
-   <div>
-    <p className="eyebrow">TRACKING / CENTRAL UTM</p>
-    <h2>Links, UTMs & Conversões</h2>
-    <p>Selecione primeiro o evento. Dentro dele, uma URL UTM selecionada alimenta toda a análise em uma única tela.</p>
-   </div>
-   <label className="utm-event-picker">
-    <span>Evento em análise</span>
-    <select value={eventId||''} onChange={e=>setEventId(e.target.value?Number(e.target.value):undefined)}>
-     <option value="">Selecione um evento</option>
-     {events.map(ev=><option key={ev.id} value={ev.id}>{ev.code} · {ev.title}</option>)}
-    </select>
-   </label>
-  </div>
-  {!selectedEvent
-   ? <article className="growth-panel feature-empty utm-event-empty">
-      <Link2 size={36}/>
-      <h3>A Central UTM começa pelo evento</h3>
-      <p>Escolha um evento acima. A próxima etapa será selecionar uma URL rastreável; somente então KPIs, funil, gráficos e pedidos serão carregados.</p>
-      <div className="feature-badges"><span>Sem números fictícios</span><span>URL controla os gráficos</span><span>Atribuição por evento</span><span>Remarketing conectado</span></div>
-     </article>
-   : <UtmConversionsCenter event={selectedEvent} notify={notify}/>
-  }
- </section>
+ return (
+   <section className="growth-page utm-marketing-entry" style={{ padding: '0 4px', background: 'transparent' }}>
+     {!selectedEvent ? (
+       <article className="growth-panel feature-empty utm-event-empty">
+         <Link2 size={36}/>
+         <h3>A Central UTM começa pelo evento</h3>
+         <p>Nenhum evento encontrado para carregar métricas de UTM.</p>
+       </article>
+     ) : (
+       <UtmConversionsCenter event={selectedEvent} notify={notify}/>
+     )}
+   </section>
+ )
 }
 
 function Tracking({producerId,events,initialEventId,notify}:{producerId:number|null;events:EventItem[];initialEventId?:number;notify:(m:string)=>void}){
