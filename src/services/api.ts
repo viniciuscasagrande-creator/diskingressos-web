@@ -146,6 +146,9 @@ async function request<T>(path:string,options:RequestInit={}){
     if (path.startsWith('/automation/')) {
       return [] as unknown as T;
     }
+    if (path.startsWith('/events')) {
+      return seedEvents as unknown as T;
+    }
     if (path.startsWith('/operations/summary')) {
       return { events: seedEvents.length, lots: 12, orders: 480, tickets: 950, participants: 600, checkins: 420, terminals: 4, payouts: 2, balanceCents: 15400000 } as unknown as T;
     }
