@@ -1,15 +1,13 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
 import { canAccess, type AppUser } from '../auth/model'
 import {
-  ArrowLeft, WalletCards, HandCoins, TrendingUp, ReceiptText, TrendingDown, Landmark, PenTool, Scale,
-  ChartNoAxesCombined, Split, Brain, CreditCard, Settings, ShieldCheck, LayoutDashboard, Ticket,
-  PlusSquare, SlidersHorizontal, Users, ScanFace, BarChart3, CircleGauge, MonitorSmartphone, ShoppingCart,
+  ArrowLeft, WalletCards, HandCoins, TrendingUp, ReceiptText, TrendingDown, Landmark, Scale,
+  ChartNoAxesCombined, Split, Brain, CreditCard, ShieldCheck, Ticket,
+  PlusSquare, SlidersHorizontal, Users, ScanFace, BarChart3, MonitorSmartphone, ShoppingCart,
   LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
-  Mail, Tags, Bot, Target, QrCode, UsersRound, ShoppingBag, GitBranch, CreditCard as CreditCardIcon,
-  UserRoundCheck, Headphones, Clock3, BookOpen, Link2, FileBarChart, Zap, FileSpreadsheet,
-  ArrowDownLeft, ArrowUpRight, Percent, BookMarked, ClipboardList, Building, FileCheck, Sparkles,
-  Layers, Lock, CheckCircle2, ChevronDown, ListTree, NotebookTabs, BookOpenText, CalendarCheck2, ArrowLeftRight,
-  FileSignature, Boxes, BookOpenCheck, FileText
+  Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
+  FileSpreadsheet, Sparkles, ChevronDown, ListTree,
+  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -69,44 +67,45 @@ const mainItems: Item[] = [
   { key: 'admin-hub', label: 'Administração', icon: Building2 },
 ]
 
-// 2. FINANCEIRO
-const financeItems: Item[] = [
-  { key: 'finance-accounting', label: 'Financeiro Contábil 18.4', icon: WalletCards, badge: '⚡ ERP' },
+// 2. GESTÃO DE CAIXA & SALDOS
+const cashFinanceItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: BarChart3 },
-  { key: 'finance-borderos', label: 'Central de Borderôs', icon: ReceiptText, badge: 'Completo' },
-  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature, badge: 'Autentique' },
-  { key: 'finance-cost-centers', label: 'Centro de Custos', icon: Boxes },
+  { key: 'finance-hub', label: 'Hub Financeiro 360°', icon: WalletCards },
+  { key: 'finance', label: 'Saldos & Carteira', icon: WalletCards },
+  { key: 'finance-statement', label: 'Extrato Detalhado', icon: ReceiptText },
+  { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
+  { key: 'finance-payouts', label: 'Solicitações de Repasse', icon: HandCoins },
+  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
+  { key: 'finance-expenses', label: 'Controle de Despesas', icon: TrendingDown },
+]
+
+// 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
+const accountingFinanceItems: Item[] = [
+  { key: 'finance-accounting', label: 'Visão Contábil Geral', icon: Landmark, badge: 'ERP' },
+  { key: 'finance-cost-centers', label: 'Centros de Custos', icon: Boxes },
   { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck },
   { key: 'finance-accounting-entries', label: 'Lançamentos Contábeis', icon: FileText },
   { key: 'finance-reconciliation', label: 'Conciliação Contábil & Bancária', icon: Scale },
   { key: 'finance-obligations', label: 'Contas a Pagar & Receber', icon: Landmark },
-  { key: 'finance-dre', label: 'DRE & Orçamento', icon: ChartNoAxesCombined },
+  { key: 'finance-dre', label: 'DRE & Orçamento', icon: BarChart3 },
+  { key: 'finance-borderos', label: 'Central de Borderôs (14 Formatos)', icon: ReceiptText, badge: '14 tipos' },
+  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature, badge: 'Autentique' },
   { key: 'finance-closing', label: 'Fechamento Contábil', icon: LockKeyhole },
   { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
-  { key: 'finance', label: 'Saldos & Carteira', icon: WalletCards },
-  { key: 'finance-statement', label: 'Extrato', icon: ReceiptText },
-  { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
-  { key: 'finance-payouts', label: 'Repasses', icon: Landmark },
-  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
-  { key: 'finance-expenses', label: 'Despesas', icon: TrendingDown },
-  { key: 'finance-consolidated', label: 'Consolidado (12)', icon: CheckCircle2, badge: 'Fase 17' },
 ]
 
-// 3. CONTABILIDADE
-const accountingItems: Item[] = [
-  { key: 'accounting-dashboard', label: 'Dashboard Contábil', icon: BarChart3 },
-  { key: 'accounting-chart', label: 'Plano de Contas', icon: ListTree },
-  { key: 'accounting-entries', label: 'Lançamentos', icon: NotebookTabs },
-  { key: 'accounting-journal', label: 'Livro Diário', icon: BookOpenText },
-  { key: 'accounting-ledger', label: 'Livro Razão', icon: BookMarked },
-  { key: 'accounting-cost-centers', label: 'Centro de Custos', icon: Building2, tier: 'advanced' },
-  { key: 'accounting-reconciliation', label: 'Conciliação Contábil', icon: Scale, tier: 'advanced' },
-  { key: 'accounting-audit', label: 'Auditoria', icon: ShieldCheck, tier: 'expert' },
-  { key: 'accounting-closing', label: 'Fechamento', icon: CalendarCheck2, tier: 'advanced' },
-  { key: 'accounting-dre', label: 'DRE / Balancete', icon: FileSpreadsheet },
+// 4. ADVANCED, SPLIT & OPERADORAS
+const advancedFinanceItems: Item[] = [
+  { key: 'finance-split', label: 'Split Financeiro Automático', icon: Split },
+  { key: 'finance-spread', label: 'Spread & Simulador de Taxas', icon: ChartNoAxesCombined },
+  { key: 'finance-bank-accounts', label: 'Contas Bancárias Cadastradas', icon: Landmark },
+  { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard },
+  { key: 'finance-operators', label: 'Operadoras de Cartão & Adquirentes', icon: ShieldCheck },
+  { key: 'finance-intelligence', label: 'Inteligência Financeira', icon: Brain },
+  { key: 'finance-refunds', label: 'Devoluções & Estornos', icon: ReceiptText },
 ]
 
-// 4. MARKETING
+// 5. MARKETING & GROWTH
 const marketingItems: Item[] = [
   { key: 'marketing-hub', label: 'Hub Marketing', icon: Megaphone },
   { key: 'marketing-dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -123,7 +122,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]
 
-// 5. REMARKETING
+// 6. REMARKETING & RESGATE
 const remarketingItems: Item[] = [
   { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
   { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -134,19 +133,20 @@ const remarketingItems: Item[] = [
   { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
 ]
 
-// 6. ADMINISTRAÇÃO
+// 7. ADMINISTRAÇÃO & GOVERNANÇA
 const adminItems: Item[] = [
   { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
   { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
-  { key: 'admin-producers', label: 'Produtoras', icon: Building },
+  { key: 'admin-producers', label: 'Produtoras', icon: Building2 },
   { key: 'admin-permissions', label: 'Perfis e Permissões', icon: ShieldCheck },
   { key: 'admin-audit', label: 'Logs de Auditoria', icon: ScrollText },
-  { key: 'admin-security', label: 'Segurança', icon: LockKeyhole }
+  { key: 'admin-security', label: 'Segurança & LGPD', icon: LockKeyhole }
 ]
 
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
   const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
-  const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-'))
+  const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
+  const [openAdvanced, setOpenAdvanced] = useState(['finance-split', 'finance-spread', 'finance-bank-accounts', 'finance-methods', 'finance-operators', 'finance-intelligence', 'finance-refunds'].includes(page))
   const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
   const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
   const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
@@ -158,21 +158,6 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           <ArrowLeft size={18} />
           <span>Navegação</span>
         </button>
-        <button
-          className="sidebar-quick-swap"
-          onClick={() => onNavigate(module === 'finance' ? 'events' : 'finance-dashboard')}
-          title="Alternar Visão"
-        >
-          <ArrowLeftRight size={18} />
-        </button>
-      </div>
-
-      {/* Commercial Tier Indicator */}
-      <div className="sidebar-tier-badge">
-        <span className="tier-tag expert">
-          <Sparkles size={11} /> NÍVEL EXPERT ATIVO
-        </span>
-        <small>Marketing + Financeiro + Contabilidade</small>
       </div>
 
       <nav className="module-nav">
@@ -189,6 +174,57 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             />
           )
         })}
+
+        {/* Collapsible Section: Financeiro - Caixa & Saldos */}
+        <CollapsibleSection
+          label="Financeiro: Caixa & Saldos"
+          open={openFinance}
+          onToggle={() => setOpenFinance(!openFinance)}
+        >
+          {cashFinanceItems.map((it, index) => (
+            <NavItem
+              key={`cash-${it.key}-${index}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+        </CollapsibleSection>
+
+        {/* Collapsible Section: Financeiro Contábil & Borderôs */}
+        <CollapsibleSection
+          label="Financeiro: Contábil & Borderôs"
+          open={openAccounting}
+          onToggle={() => setOpenAccounting(!openAccounting)}
+        >
+          {accountingFinanceItems.map((it, index) => (
+            <NavItem
+              key={`acc-${it.key}-${index}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+        </CollapsibleSection>
+
+        {/* Collapsible Section: Financeiro Advanced & Adquirência */}
+        <CollapsibleSection
+          label="Financeiro: Advanced & Taxas"
+          open={openAdvanced}
+          onToggle={() => setOpenAdvanced(!openAdvanced)}
+        >
+          {advancedFinanceItems.map((it, index) => (
+            <NavItem
+              key={`adv-${it.key}-${index}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+        </CollapsibleSection>
 
         {/* Collapsible Section: Marketing */}
         <CollapsibleSection
@@ -216,40 +252,6 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           {remarketingItems.map((it, index) => (
             <NavItem
               key={`rmk-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* Collapsible Section: Financeiro */}
-        <CollapsibleSection
-          label="Financeiro"
-          open={openFinance}
-          onToggle={() => setOpenFinance(!openFinance)}
-        >
-          {financeItems.map((it, index) => (
-            <NavItem
-              key={`fin-${it.key}-${index}`}
-              item={it}
-              active={page === it.key || (it.key === 'finance-dashboard' && page === 'finance-hub')}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* Collapsible Section: Contabilidade */}
-        <CollapsibleSection
-          label="Contabilidade"
-          open={openAccounting}
-          onToggle={() => setOpenAccounting(!openAccounting)}
-        >
-          {accountingItems.map((it, index) => (
-            <NavItem
-              key={`acc-${it.key}-${index}`}
               item={it}
               active={page === it.key}
               onNavigate={onNavigate}
@@ -322,6 +324,7 @@ function NavItem({
     >
       <Icon size={19} strokeWidth={1.9} />
       <span>{item.label}</span>
+      {item.badge && <span className="nav-item-badge">{item.badge}</span>}
       {item.tier === 'expert' && <span className="expert-dot" title="Recurso Expert" />}
     </button>
   )
