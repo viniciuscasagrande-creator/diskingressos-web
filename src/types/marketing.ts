@@ -1,38 +1,46 @@
-export type MarketingChannel = 'instagram' | 'facebook' | 'google' | 'whatsapp' | 'email' | 'direct' | 'affiliate' | 'tiktok' | 'crm' | 'coupon' | 'multichannel';
+export type MarketingChannel = 
+  | 'instagram' 
+  | 'facebook' 
+  | 'google' 
+  | 'whatsapp' 
+  | 'email' 
+  | 'direct' 
+  | 'affiliate' 
+  | 'influencer'
+  | 'tiktok' 
+  | 'crm' 
+  | 'coupon' 
+  | 'qrcode'
+  | 'multichannel';
 
 export type TrackingInheritanceMode = 'inherit' | 'custom' | 'disabled';
 
-export interface PixelIntegration {
+export interface CampaignChannelDetail {
   id: string;
-  name: string;
-  platform: 'meta' | 'google' | 'tiktok' | 'gtm' | 'custom';
-  pixelId: string;
-  conversionApiToken?: string;
-  testEventCode?: string;
-  scope: 'producer_global' | 'event_specific';
-  targetEventIds?: number[];
-  targetEventName?: string;
-  status: 'ativo' | 'pausado';
-  trackedEvents: string[];
-  createdAt: string;
-  lastFiredAt?: string;
-  fireCount?: number;
-}
-
-export interface TrackingTagConfig {
-  id: string;
-  name: string;
-  type: 'meta-pixel' | 'google-analytics' | 'google-tag-manager' | 'google-ads' | 'tiktok-pixel';
-  token: string;
-  mode: TrackingInheritanceMode;
-  status: 'active' | 'inactive';
+  channel: MarketingChannel;
+  channelName: string;
+  subchannel?: string; // e.g. "Stories", "Feed", "Search", "Base Ativa", "Remarketing"
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+  utmContent?: string;
+  budget: number;
+  spent: number;
+  salesCount: number;
+  revenue: number;
+  roi: number; // percentage
+  cpa: number;
+  ctr: number;
+  status: 'active' | 'paused';
+  trackingUrl?: string;
 }
 
 export interface MarketingCampaign {
   id: string;
+  code: string;
   name: string;
-  channel: MarketingChannel;
-  channelLabel: string;
+  objective: 'vendas' | 'lancamento' | 'urgencia' | 'remarketing' | 'reconhecimento' | 'reativacao';
+  objectiveLabel: string;
   eventId: number | null; // null = global do produtor
   eventName?: string;
   status: 'active' | 'scheduled' | 'paused' | 'completed';
@@ -40,13 +48,28 @@ export interface MarketingCampaign {
   spent: number;
   salesCount: number;
   revenue: number;
-  roi: number; // percentage, e.g. 420
-  ctr: number;
+  roi: number;
   cpa: number;
+  ctr: number;
   startDate: string;
   endDate?: string;
-  utmSource: string;
   utmCampaign: string;
+  channels: CampaignChannelDetail[];
+  isTemplate?: boolean;
+}
+
+export interface CampaignTemplate {
+  id: string;
+  name: string;
+  tagline: string;
+  description: string;
+  category: 'lancamento' | 'urgencia' | 'remarketing' | 'midia_paga' | 'engajamento' | 'influencia';
+  recommendedBudget: number;
+  channelsCount: number;
+  channels: CampaignChannelDetail[];
+  targetAudience: string;
+  expectedRoi: string;
+  badge: string;
 }
 
 export interface ConversionFunnelData {
@@ -100,13 +123,21 @@ export interface CouponPromo {
   id: string;
   code: string;
   discountType: 'percentage' | 'fixed';
-  discountValue: number;
+  value: number;
   eventId: number | null;
   eventName?: string;
-  maxUses: number;
-  currentUses: number;
-  totalDiscountGiven: number;
+  usageLimit: number;
+  usageCount: number;
   revenueGenerated: number;
-  validUntil: string;
-  status: 'active' | 'expired' | 'depleted';
+  status: 'active' | 'expired' | 'paused';
+  expiresAt: string;
+}
+
+export interface TrackingTagConfig {
+  id: string;
+  name: string;
+  type: 'meta-pixel' | 'google-analytics' | 'google-tag-manager' | 'google-ads' | 'tiktok-pixel';
+  token: string;
+  mode: TrackingInheritanceMode;
+  status: 'active' | 'inactive';
 }
