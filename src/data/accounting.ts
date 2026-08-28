@@ -214,3 +214,31 @@ export const accountingEntriesSeed: AccountingEntry[] = [
     document: 'AJU-MAN-0826'
   }
 ]
+
+export type LedgerMovement = {
+  id: number
+  date: string
+  entryCode: string
+  description: string
+  counterpart: string
+  debit: number
+  credit: number
+  balance: number
+}
+
+export const sampleLedgerMovements: Record<string, LedgerMovement[]> = {
+  '1.1.01.02': [
+    { id: 1, date: '01/08/2026', entryCode: 'SALDO-ANT', description: 'Saldo Inicial de Transporte do Exercício', counterpart: 'Transporte de Balancete', debit: 145200.00, credit: 0, balance: 145200.00 },
+    { id: 2, date: '25/08/2026', entryCode: 'LCT-2026-0889', description: 'Ajuste de Arredondamento e Conciliação', counterpart: '5.5 Despesas Administrativas', debit: 0, credit: 12.40, balance: 145187.60 },
+    { id: 3, date: '26/08/2026', entryCode: 'LCT-2026-0888', description: 'Pagamento Servidores Nuvem AWS Brasil', counterpart: '5.3 Infraestrutura Cloud', debit: 0, credit: 7420.00, balance: 137767.60 },
+    { id: 4, date: '27/08/2026', entryCode: 'LCT-2026-0886', description: 'Recebimento Vendas PIX Sem Parar', counterpart: '4.1 Receita Intermediação', debit: 39072.80, credit: 0, balance: 176840.40 },
+    { id: 5, date: '28/08/2026', entryCode: 'LCT-2026-0883', description: 'Repasse PIX Lote 2 Produtora Rua da Música', counterpart: '2.1.02.01 Repasses Produtores', debit: 0, credit: 8420.00, balance: 168420.40 },
+  ],
+  '1.1.02.01': [
+    { id: 1, date: '01/08/2026', entryCode: 'SALDO-ANT', description: 'Saldo a Liquidar Adquirentes', counterpart: 'Transporte', debit: 380500.00, credit: 0, balance: 380500.00 },
+    { id: 2, date: '27/08/2026', entryCode: 'LCT-2026-0885', description: 'Taxa operacional diária Cielo', counterpart: '5.2 Taxas Processamento', debit: 0, credit: 184.90, balance: 380315.10 },
+    { id: 3, date: '27/08/2026', entryCode: 'LCT-2026-0887', description: 'Estorno cancelamento ingresso #DI-98081', counterpart: '4.1 Receita Intermediação', debit: 0, credit: 190.00, balance: 380125.10 },
+    { id: 4, date: '28/08/2026', entryCode: 'LCT-2026-0881', description: 'Venda parcelada Iron Maiden Premium', counterpart: '4.1 Receita Intermediação', debit: 40455.80, credit: 0, balance: 420580.90 },
+  ]
+}
+
