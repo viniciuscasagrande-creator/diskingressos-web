@@ -20,7 +20,9 @@
     "db:generate:prod": "prisma generate --schema prisma/schema.postgresql.prisma",
     "db:push:prod": "prisma db push --schema prisma/schema.postgresql.prisma",
     "db:seed:prod": "tsx prisma/seed.ts",
-    "deploy:prepare": "npm run db:generate:prod && npm run build:web"
+    "deploy:prepare": "npm run db:generate:prod && npm run build:web",
+    "check:lucide": "node scripts/check-lucide-imports.mjs",
+    "validate:frontend": "npm run check:lucide && npm run build"
   },
   "dependencies": {
     "@prisma/client": "latest",

@@ -8,7 +8,7 @@ import {
   Sliders, MessageSquare, Mail, Share2, Target,
   ExternalLink, Eye, ArrowRight, ShieldCheck, Zap,
   Clock, Award, RefreshCw, FileSpreadsheet, CopyCheck,
-  ChevronLeft, CheckCircle, Flame, Gift, Building
+  ChevronLeft, CheckCircle, Flame, Gift, Building, WalletCards
 } from 'lucide-react'
 import type { EventItem } from '../../data/events'
 import type { MarketingCampaign, CampaignTemplate, CampaignChannelDetail, MarketingChannel, CampaignStatus } from '../../types/marketing'
