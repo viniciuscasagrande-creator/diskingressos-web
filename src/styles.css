@@ -238,10 +238,34 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
    FASE 17: MÓDULO FINANCEIRO & CONTABILIDADE (CORPORATE CLEAN DESIGN)
    ========================================================================== */
 
+/* Sidebar Top Bar */
+.sidebar-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 4px;
+}
+.sidebar-quick-swap {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0;
+  color: #94A3B8;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.sidebar-quick-swap:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #FFFFFF;
+}
+
 /* Sidebar Tier Badge */
 .sidebar-tier-badge {
-  margin: 10px 14px 14px;
-  padding: 10px 12px;
+  margin: 6px 14px 12px;
+  padding: 8px 12px;
   background: rgba(28, 121, 239, 0.08);
   border: 1px solid rgba(28, 121, 239, 0.2);
   border-radius: 8px;
@@ -269,6 +293,42 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
   border-radius: 50%;
   margin-left: auto;
   box-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+}
+
+/* Collapsible Nav Sections */
+.collapsible-nav-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 6px;
+  padding-top: 4px;
+}
+.collapsible-section-head {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.collapsible-section-head:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+.collapsible-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-bottom: 6px;
+}
+.module-nav-item.indent {
+  padding-left: 28px;
 }
 
 /* Finance Dashboard Wrapper */
