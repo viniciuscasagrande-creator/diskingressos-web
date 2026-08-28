@@ -628,6 +628,7 @@ export default function App() {
               'marketing-affiliates': 'affiliates', 'marketing-tracking': 'tracking', 'marketing-reports': 'reports'
             } as Record<string, any>)[page]}
             notify={notify}
+            onNavigate={navigate}
           />
         )}
 
@@ -645,6 +646,7 @@ export default function App() {
               'remarketing-reports': 'reports'
             } as Record<string, any>)[page]}
             notify={notify}
+            onNavigate={navigate}
           />
         )}
 

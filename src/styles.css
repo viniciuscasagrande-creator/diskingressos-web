@@ -126,6 +126,46 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
 @media(max-width:1100px){.module-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.growth-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.growth-grid{grid-template-columns:1fr}}
 @media(max-width:700px){.module-card-grid,.growth-kpis{grid-template-columns:1fr}.growth-context>*{width:100%;min-width:0!important}.growth-intro{align-items:flex-start}.page-actions{width:100%}.page-actions .btn{flex:1;justify-content:center}.finance-module-card{grid-template-columns:48px minmax(0,1fr) 18px}}
 
+/* Hub Marketing & Remarketing Interactive Cards */
+.interactive-hub-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: 1px solid #E2E8F0 !important;
+  background: #FFFFFF !important;
+}
+.interactive-hub-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: #93C5FD !important;
+  box-shadow: 0 10px 25px -5px rgba(28, 121, 239, 0.12), 0 8px 10px -6px rgba(28, 121, 239, 0.08) !important;
+}
+.interactive-hub-card:hover .module-card-icon {
+  background: #1C79EF !important;
+  color: #FFFFFF !important;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+.interactive-hub-card.remarketing-card:hover {
+  border-color: #C4B5FD !important;
+  box-shadow: 0 10px 25px -5px rgba(125, 96, 197, 0.15), 0 8px 10px -6px rgba(125, 96, 197, 0.1) !important;
+}
+.interactive-hub-card.remarketing-card:hover .module-card-icon {
+  background: #7D60C5 !important;
+  color: #FFFFFF !important;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+.interactive-hub-card .card-arrow-icon {
+  color: #94A3B8;
+  transition: all 0.2s ease;
+}
+.interactive-hub-card:hover .card-arrow-icon {
+  color: #1C79EF;
+  transform: translate(2px, -2px);
+}
+.interactive-hub-card.remarketing-card:hover .card-arrow-icon {
+  color: #7D60C5;
+  transform: translate(2px, -2px);
+}
+
 /* FASE 12 — Marketing persistente, UTMs e herança de tracking */
 .phase12-split{display:grid;grid-template-columns:minmax(300px,390px) minmax(0,1fr);gap:18px;align-items:start}.phase12-form{display:grid;gap:14px}.phase12-form h3{margin:0 0 2px}.phase12-form label,.tracking-config-card label{display:grid;gap:7px;font-size:12px;font-weight:700;color:#536173}.phase12-form input,.phase12-form select,.tracking-config-card input,.tracking-config-card select,.phase12-inline-select{width:100%;min-height:42px;border:1px solid #d8dee8;border-radius:8px;background:#fff;padding:0 12px;color:#202938;font:inherit;outline:none}.phase12-form input:focus,.phase12-form select:focus,.tracking-config-card input:focus,.tracking-config-card select:focus,.phase12-inline-select:focus{border-color:#1677ff;box-shadow:0 0 0 3px rgba(22,119,255,.09)}.phase12-form input:disabled,.tracking-config-card input:disabled{background:#f4f6f9;color:#94a0af}.phase12-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.phase12-form-grid.three{grid-template-columns:repeat(3,1fr)}.phase12-link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}.tracking-link-card{min-width:0}.tracking-link-title{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}.tracking-link-title>div{display:grid;gap:4px;min-width:0}.tracking-link-title strong{font-size:15px;color:#202938}.tracking-link-title small{font-size:12px;color:#7b8795;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tracking-link-card code{display:block;padding:11px 12px;border-radius:7px;background:#f5f7fa;border:1px solid #e1e6ed;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;color:#455466}.tracking-link-stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.tracking-link-stats span{font-size:12px;background:#edf6ff;color:#1668c1;padding:5px 8px;border-radius:999px}.phase12-tracking-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.tracking-config-card{display:grid;gap:14px}.tracking-config-head{display:flex;align-items:center;gap:11px}.tracking-config-head>div{display:grid;gap:3px;min-width:0}.tracking-config-head strong{font-size:14px;color:#202938}.tracking-config-head small{font-size:11px;color:#7a8695}.tracking-config-card .btn{justify-self:start}.icon-action{border:0;background:transparent;color:#1677ff;font-weight:700;cursor:pointer;padding:7px 8px;border-radius:6px}.icon-action:hover{background:#eef6ff}.status-badge.green{background:#e8f8ef;color:#16834f}.status-badge.orange{background:#fff1e6;color:#bd6519}@media(max-width:1100px){.phase12-tracking-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.phase12-split{grid-template-columns:1fr}.phase12-link-grid{grid-template-columns:1fr}}@media(max-width:720px){.phase12-tracking-grid,.phase12-form-grid,.phase12-form-grid.three{grid-template-columns:1fr}.phase12-inline-select{min-width:0}.growth-actions .page-actions{width:100%}}
 

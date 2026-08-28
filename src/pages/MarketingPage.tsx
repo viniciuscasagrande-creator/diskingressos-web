@@ -1,27 +1,101 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowUpRight, BarChart3, Download, Link2, Megaphone, MousePointerClick, Plus, Save, Settings2, TrendingUp, WalletCards } from 'lucide-react'
+import {
+  ArrowUpRight, BarChart3, Download, Link2, Megaphone, MousePointerClick, Plus,
+  Save, Settings2, TrendingUp, WalletCards, Zap, MessageSquare, Mail,
+  TicketPercent, Users, Activity, QrCode
+} from 'lucide-react'
 import type { EventItem } from '../data/events'
 import AutomationCenterPage from './AutomationCenterPage'
 import UtmConversionsCenter from '../components/UtmConversionsCenter'
 import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
 import { createMarketingCampaign, getMarketingCampaigns, getResolvedTracking, getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign, type MarketingCampaign, type ResolvedTracking, type TrackingConfig } from '../services/api'
 
-type Mode='hub'|'dashboard'|'campaigns'|'create'|'automations'|'whatsapp'|'email'|'coupons'|'links'|'affiliates'|'tracking'|'reports'
-type Props={events:EventItem[];producerName:string;producerId:number|null;mode:Mode;notify:(m:string)=>void}
-const dashboardCards=[{title:'Receita Gerada',value:'R$ 125.430',delta:'↑ 18,4%',icon:WalletCards},{title:'Conversões',value:'2.847',delta:'↑ 12,8%',icon:MousePointerClick},{title:'Taxa de Conversão',value:'4,82%',delta:'↑ 0,9%',icon:TrendingUp},{title:'ROI Marketing',value:'342%',delta:'↑ 22%',icon:BarChart3}]
-const modules=[['Dashboard','KPIs, funil e desempenho geral.'],['Campanhas','Criação, agendamento e métricas.'],['Automações','Fluxos automáticos de comunicação.'],['WhatsApp','Campanhas e mensagens transacionais.'],['E-mail Marketing','Disparos e jornadas de e-mail.'],['Cupons e Promoções','Ofertas, vouchers e descontos.'],['Links, UTMs e QR Codes','Rastreamento de origem e conversão.'],['Afiliados e Parceiros','Performance de parceiros e comissões.'],['Pixel & Analytics','Meta, GA4, GTM e conversões.'],['Relatórios','ROI, ROAS, canais e exportações.']]
-const providerLabels:Record<string,string>={meta_pixel:'Meta Pixel',ga4:'Google Analytics 4',gtm:'Google Tag Manager',google_ads:'Google Ads Conversion',whatsapp:'WhatsApp',email:'E-mail',automation_api:'APIs de Automação'}
+type Mode = 'hub' | 'dashboard' | 'campaigns' | 'create' | 'automations' | 'whatsapp' | 'email' | 'coupons' | 'links' | 'affiliates' | 'tracking' | 'reports'
 
-export default function MarketingPage({events,producerName,producerId,mode,notify}:Props){
- const [eventId,setEventId]=useState<string>('all');const [period,setPeriod]=useState('30');
- const selectedEventId=eventId==='all'?undefined:Number(eventId);const eventName=useMemo(()=>eventId==='all'?'Todos os eventos':events.find(e=>String(e.id)===eventId)?.title||'Evento',[eventId,events])
- if(mode==='hub')return <section className="growth-page"><Context producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod}/><div className="growth-intro"><div><p className="eyebrow">MARKETING & GROWTH</p><h2>Hub Marketing</h2><p>Centralize aquisição, campanhas, automações, promoções e mensuração.</p></div></div><div className="module-card-grid">{modules.map(([title,desc])=><button key={title} className="finance-module-card marketing-card" onClick={()=>notify(`${title}: disponível no menu lateral.`)}><span className="module-card-icon"><Megaphone size={24}/></span><span><strong>{title}</strong><small>{desc}</small></span><ArrowUpRight size={18}/></button>)}</div></section>
- if(mode==='dashboard')return <Dashboard producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} eventName={eventName} notify={notify}/>
- if(mode==='campaigns'||mode==='create')return <Campaigns producerId={producerId} events={events} initialEventId={selectedEventId} createOnly={mode==='create'} notify={notify}/>
- if(mode==='links')return <Links producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify}/>
- if(mode==='tracking')return <Tracking producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify}/>
- if(mode==='automations'||mode==='whatsapp'||mode==='email')return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify}/>
- return <FeaturePage title={featureTitle(mode)} eventName={eventName} producerName={producerName} notify={notify}/>
+type Props = {
+  events: EventItem[]
+  producerName: string
+  producerId: number | null
+  mode: Mode
+  notify: (m: string) => void
+  onNavigate?: (page: any) => void
+}
+
+const dashboardCards = [
+  { title: 'Receita Gerada', value: 'R$ 125.430', delta: '↑ 18,4%', icon: WalletCards },
+  { title: 'Conversões', value: '2.847', delta: '↑ 12,8%', icon: MousePointerClick },
+  { title: 'Taxa de Conversão', value: '4,82%', delta: '↑ 0,9%', icon: TrendingUp },
+  { title: 'ROI Marketing', value: '342%', delta: '↑ 22%', icon: BarChart3 }
+]
+
+const marketingModules = [
+  { id: 'marketing-dashboard', title: 'Dashboard', description: 'KPIs, funil e desempenho geral.', icon: BarChart3 },
+  { id: 'marketing-campaigns', title: 'Campanhas', description: 'Criação, agendamento e métricas.', icon: Megaphone },
+  { id: 'marketing-automations', title: 'Automações', description: 'Fluxos automáticos de comunicação.', icon: Zap },
+  { id: 'marketing-whatsapp', title: 'WhatsApp', description: 'Campanhas e mensagens transacionais.', icon: MessageSquare },
+  { id: 'marketing-email', title: 'E-mail Marketing', description: 'Disparos e jornadas de e-mail.', icon: Mail },
+  { id: 'marketing-coupons', title: 'Cupons e Promoções', description: 'Ofertas, vouchers e descontos.', icon: TicketPercent },
+  { id: 'marketing-links', title: 'Links, UTMs e QR Codes', description: 'Rastreamento de origem e conversão.', icon: Link2 },
+  { id: 'marketing-affiliates', title: 'Afiliados e Parceiros', description: 'Performance de parceiros e comissões.', icon: Users },
+  { id: 'marketing-tracking', title: 'Pixel & Analytics', description: 'Meta, GA4, GTM e conversões.', icon: Activity },
+  { id: 'marketing-reports', title: 'Relatórios', description: 'ROI, ROAS, canais e exportações.', icon: TrendingUp }
+]
+
+export default function MarketingPage({ events, producerName, producerId, mode, notify, onNavigate }: Props) {
+  const [eventId, setEventId] = useState<string>('all')
+  const [period, setPeriod] = useState('30')
+  const selectedEventId = eventId === 'all' ? undefined : Number(eventId)
+  const eventName = useMemo(() => eventId === 'all' ? 'Todos os eventos' : events.find(e => String(e.id) === eventId)?.title || 'Evento', [eventId, events])
+
+  if (mode === 'hub') {
+    return (
+      <section className="growth-page">
+        <Context producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} />
+        <div className="growth-intro">
+          <div>
+            <p className="eyebrow">MARKETING & GROWTH</p>
+            <h2>Hub Marketing</h2>
+            <p>Centralize aquisição, campanhas, automações, promoções e mensuração.</p>
+          </div>
+        </div>
+        <div className="module-card-grid">
+          {marketingModules.map(item => {
+            const Icon = item.icon
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className="finance-module-card marketing-card interactive-hub-card"
+                onClick={() => {
+                  if (onNavigate) {
+                    onNavigate(item.id)
+                  } else {
+                    notify(`Abrindo ${item.title}...`)
+                  }
+                }}
+              >
+                <span className="module-card-icon">
+                  <Icon size={24} />
+                </span>
+                <span>
+                  <strong>{item.title}</strong>
+                  <small>{item.description}</small>
+                </span>
+                <ArrowUpRight size={18} className="card-arrow-icon" />
+              </button>
+            )
+          })}
+        </div>
+      </section>
+    )
+  }
+
+  if (mode === 'dashboard') return <Dashboard producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} eventName={eventName} notify={notify} onNavigate={onNavigate} />
+  if (mode === 'campaigns' || mode === 'create') return <Campaigns producerId={producerId} events={events} initialEventId={selectedEventId} createOnly={mode === 'create'} notify={notify} />
+  if (mode === 'links') return <Links producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
+  if (mode === 'tracking') return <Tracking producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
+  if (mode === 'automations' || mode === 'whatsapp' || mode === 'email') return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify} />
+  return <FeaturePage title={featureTitle(mode)} eventName={eventName} producerName={producerName} notify={notify} />
 }
 
 function Dashboard({producerName,events,eventId,setEventId,period,setPeriod,eventName,notify}:any){return <section className="growth-page"><Context producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod}/><div className="growth-intro growth-actions"><div><p className="eyebrow">MARKETING & GROWTH</p><h2>Dashboard Marketing</h2><p>Acompanhe o desempenho das campanhas e vendas de {eventName.toLowerCase()}.</p></div><div className="page-actions"><button className="btn secondary" onClick={()=>notify('Relatório exportado (simulação).')}><Download size={17}/> Exportar</button><button className="btn primary" onClick={()=>notify('Use Criar Campanha no menu lateral.')}><Plus size={17}/> Criar Campanha</button></div></div><div className="growth-kpis">{dashboardCards.map(c=>{const I=c.icon;return <article className="growth-kpi" key={c.title}><div className="kpi-top"><span>{c.title}</span><I size={19}/></div><strong>{c.value}</strong><small>{c.delta} vs. período anterior</small></article>})}</div><div className="growth-grid"><article className="growth-panel"><div className="panel-head"><div><h3>Funil de conversão</h3><p>Da visita até a venda concluída</p></div></div><div className="funnel"><Funnel n="120.450" label="Visitantes" w="100%"/><Funnel n="48.320" label="Visualizações" w="82%"/><Funnel n="8.540" label="Checkout" w="63%"/><Funnel n="4.125" label="Pagamentos" w="46%"/><Funnel n="2.847" label="Vendas" w="32%"/></div></article><article className="growth-panel"><div className="panel-head"><div><h3>Conversões por canal</h3><p>Participação nas conversões</p></div></div><div className="channel-list">{[['Instagram',42],['Google',25],['WhatsApp',18],['E-mail',8],['Direto',7]].map(([n,v])=><div className="channel-row" key={String(n)}><div><span>{n}</span><b>{v}%</b></div><div className="channel-track"><i style={{width:`${v}%`}}/></div></div>)}</div></article></div></section>}
