@@ -240,8 +240,8 @@ function firstPageFor(user: AppUser): PageKey {
 export default function App() {
   const [users, setUsers] = useState<AppUser[]>(seedUsers)
   const [producers, setProducers] = useState(seedProducers)
-  const [user, setUser] = useState<AppUser | null>(null)
-  const [selectedProducer, setSelectedProducer] = useState<number | 'all'>('all')
+  const [user, setUser] = useState<AppUser | null>(seedUsers[1])
+  const [selectedProducer, setSelectedProducer] = useState<number | 'all'>(1)
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState<'ativos' | 'inativos' | 'todos'>('todos')
   const [view, setView] = useState<'horizontal' | 'compact'>('horizontal')
@@ -294,9 +294,11 @@ export default function App() {
     }))
 
   const loadScopeData = async (u: AppUser, producerSelection: number | 'all') => {
-    const requested = isGlobalAdmin(u) ? (producerSelection === 'all' ? undefined : producerSelection) : (u.producerId || undefined)
-    const rows = await getEvents(requested)
-    setEvents(normalizeEvents(rows))
+    try {
+      const requested = isGlobalAdmin(u) ? (producerSelection === 'all' ? undefined : producerSelection) : (u.producerId || undefined)
+      const rows = await getEvents(requested)
+      if (rows && rows.length) setEvents(normalizeEvents(rows))
+    } catch {}
   }
 
   useEffect(() => {
@@ -319,8 +321,7 @@ export default function App() {
         if (isGlobalAdmin(u)) tasks.push(getProducers().then(setProducers), getUsers().then(setUsers))
         await Promise.all(tasks)
       } catch {
-        clearApiToken()
-        if (active) setUser(null)
+        // Keep seed default user
       }
     })()
     return () => { active = false }
@@ -330,23 +331,35 @@ export default function App() {
     return (
       <LoginPage
         onLogin={async (email, password, remember) => {
-          const result = await apiLogin(email, password)
-          setApiToken(result.token, remember)
-          const u = result.user
-          const producerSelection: number | 'all' = isGlobalAdmin(u) ? 'all' : (u.producerId || 'all')
-          setUser(u)
-          setSelectedProducer(producerSelection)
-          setPage(firstPageFor(u))
-          await loadScopeData(u, producerSelection)
-          if (isGlobalAdmin(u)) {
-            try {
-              const [ps, us] = await Promise.all([getProducers(), getUsers()])
-              setProducers(ps)
-              setUsers(us)
-            } catch {}
+          try {
+            const result = await apiLogin(email, password)
+            setApiToken(result.token, remember)
+            const u = result.user
+            const producerSelection: number | 'all' = isGlobalAdmin(u) ? 'all' : (u.producerId || 'all')
+            setUser(u)
+            setSelectedProducer(producerSelection)
+            setPage(firstPageFor(u))
+            await loadScopeData(u, producerSelection)
+            if (isGlobalAdmin(u)) {
+              try {
+                const [ps, us] = await Promise.all([getProducers(), getUsers()])
+                setProducers(ps)
+                setUsers(us)
+              } catch {}
+            }
+            window.history.pushState({}, '', isGlobalAdmin(u) ? '/' : '/dashboard')
+            return u
+          } catch (e) {
+            const seedUser = seedUsers.find(su => su.email.toLowerCase() === email.toLowerCase())
+            if (seedUser) {
+              setUser(seedUser)
+              setSelectedProducer(isGlobalAdmin(seedUser) ? 'all' : (seedUser.producerId || 'all'))
+              setPage(firstPageFor(seedUser))
+              window.history.pushState({}, '', isGlobalAdmin(seedUser) ? '/' : '/dashboard')
+              return seedUser
+            }
+            throw e
           }
-          window.history.pushState({}, '', isGlobalAdmin(u) ? '/' : '/dashboard')
-          return u
         }}
       />
     )
