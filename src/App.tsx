@@ -27,6 +27,8 @@ import FinanceExpensesPage from './pages/FinanceExpensesPage'
 import FinanceBorderoPage from './pages/FinanceBorderoPage'
 import FinanceiroConsolidadoPage from './pages/FinanceiroConsolidadoPage'
 import AccountingDashboardPage from './pages/AccountingDashboardPage'
+import AccountingChartPage from './pages/AccountingChartPage'
+import AccountingEntriesPage from './pages/AccountingEntriesPage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -386,8 +388,8 @@ export default function App() {
   ] as PageKey[]
 
   const accountingPlaceholder = [
-    'accounting-chart', 'accounting-journal', 'accounting-ledger',
-    'accounting-entries', 'accounting-cost-centers', 'accounting-reconciliation', 'accounting-audit',
+    'accounting-journal', 'accounting-ledger',
+    'accounting-cost-centers', 'accounting-reconciliation', 'accounting-audit',
     'accounting-closing', 'accounting-taxes', 'accounting-nfse', 'accounting-nfe', 'accounting-sped',
     'accounting-obligations', 'accounting-dre', 'accounting-balance-sheet', 'accounting-trial-balance',
     'accounting-cashflow', 'accounting-journal-rep', 'accounting-ledger-rep', 'accounting-exports',
@@ -568,9 +570,15 @@ export default function App() {
           <FinanceiroConsolidadoPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
-        {/* FASE 18.1: CONTABILIDADE INTEGRADA */}
+        {/* FASE 18.1 & 18.2: CONTABILIDADE INTEGRADA */}
         {page === 'accounting-dashboard' && (
           <AccountingDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'accounting-chart' && (
+          <AccountingChartPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'accounting-entries' && (
+          <AccountingEntriesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
         {/* OUTRAS TELAS FINANCEIRAS */}
