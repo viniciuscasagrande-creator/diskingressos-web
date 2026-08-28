@@ -9,7 +9,7 @@ Publicar o DiskIngressos pela web com frontend React, API Node/Express, login pr
 Usuário / Navegador
         |
         v
-Frontend React (Cloudflare Pages ou Netlify)
+Frontend React (Vercel ou Cloudflare Pages)
         |
         | HTTPS / VITE_API_URL
         v

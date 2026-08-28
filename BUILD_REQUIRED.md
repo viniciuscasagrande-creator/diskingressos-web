@@ -11,4 +11,4 @@ npm run build
 npm run dev
 ```
 
-Para Netlify, use `npm run build` e diretório de publicação `dist`.
+Para Vercel, use `npm run build` e diretório de publicação `dist` (configurado no vercel.json).

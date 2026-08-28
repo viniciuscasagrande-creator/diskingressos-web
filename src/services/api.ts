@@ -86,7 +86,7 @@ async function request<T>(path:string,options:RequestInit={}){
     if(!r.ok) throw new Error(data.message||'Erro na API');
     return data as T;
   } catch (err: any) {
-    // Graceful fallback for offline / Netlify demo
+    // Graceful fallback for offline / Vercel demo
     if (path.startsWith('/auth/login')) {
       const body = JSON.parse((options.body as string) || '{}');
       const found = seedUsers.find(u => u.email.toLowerCase() === (body.email || '').toLowerCase()) || seedUsers[1];
