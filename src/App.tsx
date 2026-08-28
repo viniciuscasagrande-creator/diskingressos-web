@@ -23,6 +23,10 @@ import FinancePayablesPage from './pages/FinancePayablesPage'
 import FinanceReconciliationPage from './pages/FinanceReconciliationPage'
 import FinanceBankAccountsPage from './pages/FinanceBankAccountsPage'
 import FinanceAdvancePage from './pages/FinanceAdvancePage'
+import FinanceExpensesPage from './pages/FinanceExpensesPage'
+import FinanceBorderoPage from './pages/FinanceBorderoPage'
+import FinanceiroConsolidadoPage from './pages/FinanceiroConsolidadoPage'
+import AccountingDashboardPage from './pages/AccountingDashboardPage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -377,12 +381,12 @@ export default function App() {
 
   const financePlaceholder = [
     'finance-spread', 'finance-split', 'finance-intelligence',
-    'finance-methods', 'finance-custom', 'finance-operators', 'finance-expenses',
-    'finance-bordero', 'finance-negotiations', 'finance-refunds', 'finance-reports'
+    'finance-methods', 'finance-custom', 'finance-operators',
+    'finance-negotiations', 'finance-refunds', 'finance-reports'
   ] as PageKey[]
 
   const accountingPlaceholder = [
-    'accounting-dashboard', 'accounting-chart', 'accounting-journal', 'accounting-ledger',
+    'accounting-chart', 'accounting-journal', 'accounting-ledger',
     'accounting-entries', 'accounting-cost-centers', 'accounting-reconciliation', 'accounting-audit',
     'accounting-closing', 'accounting-taxes', 'accounting-nfse', 'accounting-nfe', 'accounting-sped',
     'accounting-obligations', 'accounting-dre', 'accounting-balance-sheet', 'accounting-trial-balance',
@@ -551,6 +555,22 @@ export default function App() {
         )}
         {page === 'finance-advance' && (
           <FinanceAdvancePage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+
+        {/* FASE 17.6: DESPESAS, BORDERÔ E CONSOLIDAÇÃO FINAL */}
+        {page === 'finance-expenses' && (
+          <FinanceExpensesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-bordero' && (
+          <FinanceBorderoPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-consolidated' && (
+          <FinanceiroConsolidadoPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+
+        {/* FASE 18.1: CONTABILIDADE INTEGRADA */}
+        {page === 'accounting-dashboard' && (
+          <AccountingDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
         {/* OUTRAS TELAS FINANCEIRAS */}

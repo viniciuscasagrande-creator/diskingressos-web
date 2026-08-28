@@ -226,3 +226,56 @@ export const advancesSeed: AdvanceContract[] = [
   { id: 403, contractNumber: 'ANT-2026-0803', event: 'SEM PARAR — EXPERIÊNCIA MÚSICA E NATUREZA', producer: 'Nature Experience', contractDate: '27/08/2026', grossAmount: 30000.00, feeRate: 3.5, feeAmount: 1050.00, netAmount: 28950.00, bankAccount: 'Nu Pagamentos (260) Ag. 0001 C/P 849102-1', status: 'Em Análise' },
 ]
 
+export type ExpenseItem = {
+  id: number
+  date: string
+  supplier: string
+  category: 'Infraestrutura' | 'Marketing' | 'Operacional' | 'Tecnologia' | 'Evento'
+  event: string
+  document: string
+  amount: number
+  status: 'Pago' | 'Pendente' | 'Agendado'
+  paymentMethod: string
+}
+
+export type BorderoItem = {
+  id: number
+  event: string
+  grossRevenue: number
+  fees: number
+  refunds: number
+  netRevenue: number
+  producerShare: number
+  platformShare: number
+  status: 'Pronto para assinatura' | 'Em conferência' | 'Assinado'
+}
+
+export const expensesSeed: ExpenseItem[] = [
+  { id: 1, date: '28/08/2026', supplier: 'AWS Brasil Cloud Services', category: 'Infraestrutura', event: 'Corporativo', document: 'NF-90821', amount: 7420.00, status: 'Pago', paymentMethod: 'Débito automático' },
+  { id: 2, date: '27/08/2026', supplier: 'Meta Ads & Google Ads', category: 'Marketing', event: 'IRON MAIDEN — THE FUTURE PAST TOUR', document: 'FAT-7782', amount: 4850.00, status: 'Pendente', paymentMethod: 'Cartão corporativo' },
+  { id: 3, date: '26/08/2026', supplier: 'Equipe de Produção & Staff', category: 'Operacional', event: 'SEM PARAR — EXPERIÊNCIA MÚSICA E NATUREZA', document: 'REC-3014', amount: 12600.00, status: 'Pago', paymentMethod: 'PIX' },
+  { id: 4, date: '25/08/2026', supplier: 'KarbonBox Soluções de TI', category: 'Tecnologia', event: 'Corporativo', document: 'NF-22931', amount: 6400.00, status: 'Agendado', paymentMethod: 'TED' },
+  { id: 5, date: '24/08/2026', supplier: 'Locação de Estruturas & Palco', category: 'Evento', event: '29ª CONFERÊNCIA ESTADUAL ESPÍRITA', document: 'NF-11872', amount: 9200.00, status: 'Pendente', paymentMethod: 'Boleto' }
+]
+
+export const borderosSeed: BorderoItem[] = [
+  { id: 1, event: 'IRON MAIDEN — THE FUTURE PAST TOUR', grossRevenue: 384500.00, fees: 28420.00, refunds: 6240.00, netRevenue: 349840.00, producerShare: 279872.00, platformShare: 69968.00, status: 'Pronto para assinatura' },
+  { id: 2, event: '29ª CONFERÊNCIA ESTADUAL ESPÍRITA', grossRevenue: 218900.00, fees: 16220.00, refunds: 2840.00, netRevenue: 199840.00, producerShare: 159872.00, platformShare: 39968.00, status: 'Em conferência' },
+  { id: 3, event: 'SEM PARAR — EXPERIÊNCIA MÚSICA E NATUREZA', grossRevenue: 472300.00, fees: 34850.00, refunds: 7180.00, netRevenue: 430270.00, producerShare: 344216.00, platformShare: 86054.00, status: 'Assinado' }
+]
+
+export const financeChecklistSeed = [
+  { label: 'Dashboard Financeiro', status: 'Concluído', page: 'finance-dashboard' },
+  { label: 'Saldos & Carteira', status: 'Concluído', page: 'finance' },
+  { label: 'Extrato Detalhado', status: 'Concluído', page: 'finance-statement' },
+  { label: 'Fluxo de Caixa (DFC)', status: 'Concluído', page: 'finance-cashflow' },
+  { label: 'Contas a Receber', status: 'Concluído', page: 'finance-receivables' },
+  { label: 'Contas a Pagar', status: 'Concluído', page: 'finance-payables' },
+  { label: 'Repasses & Payouts', status: 'Concluído', page: 'finance-payouts' },
+  { label: 'Antecipações de Receitas', status: 'Concluído', page: 'finance-advance' },
+  { label: 'Conciliação Bancária', status: 'Concluído', page: 'finance-reconciliation' },
+  { label: 'Contas Bancárias', status: 'Concluído', page: 'finance-bank-accounts' },
+  { label: 'Despesas Operacionais', status: 'Concluído', page: 'finance-expenses' },
+  { label: 'Borderô & Assinaturas', status: 'Concluído', page: 'finance-bordero' }
+]
+

@@ -19,7 +19,7 @@ export type PageKey =
   | 'facial'
   // FINANCEIRO
   | 'finance-dashboard' | 'finance-hub' | 'finance' | 'finance-statement' | 'finance-cashflow' | 'finance-receivables' | 'finance-payables'
-  | 'finance-payouts' | 'finance-advance' | 'finance-reconciliation' | 'finance-bank-accounts' | 'finance-expenses' | 'finance-bordero'
+  | 'finance-payouts' | 'finance-advance' | 'finance-reconciliation' | 'finance-bank-accounts' | 'finance-expenses' | 'finance-bordero' | 'finance-consolidated'
   | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds'
   // CONTABILIDADE
   | 'accounting-dashboard' | 'accounting-chart' | 'accounting-journal' | 'accounting-ledger' | 'accounting-entries' | 'accounting-cost-centers'
@@ -81,6 +81,7 @@ const financeItems: Item[] = [
   { key: 'finance-bank-accounts', label: 'Contas Bancárias', icon: Building },
   { key: 'finance-expenses', label: 'Despesas', icon: TrendingDown },
   { key: 'finance-bordero', label: 'Borderô', icon: FileSpreadsheet },
+  { key: 'finance-consolidated', label: 'Consolidado (12)', icon: CheckCircle2, badge: 'Fase 17' },
 ]
 
 // 3. CONTABILIDADE
