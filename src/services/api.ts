@@ -256,3 +256,10 @@ export const updateTrackingIntegration=(id:number,body:any)=>request<TrackingInt
 export const deleteTrackingIntegration=(id:number)=>request<void>(`/marketing/integrations/${id}`,{method:'DELETE'})
 export const testTrackingIntegration=(id:number)=>request<{ok:boolean;message:string;lastTestAt:string}>(`/marketing/integrations/${id}/test`,{method:'POST'})
 export const getTrackingIntegrationLogs=(id:number)=>request<TrackingDeliveryLog[]>(`/marketing/integrations/${id}/logs`)
+
+export type ReadyCampaignTemplate={key:string;name:string;description:string;objective:string;audience:string;recommendedChannels:string[];suggestedBudgetCents:number;badge:string}
+export type ReadyCampaignActivation={id:number;templateKey:string;name:string;objective:string;status:string;audience:string;channels:string[];campaignIds:number[];trackingLinkIds:number[];budgetCents:number;startsAt:string|null;endsAt:string|null;producerId:number;eventId:number;event?:{id:number;title:string;code:string};metrics?:{spentCents:number;revenueCents:number;impressions:number;clicks:number;conversions:number;roas:number;cpaCents:number}}
+export const getReadyCampaignTemplates=()=>request<ReadyCampaignTemplate[]>('/marketing/ready-campaigns/templates')
+export const getReadyCampaignActivations=(producerId?:number,eventId?:number)=>request<ReadyCampaignActivation[]>(`/marketing/ready-campaigns${qs({producerId,eventId})}`)
+export const activateReadyCampaign=(body:any)=>request<ReadyCampaignActivation>('/marketing/ready-campaigns/activate',{method:'POST',body:JSON.stringify(body)})
+export const updateReadyCampaignActivation=(id:number,status:string)=>request<ReadyCampaignActivation>(`/marketing/ready-campaigns/${id}`,{method:'PATCH',body:JSON.stringify({status})})

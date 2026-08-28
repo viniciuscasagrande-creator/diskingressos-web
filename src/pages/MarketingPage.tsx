@@ -13,6 +13,7 @@ import AutomationCenterPage from './AutomationCenterPage'
 import UtmConversionsCenter from '../components/UtmConversionsCenter'
 import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
 import { MarketingCampaignsPage } from './marketing/MarketingCampaignsPage'
+import ReadyCampaignsPage from './marketing/ReadyCampaignsPage'
 import { CouponsPromoPage } from './marketing/CouponsPromoPage'
 import { CommunicationPage } from './marketing/CommunicationPage'
 import {
@@ -248,7 +249,11 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
     return <Dashboard producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} eventName={eventName} notify={notify} onNavigate={onNavigate} />
   }
 
-  if (mode === 'campaigns' || mode === 'create' || mode === 'ready-campaigns') {
+  if (mode === 'ready-campaigns') {
+    return <ReadyCampaignsPage producerId={producerId} events={events} notify={notify} />
+  }
+
+  if (mode === 'campaigns' || mode === 'create') {
     return <MarketingCampaignsPage events={events} notify={notify} />
   }
 

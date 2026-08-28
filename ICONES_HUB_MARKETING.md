@@ -3,6 +3,7 @@
 Documentação das rotas e ícones integrados ao Hub Marketing.
 
 ## 🎯 Alterações Realizadas
+
 - **Navegação Interativa Total:** O card inteiro do Hub Marketing é clicável e dispara a troca de página instantânea.
 - **Ícones Específicos:** Cada módulo possui seu ícone temático dedicado.
 - **Acessibilidade:** Inclusão de `aria-label`, `title` e foco via teclado.
