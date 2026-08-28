@@ -467,62 +467,108 @@ function Dashboard({ producerName, events, eventId, setEventId, period, setPerio
 
 // 2. Meta Ads Manager
 function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [metaCampaigns, setMetaCampaigns] = useState([
-    { id: 1, name: 'Marcos & Belutti — Stories Lançamento', format: 'Instagram Stories', budget: 1500, spent: 1240, ctr: '3,8%', cpa: 'R$ 16,40', sales: 75, roas: '4,8x', status: 'ativa' },
-    { id: 2, name: 'Reels Vídeo Teaser — Lineup Completo', format: 'Instagram Reels', budget: 2000, spent: 1850, ctr: '4,2%', cpa: 'R$ 18,20', sales: 101, roas: '5,1x', status: 'ativa' },
-    { id: 3, name: 'Remarketing Feed — Abandono Checkout', format: 'Facebook Feed', budget: 800, spent: 620, ctr: '5,6%', cpa: 'R$ 11,50', sales: 54, roas: '8,2x', status: 'ativa' }
+    { id: 1, name: `${event.title} — Stories Lançamento 1º Lote`, format: 'Instagram Stories', budget: 1500, spent: 1240, ctr: '3,8%', cpa: 'R$ 16,40', sales: 75, roas: '4,8x', status: 'ativa' },
+    { id: 2, name: `${event.title} — Reels Vídeo Teaser & Lineup`, format: 'Instagram Reels', budget: 2000, spent: 1850, ctr: '4,2%', cpa: 'R$ 18,20', sales: 101, roas: '5,1x', status: 'ativa' },
+    { id: 3, name: `${event.title} — Remarketing Checkout Abandonado`, format: 'Facebook Feed', budget: 800, spent: 620, ctr: '5,6%', cpa: 'R$ 11,50', sales: 54, roas: '8,2x', status: 'ativa' }
   ])
+
+  // Form states
+  const [adName, setAdName] = useState('')
+  const [adFormat, setAdFormat] = useState('Instagram Stories')
+  const [adAudience, setAdAudience] = useState('Público Aberto (Curitiba + 50km)')
+  const [adBudget, setAdBudget] = useState('1200')
+  const [adObjective, setAdObjective] = useState('Vendas & Conversão (Purchase)')
+
+  const totalSpent = metaCampaigns.reduce((acc, c) => acc + c.spent, 0)
+  const totalSales = metaCampaigns.reduce((acc, c) => acc + c.sales, 0)
+
+  const handleCreateAd = (e: React.FormEvent) => {
+    e.preventDefault()
+    const nameToUse = adName || `${event.title} — ${adFormat}`
+    const newAd = {
+      id: Date.now(),
+      name: nameToUse,
+      format: adFormat,
+      budget: Number(adBudget) || 1200,
+      spent: 0,
+      ctr: '4,2%',
+      cpa: 'R$ 15,20',
+      sales: 0,
+      roas: '0,0x',
+      status: 'ativa'
+    }
+    setMetaCampaigns([newAd, ...metaCampaigns])
+    setIsModalOpen(false)
+    setAdName('')
+    notify(`🚀 Anúncio Meta "${newAd.name}" criado e sincronizado com o Meta Conversions API (CAPI)!`)
+  }
+
+  const toggleAdStatus = (id: number) => {
+    setMetaCampaigns(prev => prev.map(c => {
+      if (c.id === id) {
+        const next = c.status === 'ativa' ? 'pausada' : 'ativa'
+        notify(`Anúncio "${c.name}" ${next === 'ativa' ? 'ativado' : 'pausado'}!`)
+        return { ...c, status: next }
+      }
+      return c
+    }))
+  }
 
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>META BUSINESS MANAGER & ADS CAPI</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Meta Ads — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Gerencie anúncios no Facebook e Instagram com sincronização em tempo real via Conversions API (CAPI).</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Meta Ads — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Gerencie anúncios no Facebook e Instagram com sincronização em tempo real via Conversions API (CAPI).</p>
         </div>
-        <div className="page-actions">
+        <div className="page-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <div style={{ background: '#DCFCE7', border: '1px solid #86EFAC', borderRadius: '6px', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 700, color: '#166534' }}>
             <CheckCircle size={14} /> Meta CAPI Token Ativo
           </div>
-          <button className="btn primary" onClick={() => notify('Abrindo criação de conjunto de anúncios Meta...')}>
+          <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#1877F2', borderColor: '#1877F2', fontSize: '12px' }}>
             <Plus size={15} /> Criar Anúncio Meta
           </button>
         </div>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Gasto Meta Ads</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 3.710,00</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ {totalSpent.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
           <small style={{ color: '#16A34A' }}>Orçado: R$ 4.300,00</small>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>ROAS Médio</span><TrendingUp size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>5,4x</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>5,4x</strong>
           <small style={{ color: '#16A34A' }}>↑ 18% vs média do mercado</small>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>CPA Médio</span><Target size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>R$ 16,13</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>R$ 16,13</strong>
           <small style={{ color: '#64748B' }}>Custo por ingresso vendido</small>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Vendas Atribuídas</span><MousePointerClick size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>230</strong>
-          <small style={{ color: '#16A34A' }}>R$ 41.400 em receita</small>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>{totalSales}</strong>
+          <small style={{ color: '#16A34A' }}>R$ {(totalSales * 180).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} em receita</small>
         </article>
       </div>
 
-      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-        <div className="panel-head">
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h3 style={{ color: '#0F172A' }}>Campanhas Meta Ads Ativas</h3>
-            <p>Sincronizadas com o Pixel CAPI do evento</p>
+            <h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Campanhas Meta Ads Ativas ({metaCampaigns.length})</h3>
+            <p style={{ margin: '2px 0 0', color: '#64748B', fontSize: '12px' }}>Sincronizadas com o Pixel CAPI do evento</p>
           </div>
+          <button className="btn secondary" onClick={() => setIsModalOpen(true)} style={{ height: '32px', fontSize: '11px' }}>
+            <Plus size={13} /> Novo Conjunto
+          </button>
         </div>
         <div className="table-scroll">
-          <table className="growth-table">
+          <table className="growth-table" style={{ margin: 0 }}>
             <thead>
               <tr>
                 <th>Campanha / Criativo</th>
@@ -539,17 +585,24 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
             <tbody>
               {metaCampaigns.map(c => (
                 <tr key={c.id}>
-                  <td><strong>{c.name}</strong></td>
-                  <td><span className="badge-method">{c.format}</span></td>
-                  <td><span className="status-badge green">● Ativa</span></td>
+                  <td>
+                    <strong>{c.name}</strong>
+                    <small style={{ display: 'block', color: '#2563EB', fontSize: '10px' }}>Pixel ID: 94827104928 • CAPI v19.0</small>
+                  </td>
+                  <td><span className="badge-method" style={{ fontSize: '10px', padding: '2px 6px' }}>{c.format}</span></td>
+                  <td>
+                    <span className={`status-badge ${c.status === 'ativa' ? 'green' : 'orange'}`}>
+                      ● {c.status === 'ativa' ? 'Ativa' : 'Pausada'}
+                    </span>
+                  </td>
                   <td>R$ {c.spent.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                   <td>{c.ctr}</td>
                   <td>{c.cpa}</td>
                   <td><strong>{c.sales}</strong></td>
                   <td style={{ color: '#16A34A', fontWeight: 800 }}>{c.roas}</td>
                   <td>
-                    <button className="btn secondary" style={{ height: '30px', fontSize: '11px' }} onClick={() => notify('Campanha pausada com sucesso!')}>
-                      Pausar
+                    <button className="btn secondary" style={{ height: '28px', fontSize: '10px', padding: '0 8px' }} onClick={() => toggleAdStatus(c.id)}>
+                      {c.status === 'ativa' ? 'Pausar' : 'Ativar'}
                     </button>
                   </td>
                 </tr>
@@ -558,56 +611,190 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
           </table>
         </div>
       </article>
+
+      {/* MODAL: CRIAR ANÚNCIO META */}
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div 
+            className="utm-modal-card-v2" 
+            style={{ width: 'min(580px, 94vw)', maxHeight: '90vh', overflowY: 'auto', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#1877F2', textTransform: 'uppercase' }}>
+                  META BUSINESS SUITE & CAPI
+                </span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>
+                  Criar Anúncio Meta Ads
+                </h3>
+                <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B' }}>
+                  O anúncio será configurado para o evento <strong>{event.title}</strong> com UTM automática.
+                </p>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateAd} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                  Nome da Campanha / Criativo *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder={`Ex: ${event.title} — Stories Lançamento`}
+                  value={adName}
+                  onChange={e => setAdName(e.target.value)}
+                  style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                    Formato / Posicionamento
+                  </label>
+                  <select 
+                    value={adFormat} 
+                    onChange={e => setAdFormat(e.target.value)}
+                    style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px', color: '#0F172A', fontWeight: 600 }}
+                  >
+                    <option value="Instagram Stories">Instagram Stories (9:16)</option>
+                    <option value="Instagram Reels">Instagram Reels (9:16)</option>
+                    <option value="Instagram Feed">Instagram Feed (1:1 / 4:5)</option>
+                    <option value="Facebook Feed">Facebook Feed (1:1)</option>
+                    <option value="Meta Carrossel">Meta Carrossel (1:1)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                    Orçamento Total (R$)
+                  </label>
+                  <input
+                    type="number"
+                    min="100"
+                    required
+                    value={adBudget}
+                    onChange={e => setAdBudget(e.target.value)}
+                    style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>
+                  Público & Segmentação
+                </label>
+                <select 
+                  value={adAudience} 
+                  onChange={e => setAdAudience(e.target.value)}
+                  style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px', color: '#0F172A' }}
+                >
+                  <option value="Público Aberto (Curitiba + 50km)">Público Aberto (Curitiba + 50km, 18-55 anos)</option>
+                  <option value="Compradores Anteriores (Lookalike 1%)">Lookalike 1% de Compradores DiskIngressos</option>
+                  <option value="Remarketing de Visitantes (Últimos 14 dias)">Remarketing de Visitantes da Página (14 dias)</option>
+                  <option value="Abandonos de Checkout">Abandonos de Checkout (Últimos 7 dias)</option>
+                </select>
+              </div>
+
+              <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#1E40AF', display: 'block', marginBottom: '4px' }}>
+                  PARÂMETROS UTM & CONVERSION API
+                </span>
+                <code style={{ fontSize: '10px', color: '#2563EB', wordBreak: 'break-all', display: 'block' }}>
+                  https://www.diskingressos.com.br/evento/{event.id}?utm_source=instagram&utm_medium=stories_ads&utm_campaign=meta_{event.code.toLowerCase()}
+                </code>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px', paddingTop: '12px', borderTop: '1px solid #E2E8F0' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)} style={{ fontSize: '12px' }}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn primary" style={{ background: '#1877F2', borderColor: '#1877F2', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <Plus size={14} /> Publicar Anúncio no Meta Ads
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 3. Google Ads Manager
 function GoogleAdsManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
-  const keywords = [
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [keywords, setKeywords] = useState([
     { kw: `ingressos ${event.title.toLowerCase()}`, cpc: 'R$ 0,65', clicks: 4210, conv: 142, roas: '6,2x' },
     { kw: `show ${event.title.toLowerCase()} curitiba`, cpc: 'R$ 0,82', clicks: 2890, conv: 98, roas: '5,8x' },
     { kw: `comprar ingresso ${event.title.toLowerCase()}`, cpc: 'R$ 0,95', clicks: 1750, conv: 84, roas: '7,4x' }
-  ]
+  ])
+
+  const [newKw, setNewKw] = useState('')
+  const [newCpc, setNewCpc] = useState('0,85')
+
+  const handleAddKeyword = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newKw) return
+    const row = {
+      kw: newKw.toLowerCase(),
+      cpc: `R$ ${Number(newCpc.replace(',', '.')).toFixed(2)}`,
+      clicks: 0,
+      conv: 0,
+      roas: '0,0x'
+    }
+    setKeywords([row, ...keywords])
+    setIsModalOpen(false)
+    setNewKw('')
+    notify(`🚀 Palavra-chave "${row.kw}" adicionada à campanha Google Ads!`)
+  }
 
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>GOOGLE ADS & SEARCH ENGINE</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Google Ads — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Campanhas de intenção direta de compra na Rede de Pesquisa e YouTube Ads.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Google Ads — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Campanhas de intenção direta de compra na Rede de Pesquisa e YouTube Ads.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Adicionando nova palavra-chave...')}>
-          <Plus size={15} /> Nova Palavra-Chave
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
+          <Plus size={15} /> Nova Palavra-Chave Google
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Gasto Google</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 6.840,00</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ 6.840,00</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Cliques Totais</span><MousePointerClick size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>8.850</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>8.850</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>CPC Médio</span><Target size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 0,77</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ 0,77</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>ROAS Google</span><TrendingUp size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>6,4x</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>6,4x</strong>
         </article>
       </div>
 
-      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-        <div className="panel-head">
-          <div><h3 style={{ color: '#0F172A' }}>Palavras-Chave de Alta Conversão</h3></div>
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Palavras-Chave de Alta Conversão ({keywords.length})</h3></div>
+          <button className="btn secondary" onClick={() => setIsModalOpen(true)} style={{ height: '32px', fontSize: '11px' }}>
+            <Plus size={13} /> Adicionar Termo
+          </button>
         </div>
-        <table className="growth-table">
-          <thead><tr><th>Palavra-Chave</th><th>CPC Médio</th><th>Cliques</th><th>Conversões</th><th>ROAS</th><th>Ação</th></tr></thead>
+        <table className="growth-table" style={{ margin: 0 }}>
+          <thead><tr><th>Palavra-Chave</th><th>CPC Máx</th><th>Cliques</th><th>Conversões</th><th>ROAS</th><th>Ação</th></tr></thead>
           <tbody>
             {keywords.map(k => (
               <tr key={k.kw}>
@@ -616,106 +803,256 @@ function GoogleAdsManager({ events, event, notify }: { events: EventItem[]; even
                 <td>{k.clicks}</td>
                 <td><strong style={{ color: '#2563EB' }}>{k.conv}</strong></td>
                 <td style={{ color: '#16A34A', fontWeight: 800 }}>{k.roas}</td>
-                <td><button className="btn secondary" style={{ height: '28px', fontSize: '11px' }} onClick={() => notify('Lance atualizado!')}>Ajustar Lance</button></td>
+                <td><button className="btn secondary" style={{ height: '28px', fontSize: '11px' }} onClick={() => notify(`Lance de "${k.kw}" otimizado com sucesso!`)}>Ajustar Lance</button></td>
               </tr>
             ))}
           </tbody>
         </table>
       </article>
+
+      {/* MODAL GOOGLE ADS KEYWORD */}
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>GOOGLE ADS SEARCH</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Adicionar Palavra-Chave</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleAddKeyword} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Termo / Palavra-Chave *</label>
+                <input type="text" required placeholder="Ex: ingressos show marcos e belutti curitiba" value={newKw} onChange={e => setNewKw(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Lance Máximo de CPC (R$)</label>
+                <input type="text" value={newCpc} onChange={e => setNewCpc(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#2563EB', borderColor: '#2563EB' }}>Salvar Palavra-Chave</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 4. TikTok Ads Manager
 function TikTokAdsManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [sparkAds, setSparkAds] = useState([
+    { id: 1, name: `${event.title} — Viral TikTok Teaser`, videoId: '@diskingressos/video/739182', spent: 1450, views: '112.400', cpm: 'R$ 12,90', sales: 58, status: 'ativa' },
+    { id: 2, name: `${event.title} — Bastidores & Lineup`, videoId: '@diskingressos/video/739194', spent: 1000, views: '71.800', cpm: 'R$ 13,92', sales: 36, status: 'ativa' }
+  ])
+
+  const [adName, setAdName] = useState('')
+  const [videoCode, setVideoCode] = useState('')
+  const [adBudget, setAdBudget] = useState('800')
+
+  const handleCreateSparkAd = (e: React.FormEvent) => {
+    e.preventDefault()
+    const row = {
+      id: Date.now(),
+      name: adName || `${event.title} — TikTok Spark Ad`,
+      videoId: videoCode || '@diskingressos/spark/new',
+      spent: 0,
+      views: '0',
+      cpm: 'R$ 13,50',
+      sales: 0,
+      status: 'ativa'
+    }
+    setSparkAds([row, ...sparkAds])
+    setIsModalOpen(false)
+    setAdName('')
+    setVideoCode('')
+    notify(`🚀 Campanha TikTok Spark Ad "${row.name}" criada com sucesso!`)
+  }
+
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>TIKTOK ADS & SPARK ADS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>TikTok Ads — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Campanhas virais em vídeo com rastreamento via TikTok Pixel & Event API.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>TikTok Ads — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Campanhas virais em vídeo com rastreamento via TikTok Pixel & Event API.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Criando campanha TikTok Spark Ads...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#0F172A', borderColor: '#0F172A', fontSize: '12px' }}>
           <Plus size={15} /> Criar Spark Ad
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Gasto TikTok</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 2.450,00</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ 2.450,00</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Visualizações de Vídeo</span><Play size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>184.200</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>184.200</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>CPM</span><Target size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 13,30</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ 13,30</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Ingressos Vendidos</span><MousePointerClick size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>94</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>94</strong>
         </article>
       </div>
+
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Spark Ads em Veiculação ({sparkAds.length})</h3></div>
+        </div>
+        <table className="growth-table" style={{ margin: 0 }}>
+          <thead><tr><th>Vídeo Spark</th><th>Gasto</th><th>Views</th><th>CPM</th><th>Vendas</th><th>Status</th></tr></thead>
+          <tbody>
+            {sparkAds.map(s => (
+              <tr key={s.id}>
+                <td><strong>{s.name}</strong><small style={{ display: 'block', color: '#64748B' }}>{s.videoId}</small></td>
+                <td>R$ {s.spent.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                <td>{s.views}</td>
+                <td>{s.cpm}</td>
+                <td><strong style={{ color: '#16A34A' }}>{s.sales}</strong></td>
+                <td><span className="status-badge green">● Ativa</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </article>
+
+      {/* MODAL TIKTOK SPARK AD */}
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#0F172A', textTransform: 'uppercase' }}>TIKTOK FOR BUSINESS</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Criar Campanha Spark Ad</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleCreateSparkAd} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Nome da Campanha *</label>
+                <input type="text" required placeholder={`Ex: ${event.title} — Viral Teaser`} value={adName} onChange={e => setAdName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Código de Autorização Spark Ad / URL do Vídeo</label>
+                <input type="text" placeholder="Ex: https://tiktok.com/@criador/video/7391823901" value={videoCode} onChange={e => setVideoCode(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Orçamento Previsto (R$)</label>
+                <input type="number" value={adBudget} onChange={e => setAdBudget(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#0F172A', borderColor: '#0F172A' }}>Publicar no TikTok</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 5. Influenciadores & Promoters
 function InfluencerManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [influencers, setInfluencers] = useState([
-    { id: 1, name: 'Curitiba Cult', handle: '@curitibacult', link: 'disk.ing/cult-vip', commission: '10%', sales: 142, revenue: 24140, status: 'ativo' },
-    { id: 2, name: 'Lucas Baladas PR', handle: '@lucasbaladas', link: 'disk.ing/lucas-show', commission: 'R$ 15/ing', sales: 98, revenue: 16660, status: 'ativo' },
-    { id: 3, name: 'Gabi Entretenimento', handle: '@gabishows', link: 'disk.ing/gabi-vip', commission: '10%', sales: 64, revenue: 10880, status: 'ativo' }
+    { id: 1, name: 'Curitiba Cult', handle: '@curitibacult', link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=curitibacult`, commission: '10%', sales: 142, revenue: 24140, status: 'ativo' },
+    { id: 2, name: 'Lucas Baladas PR', handle: '@lucasbaladas', link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=lucasbaladas`, commission: 'R$ 15/ing', sales: 98, revenue: 16660, status: 'ativo' },
+    { id: 3, name: 'Gabi Entretenimento', handle: '@gabishows', link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=gabishows`, commission: '10%', sales: 64, revenue: 10880, status: 'ativo' }
   ])
+
+  const [name, setName] = useState('')
+  const [handle, setHandle] = useState('')
+  const [commission, setCommission] = useState('10%')
+
+  const handleCreateInfluencer = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!name) return
+    const cleanHandle = handle ? (handle.startsWith('@') ? handle : `@${handle}`) : `@${name.toLowerCase().replace(/\s+/g, '')}`
+    const slug = cleanHandle.replace('@', '').toLowerCase()
+    const row = {
+      id: Date.now(),
+      name,
+      handle: cleanHandle,
+      link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=${slug}`,
+      commission,
+      sales: 0,
+      revenue: 0,
+      status: 'ativo'
+    }
+    setInfluencers([row, ...influencers])
+    setIsModalOpen(false)
+    setName('')
+    setHandle('')
+    notify(`🚀 Influenciador "${row.name}" cadastrado com link rastreável exclusivo!`)
+  }
+
+  const copyLink = (link: string) => {
+    navigator.clipboard.writeText(link)
+    notify('Link do influenciador copiado para a área de transferência!')
+  }
 
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>REDE DE INFLUENCIADORES & PARCERIAS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Influenciadores & Promoters — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Acompanhe as vendas individuais de criadores de conteúdo com links UTM exclusivos.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Influenciadores & Promoters — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Acompanhe as vendas individuais de criadores de conteúdo com links UTM exclusivos.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Cadastrando novo influenciador com UTM...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#7C3AED', borderColor: '#7C3AED', fontSize: '12px' }}>
           <Plus size={15} /> Cadastrar Influenciador
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Criadores Ativos</span><Users size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>{influencers.length}</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>{influencers.length}</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Vendas por Criadores</span><MousePointerClick size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>304</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>{influencers.reduce((s, i) => s + i.sales, 0)}</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Receita Gerada</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 51.680,00</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ {influencers.reduce((s, i) => s + i.revenue, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-          <div className="kpi-top"><span>Comissão Total</span><TrendingUp size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>R$ 5.168,00</strong>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
+          <div className="kpi-top"><span>Comissão Estimada</span><TrendingUp size={18} /></div>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>R$ {(influencers.reduce((s, i) => s + i.revenue, 0) * 0.1).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
         </article>
       </div>
 
-      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-        <table className="growth-table">
-          <thead><tr><th>Influenciador</th><th>Link Rastreável</th><th>Comissão</th><th>Vendas</th><th>Receita</th><th>Ações</th></tr></thead>
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Criadores Cadastrados ({influencers.length})</h3></div>
+          <button className="btn secondary" onClick={() => setIsModalOpen(true)} style={{ height: '32px', fontSize: '11px' }}>
+            <Plus size={13} /> Novo Criador
+          </button>
+        </div>
+        <table className="growth-table" style={{ margin: 0 }}>
+          <thead><tr><th>Influenciador</th><th>Link Rastreável (UTM)</th><th>Comissão</th><th>Vendas</th><th>Receita</th><th>Ações</th></tr></thead>
           <tbody>
             {influencers.map(i => (
               <tr key={i.id}>
                 <td><strong>{i.name}</strong> <small style={{ color: '#64748B' }}>({i.handle})</small></td>
-                <td><code style={{ background: '#F1F5F9', padding: '2px 6px', borderRadius: '4px', color: '#2563EB' }}>{i.link}</code></td>
-                <td><span className="badge-method">{i.commission}</span></td>
-                <td><strong>{i.sales}</strong></td>
+                <td><code style={{ background: '#F1F5F9', padding: '2px 6px', borderRadius: '4px', color: '#2563EB', fontSize: '11px' }}>{i.link}</code></td>
+                <td><span className="badge-method" style={{ fontSize: '10px' }}>{i.commission}</span></td>
+                <td><strong style={{ color: '#0F172A' }}>{i.sales}</strong></td>
                 <td style={{ color: '#16A34A', fontWeight: 700 }}>R$ {i.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                 <td>
-                  <button className="btn secondary" style={{ height: '28px', fontSize: '11px' }} onClick={() => notify(`Link ${i.link} copiado!`)}>
+                  <button className="btn secondary" style={{ height: '28px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '4px' }} onClick={() => copyLink(i.link)}>
                     <Copy size={12} /> Copiar Link
                   </button>
                 </td>
@@ -724,6 +1061,44 @@ function InfluencerManager({ events, event, notify }: { events: EventItem[]; eve
           </tbody>
         </table>
       </article>
+
+      {/* MODAL INFLUENCIADOR */}
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#7C3AED', textTransform: 'uppercase' }}>CREATOR NETWORK</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Cadastrar Novo Influenciador</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleCreateInfluencer} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Nome do Criador / Perfil *</label>
+                <input type="text" required placeholder="Ex: Curitiba Comedy Show" value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Handle / @Instagram ou TikTok</label>
+                <input type="text" placeholder="Ex: @curitibacomedy" value={handle} onChange={e => setHandle(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Regra de Comissão</label>
+                <select value={commission} onChange={e => setCommission(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px' }}>
+                  <option value="10%">10% sobre o valor do ingresso</option>
+                  <option value="15%">15% sobre o valor do ingresso</option>
+                  <option value="R$ 15/ing">R$ 15,00 fixo por ingresso vendido</option>
+                  <option value="R$ 20/ing">R$ 20,00 fixo por ingresso vendido</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#7C3AED', borderColor: '#7C3AED' }}>Cadastrar e Gerar UTM</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
