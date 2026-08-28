@@ -16,3 +16,21 @@ export function writeProducerId(req: AuthRequest, bodyProducerId?: number): numb
 export function ownsProducer(req: AuthRequest, producerId: number): boolean {
   return globalAdmin(req.auth!.role) || req.auth!.producerId === producerId
 }
+
+export function tenantWhere(user: { role: string; producerId?: number | null }, queryProducerId?: any): any {
+  if (globalAdmin(user.role)) {
+    if (queryProducerId && queryProducerId !== 'all') {
+      const id = Number(queryProducerId);
+      if (Number.isInteger(id) && id > 0) return { producerId: id };
+    }
+    return {};
+  }
+  return { producerId: user.producerId ?? -1 };
+}
+
+export function tenantProducerId(user: { role: string; producerId?: number | null }, bodyProducerId?: any): number {
+  if (globalAdmin(user.role)) {
+    return Number(bodyProducerId) || user.producerId || 1;
+  }
+  return user.producerId || 1;
+}
