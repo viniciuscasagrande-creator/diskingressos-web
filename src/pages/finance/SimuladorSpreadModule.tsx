@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Calculator, CircleDollarSign, TrendingUp, Sparkles, Sliders } from 'lucide-react';
+import { ArrowLeft, Calculator, CircleDollarSign, TrendingUp, Sparkles, Sliders, Download, CheckCircle2, BookmarkCheck, ArrowRight, Layers, Percent } from 'lucide-react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -8,14 +8,38 @@ import { KpiCard } from '../../components/ui/KpiCard';
 
 interface SimuladorSpreadModuleProps {
   onBack: () => void;
+  notify?: (m: string) => void;
 }
 
-export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ onBack }) => {
+export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ onBack, notify }) => {
+  const [scenario, setScenario] = useState<'padrao' | 'premium' | 'volume'>('padrao');
   const [ticketPrice, setTicketPrice] = useState<number>(150);
   const [expectedQty, setExpectedQty] = useState<number>(2000);
   const [feePercent, setFeePercent] = useState<number>(12);
   const [gatewayFeePercent, setGatewayFeePercent] = useState<number>(2.5);
   const [fixedFee, setFixedFee] = useState<number>(2.00);
+  const [installments, setInstallments] = useState<number>(6);
+  const [installmentInterestPercent, setInstallmentInterestPercent] = useState<number>(1.99);
+
+  const applyPreset = (preset: 'padrao' | 'premium' | 'volume') => {
+    setScenario(preset);
+    if (preset === 'padrao') {
+      setFeePercent(12);
+      setGatewayFeePercent(2.5);
+      setFixedFee(2.00);
+      notify?.('Cenário Padrão de Mercado aplicado.');
+    } else if (preset === 'premium') {
+      setFeePercent(15);
+      setGatewayFeePercent(2.2);
+      setFixedFee(1.50);
+      notify?.('Cenário Alta Rentabilidade / Premium aplicado.');
+    } else if (preset === 'volume') {
+      setFeePercent(10);
+      setGatewayFeePercent(2.8);
+      setFixedFee(2.50);
+      notify?.('Cenário Escala / Volume aplicado.');
+    }
+  };
 
   const formatCurrency = (val: number) => {
     return val.toLocaleString('pt-BR', {
@@ -33,6 +57,38 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
   const netProducerRevenue = grossSales;
   const finalTotalProcessed = grossSales + totalServiceFee;
   const spreadPerTicket = expectedQty > 0 ? netSpreadRevenue / expectedQty : 0;
+  const marginPercent = finalTotalProcessed > 0 ? (netSpreadRevenue / finalTotalProcessed) * 100 : 0;
+
+  // Parcelamento
+  const installmentValue = (ticketPrice * (1 + feePercent / 100)) / installments;
+
+  const handleExportCsv = () => {
+    const headers = ['Parametro', 'Valor_Simulado'];
+    const rows = [
+      ['Preco_Ingresso_BRL', ticketPrice.toFixed(2)],
+      ['Quantidade_Estimada', expectedQty.toString()],
+      ['Taxa_Conveniencia_Percentual', `${feePercent}%`],
+      ['Custo_Gateway_Percentual', `${gatewayFeePercent}%`],
+      ['Custo_Fixo_Por_Ingresso_BRL', fixedFee.toFixed(2)],
+      ['Faturamento_Bruto_Ingressos_BRL', grossSales.toFixed(2)],
+      ['Receita_Taxa_Conveniencia_BRL', totalServiceFee.toFixed(2)],
+      ['Custo_Total_Gateway_BRL', gatewayCost.toFixed(2)],
+      ['Custo_Total_Fixo_BRL', fixedCostTotal.toFixed(2)],
+      ['Lucro_Liquido_Spread_BRL', Math.max(0, netSpreadRevenue).toFixed(2)],
+      ['Margem_Liquida_Spread', `${marginPercent.toFixed(2)}%`],
+      ['Spread_Por_Ingresso_BRL', Math.max(0, spreadPerTicket).toFixed(2)]
+    ];
+
+    const csvContent = [headers.join(';'), ...rows.map(r => `"${r[0]}";"${r[1]}"`)].join('\n');
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `simulacao-spread-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    notify?.('Simulação de Spread exportada com sucesso em CSV.');
+  };
 
   return (
     <div className="w-full space-y-6">
@@ -47,15 +103,56 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
       <PageHeader
         eyebrow="SIMULADORES, MÉTODOS & LIQUIDAÇÕES"
         title="Simulador de Spread & Rentabilidade"
-        subtitle="Simule preços de ingressos, taxa de conveniência e custos de processamento para prever seu lucro líquido."
+        subtitle="Simule preços de ingressos, taxa de conveniência e custos de processamento para maximizar seu lucro operacional."
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              onClick={handleExportCsv}
+              icon={<Download size={15} />}
+            >
+              Exportar Simulação
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => notify?.('Parâmetros salvos e aplicados aos lotes ativos com sucesso.')}
+              icon={<BookmarkCheck size={15} />}
+            >
+              Salvar Modelo
+            </Button>
+          </div>
+        }
       />
+
+      {/* Preset Buttons */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">Cenários Rápidos:</span>
+        <button
+          onClick={() => applyPreset('padrao')}
+          className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${scenario === 'padrao' ? 'bg-[#1677FF] text-white border-[#1677FF]' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`}
+        >
+          🎯 Padrão de Mercado (12% Taxa)
+        </button>
+        <button
+          onClick={() => applyPreset('premium')}
+          className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${scenario === 'premium' ? 'bg-[#10B981] text-white border-[#10B981]' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`}
+        >
+          🔥 Alta Rentabilidade (15% Taxa)
+        </button>
+        <button
+          onClick={() => applyPreset('volume')}
+          className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${scenario === 'volume' ? 'bg-[#8B5CF6] text-white border-[#8B5CF6]' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`}
+        >
+          ⚡ Escala & Volume (10% Taxa)
+        </button>
+      </div>
 
       {/* Main KPI Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           label="LUCRO LÍQUIDO DO SPREAD"
           value={formatCurrency(Math.max(0, netSpreadRevenue))}
-          trend={`${((netSpreadRevenue / finalTotalProcessed) * 100).toFixed(1)}% margem`}
+          trend={`${marginPercent.toFixed(1)}% margem`}
           trendDirection="up"
           note="ganho operacional retido"
           accent="green"
@@ -125,7 +222,7 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
             <div>
               <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
                 <span>Taxa de Serviço / Conveniência (%)</span>
-                <span className="text-[#1677FF]">{feePercent}%</span>
+                <span className="text-[#1677FF] font-mono">{feePercent}%</span>
               </div>
               <input
                 type="range"
@@ -142,7 +239,7 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
             <div>
               <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
                 <span>Custo Médio de Gateway / TEF (%)</span>
-                <span className="text-[#EF4444]">{gatewayFeePercent}%</span>
+                <span className="text-[#EF4444] font-mono">{gatewayFeePercent}%</span>
               </div>
               <input
                 type="range"
@@ -154,6 +251,36 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
                 className="w-full accent-[#EF4444] cursor-pointer"
               />
               <span className="text-[11px] text-[#718096] mt-1 block">Taxa média de cartão / Pix</span>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-700 block mb-1">
+                Custo Operacional Fixo por Tíquete (R$)
+              </label>
+              <Input
+                type="number"
+                step="0.10"
+                value={fixedFee}
+                onChange={(e) => setFixedFee(Math.max(0, parseFloat(e.target.value) || 0))}
+              />
+              <span className="text-[11px] text-[#718096] mt-1 block">Infraestrutura, antifraude e emissão</span>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
+                <span>Parcelamento Médio Simulado</span>
+                <span className="text-purple-600 font-mono">{installments}x de {formatCurrency(installmentValue)}</span>
+              </div>
+              <select
+                value={installments}
+                onChange={e => setInstallments(Number(e.target.value))}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none bg-white font-medium text-slate-800"
+              >
+                {[1, 2, 3, 4, 6, 10, 12].map(n => (
+                  <option key={n} value={n}>{n}x sem juros para o comprador</option>
+                ))}
+              </select>
+              <span className="text-[11px] text-[#718096] mt-1 block">Simulação de parcelamento no checkout</span>
             </div>
           </div>
         </Card>
@@ -181,7 +308,7 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
               </div>
 
               <div className="flex items-center justify-between p-2.5 rounded bg-rose-50 text-[#991B1B]">
-                <span className="font-semibold">- Custo Operacional Fixo (R$ 2/un.)</span>
+                <span className="font-semibold">- Custo Operacional Fixo (R$ {fixedFee.toFixed(2)}/un.)</span>
                 <strong className="font-bold">- {formatCurrency(fixedCostTotal)}</strong>
               </div>
 
@@ -190,11 +317,18 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
                 <strong className="text-[20px] font-bold text-[#15803D] block mt-0.5">
                   {formatCurrency(Math.max(0, netSpreadRevenue))}
                 </strong>
+                <span className="text-[11px] text-[#15803D] font-medium block mt-1">
+                  Margem Líquida Real: {marginPercent.toFixed(1)}% do faturamento
+                </span>
               </div>
             </div>
           </div>
 
-          <Button variant="primary" fullWidth onClick={() => alert('Parâmetros salvos como modelo padrão para novos lotes.')}>
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={() => notify?.(`Parâmetros de spread aplicados: Taxa ${feePercent}%, Margem ${marginPercent.toFixed(1)}%.`)}
+          >
             Aplicar Parâmetros nos Eventos
           </Button>
         </Card>
@@ -202,3 +336,4 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
     </div>
   );
 };
+

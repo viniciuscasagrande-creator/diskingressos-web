@@ -6,8 +6,8 @@ import {
   PlusSquare, SlidersHorizontal, Users, ScanFace, BarChart3, MonitorSmartphone, ShoppingCart,
   LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
-  FileSpreadsheet, Sparkles, ChevronDown, ListTree,
-  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones
+  FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
+  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -94,10 +94,19 @@ const accountingFinanceItems: Item[] = [
   { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
 ]
 
-// 4. ADVANCED, SPLIT & OPERADORAS
+// 4. CONTABILIDADE OFICIAL & LIVROS SPED
+const officialAccountingItems: Item[] = [
+  { key: 'accounting-dashboard', label: 'Dashboard Contábil & Balanço', icon: BarChart3, badge: 'ECD' },
+  { key: 'accounting-journal', label: 'Livro Diário Oficial', icon: BookOpenText },
+  { key: 'accounting-ledger', label: 'Livro Razão Analítico', icon: BookMarked },
+  { key: 'accounting-chart', label: 'Plano de Contas em Árvore', icon: ListTree },
+  { key: 'accounting-entries', label: 'Escrituração Contábil', icon: NotebookTabs },
+]
+
+// 5. ADVANCED, SPLIT & OPERADORAS
 const advancedFinanceItems: Item[] = [
-  { key: 'finance-split', label: 'Split Financeiro Automático', icon: Split },
   { key: 'finance-spread', label: 'Spread & Simulador de Taxas', icon: ChartNoAxesCombined },
+  { key: 'finance-split', label: 'Split Financeiro Automático', icon: Split },
   { key: 'finance-bank-accounts', label: 'Contas Bancárias Cadastradas', icon: Landmark },
   { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard },
   { key: 'finance-operators', label: 'Operadoras de Cartão & Adquirentes', icon: ShieldCheck },
@@ -105,7 +114,7 @@ const advancedFinanceItems: Item[] = [
   { key: 'finance-refunds', label: 'Devoluções & Estornos', icon: ReceiptText },
 ]
 
-// 5. MARKETING & GROWTH
+// 6. MARKETING & GROWTH
 const marketingItems: Item[] = [
   { key: 'marketing-hub', label: 'Hub Marketing', icon: Megaphone },
   { key: 'marketing-dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -122,7 +131,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]
 
-// 6. REMARKETING & RESGATE
+// 7. REMARKETING & RESGATE
 const remarketingItems: Item[] = [
   { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
   { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -133,7 +142,7 @@ const remarketingItems: Item[] = [
   { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
 ]
 
-// 7. ADMINISTRAÇÃO & GOVERNANÇA
+// 8. ADMINISTRAÇÃO & GOVERNANÇA
 const adminItems: Item[] = [
   { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
   { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
@@ -146,6 +155,7 @@ const adminItems: Item[] = [
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
   const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
   const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
+  const [openOfficialAccounting, setOpenOfficialAccounting] = useState(page.startsWith('accounting-'))
   const [openAdvanced, setOpenAdvanced] = useState(['finance-split', 'finance-spread', 'finance-bank-accounts', 'finance-methods', 'finance-operators', 'finance-intelligence', 'finance-refunds'].includes(page))
   const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
   const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
@@ -175,7 +185,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           )
         })}
 
-        {/* Collapsible Section: Financeiro - Caixa & Saldos */}
+        {/* Section: Financeiro - Caixa & Saldos */}
         <CollapsibleSection
           label="Financeiro: Caixa & Saldos"
           open={openFinance}
@@ -192,7 +202,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* Collapsible Section: Financeiro Contábil & Borderôs */}
+        {/* Section: Financeiro Contábil & Borderôs */}
         <CollapsibleSection
           label="Financeiro: Contábil & Borderôs"
           open={openAccounting}
@@ -209,7 +219,24 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* Collapsible Section: Financeiro Advanced & Adquirência */}
+        {/* Section: Contabilidade Oficial (SPED / ECD / Livros) */}
+        <CollapsibleSection
+          label="Contabilidade Oficial & SPED"
+          open={openOfficialAccounting}
+          onToggle={() => setOpenOfficialAccounting(!openOfficialAccounting)}
+        >
+          {officialAccountingItems.map((it, index) => (
+            <NavItem
+              key={`off-${it.key}-${index}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+        </CollapsibleSection>
+
+        {/* Section: Financeiro Advanced & Adquirência */}
         <CollapsibleSection
           label="Financeiro: Advanced & Taxas"
           open={openAdvanced}
@@ -226,7 +253,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* Collapsible Section: Marketing */}
+        {/* Section: Marketing */}
         <CollapsibleSection
           label="Marketing & Growth"
           open={openMarketing}
@@ -243,7 +270,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* Collapsible Section: Remarketing */}
+        {/* Section: Remarketing */}
         <CollapsibleSection
           label="Remarketing & Recuperação"
           open={openRemarketing}
@@ -260,7 +287,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* Collapsible Section: Administração */}
+        {/* Section: Administração */}
         {canAdmin && (
           <CollapsibleSection
             label="Administração"

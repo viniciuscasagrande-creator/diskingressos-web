@@ -666,7 +666,7 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-spread' && <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} />}
+        {page === 'finance-spread' && <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} notify={notify} />}
         {page === 'finance-split' && <SplitFinanceiroModule onBack={() => setPage('finance-dashboard')} />}
         {['finance-intelligence', 'finance-methods', 'finance-custom', 'finance-operators', 'finance-negotiations', 'finance-refunds', 'finance-reports'].includes(page) && (
           <GenericFinanceSubView moduleKey={page as any} onBack={() => setPage('finance-dashboard')} notify={notify} />
