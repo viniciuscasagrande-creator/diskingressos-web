@@ -1,4 +1,4 @@
-import { LogOut, Search, SlidersHorizontal } from 'lucide-react'
+import { LogOut, Menu, Search, SlidersHorizontal } from 'lucide-react'
 import { isGlobalAdmin, roleLabel, type AppUser, type Producer } from '../auth/model'
 
 type Props = {
@@ -9,15 +9,17 @@ type Props = {
   selectedProducer?: number | 'all'
   onProducer?: (v: number | 'all') => void
   onLogout?: () => void
+  onToggleMenu?: () => void
 }
 
-export default function Header({ query, onQuery, user, producers = [], selectedProducer = 'all', onProducer, onLogout }: Props) {
+export default function Header({ query, onQuery, user, producers = [], selectedProducer = 'all', onProducer, onLogout, onToggleMenu }: Props) {
   const userName = user?.name || 'Usuário'
   const userInitials = userName.split(' ').filter(Boolean).map(x => x[0]).slice(0, 2).join('').toUpperCase() || 'DI'
   const userRole = user?.role ? (roleLabel[user.role] || user.role) : 'Acesso'
 
   return (
     <header className="topbar global-topbar">
+      <button className="mobile-menu-button" onClick={onToggleMenu} aria-label="Abrir navegação"><Menu size={22} /></button>
       <div className="brand global-brand">
         <span className="brand-mark">Di</span>
         <span>DiskIngressos</span>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { CalendarDays, Home, Megaphone, Menu, WalletCards } from 'lucide-react'
 import Header from './components/Header'
 import ModuleSidebar, { type ModuleKey, type PageKey } from './components/ModuleSidebar'
 import EventContextSidebar from './components/EventContextSidebar'
@@ -250,6 +251,7 @@ export default function App() {
   const [participants, setParticipants] = useState<Participant[]>(seedParticipants)
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null)
   const [toast, setToast] = useState('')
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   const module = useMemo(() => moduleFor(page, user), [page, user])
   const notify = (m: string) => {
@@ -387,6 +389,7 @@ export default function App() {
   }
 
   const navigate = (next: PageKey) => {
+    setMobileNavOpen(false)
     if (next !== 'profile-dashboard' && !canAccess(user, areaFor(next))) {
       notify('Seu perfil não possui permissão para este módulo.')
       return
@@ -442,7 +445,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell phase6-shell phase7-shell">
+    <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open' : ''}`}>
       <Header
         query={query}
         onQuery={setQuery}
@@ -456,13 +459,16 @@ export default function App() {
           if (isGlobalAdmin(user)) setPage(v === 'all' ? 'global-dashboard' : 'events')
         }}
         onLogout={logout}
+        onToggleMenu={() => setMobileNavOpen(v => !v)}
       />
+
+      <button className="mobile-nav-backdrop" aria-label="Fechar navegação" onClick={() => setMobileNavOpen(false)} />
 
       {inEventContext && selectedEvent ? (
         <EventContextSidebar
           event={selectedEvent}
           page={page}
-          onNavigate={navigate}
+          onNavigate={(p) => { navigate(p); setMobileNavOpen(false) }}
           onBack={() => {
             setSelectedEvent(null)
             setPage('events')
@@ -475,8 +481,8 @@ export default function App() {
         <ModuleSidebar
           module={module}
           page={page}
-          onNavigate={navigate}
-          onHome={() => navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')}
+          onNavigate={(p) => { navigate(p); setMobileNavOpen(false) }}
+          onHome={() => { setMobileNavOpen(false); navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard') }}
           canAdmin={canAccess(user, 'admin')}
           user={user}
         />
@@ -772,6 +778,14 @@ export default function App() {
         {page === 'pos-sales' && <POSPage events={visibleEvents} initialTab="sales" notify={notify} />}
         {page === 'pos-closing' && <POSPage events={visibleEvents} initialTab="closing" notify={notify} />}
       </main>
+
+      <nav className="mobile-bottom-nav" aria-label="Navegação mobile">
+        <button onClick={() => { navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard'); setMobileNavOpen(false) }}><Home size={20}/><span>Início</span></button>
+        <button onClick={() => { navigate('events'); setMobileNavOpen(false) }}><CalendarDays size={20}/><span>Eventos</span></button>
+        <button onClick={() => { navigate('finance-dashboard'); setMobileNavOpen(false) }}><WalletCards size={20}/><span>Financeiro</span></button>
+        <button onClick={() => { navigate('marketing-hub'); setMobileNavOpen(false) }}><Megaphone size={20}/><span>Marketing</span></button>
+        <button onClick={() => setMobileNavOpen(true)}><Menu size={20}/><span>Mais</span></button>
+      </nav>
 
       <AppFooter />
       <ScrollTop />
