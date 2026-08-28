@@ -1,10 +1,45 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
+import ErrorBoundary from './components/ErrorBoundary'
 import './styles.css'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+const root = document.getElementById('root')
+
+if (!root) {
+  throw new Error('Elemento #root não encontrado no index.html')
+}
+
+try {
+  ReactDOM.createRoot(root).render(
+    <React.StrictMode>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </React.StrictMode>,
+  )
+} catch (error) {
+  if (import.meta.env.DEV) {
+    console.error('Falha ao iniciar DiskIngressos:', error)
+  }
+
+  root.innerHTML = `
+    <div style="
+      min-height:100vh;
+      background:#08111f;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:Arial,sans-serif;
+      padding:24px;
+    ">
+      <div style="max-width:500px;text-align:center;background:#131d2e;padding:32px;border-radius:12px;border:1px solid #23344d">
+        <h2 style="margin:0 0 10px 0;font-size:20px;color:#fff">Não foi possível iniciar o sistema.</h2>
+        <p style="margin:0 0 20px 0;color:#94a3b8;font-size:14px">Verifique o console do navegador para identificar o erro.</p>
+        <button onclick="window.location.reload()" style="padding:10px 18px;background:#2563EB;color:#fff;border:0;border-radius:6px;font-weight:bold;cursor:pointer">Recarregar página</button>
+      </div>
+    </div>
+  `
+}
+

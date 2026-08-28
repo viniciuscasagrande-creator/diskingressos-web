@@ -8,7 +8,8 @@ import {
   Mail, Tags, Bot, Target, QrCode, UsersRound, ShoppingBag, GitBranch, CreditCard as CreditCardIcon,
   UserRoundCheck, Headphones, Clock3, BookOpen, Link2, FileBarChart, Zap, FileSpreadsheet,
   ArrowDownLeft, ArrowUpRight, Percent, BookMarked, ClipboardList, Building, FileCheck, Sparkles,
-  Layers, Lock, CheckCircle2, ChevronDown, ListTree, NotebookTabs, BookOpenText, CalendarCheck2, ArrowLeftRight
+  Layers, Lock, CheckCircle2, ChevronDown, ListTree, NotebookTabs, BookOpenText, CalendarCheck2, ArrowLeftRight,
+  FileSignature, Boxes, BookOpenCheck, FileText
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'

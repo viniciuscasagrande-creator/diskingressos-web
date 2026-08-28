@@ -36,6 +36,9 @@ const audienceLabels: Record<string, string> = {
   compradores_anteriores: 'Compradores anteriores'
 }
 
+const money = (cents = 0) =>
+  (Number(cents || 0) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+
 export default function ReadyCampaignsPage({ producerId, events, notify }: Props) {
   const [templates, setTemplates] = useState<ReadyCampaignTemplate[]>([])
   const [activations, setActivations] = useState<ReadyCampaignActivation[]>([])
@@ -442,8 +445,4 @@ export default function ReadyCampaignsPage({ producerId, events, notify }: Props
       </article>
     </section>
   )
-}
-
-function money(cents: number) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100)
 }
