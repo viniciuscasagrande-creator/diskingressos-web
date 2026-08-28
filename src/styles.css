@@ -3010,3 +3010,428 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
     display: none !important;
   }
 }
+
+
+/* =========================================================
+   FASE 19.13.6 — FINANCEIRO ERP UI UNIFICADO
+   Corrige a apresentação visual das telas Financeiro/Contábil.
+   Não altera regras de negócio, API ou Prisma.
+   ========================================================= */
+
+.finance-erp-ui {
+  --erp-bg: #f4f7fb;
+  --erp-surface: #ffffff;
+  --erp-border: #dfe6ef;
+  --erp-text: #111827;
+  --erp-muted: #64748b;
+  --erp-primary: #1769ff;
+  --erp-success: #16a34a;
+  --erp-warning: #d97706;
+  --erp-danger: #dc2626;
+  width: 100%;
+  max-width: 100%;
+  color: var(--erp-text);
+}
+
+.finance-erp-hero,
+.finance-accounting-header {
+  background: var(--erp-surface);
+  border: 1px solid var(--erp-border);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 28px rgba(15,23,42,.05);
+}
+
+.finance-erp-hero h1,
+.finance-accounting-header h1 {
+  margin: 0 0 6px;
+  font-size: clamp(24px, 2vw, 32px);
+  line-height: 1.12;
+  letter-spacing: -.025em;
+}
+
+.finance-erp-hero p,
+.finance-accounting-header p {
+  margin: 0;
+  color: var(--erp-muted);
+  line-height: 1.5;
+}
+
+.finance-erp-actions,
+.finance-accounting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.finance-erp-actions select,
+.finance-accounting-actions select,
+.finance-erp-search input,
+.finance-accounting-search input {
+  min-height: 44px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  background: #fff;
+  color: var(--erp-text);
+  padding: 0 12px;
+  font: inherit;
+  outline: none;
+}
+
+.finance-erp-actions select:focus,
+.finance-erp-search input:focus {
+  border-color: var(--erp-primary);
+  box-shadow: 0 0 0 3px rgba(23,105,255,.12);
+}
+
+.finance-erp-actions button,
+.finance-accounting-actions button,
+.finance-primary-btn {
+  min-height: 44px;
+  border: 1px solid #cbd5e1;
+  border-radius: 11px;
+  background: #fff;
+  padding: 0 14px;
+  font-weight: 700;
+  color: #25324a;
+  cursor: pointer;
+}
+
+.finance-erp-actions button:hover,
+.finance-accounting-actions button:hover {
+  border-color: #9fb8df;
+  background: #f8fbff;
+}
+
+.finance-erp-tabs,
+.finance-accounting-tabs {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  overflow-x: auto;
+  padding: 6px;
+  margin: 0 0 12px;
+  background: #eaf0f7;
+  border: 1px solid #dbe4ef;
+  border-radius: 14px;
+  scrollbar-width: thin;
+}
+
+.finance-erp-tabs button,
+.finance-accounting-tabs button {
+  flex: 0 0 auto;
+  min-height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #53647d;
+  padding: 0 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.finance-erp-tabs button:hover,
+.finance-accounting-tabs button:hover {
+  background: rgba(255,255,255,.72);
+  color: #172033;
+}
+
+.finance-erp-tabs button.active,
+.finance-accounting-tabs button.active,
+.finance-accounting-tabs [aria-selected="true"] {
+  background: #fff;
+  color: var(--erp-primary);
+  box-shadow: 0 2px 10px rgba(15,23,42,.08);
+}
+
+.finance-erp-search,
+.finance-accounting-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 14px;
+}
+
+.finance-erp-search input,
+.finance-accounting-search input {
+  width: min(440px,100%);
+}
+
+.finance-erp-kpis,
+.finance-accounting-kpis {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 12px;
+  margin: 14px 0 18px;
+}
+
+.finance-erp-kpis > *,
+.finance-accounting-kpis > * {
+  min-width: 0;
+  background: #fff;
+  border: 1px solid var(--erp-border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 6px 20px rgba(15,23,42,.04);
+}
+
+.finance-erp-kpis span,
+.finance-accounting-kpis span {
+  display: block;
+  color: var(--erp-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .035em;
+  margin-bottom: 7px;
+}
+
+.finance-erp-kpis strong,
+.finance-accounting-kpis strong {
+  display: block;
+  max-width: 100%;
+  font-size: clamp(21px,2vw,29px);
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.finance-erp-panel,
+.finance-accounting-panel {
+  background: #fff;
+  border: 1px solid var(--erp-border);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 22px rgba(15,23,42,.04);
+}
+
+.finance-erp-panel h2,
+.finance-accounting-panel h2 {
+  margin: 0 0 5px;
+  font-size: 20px;
+  letter-spacing: -.015em;
+}
+
+.finance-erp-panel h3,
+.finance-accounting-panel h3 {
+  margin: 16px 0 8px;
+  font-size: 16px;
+}
+
+.finance-erp-panel p,
+.finance-accounting-panel p {
+  color: var(--erp-muted);
+}
+
+.finance-erp-table-wrap,
+.finance-accounting-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--erp-border);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.finance-erp-table-wrap table,
+.finance-accounting-table-wrap table,
+.finance-erp-ui table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.finance-erp-table-wrap th,
+.finance-accounting-table-wrap th,
+.finance-erp-ui table th {
+  text-align: left;
+  padding: 12px 13px;
+  background: #f7f9fc;
+  color: #64748b;
+  border-bottom: 1px solid var(--erp-border);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+.finance-erp-table-wrap td,
+.finance-accounting-table-wrap td,
+.finance-erp-ui table td {
+  padding: 12px 13px;
+  border-bottom: 1px solid #edf1f6;
+  vertical-align: middle;
+}
+
+.finance-erp-ui tbody tr:hover {
+  background: #f8fbff;
+}
+
+.finance-erp-ui tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.finance-status-badge,
+.finance-erp-ui .badge,
+.finance-erp-ui .status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #ecfdf3;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* DRE, fechamento e blocos de resumo */
+.finance-erp-ui .dre-grid,
+.finance-erp-ui .closing-health,
+.finance-erp-ui .summary-grid,
+.finance-erp-ui .dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+}
+
+.finance-erp-ui .dre-card,
+.finance-erp-ui .closing-card,
+.finance-erp-ui .summary-card {
+  background: #fff;
+  border: 1px solid var(--erp-border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.finance-erp-ui .alert,
+.finance-erp-ui .warning {
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+/* Spread / Advanced: aplica acabamento mesmo quando a tela usa classes antigas */
+.finance-spread-page,
+.spread-page,
+.advanced-finance-page {
+  width: 100%;
+  max-width: 100%;
+}
+
+.finance-spread-page .panel,
+.spread-page .panel,
+.advanced-finance-page .panel,
+.finance-spread-page section,
+.spread-page section {
+  border-radius: 16px;
+}
+
+.finance-spread-page input,
+.spread-page input,
+.advanced-finance-page input,
+.finance-spread-page select,
+.spread-page select {
+  min-height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0 11px;
+  background: #fff;
+}
+
+@media (max-width: 1100px) {
+  .finance-erp-kpis,
+  .finance-accounting-kpis {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .finance-erp-hero,
+  .finance-accounting-header {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .finance-erp-hero h1,
+  .finance-accounting-header h1 {
+    font-size: 22px;
+  }
+
+  .finance-erp-actions,
+  .finance-accounting-actions {
+    display: grid;
+    grid-template-columns: minmax(0,1fr);
+  }
+
+  .finance-erp-actions > *,
+  .finance-accounting-actions > *,
+  .finance-erp-actions select,
+  .finance-accounting-actions select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .finance-erp-tabs,
+  .finance-accounting-tabs {
+    margin-inline: 0;
+    padding: 5px;
+  }
+
+  .finance-erp-tabs button,
+  .finance-accounting-tabs button {
+    min-height: 42px;
+    padding-inline: 11px;
+    font-size: 12px;
+  }
+
+  .finance-erp-kpis,
+  .finance-accounting-kpis {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 9px;
+  }
+
+  .finance-erp-kpis > *,
+  .finance-accounting-kpis > * {
+    padding: 13px;
+  }
+
+  .finance-erp-kpis strong,
+  .finance-accounting-kpis strong {
+    font-size: clamp(19px,6vw,24px);
+  }
+
+  .finance-erp-panel,
+  .finance-accounting-panel {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .finance-erp-table-wrap,
+  .finance-accounting-table-wrap {
+    max-width: calc(100vw - 24px);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .finance-erp-table-wrap table,
+  .finance-accounting-table-wrap table,
+  .finance-erp-ui table {
+    min-width: 680px;
+  }
+
+  .finance-erp-ui .dre-grid,
+  .finance-erp-ui .closing-health,
+  .finance-erp-ui .summary-grid,
+  .finance-erp-ui .dashboard-grid {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
+
+@media (max-width: 390px) {
+  .finance-erp-kpis,
+  .finance-accounting-kpis {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
