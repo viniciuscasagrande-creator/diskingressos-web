@@ -546,9 +546,18 @@ export default function App() {
           <EventContextPage event={selectedEvent} participants={visibleParticipants} page={page} onNavigate={navigate} notify={notify} />
         )}
 
-        {/* FINANCEIRO DASHBOARD (Fase 17.2) */}
-        {(page === 'finance-dashboard' || page === 'finance-hub') && (
-          <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        {/* HUB FINANCEIRO & DASHBOARD */}
+        {page === 'finance-hub' && (
+          <FinanceHubPage onNavigate={navigate} />
+        )}
+        {page === 'finance-dashboard' && (
+          <FinanceAccountingHubPage
+            events={visibleEvents}
+            producerId={scopedProducerId}
+            initialTab="dashboard"
+            notify={notify}
+            onBack={() => setPage('finance-hub')}
+          />
         )}
 
         {/* FASE 17.3 & 17.4: OPERAÇÕES FINANCEIRAS INTEGRADAS */}

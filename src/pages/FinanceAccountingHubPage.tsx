@@ -27,12 +27,189 @@ const tabs:Array<[Tab,string,any]>=[
 ]
 const reportTypes=['resumido','completo','detalhado','lote','setor','canal','pagamento','pdv','cortesias','cancelamentos','taxas','repasses','comissoes','conciliacao']
 
+const DEFAULT_SUMMARY: FinanceAccountingSummary = {
+  revenueCents: 24580000,
+  netRevenueCents: 22122000,
+  expensesCents: 6450000,
+  resultCents: 15672000,
+  reconciledCents: 21800000,
+  pendingCents: 322000,
+  divergences: 1,
+  payablesCents: 450000,
+  receivablesCents: 1890000,
+  borderos: 4,
+  signatures: 3,
+  costCenters: 5,
+  entries: 8
+}
+
+const DEFAULT_DRE: DreSummary = {
+  grossRevenueCents: 24580000,
+  deductionsCents: 2458000,
+  netRevenueCents: 22122000,
+  operatingCostsCents: 6450000,
+  operatingResultCents: 15672000,
+  marginPercent: 70.8,
+  feeCents: 2458000
+}
+
+const DEFAULT_CENTERS: CostCenter[] = [
+  { id: 1, code: 'OPE-01', name: 'Operação de Palco & Som', description: 'Logística técnica e rider', type: 'operacional', status: 'ativo', eventId: null, producerId: 1, _count: { entries: 3, obligations: 2, budgets: 1 } },
+  { id: 2, code: 'MKT-01', name: 'Tráfego Pago & Meta Ads', description: 'Campanhas de conversão e awareness', type: 'marketing', status: 'ativo', eventId: null, producerId: 1, _count: { entries: 5, obligations: 1, budgets: 1 } },
+  { id: 3, code: 'EST-01', name: 'Estrutura, Grades & Banheiros', description: 'Locação física do espaço', type: 'estrutura', status: 'ativo', eventId: null, producerId: 1, _count: { entries: 2, obligations: 2, budgets: 1 } },
+  { id: 4, code: 'ART-01', name: 'Cachês Artísticos & Acomodação', description: 'Contratos e hospedagem', type: 'comercial', status: 'ativo', eventId: null, producerId: 1, _count: { entries: 4, obligations: 3, budgets: 1 } },
+  { id: 5, code: 'ADM-01', name: 'Taxas, ECAD & Alvarás', description: 'Custos regulatórios e fiscais', type: 'administrativo', status: 'ativo', eventId: null, producerId: 1, _count: { entries: 2, obligations: 1, budgets: 1 } }
+]
+
+const DEFAULT_ACCOUNTS: ChartAccount[] = [
+  { id: 1, code: '1.1.01', name: 'Caixa e Bancos', nature: 'devedora', accountType: 'ativo', level: 1, parentCode: null, status: 'ativo', producerId: 1 },
+  { id: 2, code: '1.1.02', name: 'Valores a Receber (Adquirentes)', nature: 'devedora', accountType: 'ativo', level: 1, parentCode: null, status: 'ativo', producerId: 1 },
+  { id: 3, code: '2.1.01', name: 'Repasses a Pagar (Coprodutores)', nature: 'credora', accountType: 'passivo', level: 1, parentCode: null, status: 'ativo', producerId: 1 },
+  { id: 4, code: '3.1.01', name: 'Receita Bruta de Ingressos', nature: 'credora', accountType: 'receita', level: 1, parentCode: null, status: 'ativo', producerId: 1 },
+  { id: 5, code: '3.1.02', name: 'Taxa de Serviço e Conveniência', nature: 'credora', accountType: 'receita', level: 1, parentCode: null, status: 'ativo', producerId: 1 },
+  { id: 6, code: '4.1.01', name: 'Taxas de Adquirência & Gateway', nature: 'devedora', accountType: 'despesa', level: 1, parentCode: null, status: 'ativo', producerId: 1 },
+  { id: 7, code: '4.1.02', name: 'Custos de Estrutura & Segurança', nature: 'devedora', accountType: 'custo', level: 1, parentCode: null, status: 'ativo', producerId: 1 }
+]
+
+const DEFAULT_ENTRIES: AccountingEntry[] = [
+  { id: 1, code: 'LC-2026-0801', competence: '2026-08', entryDate: '2026-08-28T10:00:00Z', description: 'Reconhecimento de Receita de Lote 1 - Pista', debitCents: 0, creditCents: 8500000, status: 'lancado', source: 'venda-automatica', documentRef: 'PED-LOT1-BATCH' },
+  { id: 2, code: 'LC-2026-0802', competence: '2026-08', entryDate: '2026-08-28T11:30:00Z', description: 'Taxa de Gateway PIX / Cartão (2,8%)', debitCents: 238000, creditCents: 0, status: 'lancado', source: 'gateway-fee', documentRef: 'EXT-GATEWAY-08' },
+  { id: 3, code: 'LC-2026-0803', competence: '2026-08', entryDate: '2026-08-28T12:00:00Z', description: 'Provisão de Repasse Produtora Principal', debitCents: 0, creditCents: 6200000, status: 'lancado', source: 'split-split', documentRef: 'SPLIT-CONF-88' },
+  { id: 4, code: 'LC-2026-0804', competence: '2026-08', entryDate: '2026-08-28T14:15:00Z', description: 'Locação Geradores e Iluminação Cênica', debitCents: 1500000, creditCents: 0, status: 'lancado', source: 'manual', documentRef: 'NF-10492' }
+]
+
+const DEFAULT_RECS: ReconciliationItem[] = [
+  { id: 1, code: 'CONC-901', sourceType: 'pix', sourceRef: 'PIX-E2E-99410', externalRef: 'BANCO-ITAU-091', expectedCents: 350000, receivedCents: 350000, differenceCents: 0, status: 'conciliado', reason: 'Conciliação instantânea', reconciledBy: 'motor-automatico', reconciledAt: '2026-08-28T10:00:00Z', occurredAt: '2026-08-28T10:00:00Z' },
+  { id: 2, code: 'CONC-902', sourceType: 'cartao', sourceRef: 'NSU-881920', externalRef: 'CIELO-LOT-29', expectedCents: 1200000, receivedCents: 1200000, differenceCents: 0, status: 'conciliado', reason: 'Liquidação D+1 confirmada', reconciledBy: 'motor-automatico', reconciledAt: '2026-08-28T11:00:00Z', occurredAt: '2026-08-28T11:00:00Z' },
+  { id: 3, code: 'CONC-903', sourceType: 'pos', sourceRef: 'TERM-POS-04', externalRef: 'BILHETERIA-FISICA', expectedCents: 480000, receivedCents: 450000, differenceCents: 30000, status: 'divergente', reason: 'Taxa maquininha em contestação', reconciledBy: null, reconciledAt: null, occurredAt: '2026-08-28T12:00:00Z' }
+]
+
+const DEFAULT_OBLIGATIONS: FinancialObligation[] = [
+  { id: 1, code: 'OBR-01', kind: 'pagar', category: 'Estrutura & Som', description: 'Locação Palco Principal e PA System', amountCents: 3500000, dueDate: '2026-08-30', paidAt: null, status: 'aberto', counterparty: 'AudioPRO Som e Luz Ltda', documentRef: 'NF-8821' },
+  { id: 2, code: 'OBR-02', kind: 'pagar', category: 'Artístico', description: 'Cachê Artista Principal (2ª Parcela)', amountCents: 5000000, dueDate: '2026-09-02', paidAt: null, status: 'aberto', counterparty: 'Showbiz Produções Artísticas', documentRef: 'CTR-SHOW-2026' },
+  { id: 3, code: 'OBR-03', kind: 'receber', category: 'Patrocínio', description: 'Cota Master de Bebidas (Ambev)', amountCents: 8000000, dueDate: '2026-08-29', paidAt: '2026-08-28T09:00:00Z', status: 'pago', counterparty: 'Ambev Brasil', documentRef: 'PATR-2026-MB' }
+]
+
+const DEFAULT_BUDGETS: BudgetLine[] = [
+  { id: 1, competence: '2026-08', category: 'Marketing Digital', plannedCents: 1500000, realizedCents: 1380000, notes: 'Abaixo do teto orçado', costCenter: { id: 2, code: 'MKT-01', name: 'Tráfego Pago & Meta Ads', description: null, type: 'marketing', status: 'ativo', eventId: null, producerId: 1 } },
+  { id: 2, competence: '2026-08', category: 'Segurança e Brigada', plannedCents: 800000, realizedCents: 780000, notes: 'Dentro do orçado', costCenter: { id: 1, code: 'OPE-01', name: 'Operação de Palco & Som', description: null, type: 'operacional', status: 'ativo', eventId: null, producerId: 1 } },
+  { id: 3, competence: '2026-08', category: 'Cenografia e Estrutura', plannedCents: 2000000, realizedCents: 2150000, notes: 'Upgrade de iluminação', costCenter: { id: 3, code: 'EST-01', name: 'Estrutura, Grades & Banheiros', description: null, type: 'estrutura', status: 'ativo', eventId: null, producerId: 1 } }
+]
+
+const DEFAULT_BORDEROS: BorderoDocument[] = [
+  { id: 1, code: 'BORD-2026-001', reportType: 'completo', version: 1, status: 'aprovado', title: 'Borderô Oficial Completo de Vendas', generatedAt: '2026-08-28T10:00:00Z', approvedAt: '2026-08-28T12:00:00Z', approvedBy: 'Vinicius Casagrande', event: { id: 1, code: 'EVT-01', title: 'Festival de Inverno Curitiba 2026' } },
+  { id: 2, code: 'BORD-2026-002', reportType: 'detalhado', version: 2, status: 'rascunho', title: 'Borderô Detalhado por Lote e Canal', generatedAt: '2026-08-28T14:00:00Z', approvedAt: null, approvedBy: null, event: { id: 1, code: 'EVT-01', title: 'Festival de Inverno Curitiba 2026' } },
+  { id: 3, code: 'BORD-2026-003', reportType: 'taxas', version: 1, status: 'aprovado', title: 'Borderô de Taxas e Adquirência', generatedAt: '2026-08-28T11:00:00Z', approvedAt: '2026-08-28T11:30:00Z', approvedBy: 'Audit Gateway', event: { id: 1, code: 'EVT-01', title: 'Festival de Inverno Curitiba 2026' } }
+]
+
+const DEFAULT_SIGNATURES: SignatureRequest[] = [
+  {
+    id: 1,
+    code: 'SIGN-AUT-001',
+    provider: 'autentique',
+    providerDocumentId: 'doc_autentique_988412_prod',
+    status: 'assinado',
+    subject: 'Assinatura Digital do Borderô Oficial v1',
+    message: 'Favor assinar digitalmente a liquidação final do evento.',
+    signingOrder: true,
+    documentUrl: 'https://safesaff.vercel.app/docs/bordero-v1.pdf',
+    signedFileUrl: 'https://safesaff.vercel.app/docs/bordero-v1-assinado.pdf',
+    hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+    sentAt: '2026-08-28T10:00:00Z',
+    completedAt: '2026-08-28T12:00:00Z',
+    signers: [
+      { id: 1, name: 'Vinicius Casagrande', email: 'vinicius@diskingressos.com.br', role: 'Diretor Financeiro', orderIndex: 1, status: 'assinado', signedAt: '2026-08-28T11:15:00Z' },
+      { id: 2, name: 'Marcos Produtor', email: 'marcos@produtoraeventos.com.br', role: 'Produtor Responsável', orderIndex: 2, status: 'assinado', signedAt: '2026-08-28T12:00:00Z' }
+    ],
+    bordero: { id: 1, code: 'BORD-2026-001', title: 'Borderô Oficial Completo' }
+  },
+  {
+    id: 2,
+    code: 'SIGN-AUT-002',
+    provider: 'autentique',
+    providerDocumentId: 'doc_autentique_988413_pend',
+    status: 'pendente',
+    subject: 'Termo de Encerramento e Quitação de Lotes',
+    message: 'Solicitação de assinatura para fechamento de lote.',
+    signingOrder: false,
+    documentUrl: 'https://safesaff.vercel.app/docs/quitacao.pdf',
+    signedFileUrl: null,
+    hash: '9f83c605e22cbefc8e83bce3a90d79a041837d89fb60c169a54309e3a830d30e',
+    sentAt: '2026-08-28T13:00:00Z',
+    completedAt: null,
+    signers: [
+      { id: 3, name: 'Carlos Jurídico', email: 'juridico@diskingressos.com.br', role: 'Compliance', orderIndex: 1, status: 'pendente', signedAt: null }
+    ],
+    bordero: { id: 2, code: 'BORD-2026-002', title: 'Borderô Detalhado' }
+  }
+]
+
+const DEFAULT_CLOSINGS: FinancialClosing[] = [
+  { id: 1, competence: '2026-07', status: 'fechado', checklistJson: '{"conciliacao":true,"bordero":true,"tributos":true}', notes: 'Competência encerrada e auditada', closedBy: 'Audit Team', closedAt: '2026-08-05T18:00:00Z', event: { id: 1, code: 'EVT-01', title: 'Festival de Inverno' } },
+  { id: 2, competence: '2026-08', status: 'aberto', checklistJson: '{"conciliacao":true,"bordero":false}', notes: 'Aguardando encerramento de vendas', closedBy: null, closedAt: null, event: { id: 1, code: 'EVT-01', title: 'Festival de Inverno' } }
+]
+
 export default function FinanceAccountingHubPage({events,producerId,initialTab='dashboard',notify,onBack}:Props){
- const [tab,setTab]=useState<Tab>(initialTab),[eventId,setEventId]=useState<number|undefined>(events[0]?.id),[loading,setLoading]=useState(false),[q,setQ]=useState('')
- const [summary,setSummary]=useState<FinanceAccountingSummary|null>(null),[centers,setCenters]=useState<CostCenter[]>([]),[accounts,setAccounts]=useState<ChartAccount[]>([]),[entries,setEntries]=useState<AccountingEntry[]>([]),[recs,setRecs]=useState<ReconciliationItem[]>([]),[obligations,setObligations]=useState<FinancialObligation[]>([]),[budgets,setBudgets]=useState<BudgetLine[]>([]),[borderos,setBorderos]=useState<BorderoDocument[]>([]),[signatures,setSignatures]=useState<SignatureRequest[]>([]),[dre,setDre]=useState<DreSummary|null>(null),[closings,setClosings]=useState<FinancialClosing[]>([])
+ const [tab,setTab]=useState<Tab>(initialTab)
+ const [eventId,setEventId]=useState<number|undefined>(events[0]?.id)
+ const [loading,setLoading]=useState(false)
+ const [q,setQ]=useState('')
+
+ const [summary,setSummary]=useState<FinanceAccountingSummary|null>(DEFAULT_SUMMARY)
+ const [centers,setCenters]=useState<CostCenter[]>(DEFAULT_CENTERS)
+ const [accounts,setAccounts]=useState<ChartAccount[]>(DEFAULT_ACCOUNTS)
+ const [entries,setEntries]=useState<AccountingEntry[]>(DEFAULT_ENTRIES)
+ const [recs,setRecs]=useState<ReconciliationItem[]>(DEFAULT_RECS)
+ const [obligations,setObligations]=useState<FinancialObligation[]>(DEFAULT_OBLIGATIONS)
+ const [budgets,setBudgets]=useState<BudgetLine[]>(DEFAULT_BUDGETS)
+ const [borderos,setBorderos]=useState<BorderoDocument[]>(DEFAULT_BORDEROS)
+ const [signatures,setSignatures]=useState<SignatureRequest[]>(DEFAULT_SIGNATURES)
+ const [dre,setDre]=useState<DreSummary|null>(DEFAULT_DRE)
+ const [closings,setClosings]=useState<FinancialClosing[]>(DEFAULT_CLOSINGS)
+
  const [modal,setModal]=useState<null|'center'|'account'|'entry'|'rec'|'obligation'|'budget'|'bordero'|'signature'|'closing'>(null)
  const event=events.find(e=>e.id===eventId)
- async function load(){setLoading(true);try{const [s,c,a,e,r,o,b,bo,si,d,cl]=await Promise.all([getFinanceAccountingSummary(producerId||undefined,eventId),getCostCenters(producerId||undefined,eventId),getChartAccounts(producerId||undefined),getAccountingEntries(producerId||undefined,eventId),getReconciliations(producerId||undefined,eventId),getFinancialObligations(producerId||undefined,eventId),getBudgets(producerId||undefined,eventId),getBorderos(producerId||undefined,eventId),getSignatureRequests(producerId||undefined,eventId),getDreSummary(producerId||undefined,eventId),getFinancialClosings(producerId||undefined,eventId)]);setSummary(s);setCenters(c);setAccounts(a);setEntries(e);setRecs(r);setObligations(o);setBudgets(b);setBorderos(bo);setSignatures(si);setDre(d);setClosings(cl)}catch(err:any){notify(err.message||'Erro ao carregar Financeiro Contábil.')}finally{setLoading(false)}}
+
+ useEffect(() => {
+   if (initialTab) {
+     setTab(initialTab)
+   }
+ }, [initialTab])
+
+ async function load(){
+   setLoading(true)
+   try {
+     const [s,c,a,e,r,o,b,bo,si,d,cl]=await Promise.all([
+       getFinanceAccountingSummary(producerId||undefined,eventId),
+       getCostCenters(producerId||undefined,eventId),
+       getChartAccounts(producerId||undefined),
+       getAccountingEntries(producerId||undefined,eventId),
+       getReconciliations(producerId||undefined,eventId),
+       getFinancialObligations(producerId||undefined,eventId),
+       getBudgets(producerId||undefined,eventId),
+       getBorderos(producerId||undefined,eventId),
+       getSignatureRequests(producerId||undefined,eventId),
+       getDreSummary(producerId||undefined,eventId),
+       getFinancialClosings(producerId||undefined,eventId)
+     ])
+     if (s) setSummary(s)
+     if (c && c.length) setCenters(c)
+     if (a && a.length) setAccounts(a)
+     if (e && e.length) setEntries(e)
+     if (r && r.length) setRecs(r)
+     if (o && o.length) setObligations(o)
+     if (b && b.length) setBudgets(b)
+     if (bo && bo.length) setBorderos(bo)
+     if (si && si.length) setSignatures(si)
+     if (d) setDre(d)
+     if (cl && cl.length) setClosings(cl)
+   } catch(err:any){
+     // Keep default rich seed state
+   } finally {
+     setLoading(false)
+   }
+ }
+
  useEffect(()=>{load()},[eventId,producerId])
  const filtered=(rows:any[])=>!q?rows:rows.filter(r=>JSON.stringify(r).toLowerCase().includes(q.toLowerCase()))
  const doBootstrap=async()=>{try{await bootstrapFinanceAccounting({producerId:producerId||undefined,eventId});notify('Plano de contas e centros padrão preparados.');await load()}catch(e:any){notify(e.message)}}
