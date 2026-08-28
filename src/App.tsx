@@ -34,6 +34,7 @@ import AccountingLedgerPage from './pages/AccountingLedgerPage'
 import { SimuladorSpreadModule } from './pages/finance/SimuladorSpreadModule'
 import { SplitFinanceiroModule } from './pages/finance/SplitFinanceiroModule'
 import { GenericFinanceSubView } from './pages/finance/GenericFinanceSubView'
+import FinanceAccountingHubPage from './pages/FinanceAccountingHubPage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -592,15 +593,47 @@ export default function App() {
           <FinanceiroConsolidadoPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
+        {/* FASE 18.4: ERP FINANCEIRO, CONTÁBIL, BORDERÔS E ASSINATURA DIGITAL */}
+        {['finance-accounting', 'finance-cost-centers', 'finance-chart-accounts', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page) && (
+          <FinanceAccountingHubPage
+            events={visibleEvents}
+            producerId={scopedProducerId}
+            initialTab={
+              page === 'finance-cost-centers' ? 'cost-centers' :
+              page === 'finance-chart-accounts' ? 'accounts' :
+              page === 'finance-accounting-entries' ? 'entries' :
+              page === 'finance-obligations' ? 'obligations' :
+              page === 'finance-dre' ? 'dre' :
+              page === 'finance-borderos' ? 'borderos' :
+              page === 'finance-signatures' ? 'signatures' :
+              page === 'finance-closing' ? 'closing' : 'dashboard'
+            }
+            notify={notify}
+            onBack={() => setPage('finance-dashboard')}
+          />
+        )}
+
         {/* FASE 18.1, 18.2 & 18.3: CONTABILIDADE INTEGRADA */}
         {page === 'accounting-dashboard' && (
-          <AccountingDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dashboard" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
         {page === 'accounting-chart' && (
-          <AccountingChartPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="accounts" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
         {page === 'accounting-entries' && (
-          <AccountingEntriesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="entries" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'accounting-cost-centers' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="cost-centers" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'accounting-reconciliation' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="reconciliation" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'accounting-closing' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="closing" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'accounting-dre' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dre" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
         {page === 'accounting-journal' && (
           <AccountingJournalPage events={visibleEvents} notify={notify} onNavigate={navigate} />
@@ -617,11 +650,13 @@ export default function App() {
           <GenericFinanceSubView moduleKey={page as any} onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
 
-        {/* CONTABILIDADE PLACEHOLDERS / DASHBOARD */}
+        {/* CONTABILIDADE ADVANCED */}
         {accountingPlaceholder.includes(page) && (
-          <ModulePlaceholder
-            title={titleMap[page] || 'Contabilidade Integrada'}
-            description="Módulo de inteligência contábil e fiscal conectado diretamente às vendas e liquidações do gateway (Fase 17)."
+          <FinanceAccountingHubPage
+            events={visibleEvents}
+            producerId={scopedProducerId}
+            initialTab="reports"
+            notify={notify}
             onBack={() => setPage('finance-dashboard')}
           />
         )}

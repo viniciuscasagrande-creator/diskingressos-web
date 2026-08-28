@@ -12,6 +12,7 @@ import { participantsRouter } from './routes/participants.js'
 import { checkinsRouter } from './routes/checkins.js'
 import { posRouter } from './routes/pos.js'
 import { financeOperationsRouter } from './routes/financeOperations.js'
+import { financeAccountingRouter } from './routes/financeAccounting.js'
 import { operationsRouter } from './routes/operations.js'
 import { ticketsRouter } from './routes/tickets.js'
 import { marketingRouter } from './routes/marketing.js'
@@ -34,7 +35,7 @@ app.use(cors({
 }))
 app.use(express.json({limit:'1mb'}))
 
-app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'16.7'}))
+app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'18.4'}))
 app.use('/api/tracking',trackingPublicRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/producers',producersRouter)
@@ -47,6 +48,7 @@ app.use('/api/participants',participantsRouter)
 app.use('/api/checkins',checkinsRouter)
 app.use('/api/pos',posRouter)
 app.use('/api/finance',financeOperationsRouter)
+app.use('/api/finance/accounting',financeAccountingRouter)
 app.use('/api/operations',operationsRouter)
 app.use('/api/marketing',marketingRouter)
 app.use('/api/automation',automationRouter)
@@ -56,4 +58,4 @@ app.use('/api/audit',auditRouter)
 app.use((_req,res)=>res.status(404).json({message:'Rota não encontrada.'}))
 
 const port=Number(process.env.PORT||process.env.API_PORT||3333)
-app.listen(port,()=>console.log(`DiskIngressos API Fase 16.7: http://localhost:${port}/api`))
+app.listen(port,()=>console.log(`DiskIngressos API Fase 18.4: http://localhost:${port}/api`))

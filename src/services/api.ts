@@ -1,166 +1,10 @@
 import type { AppUser, Producer } from '../auth/model'
-import { seedUsers, producers as seedProducers } from '../auth/model'
-import { events as seedEvents } from '../data/events'
-
 const API=import.meta.env.VITE_API_URL||'http://localhost:3333/api'
 let token=(typeof window!=='undefined'?(sessionStorage.getItem('disk_token')||localStorage.getItem('disk_token')||''):'')
 export function setApiToken(value:string,remember=false){token=value;if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token');(remember?localStorage:sessionStorage).setItem('disk_token',value)}}
 export function clearApiToken(){token='';if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token')}}
 export function hasStoredToken(){return !!token}
-
-const mockLinks: TrackingLink[] = [
-  { id: 1, code: '4amigos-instagram', name: 'Instagram — Lançamento 2026', destination: 'https://diskingressos.com.br/evento/1760', source: 'instagram', medium: 'cpc', campaign: 'lancamento_2026', content: 'story_01', term: 'ingressos', clicks: 1842, conversions: 87, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-instagram', qrPayload: 'https://disk.ing/4amigos-instagram' },
-  { id: 2, code: '4amigos-google', name: 'Google Ads — Pesquisa Direta', destination: 'https://diskingressos.com.br/evento/1760', source: 'google', medium: 'cpc', campaign: 'pesquisa_curitiba', content: 'anuncio_topo', term: '4amigos curitiba', clicks: 940, conversions: 31, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-google', qrPayload: 'https://disk.ing/4amigos-google' },
-  { id: 3, code: '4amigos-whatsapp', name: 'WhatsApp — Disparo Último Lote', destination: 'https://diskingressos.com.br/evento/1760', source: 'whatsapp', medium: 'mensagem', campaign: 'ultimo_lote_urgencia', content: 'cta_vip', term: '', clicks: 480, conversions: 24, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-whatsapp', qrPayload: 'https://disk.ing/4amigos-whatsapp' },
-  { id: 4, code: '4amigos-tiktok', name: 'TikTok Ads — Vídeo Lineup', destination: 'https://diskingressos.com.br/evento/1760', source: 'tiktok', medium: 'feed_video', campaign: 'trends_curitiba', content: 'video_lineup', term: '', clicks: 2150, conversions: 38, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/4amigos-tiktok', qrPayload: 'https://disk.ing/4amigos-tiktok' },
-  { id: 5, code: 'cult-vip', name: 'Influencer — Curitiba Cult VIP', destination: 'https://diskingressos.com.br/evento/1760', source: 'curitibacult', medium: 'influencer', campaign: 'parceria_vip', content: 'stories_arrasta', term: 'cupom_cult', clicks: 1420, conversions: 64, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/cult-vip', qrPayload: 'https://disk.ing/cult-vip' },
-  { id: 6, code: 'news-vip', name: 'E-mail — Newsletter Base Ativa', destination: 'https://diskingressos.com.br/evento/1760', source: 'email', medium: 'newsletter', campaign: 'base_ativa_shows', content: 'banner_principal', term: '', clicks: 890, conversions: 48, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/news-vip', qrPayload: 'https://disk.ing/news-vip' },
-  { id: 7, code: 'fb-remarketing', name: 'Facebook Ads — Remarketing Checkout', destination: 'https://diskingressos.com.br/evento/1760', source: 'facebook', medium: 'remarketing', campaign: 'abandono_carrinho', content: 'anuncio_carrossel', term: '', clicks: 630, conversions: 52, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/fb-remarketing', qrPayload: 'https://disk.ing/fb-remarketing' },
-  { id: 8, code: 'promoter-vip', name: 'Afiliados — Promoters Oficiais', destination: 'https://diskingressos.com.br/evento/1760', source: 'afiliados', medium: 'promoter', campaign: 'divulgacao_equipe', content: 'link_exclusivo', term: 'promoter_01', clicks: 1180, conversions: 58, producerId: 1, eventId: 1, trackedUrl: 'https://disk.ing/promoter-vip', qrPayload: 'https://disk.ing/promoter-vip' },
-];
-
-function getMockDashboard(linkId: number): UtmDashboard {
-  const link = mockLinks.find(l => l.id === linkId) || mockLinks[0];
-  const mult = link.id === 1 ? 1 : link.id === 2 ? 0.51 : link.id === 3 ? 0.26 : link.id === 4 ? 1.16 : link.id === 5 ? 0.77 : link.id === 6 ? 0.48 : link.id === 7 ? 0.34 : 0.64;
-  const visits = Math.round(1842 * mult);
-  const added = Math.round(312 * mult);
-  const checkout = Math.round(145 * mult);
-  const abandoned = Math.round(58 * mult);
-  const finalized = Math.round(87 * mult);
-  const revenueCents = Math.round(1248050 * mult);
-  const avgTicketCents = finalized ? Math.round(revenueCents / finalized) : 14345;
-  const conversionRate = visits ? (finalized / visits) * 100 : 0;
-
-  return {
-    link,
-    summary: {
-      visits,
-      attributedSessions: Math.round(284 * mult),
-      activeAttributions: Math.round(14 * mult),
-      abandonedAttributions: Math.round(42 * mult),
-      convertedAttributions: finalized,
-      added,
-      checkout,
-      removed: Math.round(18 * mult),
-      abandoned,
-      finalized,
-      revenueCents,
-      avgTicketCents,
-      conversionRate,
-    },
-    timeline: [
-      { date: '2026-08-20', added: Math.round(42 * mult), checkout: Math.round(22 * mult), removed: 2, abandoned: 8, finalized: Math.round(14 * mult), revenueCents: Math.round(198000 * mult) },
-      { date: '2026-08-21', added: Math.round(58 * mult), checkout: Math.round(30 * mult), removed: 4, abandoned: 10, finalized: Math.round(20 * mult), revenueCents: Math.round(285000 * mult) },
-      { date: '2026-08-22', added: Math.round(85 * mult), checkout: Math.round(44 * mult), removed: 5, abandoned: 16, finalized: Math.round(28 * mult), revenueCents: Math.round(412000 * mult) },
-      { date: '2026-08-23', added: Math.round(127 * mult), checkout: Math.round(49 * mult), removed: 7, abandoned: 24, finalized: Math.round(25 * mult), revenueCents: Math.round(353050 * mult) },
-    ],
-    hours: Array.from({ length: 24 }, (_, h) => ({
-      hour: h,
-      added: (h >= 10 && h <= 23) ? Math.round((Math.sin(h / 3) * 8 + 10) * mult) : 1,
-      checkout: (h >= 10 && h <= 23) ? Math.round((Math.sin(h / 3) * 4 + 5) * mult) : 0,
-      removed: (h >= 14 && h <= 22) ? 1 : 0,
-      abandoned: (h >= 12 && h <= 23) ? Math.round((Math.sin(h / 3) * 2 + 2) * mult) : 0,
-      finalized: (h >= 12 && h <= 23) ? Math.round((Math.sin(h / 3) * 3 + 3) * mult) : 0,
-    })),
-    actions: [
-      { id: 101, action: 'finalized', orderCode: '#PED-94821', customerName: 'Camila Guimarães', customerEmail: 'camila.g@gmail.com', ticketSummary: '2x Plateia Premium', amountCents: 36000, createdAt: '2026-08-23T19:42:10Z' },
-      { id: 102, action: 'checkout', orderCode: '#PED-94820', customerName: 'Rodrigo Antunes', customerEmail: 'rodrigo.a@outlook.com', ticketSummary: '1x Plateia Central', amountCents: 18000, createdAt: '2026-08-23T19:35:00Z' },
-      { id: 103, action: 'abandoned', orderCode: '#PED-94818', customerName: 'Mariana Silveira', customerEmail: 'mariana.s@hotmail.com', ticketSummary: '2x Balcão Nobre', amountCents: 24000, createdAt: '2026-08-23T19:12:45Z' },
-      { id: 104, action: 'finalized', orderCode: '#PED-94815', customerName: 'Felipe Rocha', customerEmail: 'felipe.r@gmail.com', ticketSummary: '4x Camarote Open', amountCents: 88000, createdAt: '2026-08-23T18:50:22Z' },
-      { id: 105, action: 'added', orderCode: null, customerName: 'Beatriz Lima', customerEmail: 'beatriz.l@yahoo.com', ticketSummary: '1x Plateia Premium', amountCents: 18000, createdAt: '2026-08-23T18:30:10Z' },
-      { id: 106, action: 'removed', orderCode: null, customerName: 'Lucas Mendes', customerEmail: 'lucas.m@gmail.com', ticketSummary: '1x Balcão Simples', amountCents: 9000, createdAt: '2026-08-23T18:15:00Z' },
-    ],
-    attributions: [
-      { id: 201, sessionKey: 'sess_9942a1bc', status: 'converted', customerName: 'Camila Guimarães', customerEmail: 'camila.g@gmail.com', customerPhone: '(41) 99881-2244', cartValueCents: 36000, firstSeenAt: '2026-08-23T19:20:00Z', lastActivityAt: '2026-08-23T19:42:10Z', convertedAt: '2026-08-23T19:42:10Z', abandonedAt: null, order: { id: 94821, code: '#PED-94821', status: 'pago', grossCents: 36000 } },
-      { id: 202, sessionKey: 'sess_8831f2dc', status: 'abandoned', customerName: 'Mariana Silveira', customerEmail: 'mariana.s@hotmail.com', customerPhone: '(41) 99123-4567', cartValueCents: 24000, firstSeenAt: '2026-08-23T18:55:00Z', lastActivityAt: '2026-08-23T19:12:45Z', convertedAt: null, abandonedAt: '2026-08-23T19:12:45Z', order: null },
-      { id: 203, sessionKey: 'sess_7720e3ab', status: 'active', customerName: 'Rodrigo Antunes', customerEmail: 'rodrigo.a@outlook.com', customerPhone: '(41) 98765-4321', cartValueCents: 18000, firstSeenAt: '2026-08-23T19:30:00Z', lastActivityAt: '2026-08-23T19:35:00Z', convertedAt: null, abandonedAt: null, order: null },
-      { id: 204, sessionKey: 'sess_6619d4ca', status: 'converted', customerName: 'Felipe Rocha', customerEmail: 'felipe.r@gmail.com', customerPhone: '(41) 99988-7766', cartValueCents: 88000, firstSeenAt: '2026-08-23T18:30:00Z', lastActivityAt: '2026-08-23T18:50:22Z', convertedAt: '2026-08-23T18:50:22Z', abandonedAt: null, order: { id: 94815, code: '#PED-94815', status: 'pago', grossCents: 88000 } },
-    ],
-  };
-}
-
-async function request<T>(path:string,options:RequestInit={}){
-  try {
-    const r=await fetch(`${API}${path}`,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok) throw new Error(data.message||'Erro na API');
-    return data as T;
-  } catch (err: any) {
-    // Graceful fallback for offline / Vercel demo
-    if (path.startsWith('/auth/login')) {
-      const body = JSON.parse((options.body as string) || '{}');
-      const found = seedUsers.find(u => u.email.toLowerCase() === (body.email || '').toLowerCase()) || seedUsers[1];
-      return { token: 'demo-jwt-token', user: found } as unknown as T;
-    }
-    if (path.startsWith('/auth/me')) {
-      return seedUsers[1] as unknown as T;
-    }
-    if (path.startsWith('/producers')) {
-      return seedProducers as unknown as T;
-    }
-    if (path.startsWith('/users')) {
-      return seedUsers as unknown as T;
-    }
-    if (path.startsWith('/events')) {
-      return seedEvents as unknown as T;
-    }
-    if (path.startsWith('/marketing/links')) {
-      if (options.method === 'POST') {
-        const body = JSON.parse((options.body as string) || '{}');
-        const newLink: TrackingLink = {
-          id: Date.now(),
-          code: body.name ? body.name.toLowerCase().replace(/[^a-z0-9]/g, '-') : 'link-utm',
-          name: body.name || 'Nova UTM',
-          destination: body.destination || 'https://diskingressos.com.br/',
-          source: body.source || null,
-          medium: body.medium || null,
-          campaign: body.campaign || null,
-          content: body.content || null,
-          term: body.term || null,
-          clicks: 0,
-          conversions: 0,
-          producerId: body.producerId || 1,
-          eventId: body.eventId || 1,
-          trackedUrl: `${body.destination || 'https://diskingressos.com.br/'}?utm_source=${body.source || ''}&utm_medium=${body.medium || ''}&utm_campaign=${body.campaign || ''}`,
-          qrPayload: body.destination || 'https://diskingressos.com.br/',
-        };
-        mockLinks.unshift(newLink);
-        return newLink as unknown as T;
-      }
-      return mockLinks as unknown as T;
-    }
-    if (path.startsWith('/marketing/utm/dashboard')) {
-      const url = new URL(`http://localhost${path}`);
-      const linkId = Number(url.searchParams.get('linkId') || '1');
-      return getMockDashboard(linkId) as unknown as T;
-    }
-    if (path.startsWith('/marketing/utm/abandon-sweep')) {
-      return { processed: 3, recoveries: 2 } as unknown as T;
-    }
-    if (path.startsWith('/marketing/campaigns')) {
-      return [] as unknown as T;
-    }
-    if (path.startsWith('/marketing/integrations')) {
-      return [] as unknown as T;
-    }
-    if (path.startsWith('/automation/')) {
-      return [] as unknown as T;
-    }
-    if (path.startsWith('/events')) {
-      return seedEvents as unknown as T;
-    }
-    if (path.startsWith('/operations/summary')) {
-      return { events: seedEvents.length, lots: 12, orders: 480, tickets: 950, participants: 600, checkins: 420, terminals: 4, payouts: 2, balanceCents: 15400000 } as unknown as T;
-    }
-    if (path.startsWith('/lots') || path.startsWith('/orders') || path.startsWith('/participants') || path.startsWith('/tickets') || path.startsWith('/checkins')) {
-      return [] as unknown as T;
-    }
-    if (path.startsWith('/finance/balance')) {
-      return { entriesCents: 18450000, exitsCents: 3050000, balanceCents: 15400000 } as unknown as T;
-    }
-    throw err;
-  }
-}
+async function request<T>(path:string,options:RequestInit={}){const r=await fetch(`${API}${path}`,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.message||'Erro na API');return data as T}
 export async function login(email:string,password:string){return request<{token:string;user:AppUser}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})})}
 export const getMe=()=>request<AppUser>('/auth/me')
 export const getProducers=()=>request<Producer[]>('/producers')
@@ -186,6 +30,12 @@ export type TrackingConfig={id?:number;provider:string;scope:'global'|'producer'
 export type ResolvedTracking={provider:string;source:string;mode:string;externalId:string|null;configJson:string|null}
 export const getMarketingCampaigns=(producerId?:number,eventId?:number)=>request<MarketingCampaign[]>(`/marketing/campaigns${qs({producerId,eventId})}`)
 export const createMarketingCampaign=(body:any)=>request<MarketingCampaign>('/marketing/campaigns',{method:'POST',body:JSON.stringify(body)})
+export type ReadyCampaignTemplate={key:string;name:string;description:string;objective:string;audience:string;recommendedChannels:string[];suggestedBudgetCents:number;badge:string}
+export type ReadyCampaignActivation={id:number;templateKey:string;name:string;objective:string;status:string;audience:string;channels:string[];campaignIds:number[];trackingLinkIds:number[];budgetCents:number;startsAt:string|null;endsAt:string|null;producerId:number;eventId:number;event?:{id:number;title:string;code:string};metrics?:{spentCents:number;revenueCents:number;impressions:number;clicks:number;conversions:number;roas:number;cpaCents:number}}
+export const getReadyCampaignTemplates=()=>request<ReadyCampaignTemplate[]>('/marketing/ready-campaigns/templates')
+export const getReadyCampaignActivations=(producerId?:number,eventId?:number)=>request<ReadyCampaignActivation[]>(`/marketing/ready-campaigns${qs({producerId,eventId})}`)
+export const activateReadyCampaign=(body:any)=>request<ReadyCampaignActivation>('/marketing/ready-campaigns/activate',{method:'POST',body:JSON.stringify(body)})
+export const updateReadyCampaignActivation=(id:number,status:string)=>request<ReadyCampaignActivation>(`/marketing/ready-campaigns/${id}`,{method:'PATCH',body:JSON.stringify({status})})
 export const updateMarketingCampaign=(id:number,body:any)=>request<MarketingCampaign>(`/marketing/campaigns/${id}`,{method:'PATCH',body:JSON.stringify(body)})
 export const getTrackingLinks=(producerId?:number,eventId?:number)=>request<TrackingLink[]>(`/marketing/links${qs({producerId,eventId})}`)
 export const createTrackingLink=(body:any)=>request<TrackingLink>('/marketing/links',{method:'POST',body:JSON.stringify(body)})
@@ -257,9 +107,47 @@ export const deleteTrackingIntegration=(id:number)=>request<void>(`/marketing/in
 export const testTrackingIntegration=(id:number)=>request<{ok:boolean;message:string;lastTestAt:string}>(`/marketing/integrations/${id}/test`,{method:'POST'})
 export const getTrackingIntegrationLogs=(id:number)=>request<TrackingDeliveryLog[]>(`/marketing/integrations/${id}/logs`)
 
-export type ReadyCampaignTemplate={key:string;name:string;description:string;objective:string;audience:string;recommendedChannels:string[];suggestedBudgetCents:number;badge:string}
-export type ReadyCampaignActivation={id:number;templateKey:string;name:string;objective:string;status:string;audience:string;channels:string[];campaignIds:number[];trackingLinkIds:number[];budgetCents:number;startsAt:string|null;endsAt:string|null;producerId:number;eventId:number;event?:{id:number;title:string;code:string};metrics?:{spentCents:number;revenueCents:number;impressions:number;clicks:number;conversions:number;roas:number;cpaCents:number}}
-export const getReadyCampaignTemplates=()=>request<ReadyCampaignTemplate[]>('/marketing/ready-campaigns/templates')
-export const getReadyCampaignActivations=(producerId?:number,eventId?:number)=>request<ReadyCampaignActivation[]>(`/marketing/ready-campaigns${qs({producerId,eventId})}`)
-export const activateReadyCampaign=(body:any)=>request<ReadyCampaignActivation>('/marketing/ready-campaigns/activate',{method:'POST',body:JSON.stringify(body)})
-export const updateReadyCampaignActivation=(id:number,status:string)=>request<ReadyCampaignActivation>(`/marketing/ready-campaigns/${id}`,{method:'PATCH',body:JSON.stringify({status})})
+// ===== Fase 18.4 — Financeiro Contábil, Borderôs e Assinaturas =====
+export type FinanceAccountingSummary={revenueCents:number;netRevenueCents:number;expensesCents:number;resultCents:number;reconciledCents:number;pendingCents:number;divergences:number;payablesCents:number;receivablesCents:number;borderos:number;signatures:number;costCenters:number;entries:number}
+export type CostCenter={id:number;code:string;name:string;description:string|null;type:string;status:string;eventId:number|null;producerId:number;event?:{id:number;title:string}|null;_count?:{entries:number;obligations:number;budgets:number}}
+export type ChartAccount={id:number;code:string;name:string;nature:string;accountType:string;level:number;parentCode:string|null;status:string;producerId:number}
+export type AccountingEntry={id:number;code:string;competence:string;entryDate:string;description:string;debitCents:number;creditCents:number;status:string;source:string;documentRef:string|null;event?:{id:number;title:string}|null;costCenter?:CostCenter|null;chartAccount?:ChartAccount|null}
+export type ReconciliationItem={id:number;code:string;sourceType:string;sourceRef:string|null;externalRef:string|null;expectedCents:number;receivedCents:number;differenceCents:number;status:string;reason:string|null;reconciledBy:string|null;reconciledAt:string|null;occurredAt:string;event?:{id:number;title:string}|null}
+export type FinancialObligation={id:number;code:string;kind:'pagar'|'receber';category:string;description:string;amountCents:number;dueDate:string;paidAt:string|null;status:string;counterparty:string|null;documentRef:string|null;event?:{id:number;title:string}|null;costCenter?:CostCenter|null;chartAccount?:ChartAccount|null}
+export type BudgetLine={id:number;competence:string;category:string;plannedCents:number;realizedCents:number;notes:string|null;costCenter?:CostCenter|null;event?:{id:number;title:string}|null}
+export type BorderoDocument={id:number;code:string;reportType:string;version:number;status:string;title:string;generatedAt:string;approvedAt:string|null;approvedBy:string|null;event:{id:number;title:string;code:string};summary?:any;signatureRequests?:SignatureRequest[]}
+export type SignatureSigner={id:number;name:string;email:string;role:string|null;orderIndex:number;status:string;signedAt:string|null}
+export type SignatureRequest={id:number;code:string;provider:string;providerDocumentId:string|null;status:string;subject:string;message:string|null;signingOrder:boolean;documentUrl:string|null;signedFileUrl:string|null;hash:string|null;sentAt:string|null;completedAt:string|null;signers:SignatureSigner[];bordero?:{id:number;code:string;title:string}|null}
+export type DreSummary={grossRevenueCents:number;deductionsCents:number;netRevenueCents:number;operatingCostsCents:number;operatingResultCents:number;marginPercent:number;feeCents:number}
+export type FinancialClosing={id:number;competence:string;status:string;checklistJson:string;notes:string|null;closedBy:string|null;closedAt:string|null;event?:{id:number;title:string;code:string}|null;checklist?:Record<string,boolean>}
+const financeQs=(producerId?:number,eventId?:number)=>qs({producerId,eventId})
+export const getFinanceAccountingSummary=(producerId?:number,eventId?:number)=>request<FinanceAccountingSummary>(`/finance/accounting/summary${financeQs(producerId,eventId)}`)
+export const bootstrapFinanceAccounting=(body:any)=>request<{ok:boolean}>('/finance/accounting/bootstrap',{method:'POST',body:JSON.stringify(body)})
+export const getCostCenters=(producerId?:number,eventId?:number)=>request<CostCenter[]>(`/finance/accounting/cost-centers${financeQs(producerId,eventId)}`)
+export const createCostCenter=(body:any)=>request<CostCenter>('/finance/accounting/cost-centers',{method:'POST',body:JSON.stringify(body)})
+export const updateCostCenter=(id:number,body:any)=>request<CostCenter>(`/finance/accounting/cost-centers/${id}`,{method:'PATCH',body:JSON.stringify(body)})
+export const getChartAccounts=(producerId?:number)=>request<ChartAccount[]>(`/finance/accounting/chart-accounts${qs({producerId})}`)
+export const createChartAccount=(body:any)=>request<ChartAccount>('/finance/accounting/chart-accounts',{method:'POST',body:JSON.stringify(body)})
+export const getAccountingEntries=(producerId?:number,eventId?:number)=>request<AccountingEntry[]>(`/finance/accounting/entries${financeQs(producerId,eventId)}`)
+export const createAccountingEntry=(body:any)=>request<AccountingEntry>('/finance/accounting/entries',{method:'POST',body:JSON.stringify(body)})
+export const getReconciliations=(producerId?:number,eventId?:number)=>request<ReconciliationItem[]>(`/finance/accounting/reconciliations${financeQs(producerId,eventId)}`)
+export const createReconciliation=(body:any)=>request<ReconciliationItem>('/finance/accounting/reconciliations',{method:'POST',body:JSON.stringify(body)})
+export const reconcileItem=(id:number,body:any)=>request<ReconciliationItem>(`/finance/accounting/reconciliations/${id}/reconcile`,{method:'PATCH',body:JSON.stringify(body)})
+export const autoReconcile=(body:any)=>request<{created:number}>('/finance/accounting/reconciliations/auto',{method:'POST',body:JSON.stringify(body)})
+export const getFinancialObligations=(producerId?:number,eventId?:number,kind?:'pagar'|'receber')=>request<FinancialObligation[]>(`/finance/accounting/obligations${financeQs(producerId,eventId)}${kind?`${financeQs(producerId,eventId)?'&':'?'}kind=${kind}`:''}`)
+export const createFinancialObligation=(body:any)=>request<FinancialObligation>('/finance/accounting/obligations',{method:'POST',body:JSON.stringify(body)})
+export const payFinancialObligation=(id:number)=>request<FinancialObligation>(`/finance/accounting/obligations/${id}/pay`,{method:'PATCH',body:'{}'})
+export const getBudgets=(producerId?:number,eventId?:number)=>request<BudgetLine[]>(`/finance/accounting/budgets${financeQs(producerId,eventId)}`)
+export const createBudgetLine=(body:any)=>request<BudgetLine>('/finance/accounting/budgets',{method:'POST',body:JSON.stringify(body)})
+export const getBorderos=(producerId?:number,eventId?:number)=>request<BorderoDocument[]>(`/finance/accounting/borderos${financeQs(producerId,eventId)}`)
+export const generateBordero=(body:any)=>request<BorderoDocument>('/finance/accounting/borderos/generate',{method:'POST',body:JSON.stringify(body)})
+export const getBorderoDetail=(id:number)=>request<any>(`/finance/accounting/borderos/${id}/detail`)
+export const approveBordero=(id:number)=>request<BorderoDocument>(`/finance/accounting/borderos/${id}/approve`,{method:'PATCH',body:'{}'})
+export const getSignatureRequests=(producerId?:number,eventId?:number)=>request<SignatureRequest[]>(`/finance/accounting/signatures${financeQs(producerId,eventId)}`)
+export const createSignatureRequest=(body:any)=>request<SignatureRequest>('/finance/accounting/signatures',{method:'POST',body:JSON.stringify(body)})
+export const updateSignatureStatus=(id:number,body:any)=>request<SignatureRequest>(`/finance/accounting/signatures/${id}/status`,{method:'PATCH',body:JSON.stringify(body)})
+export const updateSignerStatus=(requestId:number,signerId:number,status:string)=>request<SignatureSigner>(`/finance/accounting/signatures/${requestId}/signers/${signerId}`,{method:'PATCH',body:JSON.stringify({status})})
+export const getDreSummary=(producerId?:number,eventId?:number)=>request<DreSummary>(`/finance/accounting/dre${financeQs(producerId,eventId)}`)
+export const getFinancialClosings=(producerId?:number,eventId?:number)=>request<FinancialClosing[]>(`/finance/accounting/closings${financeQs(producerId,eventId)}`)
+export const createFinancialClosing=(body:any)=>request<FinancialClosing>('/finance/accounting/closings',{method:'POST',body:JSON.stringify(body)})
+export const closeFinancialClosing=(id:number)=>request<FinancialClosing>(`/finance/accounting/closings/${id}/close`,{method:'PATCH',body:'{}'})

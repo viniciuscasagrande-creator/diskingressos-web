@@ -21,6 +21,7 @@ export type PageKey =
   | 'finance-dashboard' | 'finance-hub' | 'finance' | 'finance-statement' | 'finance-cashflow' | 'finance-receivables' | 'finance-payables'
   | 'finance-payouts' | 'finance-advance' | 'finance-reconciliation' | 'finance-bank-accounts' | 'finance-expenses' | 'finance-bordero' | 'finance-consolidated'
   | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds'
+  | 'finance-accounting' | 'finance-cost-centers' | 'finance-chart-accounts' | 'finance-accounting-entries' | 'finance-obligations' | 'finance-dre' | 'finance-borderos' | 'finance-signatures' | 'finance-closing'
   // CONTABILIDADE
   | 'accounting-dashboard' | 'accounting-chart' | 'accounting-journal' | 'accounting-ledger' | 'accounting-entries' | 'accounting-cost-centers'
   | 'accounting-reconciliation' | 'accounting-audit' | 'accounting-closing'
@@ -69,18 +70,24 @@ const mainItems: Item[] = [
 
 // 2. FINANCEIRO
 const financeItems: Item[] = [
+  { key: 'finance-accounting', label: 'Financeiro Contábil 18.4', icon: WalletCards, badge: '⚡ ERP' },
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: BarChart3 },
+  { key: 'finance-borderos', label: 'Central de Borderôs', icon: ReceiptText, badge: 'Completo' },
+  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature, badge: 'Autentique' },
+  { key: 'finance-cost-centers', label: 'Centro de Custos', icon: Boxes },
+  { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck },
+  { key: 'finance-accounting-entries', label: 'Lançamentos Contábeis', icon: FileText },
+  { key: 'finance-reconciliation', label: 'Conciliação Contábil & Bancária', icon: Scale },
+  { key: 'finance-obligations', label: 'Contas a Pagar & Receber', icon: Landmark },
+  { key: 'finance-dre', label: 'DRE & Orçamento', icon: ChartNoAxesCombined },
+  { key: 'finance-closing', label: 'Fechamento Contábil', icon: LockKeyhole },
+  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
   { key: 'finance', label: 'Saldos & Carteira', icon: WalletCards },
   { key: 'finance-statement', label: 'Extrato', icon: ReceiptText },
   { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
-  { key: 'finance-receivables', label: 'Contas a Receber', icon: ArrowDownLeft, tier: 'advanced' },
-  { key: 'finance-payables', label: 'Contas a Pagar', icon: ArrowUpRight, tier: 'advanced' },
   { key: 'finance-payouts', label: 'Repasses', icon: Landmark },
   { key: 'finance-advance', label: 'Antecipações', icon: Zap },
-  { key: 'finance-reconciliation', label: 'Conciliação Bancária', icon: Scale, tier: 'advanced' },
-  { key: 'finance-bank-accounts', label: 'Contas Bancárias', icon: Building },
   { key: 'finance-expenses', label: 'Despesas', icon: TrendingDown },
-  { key: 'finance-bordero', label: 'Borderô', icon: FileSpreadsheet },
   { key: 'finance-consolidated', label: 'Consolidado (12)', icon: CheckCircle2, badge: 'Fase 17' },
 ]
 
