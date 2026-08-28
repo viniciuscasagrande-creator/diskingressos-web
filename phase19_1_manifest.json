@@ -1,0 +1,20 @@
+{
+  "phase": "19.1",
+  "title": "Mapa Mestre ERP DiskIngressos",
+  "status": "planejado",
+  "next_phases": [
+    "19.2 Hub ERP Unificado",
+    "19.3 Contas a Pagar & Receber Avançado",
+    "19.4 Tesouraria & Fluxo de Caixa",
+    "19.5 Controladoria",
+    "19.6 Compras & Fornecedores",
+    "19.7 Fiscal",
+    "19.8 Contratos & Assinaturas",
+    "19.9 Auditoria, Compliance & Governança",
+    "19.10 BI Executivo ERP",
+    "19.11 IA Financeira & Operacional",
+    "19.12 Integrações Corporativas",
+    "19.13 ERP Mobile Completo",
+    "19.14 Hardening & Escala"
+  ]
+}
