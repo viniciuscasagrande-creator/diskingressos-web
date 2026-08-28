@@ -34,6 +34,20 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
   const formatBrl = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
+  const channelLabels: Record<MarketingChannel, string> = {
+    instagram: 'Instagram',
+    facebook: 'Meta Ads',
+    google: 'Google Ads',
+    whatsapp: 'WhatsApp',
+    email: 'E-mail Marketing',
+    direct: 'Direto',
+    affiliate: 'Afiliados / Influenciadores',
+    tiktok: 'TikTok Ads',
+    crm: 'CRM',
+    coupon: 'Promoção / Cupom',
+    multichannel: 'Multicanal',
+  };
+
   const filtered = campaigns.filter((c) => {
     const matchSearch = c.name.toLowerCase().includes(search.toLowerCase()) || c.utmCampaign.toLowerCase().includes(search.toLowerCase());
     const matchChannel = selectedChannel === 'all' || c.channel === selectedChannel;
@@ -49,9 +63,9 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
       id: `CMP-00${campaigns.length + 1}`,
       name,
       channel,
-      channelLabel: channel === 'instagram' ? 'Instagram' : channel === 'google' ? 'Google Ads' : channel === 'whatsapp' ? 'WhatsApp' : 'E-mail',
-      eventId,
-      eventName: eventObj?.title || 'Evento Geral',
+      channelLabel: channelLabels[channel],
+      eventId: eventId === 0 ? null : eventId,
+      eventName: eventId === 0 ? 'Todos os Eventos' : (eventObj?.title || 'Evento Geral'),
       status: 'active',
       budget: Number(budget) || 0,
       spent: 0,
@@ -129,7 +143,13 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
             <option value="instagram">Instagram Ads</option>
             <option value="google">Google Ads</option>
             <option value="whatsapp">WhatsApp</option>
-            <option value="facebook">Meta Pixel</option>
+            <option value="facebook">Meta Ads</option>
+            <option value="email">E-mail Marketing</option>
+            <option value="tiktok">TikTok Ads</option>
+            <option value="affiliate">Afiliados / Influenciadores</option>
+            <option value="crm">CRM</option>
+            <option value="coupon">Promoções / Cupons</option>
+            <option value="multichannel">Multicanal</option>
           </select>
         </div>
       </div>
@@ -224,6 +244,11 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
                 <option value="whatsapp">WhatsApp Direct / Disparos</option>
                 <option value="facebook">Meta Pixel Ads</option>
                 <option value="email">E-mail Marketing</option>
+                <option value="tiktok">TikTok Ads</option>
+                <option value="affiliate">Afiliados / Influenciadores</option>
+                <option value="crm">CRM / Reativação</option>
+                <option value="coupon">Promoção / Cupom</option>
+                <option value="multichannel">Multicanal</option>
               </select>
             </div>
 
@@ -234,6 +259,7 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
                 onChange={(e) => setEventId(Number(e.target.value))}
                 className="w-full bg-slate-50 border border-slate-300 rounded-btn px-3 py-2 text-xs text-slate-900 outline-none cursor-pointer"
               >
+                <option value={0}>Campanha Global / Todos os Eventos</option>
                 {events.map((ev) => (
                   <option key={ev.id} value={ev.id}>
                     {ev.title}

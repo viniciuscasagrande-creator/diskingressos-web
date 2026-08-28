@@ -1,4 +1,4 @@
-export type MarketingChannel = 'instagram' | 'facebook' | 'google' | 'whatsapp' | 'email' | 'direct' | 'affiliate';
+export type MarketingChannel = 'instagram' | 'facebook' | 'google' | 'whatsapp' | 'email' | 'direct' | 'affiliate' | 'tiktok' | 'crm' | 'coupon' | 'multichannel';
 
 export type TrackingInheritanceMode = 'inherit' | 'custom' | 'disabled';
 

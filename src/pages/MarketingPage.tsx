@@ -8,6 +8,7 @@ import type { EventItem } from '../data/events'
 import AutomationCenterPage from './AutomationCenterPage'
 import UtmConversionsCenter from '../components/UtmConversionsCenter'
 import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
+import { MarketingCampaignsPage } from './marketing/MarketingCampaignsPage'
 import { createMarketingCampaign, getMarketingCampaigns, getResolvedTracking, getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign, type MarketingCampaign, type ResolvedTracking, type TrackingConfig } from '../services/api'
 
 type Mode = 'hub' | 'dashboard' | 'campaigns' | 'create' | 'automations' | 'whatsapp' | 'email' | 'coupons' | 'links' | 'affiliates' | 'tracking' | 'reports'
@@ -91,7 +92,7 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
   }
 
   if (mode === 'dashboard') return <Dashboard producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} eventName={eventName} notify={notify} onNavigate={onNavigate} />
-  if (mode === 'campaigns' || mode === 'create') return <Campaigns producerId={producerId} events={events} initialEventId={selectedEventId} createOnly={mode === 'create'} notify={notify} />
+  if (mode === 'campaigns' || mode === 'create') return <MarketingCampaignsPage events={events} notify={notify} />
   if (mode === 'links') return <Links producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
   if (mode === 'tracking') return <Tracking producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
   if (mode === 'automations' || mode === 'whatsapp' || mode === 'email') return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify} />
