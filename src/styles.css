@@ -274,6 +274,277 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
 .utm-period-select option { background: #0A1726; color: #FFFFFF; }
 @keyframes utm-pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
+/* Pixel-Perfect UTM Conversions Center Styles */
+.utm-source-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: #1E293B;
+}
+.utm-source-avatar.instagram { background: linear-gradient(135deg, #833AB4, #FD1D1D, #FCB045); }
+.utm-source-avatar.google { background: #FFFFFF; }
+.utm-source-avatar.whatsapp { background: #25D366; }
+.utm-source-avatar.tiktok { background: #000000; }
+.utm-source-avatar.influencer { background: #D946EF; }
+.utm-source-avatar.email { background: #3B82F6; }
+.utm-source-avatar.facebook { background: #1877F2; }
+.utm-source-avatar.affiliates { background: #F59E0B; }
+.utm-source-avatar.big { width: 42px; height: 42px; border-radius: 10px; }
+
+.utm-count-badge {
+  font-size: 11px;
+  background: #1E293B;
+  color: #94A3B8;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #334155;
+}
+
+.live-status-pill {
+  font-size: 10px;
+  color: #4ADE80;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.utm-view-all-btn {
+  background: transparent;
+  border: 0;
+  color: #38BDF8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.utm-view-all-btn:hover { text-decoration: underline; }
+
+.kpi-title-label { font-size: 11px; color: #94A3B8; display: block; }
+.kpi-main-value { font-size: 22px; font-weight: 800; color: #F8FAFC; display: block; margin: 4px 0 2px; }
+.kpi-delta-tag { font-size: 10px; font-weight: 700; }
+.kpi-delta-tag.positive-tag { color: #4ADE80; }
+.kpi-delta-tag.neutral-tag { color: #4ADE80; }
+
+.utm-funnel-row-v3 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.funnel-trapezoid-wrap {
+  width: 130px;
+  height: 28px;
+}
+.funnel-trapezoid-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+.funnel-text-labels {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  font-size: 11px;
+  align-items: center;
+}
+.funnel-step-name { color: #E2E8F0; }
+.funnel-step-count { color: #F8FAFC; font-weight: 700; }
+.funnel-step-pct { color: #94A3B8; }
+
+.utm-funnel-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #1E293B;
+  font-size: 12px;
+  color: #94A3B8;
+}
+.conversion-highlight {
+  color: #4ADE80;
+  font-size: 16px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.utm-svg-chart-wrap {
+  position: relative;
+  width: 100%;
+  margin-top: 8px;
+}
+.utm-spline-svg {
+  width: 100%;
+  height: 100px;
+}
+.chart-date-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #64748B;
+  font-size: 9px;
+  margin-top: 6px;
+}
+
+.utm-line-legend span { font-size: 10px; font-weight: 600; }
+.dot-green { color: #10B981; }
+.dot-orange { color: #F97316; }
+.dot-purple { color: #A855F7; }
+.dot-blue { color: #3B82F6; }
+
+.utm-hour-chart-v3 {
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding-top: 10px;
+}
+.utm-hour-col-v3 {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+.utm-bar-fill {
+  width: 100%;
+  max-width: 12px;
+  background: #3B82F6;
+  border-radius: 2px 2px 0 0;
+  transition: all 0.2s ease;
+}
+.utm-hour-col-v3 small {
+  font-size: 8px;
+  color: #64748B;
+  margin-top: 4px;
+}
+
+.tool-btn-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1E293B;
+  border: 1px solid #334155;
+  color: #E2E8F0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tool-btn-dark:hover { background: #334155; }
+
+.order-code-link { color: #38BDF8; }
+.utm-status-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.utm-status-tag.finalized { background: rgba(34, 197, 94, 0.15); color: #4ADE80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.utm-status-tag.checkout { background: rgba(249, 115, 22, 0.15); color: #FB923C; border: 1px solid rgba(249, 115, 22, 0.3); }
+.utm-status-tag.abandoned { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.utm-status-tag.added { background: rgba(234, 179, 8, 0.15); color: #FACC15; border: 1px solid rgba(234, 179, 8, 0.3); }
+
+.order-customer-cell strong, .order-tickets-cell strong { display: block; color: #F8FAFC; font-size: 12px; }
+.order-customer-cell small, .order-tickets-cell small, .order-utm-cell small { display: block; color: #64748B; font-size: 10px; }
+.order-utm-cell span { color: #94A3B8; font-size: 11px; }
+.order-date-time { color: #94A3B8; font-size: 11px; }
+
+.utm-table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-top: 1px solid #1E293B;
+  font-size: 12px;
+  color: #94A3B8;
+}
+.pagination-page-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pagination-page-size select {
+  background: #1E293B;
+  border: 1px solid #334155;
+  color: #F8FAFC;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pag-btn {
+  background: #1E293B;
+  border: 1px solid #334155;
+  color: #F8FAFC;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.pag-btn.active {
+  background: #2563EB;
+  border-color: #2563EB;
+}
+.pag-btn:disabled { opacity: 0.4; cursor: default; }
+
+.utm-recovery-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.recovery-metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.recovery-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #1E293B;
+  font-size: 12px;
+  color: #94A3B8;
+}
+.recovery-metric-row strong { color: #F8FAFC; font-size: 13px; }
+.recovered-money-value { color: #4ADE80 !important; font-weight: 800; }
+.recovery-cta-btn { margin-top: 8px; font-weight: 700; }
+.recovery-info-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #64748B;
+  margin-top: 6px;
+}
+.icon-more-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: #1E293B;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #94A3B8;
+  cursor: pointer;
+}
+.icon-more-btn:hover { background: #334155; color: #FFFFFF; }
+
+
 /* ==========================================================================
    FASE 17: MÓDULO FINANCEIRO & CONTABILIDADE (CORPORATE CLEAN DESIGN)
    ========================================================================== */

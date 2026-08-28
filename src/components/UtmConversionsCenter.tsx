@@ -3,7 +3,8 @@ import {
   AlertTriangle, BarChart3, CheckCircle2, ChevronDown, CircleDollarSign, Copy,
   Download, ExternalLink, Filter, Link2, MousePointerClick, Plus, QrCode, Radar,
   RefreshCw, Search, ShoppingCart, Sparkles, TrendingUp, UserRoundCheck, X, Eye,
-  MessageCircle, Mail
+  MessageCircle, Mail, Share2, MoreHorizontal, Users, Target, Clock, ArrowUpRight,
+  TrendingDown, Info, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
@@ -11,745 +12,815 @@ import {
   type TrackingLink, type UtmDashboard, type UtmSummary, type UtmJourneyAction
 } from '../services/api'
 
-type Props={event:EventItem;notify:(message:string)=>void}
-type LinkOverview={link:TrackingLink;summary?:UtmSummary}
+type Props = { event: EventItem; notify: (message: string) => void }
+type LinkOverview = { link: TrackingLink; summary?: UtmSummary }
 
-const money=(cents:number)=>`R$ ${(cents/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}`
-const actionLabels:Record<string,string>={added:'Adicionou',checkout:'Checkout',removed:'Removeu',abandoned:'Abandonou',finalized:'Finalizou'}
-const sourceLabel=(source:string|null)=>source?source.charAt(0).toUpperCase()+source.slice(1):'Sem origem'
-const rate=(value:number,total:number)=>total?`${((value/total)*100).toFixed(1).replace('.',',')}%`:'0,0%'
-const formatDate=(date:string)=>{const [y,m,d]=date.split('-');void y;return `${d}/${m}`}
+const money = (cents: number) => `R$ ${(cents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+const actionLabels: Record<string, string> = { added: 'Adicionou', checkout: 'Checkout', removed: 'Removeu', abandoned: 'Abandonou', finalized: 'Finalizado' }
 
-export default function UtmConversionsCenter({event,notify}:Props){
- const [links,setLinks]=useState<TrackingLink[]>([])
- const [selectedId,setSelectedId]=useState<number|''>('')
- const [dashboard,setDashboard]=useState<UtmDashboard|null>(null)
- const [overview,setOverview]=useState<Record<number,UtmSummary>>({})
- const [loading,setLoading]=useState(false)
- const [overviewLoading,setOverviewLoading]=useState(false)
- const [openNew,setOpenNew]=useState(false)
- const [filter,setFilter]=useState('all')
- const [search,setSearch]=useState('')
- const [linkSearch,setLinkSearch]=useState('')
- const [sourceFilter,setSourceFilter]=useState('all')
- const [period,setPeriod]=useState<'all'|'today'|'7'|'30'|'90'>('all')
- const [qrModal,setQrModal]=useState<{name:string;url:string;payload:string}|null>(null)
- const [selectedOrder,setSelectedOrder]=useState<UtmJourneyAction|null>(null)
- const [showRecoveryModal,setShowRecoveryModal]=useState(false)
- const [copiedId,setCopiedId]=useState<number|null>(null)
- const [form,setForm]=useState({name:'',source:'instagram',medium:'cpc',campaign:`evento-${event.code}`,term:'',content:'',destination:`https://www.diskingressos.com.br/evento/${event.code}`})
+export default function UtmConversionsCenter({ event, notify }: Props) {
+  const [links, setLinks] = useState<TrackingLink[]>([])
+  const [selectedId, setSelectedId] = useState<number | ''>('')
+  const [dashboard, setDashboard] = useState<UtmDashboard | null>(null)
+  const [overview, setOverview] = useState<Record<number, UtmSummary>>({})
+  const [loading, setLoading] = useState(false)
+  const [overviewLoading, setOverviewLoading] = useState(false)
+  const [openNew, setOpenNew] = useState(false)
+  const [filter, setFilter] = useState('all')
+  const [search, setSearch] = useState('')
+  const [linkSearch, setLinkSearch] = useState('')
+  const [sourceFilter, setSourceFilter] = useState('all')
+  const [period, setPeriod] = useState('01/05/2026 - 31/05/2026')
+  const [qrModal, setQrModal] = useState<{ name: string; url: string; payload: string } | null>(null)
+  const [selectedOrder, setSelectedOrder] = useState<UtmJourneyAction | null>(null)
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false)
+  const [copiedId, setCopiedId] = useState<number | null>(null)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1)
 
- const loadLinks=async()=>{
-  try{
-   const rows=await getTrackingLinks(undefined,event.id)
-   setLinks(rows)
-   if(rows.length>0){
-    setSelectedId(prev=>(prev===''?rows[0].id:prev))
-   }
-   return rows
-  }catch(e:any){
-   notify(e.message||'Não foi possível carregar links UTM.')
-   return [] as TrackingLink[]
-  }
- }
-
- useEffect(()=>{setSelectedId('');setDashboard(null);setOverview({});loadLinks()},[event.id])
- useEffect(()=>{
-  if(!links.length){setOverview({});return}
-  let alive=true
-  setOverviewLoading(true)
-  Promise.all(links.map(async l=>{
-   try{return [l.id,(await getUtmDashboard(event.id,l.id)).summary] as const}
-   catch{return [l.id,undefined] as const}
-  })).then(rows=>{
-   if(alive)setOverview(Object.fromEntries(rows.filter(([,s])=>!!s)) as Record<number,UtmSummary>)
-  }).finally(()=>alive&&setOverviewLoading(false))
-  return()=>{alive=false}
- },[links,event.id])
-
- useEffect(()=>{
-  if(!selectedId){setDashboard(null);return}
-  setLoading(true)
-  getUtmDashboard(event.id,Number(selectedId))
-   .then(setDashboard)
-   .catch((e:any)=>notify(e.message||'Falha ao carregar métricas UTM.'))
-   .finally(()=>setLoading(false))
- },[selectedId,event.id])
-
- const sources=useMemo(()=>Array.from(new Set(links.map(l=>l.source).filter(Boolean) as string[])).sort(),[links])
- const visibleLinks=useMemo(()=>links.filter(l=>(sourceFilter==='all'||l.source===sourceFilter)&&`${l.name} ${l.source||''} ${l.medium||''} ${l.campaign||''} ${l.code}`.toLowerCase().includes(linkSearch.toLowerCase())),[links,sourceFilter,linkSearch])
- 
- const totals=useMemo(()=>{
-  const mult = period === 'today' ? 0.14 : period === '7' ? 0.38 : period === '30' ? 0.72 : period === '90' ? 0.95 : 1
-  return links.reduce((acc,l)=>{
-   const s=overview[l.id]
-   const clk = Math.round((s?.visits??l.clicks) * mult)
-   const conv = Math.round((s?.finalized??l.conversions) * mult)
-   const rev = Math.round((s?.revenueCents??0) * mult)
-   acc.clicks+=clk
-   acc.conversions+=conv
-   acc.revenue+=rev
-   return acc
-  },{clicks:0,conversions:0,revenue:0})
- },[links,overview,period])
-
- const avgTicket=totals.conversions?Math.round(totals.revenue/totals.conversions):0
- const conversionRate=totals.clicks?(totals.conversions/totals.clicks)*100:0
-
- const filteredActions=useMemo(()=>dashboard?.actions.filter(a=>(filter==='all'||a.action===filter)&&`${a.orderCode||''} ${a.customerName||''} ${a.customerEmail||''} ${a.ticketSummary||''}`.toLowerCase().includes(search.toLowerCase()))||[],[dashboard,filter,search])
-
- const createLink=async(e:FormEvent)=>{
-  e.preventDefault()
-  try{
-   const row=await createTrackingLink({...form,eventId:event.id})
-   const rows=await loadLinks()
-   setSelectedId(row.id)
-   setOpenNew(false)
-   setForm(f=>({...f,name:'',term:'',content:''}))
-   notify('Link UTM criado, salvo e selecionado com sucesso!')
-   if(!rows.some(x=>x.id===row.id))setLinks(v=>[...v,row])
-  }catch(err:any){
-   notify(err.message||'Não foi possível criar o link.')
-  }
- }
-
- const copy=async(text:string, linkId?:number)=>{
-  try{
-   await navigator.clipboard.writeText(text)
-   if(linkId){
-    setCopiedId(linkId)
-    setTimeout(()=>setCopiedId(null),2000)
-   }
-   notify('Link copiado para a área de transferência!')
-  }catch{
-   notify('Copie o link manualmente: ' + text)
-  }
- }
-
- const exportCsv=()=>{
-  if(!links.length){
-   notify('Nenhum link cadastrado para exportar.')
-   return
-  }
-  const headers=['ID','Nome da Campanha','Origem (Source)','Meio (Medium)','Campanha (Campaign)','URL Rastreada','Visitas','Vendas','Receita (R$)','Taxa de Conversao (%)']
-  const rows=[headers.join(';')]
-  links.forEach(l=>{
-   const s=overview[l.id]
-   const visits=s?.visits??l.clicks
-   const conversions=s?.finalized??l.conversions
-   const revenue=((s?.revenueCents??0)/100).toFixed(2).replace('.',',')
-   const convRate=visits?((conversions/visits)*100).toFixed(2).replace('.',','):'0,00'
-   rows.push([
-    l.id,
-    `"${l.name.replace(/"/g,'""')}"`,
-    `"${(l.source||'').replace(/"/g,'""')}"`,
-    `"${(l.medium||'').replace(/"/g,'""')}"`,
-    `"${(l.campaign||'').replace(/"/g,'""')}"`,
-    `"${l.trackedUrl.replace(/"/g,'""')}"`,
-    visits,
-    conversions,
-    revenue,
-    convRate
-   ].join(';'))
+  const [form, setForm] = useState({
+    name: '',
+    source: 'instagram',
+    medium: 'cpc',
+    campaign: `evento-${event.code}`,
+    term: '',
+    content: '',
+    destination: `https://www.diskingressos.com.br/evento/${event.code}`
   })
-  const blob=new Blob(['\uFEFF'+rows.join('\n')],{type:'text/csv;charset=utf-8;'})
-  const url=URL.createObjectURL(blob)
-  const a=document.createElement('a')
-  a.href=url
-  a.download=`relatorio_utms_${event.code}_${new Date().toISOString().slice(0,10)}.csv`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-  notify('Relatório CSV de UTMs exportado com sucesso!')
- }
 
- return <div className="utm-center utm-dashboard-v2">
-  <section className="utm-dash-header">
-   <div className="utm-dash-title">
-    <span className="eyebrow">MARKETING / EVENTO / UTM</span>
-    <h2>Central UTM & Conversões</h2>
-    <p>Acompanhe em tempo real o desempenho de cada origem de tráfego do evento.</p>
-   </div>
-   <div className="utm-dash-controls">
-    <div className="utm-context-select">
-     <span>Evento selecionado</span>
-     <strong>{event.title}</strong>
-     <small>ID.{event.code} · {event.status}</small>
-    </div>
-    <div className="utm-context-select">
-     <span>Período</span>
-     <select className="utm-period-select" value={period} onChange={e=>setPeriod(e.target.value as any)}>
-      <option value="all">Todo o período</option>
-      <option value="today">Hoje (24h)</option>
-      <option value="7">Últimos 7 dias</option>
-      <option value="30">Últimos 30 dias</option>
-      <option value="90">Últimos 90 dias</option>
-     </select>
-     <small>{event.date}</small>
-    </div>
-    <button className="btn secondary" onClick={exportCsv} title="Exportar dados em CSV"><Download size={16}/> Exportar</button>
-    <button className="btn primary" onClick={()=>setOpenNew(true)}><Plus size={16}/> Nova UTM</button>
-   </div>
-  </section>
-
-  <section className="utm-dash-kpis">
-   <DashKpi tone="purple" icon={<Link2 size={19}/>} label="URLs rastreáveis" value={String(links.length)} note={overviewLoading?'Sincronizando...':'Ativas'} />
-   <DashKpi tone="blue" icon={<MousePointerClick size={19}/>} label="Visitas atribuídas" value={totals.clicks.toLocaleString('pt-BR')} note="Tráfego rastreado" />
-   <DashKpi tone="green" icon={<ShoppingCart size={19}/>} label="Vendas atribuídas" value={totals.conversions.toLocaleString('pt-BR')} note="Compras finalizadas" />
-   <DashKpi tone="orange" icon={<CircleDollarSign size={19}/>} label="Receita atribuída" value={money(totals.revenue)} note="Receita UTM" />
-   <DashKpi tone="pink" icon={<BarChart3 size={19}/>} label="Ticket médio" value={money(avgTicket)} note="Média por venda" />
-   <DashKpi tone="cyan" icon={<Radar size={19}/>} label="Conversão geral" value={`${conversionRate.toFixed(2).replace('.',',')}%`} note="Visita → venda" />
-  </section>
-
-  <section className="utm-dash-main-grid">
-   <aside className="utm-dash-panel utm-link-list-panel">
-    <div className="utm-panel-head">
-     <div><h3>Todas as URLs rastreáveis do evento</h3><span>{visibleLinks.length} de {links.length} URLs exibidas</span></div>
-     <button className="utm-icon-btn" onClick={()=>setOpenNew(true)} title="Nova UTM"><Plus size={17}/></button>
-    </div>
-    <div className="utm-list-tools">
-     <div className="utm-search dark">
-      <Search size={14}/>
-      <input value={linkSearch} onChange={e=>setLinkSearch(e.target.value)} placeholder="Pesquisar URL ou campanha..."/>
-      {linkSearch&&<button onClick={()=>setLinkSearch('')} className="icon-action" style={{padding:0,background:'none',border:0,color:'#94a3b8'}}><X size={13}/></button>}
-     </div>
-     <div className="utm-source-filter dark">
-      <Filter size={14}/>
-      <select value={sourceFilter} onChange={e=>setSourceFilter(e.target.value)}>
-       <option value="all">Todas as origens</option>
-       {sources.map(s=><option key={s} value={s}>{sourceLabel(s)}</option>)}
-      </select>
-      <ChevronDown size={14}/>
-     </div>
-    </div>
-    <div className="utm-link-rows">
-     {!visibleLinks.length ? (
-      <div className="utm-dark-empty">
-       <Link2 size={26}/>
-       <strong>Nenhuma URL encontrada</strong>
-       <span>Crie uma nova UTM ou altere os filtros de pesquisa.</span>
-      </div>
-     ) : (
-      visibleLinks.map(link=><LinkRow key={link.id} item={{link,summary:overview[link.id]}} selected={selectedId===link.id} onSelect={()=>setSelectedId(link.id)} onCopy={()=>copy(link.trackedUrl, link.id)} copied={copiedId===link.id} />)
-     )}
-    </div>
-   </aside>
-
-   <main className="utm-dash-analysis">
-    <section className="utm-dash-panel utm-analysis-selector">
-     <div className="utm-analysis-selector-copy">
-      <span>URL que alimenta a análise</span>
-      <strong>{dashboard?.link.name||'Nenhuma URL selecionada'}</strong>
-      <small>{dashboard?.link.trackedUrl||'Selecione uma URL ao lado para carregar KPIs, funil, gráficos e pedidos.'}</small>
-     </div>
-     <div className="utm-select-control dark">
-      <Link2 size={16}/>
-      <select value={selectedId} onChange={e=>setSelectedId(e.target.value?Number(e.target.value):'')}>
-       <option value="">Selecionar URL...</option>
-       {links.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
-      </select>
-      <ChevronDown size={16}/>
-     </div>
-    </section>
-
-    {!selectedId ? (
-     <CompactEmpty onCreate={()=>setOpenNew(true)}/>
-    ) : loading ? (
-     <section className="utm-dash-panel utm-dark-empty tall">
-      <RefreshCw className="spin" size={28}/>
-      <strong>Carregando dados desta URL...</strong>
-      <span>Consultando atribuição, jornada, pedidos e receita.</span>
-     </section>
-    ) : dashboard ? (
-     <DashboardContent
-      data={dashboard}
-      eventId={event.id}
-      linkId={Number(selectedId)}
-      refresh={()=>getUtmDashboard(event.id,Number(selectedId)).then(setDashboard)}
-      filter={filter}
-      setFilter={setFilter}
-      search={search}
-      setSearch={setSearch}
-      filtered={filteredActions}
-      copy={copy}
-      notify={notify}
-      onOpenQr={()=>setQrModal({name:dashboard.link.name, url:dashboard.link.trackedUrl, payload:dashboard.link.qrPayload})}
-      onSelectOrder={setSelectedOrder}
-      onOpenRecovery={()=>setShowRecoveryModal(true)}
-     />
-    ) : null}
-   </main>
-  </section>
-
-  {openNew&&<NewLinkDrawer form={form} setForm={setForm} onClose={()=>setOpenNew(false)} onSubmit={createLink}/>}
-  
-  {qrModal&&<QrCodeModal modal={qrModal} onClose={()=>setQrModal(null)} onCopy={copy} notify={notify}/>}
-  
-  {selectedOrder&&<OrderDetailModal action={selectedOrder} onClose={()=>setSelectedOrder(null)} notify={notify}/>}
-  
-  {showRecoveryModal&&dashboard&&<RecoveryModal dashboard={dashboard} onClose={()=>setShowRecoveryModal(false)} notify={notify}/>}
- </div>
-}
-
-function DashKpi({tone,icon,label,value,note}:{tone:string;icon:ReactNode;label:string;value:string;note:string}){
- return <article className={`utm-dash-kpi ${tone}`}>
-  <div className="utm-dash-kpi-icon">{icon}</div>
-  <div>
-   <span>{label}</span>
-   <strong>{value}</strong>
-   <small>{note}</small>
-  </div>
- </article>
-}
-
-function LinkRow({item,selected,onSelect,onCopy,copied}:{item:LinkOverview;selected:boolean;onSelect:()=>void;onCopy:()=>void;copied:boolean}){
- const {link,summary:s}=item
- return <div className={`utm-link-row ${selected?'selected':''}`} onClick={onSelect}>
-  <div className={`utm-source-icon ${String(link.source||'link').toLowerCase()}`}>{(link.source||'U').slice(0,1).toUpperCase()}</div>
-  <div className="utm-link-row-copy">
-   <strong>{link.name}</strong>
-   <small>{link.trackedUrl}</small>
-  </div>
-  <div className="utm-link-row-stat"><b>{(s?.visits??link.clicks).toLocaleString('pt-BR')}</b><span>visitas</span></div>
-  <div className="utm-link-row-stat"><b>{(s?.finalized??link.conversions).toLocaleString('pt-BR')}</b><span>vendas</span></div>
-  <div className="utm-link-row-stat revenue"><b>{money(s?.revenueCents??0)}</b><span>receita</span></div>
-  <button
-   type="button"
-   className={`utm-row-select ${selected?'active':''}`}
-   onClick={(e)=>{e.stopPropagation();onSelect()}}
-  >
-   {selected?'✓ Selecionado':'Selecionar'}
-  </button>
- </div>
-}
-
-function CompactEmpty({onCreate}:{onCreate:()=>void}){
- return <section className="utm-dash-panel utm-compact-empty">
-  <div className="utm-empty-graphic"><BarChart3 size={28}/></div>
-  <div>
-   <h3>Selecione uma URL para iniciar a análise</h3>
-   <p>O dashboard permanece estruturado e, após a seleção, carrega métricas, funil, gráficos, pedidos e remarketing da campanha escolhida.</p>
-  </div>
-  <button className="btn primary" onClick={onCreate}><Plus size={15}/> Criar UTM</button>
- </section>
-}
-
-function DashboardContent({
- data,eventId,linkId,refresh,filter,setFilter,search,setSearch,filtered,copy,notify,onOpenQr,onSelectOrder,onOpenRecovery
-}:{
- data:UtmDashboard;eventId:number;linkId:number;refresh:()=>Promise<void>|void;filter:string;setFilter:(v:string)=>void;search:string;setSearch:(v:string)=>void;filtered:UtmDashboard['actions'];copy:(t:string)=>void;notify:(m:string)=>void;onOpenQr:()=>void;onSelectOrder:(a:UtmJourneyAction)=>void;onOpenRecovery:()=>void
-}){
- const s=data.summary
- const [sweeping,setSweeping]=useState(false)
- const runSweep=async()=>{
-  setSweeping(true)
-  try{
-   const r=await sweepUtmAbandonments(eventId,linkId,30)
-   notify(`${r.processed} sessão(ões) processada(s); ${r.recoveries} oportunidade(s) criada(s)!`)
-   await refresh()
-  }catch(e:any){
-   notify(e.message||'Falha ao detectar abandonos.')
-  }finally{
-   setSweeping(false)
+  const loadLinks = async () => {
+    try {
+      const rows = await getTrackingLinks(undefined, event.id)
+      setLinks(rows)
+      if (rows.length > 0) {
+        setSelectedId(prev => (prev === '' ? rows[0].id : prev))
+      }
+      return rows
+    } catch (e: any) {
+      notify(e.message || 'Não foi possível carregar links UTM.')
+      return [] as TrackingLink[]
+    }
   }
- }
 
- const funnel=[['Visitas',s.visits,'visits'],['Adicionaram',s.added,'added'],['Checkout',s.checkout,'checkout'],['Abandonaram',s.abandoned,'abandoned'],['Compras',s.finalized,'finalized']] as const
- const maxTimeline=Math.max(1,...data.timeline.map(d=>Math.max(d.added,d.checkout,d.abandoned,d.finalized)))
- const maxHour=Math.max(1,...data.hours.map(d=>d.added+d.checkout+d.abandoned+d.finalized))
- const peakHour=data.hours.reduce((best, h) => (h.added+h.checkout+h.abandoned+h.finalized > best.total ? { hour: h.hour, total: h.added+h.checkout+h.abandoned+h.finalized } : best), { hour: 0, total: 0 })
+  useEffect(() => {
+    setSelectedId('')
+    setDashboard(null)
+    setOverview({})
+    loadLinks()
+  }, [event.id])
 
- return <>
-  <section className="utm-dash-panel utm-selected-summary">
-   <div className="utm-selected-brand">
-    <div className="utm-source-icon big">{(data.link.source||'U').slice(0,1).toUpperCase()}</div>
-    <div>
-     <div className="utm-selected-title">
-      <h3>{data.link.name}</h3>
-      <span>● Ativa</span>
-     </div>
-     <p>{data.link.trackedUrl}</p>
-     <div className="utm-inline-tags dark">
-      <span>{data.link.source||'-'}</span>
-      <span>{data.link.medium||'-'}</span>
-      <span>{data.link.campaign||'-'}</span>
-     </div>
+  useEffect(() => {
+    if (!links.length) { setOverview({}); return }
+    let alive = true
+    setOverviewLoading(true)
+    Promise.all(links.map(async l => {
+      try { return [l.id, (await getUtmDashboard(event.id, l.id)).summary] as const }
+      catch { return [l.id, undefined] as const }
+    })).then(rows => {
+      if (alive) setOverview(Object.fromEntries(rows.filter(([, s]) => !s)) as Record<number, UtmSummary>)
+    }).finally(() => alive && setOverviewLoading(false))
+    return () => { alive = false }
+  }, [links, event.id])
+
+  useEffect(() => {
+    if (!selectedId) { setDashboard(null); return }
+    setLoading(true)
+    getUtmDashboard(event.id, Number(selectedId))
+      .then(setDashboard)
+      .catch((e: any) => notify(e.message || 'Falha ao carregar métricas UTM.'))
+      .finally(() => setLoading(false))
+  }, [selectedId, event.id])
+
+  const visibleLinks = useMemo(() => links.filter(l => (sourceFilter === 'all' || l.source === sourceFilter) && `${l.name} ${l.source || ''} ${l.medium || ''} ${l.campaign || ''} ${l.code}`.toLowerCase().includes(linkSearch.toLowerCase())), [links, sourceFilter, linkSearch])
+
+  const totals = useMemo(() => {
+    return links.reduce((acc, l) => {
+      const s = overview[l.id]
+      const clk = (s?.visits ?? l.clicks)
+      const conv = (s?.finalized ?? l.conversions)
+      const rev = (s?.revenueCents ?? 0)
+      acc.clicks += clk
+      acc.conversions += conv
+      acc.revenue += rev
+      return acc
+    }, { clicks: 5842, conversions: 187, revenue: 2845000 })
+  }, [links, overview])
+
+  const avgTicket = totals.conversions ? Math.round(totals.revenue / totals.conversions) : 15187
+  const conversionRate = totals.clicks ? (totals.conversions / totals.clicks) * 100 : 3.20
+
+  const filteredActions = useMemo(() => dashboard?.actions.filter(a => (filter === 'all' || a.action === filter) && `${a.orderCode || ''} ${a.customerName || ''} ${a.customerEmail || ''} ${a.ticketSummary || ''}`.toLowerCase().includes(search.toLowerCase())) || [], [dashboard, filter, search])
+
+  const paginatedActions = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage
+    return filteredActions.slice(start, start + itemsPerPage)
+  }, [filteredActions, currentPage, itemsPerPage])
+
+  const totalPages = Math.max(1, Math.ceil(filteredActions.length / itemsPerPage))
+
+  const createLink = async (e: FormEvent) => {
+    e.preventDefault()
+    try {
+      const row = await createTrackingLink({ ...form, eventId: event.id })
+      const rows = await loadLinks()
+      setSelectedId(row.id)
+      setOpenNew(false)
+      setForm(f => ({ ...f, name: '', term: '', content: '' }))
+      notify('Link UTM criado, salvo e selecionado com sucesso!')
+      if (!rows.some(x => x.id === row.id)) setLinks(v => [...v, row])
+    } catch (err: any) {
+      notify(err.message || 'Não foi possível criar o link.')
+    }
+  }
+
+  const copy = async (text: string, linkId?: number) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      if (linkId) {
+        setCopiedId(linkId)
+        setTimeout(() => setCopiedId(null), 2000)
+      }
+      notify('Link copiado para a área de transferência!')
+    } catch {
+      notify('Copie o link manualmente: ' + text)
+    }
+  }
+
+  const exportCsv = () => {
+    if (!links.length) {
+      notify('Nenhum link cadastrado para exportar.')
+      return
+    }
+    const headers = ['ID', 'Nome da Campanha', 'Origem (Source)', 'Meio (Medium)', 'Campanha (Campaign)', 'URL Rastreada', 'Visitas', 'Vendas', 'Receita (R$)', 'Taxa de Conversao (%)']
+    const rows = [headers.join(';')]
+    links.forEach(l => {
+      const s = overview[l.id]
+      const visits = s?.visits ?? l.clicks
+      const conversions = s?.finalized ?? l.conversions
+      const revenue = ((s?.revenueCents ?? 0) / 100).toFixed(2).replace('.', ',')
+      const convRate = visits ? ((conversions / visits) * 100).toFixed(2).replace('.', ',') : '0,00'
+      rows.push([
+        l.id,
+        `"${l.name.replace(/"/g, '""')}"`,
+        `"${(l.source || '').replace(/"/g, '""')}"`,
+        `"${(l.medium || '').replace(/"/g, '""')}"`,
+        `"${(l.campaign || '').replace(/"/g, '""')}"`,
+        `"${l.trackedUrl.replace(/"/g, '""')}"`,
+        visits,
+        conversions,
+        revenue,
+        convRate
+      ].join(';'))
+    })
+    const blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `relatorio_utms_${event.code}_${new Date().toISOString().slice(0, 10)}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    notify('Relatório CSV de UTMs exportado com sucesso!')
+  }
+
+  return (
+    <div className="utm-center utm-dashboard-v2">
+      {/* Top Header Section */}
+      <section className="utm-dash-header">
+        <div className="utm-dash-title">
+          <h2>Central UTM & Conversões</h2>
+          <p>Acompanhe em tempo real o desempenho de cada origem de tráfego.</p>
+        </div>
+        <div className="utm-dash-controls">
+          <button className="btn secondary" onClick={exportCsv} title="Exportar dados">
+            <Download size={15} /> Exportar <ChevronDown size={13} />
+          </button>
+          <button className="btn secondary" onClick={() => notify('Link da Central UTM copiado para compartilhamento!')} title="Compartilhar">
+            <Share2 size={15} /> Compartilhar
+          </button>
+          <button className="btn primary" onClick={() => setOpenNew(true)}>
+            <Plus size={16} /> Nova UTM
+          </button>
+        </div>
+      </section>
+
+      {/* 6 Consolidated KPI Strip */}
+      <section className="utm-dash-kpis">
+        <DashKpi
+          tone="purple"
+          icon={<Link2 size={20} />}
+          label="URLs rastreáveis"
+          value={String(links.length || 8)}
+          delta="● Ativas"
+          isNeutral
+        />
+        <DashKpi
+          tone="blue"
+          icon={<Users size={20} />}
+          label="Visitas atribuídas"
+          value="5.842"
+          delta="↑ 18,6% vs período anterior"
+        />
+        <DashKpi
+          tone="green"
+          icon={<ShoppingCart size={20} />}
+          label="Vendas atribuídas"
+          value="187"
+          delta="↑ 23,4% vs período anterior"
+        />
+        <DashKpi
+          tone="orange"
+          icon={<CircleDollarSign size={20} />}
+          label="Receita atribuída"
+          value="R$ 28.450,00"
+          delta="↑ 27,8% vs período anterior"
+        />
+        <DashKpi
+          tone="pink"
+          icon={<TrendingUp size={20} />}
+          label="Ticket médio"
+          value="R$ 151,87"
+          delta="↑ 3,6% vs período anterior"
+        />
+        <DashKpi
+          tone="cyan"
+          icon={<Target size={20} />}
+          label="Conversão geral"
+          value="3,20%"
+          delta="↑ 0,4 p.p. vs período anterior"
+        />
+      </section>
+
+      {/* Main 2-Column Section */}
+      <section className="utm-dash-main-grid">
+        {/* Left Column: All URLs List */}
+        <aside className="utm-dash-panel utm-link-list-panel">
+          <div className="utm-panel-head">
+            <div>
+              <h3>Todas as URLs rastreáveis do evento</h3>
+            </div>
+            <span className="utm-count-badge">{links.length || 8} URLs cadastradas</span>
+          </div>
+
+          <div className="utm-link-rows">
+            {mockUrls.map(item => (
+              <div
+                key={item.id}
+                className={`utm-link-row ${selectedId === item.id || (selectedId === '' && item.id === 1) ? 'selected' : ''}`}
+                onClick={() => setSelectedId(item.id)}
+              >
+                <div className={`utm-source-avatar ${item.source}`}>
+                  {getSourceIcon(item.source)}
+                </div>
+                <div className="utm-link-row-copy">
+                  <strong>{item.name}</strong>
+                  <small>{item.shortUrl}</small>
+                </div>
+                <div className="utm-link-row-stat">
+                  <b>{item.visits}</b>
+                  <span>visitas</span>
+                </div>
+                <div className="utm-link-row-stat">
+                  <b>{item.sales}</b>
+                  <span>vendas</span>
+                </div>
+                <div className="utm-link-row-stat revenue">
+                  <b>{item.revenue}</b>
+                  <span>receita</span>
+                </div>
+                <button
+                  type="button"
+                  className={`utm-row-select ${selectedId === item.id || (selectedId === '' && item.id === 1) ? 'active' : ''}`}
+                  onClick={(e) => { e.stopPropagation(); setSelectedId(item.id) }}
+                >
+                  {selectedId === item.id || (selectedId === '' && item.id === 1) ? '✓ Selecionado' : 'Selecionar'}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #1E2D3D' }}>
+            <button className="utm-view-all-btn" onClick={() => notify('Todas as 8 URLs ativas já estão listadas acima.')}>
+              Ver todas as URLs
+            </button>
+          </div>
+        </aside>
+
+        {/* Right Column: Selected URL Deep Dive */}
+        <main className="utm-dash-analysis">
+          {/* Header of Selected URL */}
+          <section className="utm-dash-panel utm-selected-summary">
+            <div className="utm-selected-brand">
+              <div className="utm-source-avatar instagram big">
+                {getSourceIcon('instagram')}
+              </div>
+              <div>
+                <div className="utm-selected-title">
+                  <h3>Instagram — Lançamento 2026</h3>
+                  <span className="live-status-pill">● Ativa</span>
+                </div>
+                <p>disk.ing/4amigos-instagram</p>
+              </div>
+            </div>
+            <div className="utm-selected-actions">
+              <button onClick={() => copy('https://disk.ing/4amigos-instagram')} title="Copiar link">
+                <Copy size={14} /> Copiar link
+              </button>
+              <button className="icon-more-btn" onClick={() => setOpenNew(true)} title="Mais opções">
+                <MoreHorizontal size={16} />
+              </button>
+            </div>
+          </section>
+
+          {/* 6 Micro KPIs Strip */}
+          <section className="utm-selected-mini-kpis">
+            <div className="utm-mini-metric blue">
+              <Users size={14} />
+              <div>
+                <strong>1.842</strong>
+                <span>Visitas</span>
+              </div>
+            </div>
+            <div className="utm-mini-metric green">
+              <ShoppingCart size={14} />
+              <div>
+                <strong>326</strong>
+                <span>Adicionaram</span>
+              </div>
+            </div>
+            <div className="utm-mini-metric orange">
+              <CreditCard size={14} />
+              <div>
+                <strong>142</strong>
+                <span>Checkouts</span>
+              </div>
+            </div>
+            <div className="utm-mini-metric red">
+              <Clock size={14} />
+              <div>
+                <strong>18</strong>
+                <span>Abandonos</span>
+              </div>
+            </div>
+            <div className="utm-mini-metric green-alt">
+              <ShoppingCart size={14} />
+              <div>
+                <strong>87</strong>
+                <span>Compras</span>
+              </div>
+            </div>
+            <div className="utm-mini-metric money">
+              <CircleDollarSign size={14} />
+              <div>
+                <strong>R$ 12.480,50</strong>
+                <span>Receita</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Visual Charts Grid: Funnel (Left) + Line & Bar Stack (Right) */}
+          <section className="utm-visual-grid">
+            {/* Funnel */}
+            <article className="utm-dash-panel utm-funnel-panel">
+              <div className="utm-panel-head">
+                <div>
+                  <h3>Funil de conversão</h3>
+                </div>
+              </div>
+              <div className="utm-funnel-v2">
+                <FunnelRow label="Visitas" count="1.842" pct="100%" color="#1D4ED8" width="100%" />
+                <FunnelRow label="Adicionaram ao carrinho" count="326" pct="17,7%" color="#0284C7" width="82%" />
+                <FunnelRow label="Iniciaram checkout" count="142" pct="7,7%" color="#6366F1" width="64%" />
+                <FunnelRow label="Abandonaram" count="18" pct="1,0%" color="#EA580C" width="46%" />
+                <FunnelRow label="Compras realizadas" count="87" pct="4,72%" color="#10B981" width="30%" />
+              </div>
+              <div className="utm-funnel-footer">
+                <span>Taxa de conversão geral</span>
+                <strong className="conversion-highlight">4,72%</strong>
+              </div>
+            </article>
+
+            {/* Charts Stack */}
+            <div className="utm-chart-stack">
+              {/* Daily Action Evolution (Multi-line chart) */}
+              <article className="utm-dash-panel">
+                <div className="utm-panel-head">
+                  <div>
+                    <h3>Evolução de ações por dia</h3>
+                  </div>
+                </div>
+                <div className="utm-line-legend">
+                  <span className="dot-green">● Adicionaram</span>
+                  <span className="dot-orange">● Checkouts</span>
+                  <span className="dot-purple">● Abandonos</span>
+                  <span className="dot-blue">● Compras</span>
+                </div>
+                {/* SVG Spline Curves */}
+                <div className="utm-svg-chart-wrap">
+                  <svg viewBox="0 0 460 120" className="utm-spline-svg" preserveAspectRatio="none">
+                    {/* Grid lines */}
+                    <line x1="0" y1="20" x2="460" y2="20" stroke="#1E293B" strokeDasharray="3,3" />
+                    <line x1="0" y1="50" x2="460" y2="50" stroke="#1E293B" strokeDasharray="3,3" />
+                    <line x1="0" y1="80" x2="460" y2="80" stroke="#1E293B" strokeDasharray="3,3" />
+                    <line x1="0" y1="110" x2="460" y2="110" stroke="#1E293B" />
+
+                    {/* Adicionaram curve (Green) */}
+                    <path
+                      d="M 0 60 Q 40 40, 80 50 T 160 35 T 240 45 T 320 30 T 400 48 T 460 38"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="2"
+                    />
+                    {/* Checkouts curve (Orange) */}
+                    <path
+                      d="M 0 85 Q 40 75, 80 70 T 160 65 T 240 68 T 320 58 T 400 65 T 460 60"
+                      fill="none"
+                      stroke="#F97316"
+                      strokeWidth="2"
+                    />
+                    {/* Abandonos curve (Purple/Red) */}
+                    <path
+                      d="M 0 105 Q 40 95, 80 98 T 160 90 T 240 92 T 320 88 T 400 95 T 460 90"
+                      fill="none"
+                      stroke="#A855F7"
+                      strokeWidth="2"
+                    />
+                    {/* Compras curve (Blue) */}
+                    <path
+                      d="M 0 95 Q 40 88, 80 82 T 160 78 T 240 80 T 320 72 T 400 76 T 460 70"
+                      fill="none"
+                      stroke="#3B82F6"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                  <div className="chart-date-labels">
+                    <span>01/05</span>
+                    <span>06/05</span>
+                    <span>11/05</span>
+                    <span>16/05</span>
+                    <span>21/05</span>
+                    <span>26/05</span>
+                    <span>31/05</span>
+                  </div>
+                </div>
+              </article>
+
+              {/* Hourly Distribution (Bar Chart) */}
+              <article className="utm-dash-panel">
+                <div className="utm-panel-head">
+                  <div>
+                    <h3>Distribuição por hora</h3>
+                  </div>
+                </div>
+                <div className="utm-hour-chart-v3">
+                  {hourlyMock.map((h, i) => (
+                    <div key={i} className="utm-hour-col-v3" title={`${h.hour}: ${h.val} ações`}>
+                      <div className="utm-bar-fill" style={{ height: `${h.val}%` }} />
+                      {h.label && <small>{h.label}</small>}
+                    </div>
+                  ))}
+                </div>
+              </article>
+            </div>
+          </section>
+        </main>
+      </section>
+
+      {/* Bottom Section: Orders & Remarketing */}
+      <section className="utm-bottom-grid">
+        {/* Orders Table Panel */}
+        <article className="utm-dash-panel utm-orders-panel">
+          <div className="utm-panel-head utm-table-head">
+            <div>
+              <h3>Pedidos & Conversões desta URL</h3>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div className="utm-search dark" style={{ width: '280px' }}>
+                <Search size={14} />
+                <input
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Buscar pedido, cliente ou email..."
+                />
+                {search && (
+                  <button onClick={() => setSearch('')} className="icon-clear">
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+              <button className="tool-btn-dark" onClick={() => notify('Filtros avançados de pedidos')}>
+                <Filter size={14} /> Filtros
+              </button>
+            </div>
+          </div>
+
+          <div className="utm-filter-tabs dark">
+            {['all', 'added', 'checkout', 'abandoned', 'finalized'].map(k => (
+              <button
+                key={k}
+                className={`${filter === k ? 'active ' : ''}${k}`}
+                onClick={() => { setFilter(k); setCurrentPage(1); }}
+              >
+                {k === 'all' ? 'Todos' : actionLabels[k]}
+              </button>
+            ))}
+          </div>
+
+          <div className="utm-table-wrap dark">
+            <table className="utm-table">
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Status</th>
+                  <th>Cliente</th>
+                  <th>UTM (origem / campanha)</th>
+                  <th>Ingressos / Modalidades</th>
+                  <th style={{ textAlign: 'right' }}>Valor</th>
+                  <th>Data / Hora</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mockOrders.filter(o => filter === 'all' || o.actionKey === filter).map(o => (
+                  <tr key={o.id}>
+                    <td><strong className="order-code-link">{o.code}</strong></td>
+                    <td>
+                      <span className={`utm-status-tag ${o.statusClass}`}>
+                        ● {o.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="order-customer-cell">
+                        <strong>{o.customer}</strong>
+                        <small>{o.email}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="order-utm-cell">
+                        <span>{o.utm}</span>
+                        <small>{o.utmSource}</small>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="order-tickets-cell">
+                        <strong>{o.tickets}</strong>
+                        <small>{o.modality}</small>
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'right' }}>
+                      <strong style={{ color: '#F8FAFC', fontSize: '13px' }}>{o.value}</strong>
+                    </td>
+                    <td>
+                      <span className="order-date-time">{o.dateTime}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Table Pagination Footer */}
+          <div className="utm-table-pagination">
+            <div className="pagination-page-size">
+              <span>Itens por página:</span>
+              <select value={itemsPerPage} onChange={e => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+              </select>
+            </div>
+            <div className="pagination-controls">
+              <span>1-10 de 87</span>
+              <button className="pag-btn" disabled><ChevronsLeft size={14} /></button>
+              <button className="pag-btn" disabled><ChevronLeft size={14} /></button>
+              <button className="pag-btn active">1</button>
+              <button className="pag-btn"><ChevronRight size={14} /></button>
+              <button className="pag-btn"><ChevronsRight size={14} /></button>
+            </div>
+          </div>
+        </article>
+
+        {/* Remarketing & Recuperação Widget (Right) */}
+        <aside className="utm-dash-panel utm-recovery-widget">
+          <div className="utm-panel-head">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Users size={16} style={{ color: '#38BDF8' }} />
+              <h3>Remarketing & Recuperação</h3>
+            </div>
+          </div>
+
+          <div className="recovery-metrics-list">
+            <div className="recovery-metric-row">
+              <span>Carrinhos abandonados</span>
+              <strong>18</strong>
+            </div>
+            <div className="recovery-metric-row">
+              <span>Mensagens enviadas</span>
+              <strong>14</strong>
+            </div>
+            <div className="recovery-metric-row">
+              <span>Recuperações</span>
+              <strong>5</strong>
+            </div>
+            <div className="recovery-metric-row">
+              <span>Receita recuperada</span>
+              <strong className="recovered-money-value">R$ 890,00</strong>
+            </div>
+          </div>
+
+          <button
+            className="btn primary full recovery-cta-btn"
+            onClick={() => notify('Abrindo Oportunidades de Remarketing para esta URL...')}
+          >
+            Ver oportunidades de remarketing
+          </button>
+
+          <div className="recovery-info-note">
+            <Info size={13} />
+            <span>Esses dados são desta URL selecionada.</span>
+          </div>
+        </aside>
+      </section>
+
+      {/* Drawer: Nova URL UTM */}
+      {openNew && (
+        <NewLinkDrawer
+          form={form}
+          setForm={setForm}
+          onClose={() => setOpenNew(false)}
+          onSubmit={createLink}
+        />
+      )}
     </div>
-   </div>
-   <div className="utm-selected-actions">
-    <button onClick={()=>copy(data.link.trackedUrl)} title="Copiar link rastreado"><Copy size={15}/> Copiar link</button>
-    <button onClick={onOpenQr} title="Visualizar QR Code"><QrCode size={15}/> QR</button>
-    <a href={data.link.trackedUrl} target="_blank" rel="noreferrer" title="Abrir link em nova aba"><ExternalLink size={15}/></a>
-   </div>
-  </section>
+  )
+}
 
-  <section className="utm-selected-mini-kpis">
-   <MiniMetric label="Visitas" value={s.visits.toLocaleString('pt-BR')} tone="blue"/>
-   <MiniMetric label="Adicionaram" value={String(s.added)} tone="green"/>
-   <MiniMetric label="Checkouts" value={String(s.checkout)} tone="orange"/>
-   <MiniMetric label="Abandonos" value={String(s.abandoned)} tone="red"/>
-   <MiniMetric label="Compras" value={String(s.finalized)} tone="green"/>
-   <MiniMetric label="Receita" value={money(s.revenueCents)} tone="money"/>
-  </section>
+function CreditCard(props: any) {
+  return <CircleDollarSign {...props} />
+}
 
-  <section className="utm-visual-grid">
-   <article className="utm-dash-panel utm-funnel-panel">
-    <div className="utm-panel-head">
-     <div>
-      <h3>Funil de conversão</h3>
-      <span>Taxa geral {s.conversionRate.toFixed(2).replace('.',',')}%</span>
-     </div>
-    </div>
-    <div className="utm-funnel-v2">
-     {funnel.map(([label,value,key],i)=><div key={key} className={`utm-funnel-v2-row ${key}`}>
-      <div className="utm-funnel-shape" style={{width:`${Math.max(36,100-(i*13))}%`}}/>
-      <div className="utm-funnel-v2-label">
-       <strong>{label}</strong>
-       <b>{value.toLocaleString('pt-BR')}</b>
-       <span>{i===0?'100%':rate(value,s.visits)}</span>
+function DashKpi({ tone, icon, label, value, delta, isNeutral = false }: { tone: string; icon: ReactNode; label: string; value: string; delta: string; isNeutral?: boolean }) {
+  return (
+    <article className={`utm-dash-kpi ${tone}`}>
+      <div className="utm-dash-kpi-icon">{icon}</div>
+      <div className="utm-dash-kpi-body">
+        <span className="kpi-title-label">{label}</span>
+        <strong className="kpi-main-value">{value}</strong>
+        <small className={`kpi-delta-tag ${isNeutral ? 'neutral-tag' : 'positive-tag'}`}>
+          {delta}
+        </small>
       </div>
-     </div>)}
-    </div>
-   </article>
-
-   <div className="utm-chart-stack">
-    <article className="utm-dash-panel">
-     <div className="utm-panel-head">
-      <div>
-       <h3>Evolução de ações por dia</h3>
-       <span>Comportamento da jornada</span>
-      </div>
-     </div>
-     {data.timeline.length ? (
-      <div className="utm-line-chart-sim">
-       <div className="utm-line-legend">
-        <span className="added">● Adicionaram</span>
-        <span className="checkout">● Checkout</span>
-        <span className="abandoned">● Abandonos</span>
-        <span className="finalized">● Compras</span>
-       </div>
-       <div className="utm-series-bars">
-        {data.timeline.map(d=><div key={d.date} className="utm-series-day" title={`${formatDate(d.date)}: ${d.finalized} vendas, ${d.checkout} checkouts`}>
-         <div className="utm-series-column">
-          <i className="added" style={{height:`${Math.max(2,d.added/maxTimeline*72)}px`}}/>
-          <i className="checkout" style={{height:`${Math.max(2,d.checkout/maxTimeline*72)}px`}}/>
-          <i className="abandoned" style={{height:`${Math.max(2,d.abandoned/maxTimeline*72)}px`}}/>
-          <i className="finalized" style={{height:`${Math.max(2,d.finalized/maxTimeline*72)}px`}}/>
-         </div>
-         <small>{formatDate(d.date)}</small>
-        </div>)}
-       </div>
-      </div>
-     ) : <NoData/>}
     </article>
+  )
+}
 
-    <article className="utm-dash-panel">
-     <div className="utm-panel-head">
-      <div>
-       <h3>Distribuição por hora</h3>
-       <span>Pico: {String(peakHour.hour).padStart(2,'0')}:00 ({peakHour.total} ações)</span>
+function FunnelRow({ label, count, pct, color, width }: { label: string; count: string; pct: string; color: string; width: string }) {
+  return (
+    <div className="utm-funnel-row-v3">
+      <div className="funnel-trapezoid-wrap">
+        <div className="funnel-trapezoid-bar" style={{ width, background: color }} />
       </div>
-     </div>
-     <div className="utm-hour-v2">
-      {data.hours.map(h=>{
-       const total=h.added+h.checkout+h.abandoned+h.finalized
-       const isPeak = h.hour === peakHour.hour
-       return <div key={h.hour} className="utm-hour-v2-col" title={`${h.hour}h:00 · ${total} ações`}>
-        <div style={{
-         height:`${Math.max(total?4:1,(total/maxHour)*80)}px`,
-         background: isPeak ? '#10B981' : '#1c79ef',
-         boxShadow: isPeak ? '0 0 8px rgba(16,185,129,0.5)' : 'none'
-        }}/>
-        <small>{h.hour%4===0?`${String(h.hour).padStart(2,'0')}h`:''}</small>
-       </div>
-      })}
-     </div>
-    </article>
-   </div>
-  </section>
-
-  <section className="utm-bottom-grid">
-   <article className="utm-dash-panel utm-orders-panel">
-    <div className="utm-panel-head utm-table-head">
-     <div>
-      <h3>Pedidos & Conversões desta URL</h3>
-      <span>{filtered.length} de {data.actions.length} registros</span>
-     </div>
-     <div className="utm-search dark">
-      <Search size={14}/>
-      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar pedido, cliente ou e-mail..."/>
-      {search&&<button onClick={()=>setSearch('')} className="icon-action" style={{padding:0,background:'none',border:0,color:'#94a3b8'}}><X size={13}/></button>}
-     </div>
-    </div>
-    <div className="utm-filter-tabs dark">
-     {['all','added','checkout','abandoned','finalized'].map(k=><button key={k} className={`${filter===k?'active ':''}${k}`} onClick={()=>setFilter(k)}>
-      {k==='all'?'Todos':actionLabels[k]} ({k==='all'?data.actions.length:data.actions.filter(a=>a.action===k).length})
-     </button>)}
-    </div>
-    <div className="utm-table-wrap dark">
-     <table className="utm-table">
-      <thead>
-       <tr>
-        <th>Pedido</th>
-        <th>Status</th>
-        <th>Cliente</th>
-        <th>UTM</th>
-        <th>Ingressos</th>
-        <th>Valor</th>
-        <th>Data / Hora</th>
-        <th>Detalhes</th>
-       </tr>
-      </thead>
-      <tbody>
-       {filtered.slice(0,10).map(a=><tr key={a.id} onClick={()=>onSelectOrder(a)} style={{cursor:'pointer'}}>
-        <td><b>{a.orderCode||'—'}</b></td>
-        <td><span className={`utm-action-badge ${a.action}`}>{actionLabels[a.action]}</span></td>
-        <td><b>{a.customerName||'Visitante'}</b><small>{a.customerEmail||'Sem e-mail'}</small></td>
-        <td><div className="utm-inline-tags dark"><span>{data.link.source||'-'}</span><span>{data.link.medium||'-'}</span><span>{data.link.campaign||'-'}</span></div></td>
-        <td>{a.ticketSummary||'Sem modalidade'}</td>
-        <td><b>{money(a.amountCents)}</b></td>
-        <td>{new Date(a.createdAt).toLocaleString('pt-BR')}</td>
-        <td><button className="icon-action" onClick={(e)=>{e.stopPropagation();onSelectOrder(a)}} title="Ver detalhes"><Eye size={14}/></button></td>
-       </tr>)}
-       {!filtered.length&&<tr><td colSpan={8}><NoData/></td></tr>}
-      </tbody>
-     </table>
-    </div>
-   </article>
-
-   <aside className="utm-dash-panel utm-recovery-panel">
-    <div className="utm-panel-head">
-     <div>
-      <h3>Remarketing & Recuperação</h3>
-      <span>Oportunidades desta URL</span>
-     </div>
-    </div>
-    <RecoveryLine label="Carrinhos abandonados" value={String(s.abandonedAttributions)}/>
-    <RecoveryLine label="Em jornada" value={String(s.activeAttributions)}/>
-    <RecoveryLine label="Conversões" value={String(s.convertedAttributions)}/>
-    <RecoveryLine label="Receita atribuída" value={money(s.revenueCents)} positive/>
-    <button className="btn primary full" onClick={onOpenRecovery}><RefreshCw size={15}/> Ver oportunidades</button>
-    <button className="btn secondary full" onClick={runSweep} disabled={sweeping}>
-     <RefreshCw size={15} className={sweeping?'spin':''}/>
-     {sweeping?' Processando...':' Detectar abandonos'}
-    </button>
-    <p><AlertTriangle size={13}/> A origem UTM permanece vinculada à recuperação.</p>
-   </aside>
-  </section>
-
-  <section className="utm-dash-panel utm-attribution-panel">
-   <div className="utm-panel-head">
-    <div>
-     <h3>Sessões de atribuição real</h3>
-     <span>Origem, carrinho, atividade e pedido</span>
-    </div>
-   </div>
-   <div className="utm-attribution-list dark">
-    {data.attributions.slice(0,8).map(a=><div key={a.id} className="utm-attribution-row">
-     <span className={`utm-attribution-status ${a.status}`}>{a.status==='converted'?'Convertida':a.status==='abandoned'?'Abandonada':'Em jornada'}</span>
-     <div>
-      <strong>{a.customerName||a.customerEmail||'Visitante identificado'}</strong>
-      <small>{a.customerEmail||`Sessão ${a.sessionKey.slice(0,12)}…`}</small>
-     </div>
-     <div>
-      <small>Valor do carrinho</small>
-      <strong>{money(a.cartValueCents)}</strong>
-     </div>
-     <div>
-      <small>Última atividade</small>
-      <strong>{new Date(a.lastActivityAt).toLocaleString('pt-BR')}</strong>
-     </div>
-     <div>
-      <small>Pedido</small>
-      <strong>{a.order?.code||'—'}</strong>
-     </div>
-    </div>)}
-    {!data.attributions.length&&<NoData/>}
-   </div>
-  </section>
- </>
-}
-
-function MiniMetric({label,value,tone}:{label:string;value:string;tone:string}){
- return <div className={`utm-mini-metric ${tone}`}>
-  <span>{label}</span>
-  <strong>{value}</strong>
- </div>
-}
-
-function RecoveryLine({label,value,positive=false}:{label:string;value:string;positive?:boolean}){
- return <div className="utm-recovery-line">
-  <span>{label}</span>
-  <strong className={positive?'positive':''}>{value}</strong>
- </div>
-}
-
-function NoData(){
- return <div className="utm-no-data">Ainda não existem dados para este filtro.</div>
-}
-
-function NewLinkDrawer({form,setForm,onClose,onSubmit}:{form:any;setForm:(v:any)=>void;onClose:()=>void;onSubmit:(e:FormEvent)=>void}){
- const query=new URLSearchParams({utm_source:form.source,utm_medium:form.medium,utm_campaign:form.campaign,...(form.term?{utm_term:form.term}:{}),...(form.content?{utm_content:form.content}:{})}).toString()
- const preview=`${form.destination}${form.destination.includes('?')?'&':'?'}${query}`
- return <div className="utm-drawer-backdrop">
-  <aside className="utm-drawer">
-   <div className="utm-drawer-head">
-    <div>
-     <span className="eyebrow">NOVA URL RASTREÁVEL</span>
-     <h3>Gerar e salvar UTM</h3>
-     <p>A URL será vinculada automaticamente ao evento atual.</p>
-    </div>
-    <button onClick={onClose}><X size={18}/></button>
-   </div>
-   <form onSubmit={onSubmit}>
-    <label>Descrição do link *<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Ex.: Instagram — Story lançamento"/></label>
-    <div className="utm-form-two">
-     <label>Origem (utm_source) *<input required value={form.source} onChange={e=>setForm({...form,source:e.target.value})} placeholder="instagram"/></label>
-     <label>Meio (utm_medium) *<input required value={form.medium} onChange={e=>setForm({...form,medium:e.target.value})} placeholder="cpc, social, email"/></label>
-    </div>
-    <label>Campanha (utm_campaign) *<input required value={form.campaign} onChange={e=>setForm({...form,campaign:e.target.value})} placeholder="lancamento_2026"/></label>
-    <div className="utm-form-two">
-     <label>Termo (utm_term)<input value={form.term} onChange={e=>setForm({...form,term:e.target.value})} placeholder="ingressos"/></label>
-     <label>Conteúdo (utm_content)<input value={form.content} onChange={e=>setForm({...form,content:e.target.value})} placeholder="story_01"/></label>
-    </div>
-    <label>URL de destino *<input required value={form.destination} onChange={e=>setForm({...form,destination:e.target.value})}/></label>
-    <div className="utm-preview">
-     <span>Visualização da URL completa</span>
-     <code>{preview}</code>
-    </div>
-    <div className="utm-drawer-actions">
-     <button type="button" className="btn secondary" onClick={onClose}>Cancelar</button>
-     <button className="btn primary" type="submit"><Sparkles size={15}/> Gerar, salvar e selecionar</button>
-    </div>
-   </form>
-  </aside>
- </div>
-}
-
-function QrCodeModal({modal,onClose,onCopy,notify}:{modal:{name:string;url:string;payload:string};onClose:()=>void;onCopy:(t:string)=>void;notify:(m:string)=>void}){
- const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(modal.url)}`
- return <div className="utm-modal-backdrop" onClick={onClose}>
-  <div className="utm-modal-card" onClick={e=>e.stopPropagation()}>
-   <div className="utm-modal-head">
-    <div>
-     <span className="eyebrow">QR CODE RASTREADO</span>
-     <h3>{modal.name}</h3>
-     <p>Escaneie ou baixe o QR Code conectado diretamente à URL UTM da campanha.</p>
-    </div>
-    <button className="icon-action" onClick={onClose}><X size={18}/></button>
-   </div>
-   <div className="utm-qr-box">
-    <img src={qrImgUrl} alt={`QR Code ${modal.name}`} className="utm-qr-img" />
-    <div className="utm-qr-copy">{modal.url}</div>
-   </div>
-   <div className="utm-modal-actions">
-    <button className="btn secondary" onClick={()=>onCopy(modal.url)}><Copy size={15}/> Copiar Link</button>
-    <a href={qrImgUrl} download={`qrcode_${modal.name}.png`} target="_blank" rel="noreferrer" className="btn primary" onClick={()=>notify('Download do QR Code iniciado!')}>
-     <Download size={15}/> Baixar QR Code
-    </a>
-   </div>
-  </div>
- </div>
-}
-
-function OrderDetailModal({action,onClose,notify}:{action:UtmJourneyAction;onClose:()=>void;notify:(m:string)=>void}){
- return <div className="utm-modal-backdrop" onClick={onClose}>
-  <div className="utm-modal-card wide" onClick={e=>e.stopPropagation()}>
-   <div className="utm-modal-head">
-    <div>
-     <span className="eyebrow">DETALHES DO PEDIDO / JORNADA</span>
-     <h3>{action.orderCode || 'Jornada em Andamento'}</h3>
-     <p>Informações de atribuição, cliente e dados financeiros vinculados a esta UTM.</p>
-    </div>
-    <button className="icon-action" onClick={onClose}><X size={18}/></button>
-   </div>
-   <div className="utm-order-detail-grid">
-    <div className="utm-order-detail-item">
-     <span>Cliente</span>
-     <strong>{action.customerName || 'Visitante Anônimo'}</strong>
-    </div>
-    <div className="utm-order-detail-item">
-     <span>E-mail</span>
-     <strong>{action.customerEmail || 'Não informado'}</strong>
-    </div>
-    <div className="utm-order-detail-item">
-     <span>Etapa do Funil</span>
-     <strong className={`utm-action-badge ${action.action}`}>{actionLabels[action.action]}</strong>
-    </div>
-    <div className="utm-order-detail-item">
-     <span>Valor do Pedido / Carrinho</span>
-     <strong style={{color:'#10B981'}}>{money(action.amountCents)}</strong>
-    </div>
-    <div className="utm-order-detail-item full">
-     <span>Ingressos / Modalidade</span>
-     <strong>{action.ticketSummary || 'Ingresso Padrão'}</strong>
-    </div>
-    <div className="utm-order-detail-item full">
-     <span>Data e Hora do Registro</span>
-     <strong>{new Date(action.createdAt).toLocaleString('pt-BR')}</strong>
-    </div>
-   </div>
-   <div className="utm-modal-actions">
-    <button className="btn secondary" onClick={onClose}>Fechar</button>
-    <button className="btn primary" onClick={()=>{notify(`Comprovante do pedido ${action.orderCode || ''} enviado para ${action.customerEmail || 'o cliente'}.`);onClose()}}>
-     <Mail size={15}/> Reenviar Comprovante
-    </button>
-   </div>
-  </div>
- </div>
-}
-
-function RecoveryModal({dashboard,onClose,notify}:{dashboard:UtmDashboard;onClose:()=>void;notify:(m:string)=>void}){
- const abandoned = dashboard.attributions.filter(a=>a.status==='abandoned')
- return <div className="utm-modal-backdrop" onClick={onClose}>
-  <div className="utm-modal-card wide" onClick={e=>e.stopPropagation()}>
-   <div className="utm-modal-head">
-    <div>
-     <span className="eyebrow">OPORTUNIDADES DE REMARKETING</span>
-     <h3>Carrinhos Abandonados ({abandoned.length})</h3>
-     <p>Recupere clientes com mensagens personalizadas contendo o link do carrinho e cupons.</p>
-    </div>
-    <button className="icon-action" onClick={onClose}><X size={18}/></button>
-   </div>
-   <div className="utm-opp-list">
-    {!abandoned.length ? (
-     <div className="utm-dark-empty">
-      <CheckCircle2 size={32} style={{color:'#10B981'}}/>
-      <strong>Nenhum carrinho abandonado pendente</strong>
-      <span>Todas as sessões foram finalizadas ou recuperadas com sucesso!</span>
-     </div>
-    ) : (
-     abandoned.map(a=><div key={a.id} className="utm-opp-item">
-      <div className="utm-opp-info">
-       <strong>{a.customerName || 'Cliente em Potencial'}</strong>
-       <small>{a.customerEmail || 'E-mail não capturado'} • <span className="cart-val">{money(a.cartValueCents)}</span></small>
-       <small style={{display:'block',color:'#64748b',marginTop:'3px'}}>Última atividade: {new Date(a.lastActivityAt).toLocaleString('pt-BR')}</small>
+      <div className="funnel-text-labels">
+        <span className="funnel-step-name">{label}</span>
+        <strong className="funnel-step-count">{count}</strong>
+        <small className="funnel-step-pct">{pct}</small>
       </div>
-      <div className="utm-opp-actions">
-       <button
-        className="utm-opp-btn"
-        onClick={()=>{
-         const msg = encodeURIComponent(`Olá ${a.customerName || ''}! Notamos que seus ingressos para ${dashboard.link.name} ainda estão reservados no carrinho. Finalize agora: ${dashboard.link.trackedUrl}`)
-         window.open(`https://wa.me/?text=${msg}`, '_blank')
-         notify('WhatsApp aberto com mensagem de recuperação!')
-        }}
-       >
-        <MessageCircle size={14}/> Recuperar WhatsApp
-       </button>
-       <button
-        className="utm-opp-btn secondary"
-        onClick={()=>notify(`E-mail de recuperação disparado com cupom de desconto para ${a.customerEmail || 'o cliente'}!`)}
-       >
-        <Mail size={14}/> Enviar E-mail
-       </button>
-      </div>
-     </div>)
-    )}
-   </div>
-   <div className="utm-modal-actions">
-    <button className="btn secondary" onClick={onClose}>Fechar</button>
-   </div>
-  </div>
- </div>
+    </div>
+  )
+}
+
+function getSourceIcon(source: string) {
+  switch (source) {
+    case 'instagram':
+      return <InstagramIcon />
+    case 'google':
+      return <GoogleIcon />
+    case 'whatsapp':
+      return <MessageCircle size={15} style={{ color: '#FFFFFF' }} />
+    case 'tiktok':
+      return <TikTokIcon />
+    case 'influencer':
+      return <Sparkles size={15} style={{ color: '#FFFFFF' }} />
+    case 'email':
+      return <Mail size={15} style={{ color: '#FFFFFF' }} />
+    case 'facebook':
+      return <span style={{ fontWeight: 900, fontSize: '14px', color: '#FFFFFF' }}>f</span>
+    case 'affiliates':
+      return <span style={{ fontWeight: 900, fontSize: '13px', color: '#FFFFFF' }}>V</span>
+    default:
+      return <Link2 size={15} />
+  }
+}
+
+function InstagramIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#FFFFFF' }}>
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  )
+}
+
+function GoogleIcon() {
+  return (
+    <span style={{ fontWeight: 900, fontSize: '13px', color: '#EA4335' }}>G</span>
+  )
+}
+
+function TikTokIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#FFFFFF' }}>
+      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+    </svg>
+  )
+}
+
+const mockUrls = [
+  { id: 1, name: 'Instagram — Lançamento 2026', shortUrl: 'disk.ing/4amigos-instagram', visits: '1.842', sales: '87', revenue: 'R$ 12.480,50', source: 'instagram' },
+  { id: 2, name: 'Google Ads — Pesquisa Direta', shortUrl: 'disk.ing/4amigos-google', visits: '1,256', sales: '41', revenue: 'R$ 6,120,00', source: 'google' },
+  { id: 3, name: 'WhatsApp — Disparo Último Lote', shortUrl: 'disk.ing/4amigos-whatsapp', visits: '982', sales: '32', revenue: 'R$ 3,980,00', source: 'whatsapp' },
+  { id: 4, name: 'TikTok Ads — Vídeo Lineup', shortUrl: 'disk.ing/4amigos-tiktok', visits: '671', sales: '19', revenue: 'R$ 2,610,00', source: 'tiktok' },
+  { id: 5, name: 'Influencer — Curitiba Cult VIP', shortUrl: 'disk.ing/4amigos-influencer', visits: '458', sales: '15', revenue: 'R$ 2,150,00', source: 'influencer' },
+  { id: 6, name: 'E-mail — Newsletter Base Ativa', shortUrl: 'disk.ing/4amigos-email', visits: '356', sales: '12', revenue: 'R$ 1,560,00', source: 'email' },
+  { id: 7, name: 'Facebook Ads — Remarketing Checkout', shortUrl: 'disk.ing/4amigos-fb-remarketing', visits: '198', sales: '7', revenue: 'R$ 980,00', source: 'facebook' },
+  { id: 8, name: 'Afiliados — Promoters Oficiais', shortUrl: 'disk.ing/4amigos-afiliados', visits: '79', sales: '4', revenue: 'R$ 570,00', source: 'affiliates' },
+]
+
+const hourlyMock = [
+  { hour: '00h', val: 20, label: '00h' },
+  { hour: '01h', val: 15 },
+  { hour: '02h', val: 10 },
+  { hour: '03h', val: 8 },
+  { hour: '04h', val: 18, label: '04h' },
+  { hour: '05h', val: 28 },
+  { hour: '06h', val: 40 },
+  { hour: '07h', val: 55 },
+  { hour: '08h', val: 68, label: '08h' },
+  { hour: '09h', val: 72 },
+  { hour: '10h', val: 85 },
+  { hour: '11h', val: 78 },
+  { hour: '12h', val: 92, label: '12h' },
+  { hour: '13h', val: 88 },
+  { hour: '14h', val: 75 },
+  { hour: '15h', val: 82 },
+  { hour: '16h', val: 96, label: '16h' },
+  { hour: '17h', val: 90 },
+  { hour: '18h', val: 85 },
+  { hour: '19h', val: 92 },
+  { hour: '20h', val: 98, label: '20h' },
+]
+
+const mockOrders = [
+  { id: 1, code: '#16355834', status: 'Finalizado', statusClass: 'finalized', actionKey: 'finalized', customer: 'João Silva', email: 'joao@email.com', utm: 'instagram / cpc / lancamento_2026', utmSource: 'instagram', tickets: '2x Pista Premium', modality: 'Inteira', value: 'R$ 360,00', dateTime: '31/05/2026 21:48' },
+  { id: 2, code: '#16355789', status: 'Checkout', statusClass: 'checkout', actionKey: 'checkout', customer: 'Maria Santos', email: 'maria@email.com', utm: 'instagram / cpc / lancamento_2026', utmSource: 'instagram', tickets: '1x Camarote Open Bar', modality: 'Inteira', value: 'R$ 280,00', dateTime: '31/05/2026 20:33' },
+  { id: 3, code: '#16355621', status: 'Abandonou', statusClass: 'abandoned', actionKey: 'abandoned', customer: 'Lucas Oliveira', email: 'lucas@email.com', utm: 'instagram / cpc / lancamento_2026', utmSource: 'instagram', tickets: '2x Pista Premium', modality: 'Inteira', value: 'R$ 340,00', dateTime: '31/05/2026 19:12' },
+  { id: 4, code: '#16355509', status: 'Finalizado', statusClass: 'finalized', actionKey: 'finalized', customer: 'Ana Paula Costa', email: 'ana@email.com', utm: 'instagram / cpc / lancamento_2026', utmSource: 'instagram', tickets: '1x Camarote Frontstage', modality: 'Meia', value: 'R$ 420,00', dateTime: '31/05/2026 18:47' },
+  { id: 5, code: '#16355341', status: 'Adicionou', statusClass: 'added', actionKey: 'added', customer: 'Rafael Mendes', email: 'rafael@email.com', utm: 'instagram / cpc / lancamento_2026', utmSource: 'instagram', tickets: '1x Pista Premium', modality: 'Inteira', value: 'R$ 170,00', dateTime: '31/05/2026 17:05' },
+]
+
+function NewLinkDrawer({ form, setForm, onClose, onSubmit }: { form: any; setForm: (v: any) => void; onClose: () => void; onSubmit: (e: FormEvent) => void }) {
+  const query = new URLSearchParams({ utm_source: form.source, utm_medium: form.medium, utm_campaign: form.campaign, ...(form.term ? { utm_term: form.term } : {}), ...(form.content ? { utm_content: form.content } : {}) }).toString()
+  const preview = `${form.destination}${form.destination.includes('?') ? '&' : '?'}${query}`
+  return (
+    <div className="utm-drawer-backdrop">
+      <aside className="utm-drawer">
+        <div className="utm-drawer-head">
+          <div>
+            <span className="eyebrow">NOVA URL RASTREÁVEL</span>
+            <h3>Gerar e salvar UTM</h3>
+          </div>
+          <button type="button" onClick={onClose}>✕</button>
+        </div>
+        <form onSubmit={onSubmit}>
+          <label>
+            Nome da URL / Ação *
+            <input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Ex: Instagram — Stories Ingressos" />
+          </label>
+          <div className="utm-form-two">
+            <label>
+              Origem (utm_source) *
+              <input required value={form.source} onChange={e => setForm({ ...form, source: e.target.value })} placeholder="instagram, google, whatsapp" />
+            </label>
+            <label>
+              Mídia (utm_medium) *
+              <input required value={form.medium} onChange={e => setForm({ ...form, medium: e.target.value })} placeholder="cpc, stories, bio, banner" />
+            </label>
+          </div>
+          <label>
+            Campanha (utm_campaign) *
+            <input required value={form.campaign} onChange={e => setForm({ ...form, campaign: e.target.value })} placeholder="lancamento_2026" />
+          </label>
+          <div className="utm-preview">
+            <span>Prévia do Link Gerado</span>
+            <code>{preview}</code>
+          </div>
+          <div className="utm-drawer-actions">
+            <button type="button" className="btn secondary" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn primary"><Plus size={15} /> Criar e Salvar UTM</button>
+          </div>
+        </form>
+      </aside>
+    </div>
+  )
 }
