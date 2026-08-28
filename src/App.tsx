@@ -29,6 +29,8 @@ import FinanceiroConsolidadoPage from './pages/FinanceiroConsolidadoPage'
 import AccountingDashboardPage from './pages/AccountingDashboardPage'
 import AccountingChartPage from './pages/AccountingChartPage'
 import AccountingEntriesPage from './pages/AccountingEntriesPage'
+import AccountingJournalPage from './pages/AccountingJournalPage'
+import AccountingLedgerPage from './pages/AccountingLedgerPage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -388,7 +390,6 @@ export default function App() {
   ] as PageKey[]
 
   const accountingPlaceholder = [
-    'accounting-journal', 'accounting-ledger',
     'accounting-cost-centers', 'accounting-reconciliation', 'accounting-audit',
     'accounting-closing', 'accounting-taxes', 'accounting-nfse', 'accounting-nfe', 'accounting-sped',
     'accounting-obligations', 'accounting-dre', 'accounting-balance-sheet', 'accounting-trial-balance',
@@ -570,7 +571,7 @@ export default function App() {
           <FinanceiroConsolidadoPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
-        {/* FASE 18.1 & 18.2: CONTABILIDADE INTEGRADA */}
+        {/* FASE 18.1, 18.2 & 18.3: CONTABILIDADE INTEGRADA */}
         {page === 'accounting-dashboard' && (
           <AccountingDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
@@ -579,6 +580,12 @@ export default function App() {
         )}
         {page === 'accounting-entries' && (
           <AccountingEntriesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'accounting-journal' && (
+          <AccountingJournalPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'accounting-ledger' && (
+          <AccountingLedgerPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
         {/* OUTRAS TELAS FINANCEIRAS */}
