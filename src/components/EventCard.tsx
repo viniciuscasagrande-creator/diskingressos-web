@@ -17,18 +17,8 @@ export default function EventCard({event, onEdit, onLots, onDashboard, onOpen}: 
       <div className={`event-cover ${event.cover}`}>
         {event.badge && <span className="cover-badge">{event.badge}</span>}
         <div className="cover-overlay">
-          {event.cover === 'comedy' && <><strong>4 AMIGOS</strong><span>Stand Up Comedy Brasil</span></>}
-          {event.cover === 'theater' && <><strong>FESTIVAL DE CURITIBA</strong><span>Mostra Principal 2026</span></>}
-          {event.cover === 'electronic' && <><strong>WARUNG DAY FESTIVAL</strong><span>Pedreira Paulo Leminski</span></>}
-          {event.cover === 'rock' && <><strong>PRIME ROCK BRASIL</strong><span>Clássicos do Rock Nacional</span></>}
-          {event.cover === 'symphonic' && <><strong>ORQUESTRA SINFÔNICA</strong><span>Clássicos do Cinema</span></>}
-          {event.cover === 'tech' && <><strong>EXPONORTE TECH</strong><span>Inovação & IA 2026</span></>}
-          {event.cover === 'circus' && <><strong>CIRQUE DU SOLEIL</strong><span>Bazzar Brasil Tour</span></>}
-          {event.cover === 'running' && <><strong>CIRCUITO ESTAÇÕES</strong><span>Etapa Inverno 10K</span></>}
-          {event.cover.startsWith('conference') && <><strong>O Espiritismo</strong><span>Luz em nossas vidas.</span></>}
-          {event.cover === 'nature' && <><strong>Música e natureza</strong><span>fazendo arte.</span></>}
-          {event.cover === 'maiden' && <><strong>IRON MAIDEN SYMPHONIC</strong><span>THE BEAST EXPERIENCE</span></>}
-          {event.cover === 'custom' && <><strong>{event.category || 'Novo evento'}</strong><span>{event.city}</span></>}
+          <strong>{event.title.split('•')[0].trim()}</strong>
+          <span>{event.badge || event.category || event.city}</span>
         </div>
         <span className="event-id">{event.code}</span>
       </div>
