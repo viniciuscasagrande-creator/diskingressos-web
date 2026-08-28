@@ -17,6 +17,9 @@ import FinanceDashboardPage from './pages/FinanceDashboardPage'
 import FinanceBalancesPage from './pages/FinanceBalancesPage'
 import FinanceStatementPage from './pages/FinanceStatementPage'
 import FinancePayoutsPage from './pages/FinancePayoutsPage'
+import FinanceCashFlowPage from './pages/FinanceCashFlowPage'
+import FinanceReceivablesPage from './pages/FinanceReceivablesPage'
+import FinancePayablesPage from './pages/FinancePayablesPage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -370,9 +373,8 @@ export default function App() {
   }
 
   const financePlaceholder = [
-    'finance-receivables', 'finance-payables', 'finance-reconciliation',
-    'finance-spread', 'finance-split', 'finance-intelligence', 'finance-methods',
-    'finance-custom', 'finance-operators', 'finance-bank', 'finance-expenses',
+    'finance-reconciliation', 'finance-spread', 'finance-split', 'finance-intelligence',
+    'finance-methods', 'finance-custom', 'finance-operators', 'finance-bank', 'finance-expenses',
     'finance-bordero', 'finance-negotiations', 'finance-refunds', 'finance-reports'
   ] as PageKey[]
 
@@ -517,7 +519,7 @@ export default function App() {
           <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
-        {/* FASE 17.3: SALDOS, EXTRATO E REPASSES */}
+        {/* FASE 17.3 & 17.4: OPERAÇÕES FINANCEIRAS INTEGRADAS */}
         {page === 'finance' && (
           <FinanceBalancesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
@@ -527,10 +529,18 @@ export default function App() {
         {page === 'finance-payouts' && (
           <FinancePayoutsPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
+        {page === 'finance-cashflow' && (
+          <FinanceCashFlowPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-receivables' && (
+          <FinanceReceivablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-payables' && (
+          <FinancePayablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-cashflow' && <FinancePage events={visibleEvents} initialTab="cashflow" notify={notify} />}
         {page === 'finance-bank-accounts' && <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
         {page === 'finance-advance' && <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
 

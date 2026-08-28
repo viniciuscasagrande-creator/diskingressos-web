@@ -66,6 +66,34 @@ export type EventBalance = {
   paidOut: number
 }
 
+export type ReceivableItem = {
+  id: number
+  title: string
+  event: string
+  client: string
+  method: 'Crédito' | 'Pix' | 'Boleto' | 'Débito'
+  saleDate: string
+  dueDate: string
+  installment: string
+  grossValue: number
+  gatewayFee: number
+  netValue: number
+  status: 'A Vencer' | 'Liquidado' | 'Antecipado' | 'Processando'
+}
+
+export type PayableItem = {
+  id: number
+  description: string
+  vendor: string
+  category: 'Repasse Produtor' | 'Gateway Adquirente' | 'Servidores & Infra' | 'Equipe & Portaria' | 'Taxas & Impostos' | 'Direitos Autorais'
+  event: string
+  dueDate: string
+  paymentMethod: 'PIX' | 'Boleto' | 'TED' | 'Débito Automático'
+  amount: number
+  status: 'Agendado' | 'Pendente' | 'Pago' | 'Atrasado'
+  documentNumber?: string
+}
+
 export const financeSummary = {
   availableBalance: 248960.40,
   blockedBalance: 68420.15,
@@ -139,3 +167,21 @@ export const integratedPipelineSeed: FlowPipelineStep[] = [
   { id: 'conciliacao', title: '5. CONCILIAÇÃO', subtitle: 'Batimento bancário e divergências', amountCents: 108614050, count: 4790, status: 'synced' },
   { id: 'repasse', title: '6. REPASSE', subtitle: 'Pagamentos PIX/TED liberados ao produtor', amountCents: 24896040, count: 8, status: 'active' },
 ]
+
+export const receivablesSeed: ReceivableItem[] = [
+  { id: 101, title: 'Venda Parcelada #DI-98240 (Parc. 1/6)', event: 'IRON MAIDEN — THE FUTURE PAST TOUR', client: 'Lucas Silveira', method: 'Crédito', saleDate: '28/08/2026', dueDate: '28/09/2026', installment: '1/6', grossValue: 208.33, gatewayFee: 14.16, netValue: 194.17, status: 'A Vencer' },
+  { id: 102, title: 'Lote Corporativo 50 Ingressos #DI-98210', event: '4 AMIGOS 2026 — EDIÇÃO ESPECIAL', client: 'Tech Paraná Soluções', method: 'Boleto', saleDate: '27/08/2026', dueDate: '02/09/2026', installment: 'À Vista', grossValue: 8500.00, gatewayFee: 297.50, netValue: 8202.50, status: 'Processando' },
+  { id: 103, title: 'Venda Parcelada #DI-98180 (Parc. 2/4)', event: 'SEM PARAR — EXPERIÊNCIA MÚSICA E NATUREZA', client: 'Mariana Rocha', method: 'Crédito', saleDate: '25/08/2026', dueDate: '25/09/2026', installment: '2/4', grossValue: 410.00, gatewayFee: 27.88, netValue: 382.12, status: 'A Vencer' },
+  { id: 104, title: 'Venda Parcelada #DI-97990 (Parc. 3/10)', event: 'IRON MAIDEN — THE FUTURE PAST TOUR', client: 'Rodrigo Medeiros', method: 'Crédito', saleDate: '20/08/2026', dueDate: '20/09/2026', installment: '3/10', grossValue: 129.00, gatewayFee: 8.77, netValue: 120.23, status: 'A Vencer' },
+  { id: 105, title: 'Liquidação Lote 2 Antecipada', event: '4 AMIGOS 2026 — EDIÇÃO ESPECIAL', client: 'Disk Produções', method: 'Crédito', saleDate: '15/08/2026', dueDate: '15/09/2026', installment: 'Lote Completo', grossValue: 45000.00, gatewayFee: 1575.00, netValue: 43425.00, status: 'Antecipado' },
+  { id: 106, title: 'Venda PDV Cartão Débito D+1 #DI-98288', event: '29ª CONFERÊNCIA ESTADUAL ESPÍRITA', client: 'Bruno Freitas', method: 'Débito', saleDate: '28/08/2026', dueDate: '29/08/2026', installment: 'À Vista', grossValue: 680.00, gatewayFee: 13.60, netValue: 666.40, status: 'A Vencer' },
+]
+
+export const payablesSeed: PayableItem[] = [
+  { id: 201, description: 'Repasse Programado Lote 2', vendor: 'Rua da Música Produções Ltda', category: 'Repasse Produtor', event: 'IRON MAIDEN — THE FUTURE PAST TOUR', dueDate: '30/08/2026', paymentMethod: 'PIX', amount: 42300.00, status: 'Agendado', documentNumber: 'REP-2026-IM02' },
+  { id: 202, description: 'Tarifa Adquirente Cielo / Rede Mês 08', vendor: 'Adquirente Cielo S.A.', category: 'Gateway Adquirente', event: 'GLOBAL', dueDate: '05/09/2026', paymentMethod: 'Débito Automático', amount: 18450.30, status: 'Agendado', documentNumber: 'FAT-CIE-8891' },
+  { id: 203, description: 'Servidores e Infraestrutura Cloud AWS', vendor: 'Amazon Web Services Brasil', category: 'Servidores & Infra', event: 'GLOBAL', dueDate: '10/09/2026', paymentMethod: 'Boleto', amount: 8920.00, status: 'Agendado', documentNumber: 'INV-AWS-2910' },
+  { id: 204, description: 'Equipe de Portaria & Controle Facial', vendor: 'Staff Eventos Segurança e Acesso', category: 'Equipe & Portaria', event: 'SEM PARAR — EXPERIÊNCIA MÚSICA E NATUREZA', dueDate: '02/09/2026', paymentMethod: 'TED', amount: 7200.00, status: 'Pendente', documentNumber: 'NF-STF-1092' },
+  { id: 205, description: 'Direitos Autorais ECAD Lote 1', vendor: 'ECAD - Escritório Central de Arrecadação', category: 'Direitos Autorais', event: 'IRON MAIDEN — THE FUTURE PAST TOUR', dueDate: '15/09/2026', paymentMethod: 'Boleto', amount: 21670.00, status: 'Agendado', documentNumber: 'BOL-ECAD-8941' },
+]
+
