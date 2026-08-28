@@ -2930,3 +2930,83 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
     grid-column: 1 !important;
   }
 }
+
+
+/* =========================================================
+   FASE 19.13.5 — MOBILE UX FINAL (PIXEL PERFECT & TITLEBAR)
+   ========================================================= */
+@media (max-width: 900px) {
+  .mobile-titlebar-hidden {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .events-revenue-full {
+    display: none !important;
+  }
+  .events-revenue-compact {
+    display: block !important;
+  }
+  .events-page-head {
+    margin-bottom: 12px !important;
+  }
+  .events-summary-strip {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+  .events-summary-strip > div {
+    padding: 8px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+  .events-summary-strip span {
+    font-size: 11px !important;
+    color: #64748B !important;
+    font-weight: 600 !important;
+  }
+  .events-summary-strip strong {
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+  }
+  .events-toolbar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+  }
+  .events-compare-btn {
+    display: none !important;
+  }
+  .events-view-switch {
+    display: none !important;
+  }
+  .events-status-tabs {
+    display: flex !important;
+    width: 100% !important;
+    gap: 4px !important;
+  }
+  .events-status-tabs button {
+    flex: 1 1 0 !important;
+    min-height: 38px !important;
+    padding: 6px 4px !important;
+    font-size: 12px !important;
+    justify-content: center !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .events-revenue-full {
+    display: block !important;
+  }
+  .events-revenue-compact {
+    display: none !important;
+  }
+}

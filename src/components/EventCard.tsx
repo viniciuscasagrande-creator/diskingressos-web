@@ -27,16 +27,16 @@ export default function EventCard({event, onEdit, onLots, onDashboard, onOpen}: 
           <div className="title-with-status"><h3>{event.title}</h3><span className={`status-pill ${event.status}`}>{event.status}</span></div>
           <p className="venue"><MapPin size={17}/>{event.venue}</p>
         </div>
-        <div className="metrics">
+        <div className="metrics event-card-metrics">
           <Metric label="Total (R$)" value={event.total} accent="green" />
           <Metric label="Vendas" value={String(event.sales)} accent="blue" />
           <Metric label="Disponível" value={String(event.available)} accent="cyan" />
           <Metric label="Cortesia" value={String(event.courtesy)} accent="slate" />
           <Metric label="Ocupação" value={event.occupancy} accent={high ? 'orange' : 'blue'} />
         </div>
-        <div className="card-footer">
+        <div className="card-footer event-card-footer">
           <span><CalendarDays size={17}/>{event.date}</span>
-          <div className="actions">
+          <div className="actions event-card-actions">
             <button title="Painel do evento" onClick={e=>{e.stopPropagation();onDashboard(event)}}><Settings2 size={17}/></button>
             <button title="Editar evento" onClick={e=>{e.stopPropagation();onEdit(event)}}><Pencil size={17}/></button>
             <button title="Lotes" onClick={e=>{e.stopPropagation();onLots(event)}}><Layers3 size={18}/></button>

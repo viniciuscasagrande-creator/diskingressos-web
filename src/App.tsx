@@ -56,6 +56,25 @@ import ProfileDashboardPage from './pages/ProfileDashboardPage'
 import { canAccess, isGlobalAdmin, producers as seedProducers, seedUsers, type AppUser } from './auth/model'
 import { login as apiLogin, setApiToken, clearApiToken, hasStoredToken, getMe, getProducers, getUsers, getEvents } from './services/api'
 
+const mobileInternalHeaderPages = new Set<PageKey>([
+  'events',
+  'event-utm',
+  'marketing-utm-central',
+  'finance-dashboard',
+  'finance',
+  'finance-statement',
+  'finance-cashflow',
+  'finance-receivables',
+  'finance-payables',
+  'finance-payouts',
+  'finance-advance',
+  'finance-reconciliation',
+  'finance-bank-accounts',
+  'finance-expenses',
+  'finance-bordero',
+  'finance-consolidated',
+])
+
 const titleMap: Partial<Record<PageKey, string>> = {
   'profile-dashboard': 'Meu Dashboard',
   'global-dashboard': 'Visão Geral Administrativa',
@@ -488,7 +507,7 @@ export default function App() {
         />
       )}
 
-      <div className="module-titlebar">
+      <div className={`module-titlebar ${mobileInternalHeaderPages.has(page) ? 'mobile-titlebar-hidden' : ''}`}>
         <h1>{titleMap[page] || 'DiskIngressos'}</h1>
         <div className="scope-pill">
           {inEventContext && selectedEvent

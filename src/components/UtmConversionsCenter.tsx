@@ -388,14 +388,14 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
   return (
     <div className="utm-center utm-dashboard-v2" style={{ background: '#F8FAFC', color: '#0F172A' }}>
       {/* 1. Header & Operational Context Controls */}
-      <section className="utm-dash-header" style={{ padding: '8px 0', borderBottom: '1px solid #E2E8F0', marginBottom: '8px' }}>
+      <section className="utm-dash-header mobile-utm-head" style={{ padding: '8px 0', borderBottom: '1px solid #E2E8F0', marginBottom: '8px' }}>
         <div className="utm-dash-title">
           <h2>Central UTM & Conversões</h2>
           <p>Acompanhe em tempo real a atribuição, jornada e desempenho operacional de cada origem de tráfego.</p>
         </div>
-        <div className="utm-dash-controls">
+        <div className="utm-dash-controls mobile-utm-controls">
           {/* Event Context */}
-          <div className="utm-context-select" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+          <div className="utm-context-select mobile-utm-context" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
             <span style={{ color: '#64748B' }}>Evento selecionado</span>
             {events.length > 0 && onSelectEvent ? (
               <select
@@ -421,7 +421,7 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
           </div>
 
           {/* Date Range Picker */}
-          <div className="utm-context-select" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+          <div className="utm-context-select mobile-utm-context" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
             <span style={{ color: '#64748B' }}>Período</span>
             <select
               className="utm-period-select"
@@ -441,7 +441,7 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
 
           {/* Action Buttons */}
           <button 
-            className={`btn ${compareMode ? 'primary' : 'secondary'}`} 
+            className={`btn mobile-utm-secondary-action ${compareMode ? 'primary' : 'secondary'}`} 
             onClick={() => {
               setCompareMode(!compareMode)
               notify(compareMode ? 'Modo de comparação desativado.' : 'Modo de comparação ativado: selecione as URLs para comparar lado a lado.')
@@ -455,13 +455,13 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
           >
             <Scale size={15} /> {compareMode ? 'Sair da Comparação' : 'Comparar URLs'}
           </button>
-          <button className="btn secondary" onClick={() => setOpenExportModal(true)} title="Exportar dados">
+          <button className="btn secondary mobile-utm-secondary-action" onClick={() => setOpenExportModal(true)} title="Exportar dados">
             <Download size={15} /> Exportar <ChevronDown size={13} />
           </button>
-          <button className="btn secondary" onClick={() => setOpenShareModal(true)} title="Compartilhar visão">
+          <button className="btn secondary mobile-utm-secondary-action" onClick={() => setOpenShareModal(true)} title="Compartilhar visão">
             <Share2 size={15} /> Compartilhar
           </button>
-          <button className="btn primary" onClick={() => setOpenNew(true)}>
+          <button className="btn primary mobile-utm-primary-action" onClick={() => setOpenNew(true)}>
             <Plus size={16} /> Nova UTM
           </button>
         </div>
