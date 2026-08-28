@@ -20,6 +20,9 @@ import FinancePayoutsPage from './pages/FinancePayoutsPage'
 import FinanceCashFlowPage from './pages/FinanceCashFlowPage'
 import FinanceReceivablesPage from './pages/FinanceReceivablesPage'
 import FinancePayablesPage from './pages/FinancePayablesPage'
+import FinanceReconciliationPage from './pages/FinanceReconciliationPage'
+import FinanceBankAccountsPage from './pages/FinanceBankAccountsPage'
+import FinanceAdvancePage from './pages/FinanceAdvancePage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -373,8 +376,8 @@ export default function App() {
   }
 
   const financePlaceholder = [
-    'finance-reconciliation', 'finance-spread', 'finance-split', 'finance-intelligence',
-    'finance-methods', 'finance-custom', 'finance-operators', 'finance-bank', 'finance-expenses',
+    'finance-spread', 'finance-split', 'finance-intelligence',
+    'finance-methods', 'finance-custom', 'finance-operators', 'finance-expenses',
     'finance-bordero', 'finance-negotiations', 'finance-refunds', 'finance-reports'
   ] as PageKey[]
 
@@ -539,10 +542,19 @@ export default function App() {
           <FinancePayablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
+        {/* FASE 17.5: CONCILIAÇÃO BANCÁRIA, CONTAS BANCÁRIAS E ANTECIPAÇÕES */}
+        {(page === 'finance-reconciliation' || page === 'finance-bank') && (
+          <FinanceReconciliationPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-bank-accounts' && (
+          <FinanceBankAccountsPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-advance' && (
+          <FinanceAdvancePage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-bank-accounts' && <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
-        {page === 'finance-advance' && <FinanceDashboardPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
 
         {financePlaceholder.includes(page) && (
           <ModulePlaceholder

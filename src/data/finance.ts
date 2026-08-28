@@ -94,6 +94,33 @@ export type PayableItem = {
   documentNumber?: string
 }
 
+export type ReconciliationItem = {
+  id: number
+  date: string
+  systemDescription: string
+  bankDescription: string
+  orderCode?: string
+  systemValue: number
+  bankValue: number
+  difference: number
+  bankName: string
+  status: 'Conciliado' | 'Pendente' | 'Divergente'
+}
+
+export type AdvanceContract = {
+  id: number
+  contractNumber: string
+  event: string
+  producer: string
+  contractDate: string
+  grossAmount: number
+  feeRate: number
+  feeAmount: number
+  netAmount: number
+  bankAccount: string
+  status: 'Liquidado' | 'Em Análise' | 'Aprovado'
+}
+
 export const financeSummary = {
   availableBalance: 248960.40,
   blockedBalance: 68420.15,
@@ -183,5 +210,19 @@ export const payablesSeed: PayableItem[] = [
   { id: 203, description: 'Servidores e Infraestrutura Cloud AWS', vendor: 'Amazon Web Services Brasil', category: 'Servidores & Infra', event: 'GLOBAL', dueDate: '10/09/2026', paymentMethod: 'Boleto', amount: 8920.00, status: 'Agendado', documentNumber: 'INV-AWS-2910' },
   { id: 204, description: 'Equipe de Portaria & Controle Facial', vendor: 'Staff Eventos Segurança e Acesso', category: 'Equipe & Portaria', event: 'SEM PARAR — EXPERIÊNCIA MÚSICA E NATUREZA', dueDate: '02/09/2026', paymentMethod: 'TED', amount: 7200.00, status: 'Pendente', documentNumber: 'NF-STF-1092' },
   { id: 205, description: 'Direitos Autorais ECAD Lote 1', vendor: 'ECAD - Escritório Central de Arrecadação', category: 'Direitos Autorais', event: 'IRON MAIDEN — THE FUTURE PAST TOUR', dueDate: '15/09/2026', paymentMethod: 'Boleto', amount: 21670.00, status: 'Agendado', documentNumber: 'BOL-ECAD-8941' },
+]
+
+export const reconciliationsSeed: ReconciliationItem[] = [
+  { id: 301, date: '28/08/2026', systemDescription: 'Venda Ingressos PIX Lote 1 #DI-98240', bankDescription: 'PIX RECEBIDO 44.821.902/0001-38 BANCO ITAU', orderCode: 'PED-IM-98240', systemValue: 1250.00, bankValue: 1250.00, difference: 0.00, bankName: 'Banco Itaú (341)', status: 'Conciliado' },
+  { id: 302, date: '28/08/2026', systemDescription: 'Repasse Produtora Rua da Música', bankDescription: 'PIX TRANSF RUA DA MUSICA PROD LTDA', orderCode: 'REP-PIX-4AM-02', systemValue: -8420.00, bankValue: -8420.00, difference: 0.00, bankName: 'Banco Itaú (341)', status: 'Conciliado' },
+  { id: 303, date: '27/08/2026', systemDescription: 'Liquidação Adquirente Cielo Cartão Crédito', bankDescription: 'CIELO LIQUIDACAO DIARIA D+30', orderCode: 'CIELO-LIQ-2708', systemValue: 24890.00, bankValue: 24890.00, difference: 0.00, bankName: 'Banco Bradesco (237)', status: 'Conciliado' },
+  { id: 304, date: '27/08/2026', systemDescription: 'Tarifa Mensal Manutenção de Conta Corrente', bankDescription: 'TARIFA MENSAL PACOTE EMPRESARIAL', orderCode: 'TAR-BAN-0826', systemValue: -89.90, bankValue: -89.90, difference: 0.00, bankName: 'Banco Itaú (341)', status: 'Conciliado' },
+  { id: 305, date: '26/08/2026', systemDescription: 'Depósito PDV Bilheteria Física Sem Parar', bankDescription: 'DEPOSITO DINHEIRO AG 0432 TERMINAL 12', orderCode: 'PDV-DEP-2608', systemValue: 1840.00, bankValue: 1840.00, difference: 0.00, bankName: 'Banco Itaú (341)', status: 'Pendente' },
+]
+
+export const advancesSeed: AdvanceContract[] = [
+  { id: 401, contractNumber: 'ANT-2026-0801', event: '4 AMIGOS 2026 — EDIÇÃO ESPECIAL', producer: 'Disk Produções', contractDate: '15/08/2026', grossAmount: 45000.00, feeRate: 3.5, feeAmount: 1575.00, netAmount: 43425.00, bankAccount: 'Banco Itaú (341) Ag. 0432 C/C 29814-5', status: 'Liquidado' },
+  { id: 402, contractNumber: 'ANT-2026-0802', event: 'IRON MAIDEN — THE FUTURE PAST TOUR', producer: 'Rua da Música', contractDate: '22/08/2026', grossAmount: 80000.00, feeRate: 3.5, feeAmount: 2800.00, netAmount: 77200.00, bankAccount: 'Banco Bradesco (237) Ag. 1892 C/C 55421-0', status: 'Aprovado' },
+  { id: 403, contractNumber: 'ANT-2026-0803', event: 'SEM PARAR — EXPERIÊNCIA MÚSICA E NATUREZA', producer: 'Nature Experience', contractDate: '27/08/2026', grossAmount: 30000.00, feeRate: 3.5, feeAmount: 1050.00, netAmount: 28950.00, bankAccount: 'Nu Pagamentos (260) Ag. 0001 C/P 849102-1', status: 'Em Análise' },
 ]
 
