@@ -74,27 +74,9 @@ export default function RemarketingPage({ events, producerName, producerId, mode
     )
   }
 
-  if (['carts', 'flows', 'whatsapp', 'email', 'payments', 'inactive', 'postevent', 'automation'].includes(mode)) {
-    return <RecoveryCenterPage producerId={producerId} events={events} mode={mode as any} notify={notify} />
-  }
-
-  if (mode !== 'dashboard') {
-    return (
-      <section className="growth-page">
-        <div className="growth-intro">
-          <div>
-            <p className="eyebrow remarketing">REMARKETING</p>
-            <h2>{title(mode)}</h2>
-            <p>{producerName} · dados limitados aos eventos autorizados ({events.length}).</p>
-          </div>
-        </div>
-        <article className="growth-panel feature-empty">
-          <Repeat2 size={34} />
-          <h3>{title(mode)}</h3>
-          <p>Módulo preparado no template global com isolamento por produtora e contexto por evento.</p>
-        </article>
-      </section>
-    )
+  if (['carts', 'flows', 'whatsapp', 'email', 'payments', 'inactive', 'postevent', 'automation', 'audiences', 'segments'].includes(mode)) {
+    const targetMode = mode === 'audiences' || mode === 'segments' ? 'flows' : mode
+    return <RecoveryCenterPage producerId={producerId} events={events} mode={targetMode as any} notify={notify} />
   }
 
   return (

@@ -1151,22 +1151,40 @@ function MarketingCrmPage({ events, event, notify }: { events: EventItem[]; even
 
 // 7. Públicos & Segmentação
 function AudiencesPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
-  const audiences = [
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [audiences, setAudiences] = useState([
     { name: 'Compradores VIP (Ticket Médio > R$ 300)', size: '1.240 contatos', capi: 'Sincronizado', color: '#16A34A' },
     { name: 'Abandonos de Checkout (Últimos 14 dias)', size: '380 contatos', capi: 'Sincronizado', color: '#2563EB' },
     { name: 'Compradores de Edições Anteriores 2025', size: '4.520 contatos', capi: 'Pendente', color: '#D97706' },
     { name: 'Visitantes Recorrentes sem Compra', size: '2.180 contatos', capi: 'Sincronizado', color: '#7C3AED' }
-  ]
+  ])
+  const [newName, setNewName] = useState('')
+  const [newRule, setNewRule] = useState('Compradores nos últimos 90 dias')
+
+  const handleCreateAudience = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newName) return
+    const row = {
+      name: newName,
+      size: '520 contatos calculados',
+      capi: 'Sincronizado',
+      color: '#16A34A'
+    }
+    setAudiences([row, ...audiences])
+    setIsModalOpen(false)
+    setNewName('')
+    notify(`🚀 Público "${row.name}" criado e sincronizado com o Meta CAPI & Google!`)
+  }
 
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>AUDIÊNCIAS & SEGMENTAÇÃO</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Públicos Personalizados — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Crie listas para remarketing e sincronize com Meta Custom Audiences e Google Ads.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Públicos Personalizados — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Crie listas para remarketing e sincronize com Meta Custom Audiences e Google Ads.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Criando novo público segmentado...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
           <Plus size={15} /> Criar Público
         </button>
       </div>
@@ -1176,118 +1194,344 @@ function AudiencesPage({ events, event, notify }: { events: EventItem[]; event: 
           <div key={i} className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
               <span style={{ fontSize: '10px', fontWeight: 800, background: '#EFF6FF', color: a.color, padding: '2px 6px', borderRadius: '4px' }}>
-                {a.capi}
+                ● {a.capi}
               </span>
               <Users size={16} style={{ color: '#64748B' }} />
             </div>
             <strong style={{ fontSize: '14px', color: '#0F172A', display: 'block' }}>{a.name}</strong>
             <span style={{ fontSize: '12px', color: '#64748B', marginTop: '4px', display: 'block' }}>{a.size}</span>
             <div style={{ marginTop: '12px', paddingTop: '8px', borderTop: '1px solid #F1F5F9', display: 'flex', gap: '6px' }}>
-              <button className="btn secondary" style={{ height: '28px', fontSize: '11px', flex: 1 }} onClick={() => notify('Sincronizando com Meta Ads...')}>
+              <button className="btn secondary" style={{ height: '28px', fontSize: '11px', flex: 1 }} onClick={() => notify(`Público "${a.name}" sincronizado com Meta CAPI!`)}>
                 Sincronizar Meta
               </button>
-              <button className="btn secondary" style={{ height: '28px', fontSize: '11px', flex: 1 }} onClick={() => notify('Exportando CSV do público...')}>
+              <button className="btn secondary" style={{ height: '28px', fontSize: '11px', flex: 1 }} onClick={() => notify(`Exportando CSV de "${a.name}"...`)}>
                 <Download size={12} /> CSV
               </button>
             </div>
           </div>
         ))}
       </div>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>AUDIÊNCIA & CAPI</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Criar Público Personalizado</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleCreateAudience} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Nome do Público *</label>
+                <input type="text" required placeholder="Ex: Compradores VIP Setor Premium" value={newName} onChange={e => setNewName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Regra de Segmentação</label>
+                <select value={newRule} onChange={e => setNewRule(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px' }}>
+                  <option value="Compradores nos últimos 90 dias">Compradores nos últimos 90 dias</option>
+                  <option value="Abandonos de checkout últimos 14 dias">Abandonos de checkout últimos 14 dias</option>
+                  <option value="Visitantes da página que não compraram">Visitantes da página que não compraram</option>
+                  <option value="Clientes VIP (Gasto acima de R$ 500)">Clientes VIP (Gasto acima de R$ 500)</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#2563EB', borderColor: '#2563EB' }}>Salvar e Sincronizar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 8. Cashback Promocional
 function CashbackPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [rules, setRules] = useState([
+    { id: 1, name: 'Cashback 5% no Pix', paymentMethod: 'PIX', percentage: '5%', validity: '45 dias', status: 'ativo' },
+    { id: 2, name: 'Cashback 3% no Cartão', paymentMethod: 'Cartão de Crédito', percentage: '3%', validity: '30 dias', status: 'ativo' }
+  ])
+
+  const [ruleName, setRuleName] = useState('')
+  const [method, setMethod] = useState('PIX')
+  const [pct, setPct] = useState('5')
+
+  const handleCreateRule = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!ruleName) return
+    const row = {
+      id: Date.now(),
+      name: ruleName,
+      paymentMethod: method,
+      percentage: `${pct}%`,
+      validity: '30 dias',
+      status: 'ativo'
+    }
+    setRules([...rules, row])
+    setIsModalOpen(false)
+    setRuleName('')
+    notify(`🚀 Regra de Cashback "${row.name}" ativada para o evento!`)
+  }
+
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>MOTOR DE CASHBACK & RECOMPENSAS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Cashback Promocional — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Conceda saldo promocional de volta na carteira do cliente para compras futuras.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Cashback Promocional — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Conceda saldo promocional de volta na carteira do cliente para compras futuras.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Criando nova regra de cashback...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#D97706', borderColor: '#D97706', fontSize: '12px' }}>
           <Plus size={15} /> Nova Regra de Cashback
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Saldo Emitido</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 14.280,00</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ 14.280,00</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Saldo Resgatado</span><Coins size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>R$ 9.450,00</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>R$ 9.450,00</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Taxa de Recompra</span><TrendingUp size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>66,1%</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>66,1%</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-          <div className="kpi-top"><span>Regra Vigente</span><TicketPercent size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>5% no Pix</strong>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
+          <div className="kpi-top"><span>Regras Ativas</span><TicketPercent size={18} /></div>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>{rules.length} vigentes</strong>
         </article>
       </div>
+
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Regras de Cashback Configuradas ({rules.length})</h3></div>
+        </div>
+        <table className="growth-table" style={{ margin: 0 }}>
+          <thead><tr><th>Regra</th><th>Método de Pagamento</th><th>% Cashback</th><th>Validade</th><th>Status</th></tr></thead>
+          <tbody>
+            {rules.map(r => (
+              <tr key={r.id}>
+                <td><strong>{r.name}</strong></td>
+                <td><span className="badge-method">{r.paymentMethod}</span></td>
+                <td><strong style={{ color: '#16A34A' }}>{r.percentage}</strong></td>
+                <td>{r.validity}</td>
+                <td><span className="status-badge green">● Ativo</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </article>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#D97706', textTransform: 'uppercase' }}>CASHBACK FIDELIDADE</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Nova Regra de Cashback</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleCreateRule} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Nome da Regra *</label>
+                <input type="text" required placeholder="Ex: Cashback 5% Lote Especial" value={ruleName} onChange={e => setRuleName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Forma de Pagamento</label>
+                  <select value={method} onChange={e => setMethod(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px' }}>
+                    <option value="PIX">PIX Instantâneo</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Todos os Métodos">Todos os Métodos</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Percentual (%)</label>
+                  <input type="number" min="1" max="50" value={pct} onChange={e => setPct(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#D97706', borderColor: '#D97706' }}>Ativar Cashback</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 9. Coins / Pontos de Fidelidade
 function DiskCoinsPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [rewards, setRewards] = useState([
+    { id: 1, name: 'Copo Oficial do Evento', cost: '300 coins', category: 'Brinde Oficial', stock: 150 },
+    { id: 2, name: 'Upgrade para Área VIP', cost: '1.200 coins', category: 'Experiência VIP', stock: 20 },
+    { id: 3, name: 'Vale Bebida R$ 25 no Bar', cost: '450 coins', category: 'Consumação', stock: 300 }
+  ])
+
+  const [rewardName, setRewardName] = useState('')
+  const [rewardCost, setRewardCost] = useState('500')
+  const [rewardCategory, setRewardCategory] = useState('Brinde Oficial')
+
+  const handleCreateReward = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!rewardName) return
+    const row = {
+      id: Date.now(),
+      name: rewardName,
+      cost: `${rewardCost} coins`,
+      category: rewardCategory,
+      stock: 100
+    }
+    setRewards([...rewards, row])
+    setIsModalOpen(false)
+    setRewardName('')
+    notify(`🚀 Recompensa "${row.name}" adicionada ao catálogo de resgate!`)
+  }
+
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>PROGRAMA DE PONTOS DISKCOINS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>DiskCoins Fidelidade — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Acúmulo automático de pontos por real gasto em ingressos.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>DiskCoins Fidelidade — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Acúmulo automático de pontos por real gasto em ingressos.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Criando recompensa no catálogo...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#0D9488', borderColor: '#0D9488', fontSize: '12px' }}>
           <Plus size={15} /> Nova Recompensa
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Coins Emitidos</span><Coins size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>345.000</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>345.000</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Coins Resgatados</span><Gift size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>210.000</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>210.000</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Clientes Ativos</span><Users size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>2.840</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>2.840</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Regra Padrão</span><Sparkles size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>10 coins / R$ 100</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>10 coins / R$ 100</strong>
         </article>
       </div>
+
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Catálogo de Resgate ({rewards.length})</h3></div>
+        </div>
+        <table className="growth-table" style={{ margin: 0 }}>
+          <thead><tr><th>Item / Recompensa</th><th>Categoria</th><th>Custo em Coins</th><th>Estoque</th><th>Ações</th></tr></thead>
+          <tbody>
+            {rewards.map(r => (
+              <tr key={r.id}>
+                <td><strong>{r.name}</strong></td>
+                <td><span className="badge-method">{r.category}</span></td>
+                <td><strong style={{ color: '#0D9488' }}>{r.cost}</strong></td>
+                <td>{r.stock} un.</td>
+                <td><button className="btn secondary" style={{ height: '28px', fontSize: '10px' }} onClick={() => notify(`Estoque de "${r.name}" atualizado!`)}>Editar Estoque</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </article>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#0D9488', textTransform: 'uppercase' }}>CATÁLOGO DE RESGATE</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Cadastrar Nova Recompensa</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleCreateReward} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Nome da Recompensa *</label>
+                <input type="text" required placeholder="Ex: Camiseta Exclusiva do Show" value={rewardName} onChange={e => setRewardName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Categoria</label>
+                  <select value={rewardCategory} onChange={e => setRewardCategory(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px' }}>
+                    <option value="Brinde Oficial">Brinde Oficial</option>
+                    <option value="Experiência VIP">Experiência VIP</option>
+                    <option value="Consumação">Consumação</option>
+                    <option value="Desconto Ingresso">Desconto em Ingressos</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Custo em Coins</label>
+                  <input type="number" min="50" value={rewardCost} onChange={e => setRewardCost(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#0D9488', borderColor: '#0D9488' }}>Salvar Recompensa</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 10. Gamificação de Eventos
 function GamificationPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
-  const missions = [
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [missions, setMissions] = useState([
     { title: 'Compre no 1º Lote', desc: 'Garanta seu ingresso nas primeiras 48h', reward: '500 Coins + Badge Fã VIP', progress: '1.240 completaram' },
     { title: 'Indique 3 Amigos', desc: 'Compartilhe seu link e traga amigos para o evento', reward: 'Copo Oficial no Evento', progress: '418 completaram' },
     { title: 'Compartilhe o Lineup', desc: 'Poste o flyer nos Stories com a tag oficial', reward: 'Cupom 10% OFF no Bar', progress: '890 completaram' }
-  ]
+  ])
+
+  const [title, setTitle] = useState('')
+  const [desc, setDesc] = useState('')
+  const [reward, setReward] = useState('')
+
+  const handleCreateMission = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!title) return
+    const row = {
+      title,
+      desc: desc || 'Complete o desafio e ganhe benefícios no evento',
+      reward: reward || '250 Coins DiskIngressos',
+      progress: '0 completaram'
+    }
+    setMissions([...missions, row])
+    setIsModalOpen(false)
+    setTitle('')
+    setDesc('')
+    setReward('')
+    notify(`🚀 Missão de gamificação "${row.title}" lançada para os fãs!`)
+  }
 
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>MISSÕES & GAMIFICAÇÃO</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Gamificação do Evento — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Engaje o público com desafios e libere benefícios exclusivos.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Gamificação do Evento — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Engaje o público com desafios e libere benefícios exclusivos.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Criando nova missão de gamificação...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#D97706', borderColor: '#D97706', fontSize: '12px' }}>
           <Plus size={15} /> Criar Missão
         </button>
       </div>
@@ -1309,80 +1553,236 @@ function GamificationPage({ events, event, notify }: { events: EventItem[]; even
           </div>
         ))}
       </div>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#D97706', textTransform: 'uppercase' }}>ENGAGEMENT & MISSÕES</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Nova Missão de Gamificação</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleCreateMission} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Título da Missão *</label>
+                <input type="text" required placeholder="Ex: Marque 3 amigos no Instagram Oficial" value={title} onChange={e => setTitle(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Descrição do Desafio</label>
+                <textarea rows={3} placeholder="Descreva o que o fã precisa fazer..." value={desc} onChange={e => setDesc(e.target.value)} style={{ width: '100%', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '8px 10px', fontSize: '12px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Recompensa / Benefício</label>
+                <input type="text" placeholder="Ex: 500 Coins + 10% de Desconto no Bar" value={reward} onChange={e => setReward(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#D97706', borderColor: '#D97706' }}>Lançar Missão</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 11. Indique e Ganhe
 function ReferralProgramPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [bonusPercent, setBonusPercent] = useState('10')
+  const [friendDiscount, setFriendDiscount] = useState('5')
+
+  const handleSaveProgram = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsModalOpen(false)
+    notify(`🚀 Programa Indique e Ganhe atualizado: ${bonusPercent}% de bônus para quem indica e ${friendDiscount}% de desconto para o amigo!`)
+  }
+
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>PROGRAMA DE INDICAÇÃO</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Indique e Ganhe — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Transforme seus clientes em promotores ativos do evento.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Indique e Ganhe — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Transforme seus clientes em promotores ativos do evento.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Configurando regras de indicação...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
           <Settings2 size={15} /> Configurar Programa
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Indicações Totais</span><Share2 size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>1.420</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>1.420</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Vendas Geradas</span><MousePointerClick size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>486</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>486</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Receita de Indicação</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>R$ 78.400,00</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>R$ 78.400,00</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Bônus Concedidos</span><Gift size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 7.840,00</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ 7.840,00</strong>
         </article>
       </div>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>REGRAS DE INDICAÇÃO</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Configurar Indique e Ganhe</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleSaveProgram} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Bônus para o Padrinho (%)</label>
+                <input type="number" min="1" max="30" value={bonusPercent} onChange={e => setBonusPercent(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Desconto para o Amigo Convidado (%)</label>
+                <input type="number" min="1" max="20" value={friendDiscount} onChange={e => setFriendDiscount(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#2563EB', borderColor: '#2563EB' }}>Salvar Configurações</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
 
 // 12. Afiliados & Parceiros
 function AffiliatesManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [affiliates, setAffiliates] = useState([
+    { id: 1, name: 'Curitiba Shows PR', code: 'PROMOTER_CURITIBA', commission: '8%', sales: 342, revenue: 54720, status: 'ativo' },
+    { id: 2, name: 'Universitários PR Eventos', code: 'UNIVERSITARIOS_PR', commission: '10%', sales: 270, revenue: 43730, status: 'ativo' }
+  ])
+
+  const [affiliateName, setAffiliateName] = useState('')
+  const [affiliateCode, setAffiliateCode] = useState('')
+  const [affiliateComm, setAffiliateComm] = useState('8%')
+
+  const handleCreateAffiliate = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!affiliateName) return
+    const row = {
+      id: Date.now(),
+      name: affiliateName,
+      code: (affiliateCode || affiliateName.toUpperCase().replace(/\s+/g, '_')),
+      commission: affiliateComm,
+      sales: 0,
+      revenue: 0,
+      status: 'ativo'
+    }
+    setAffiliates([...affiliates, row])
+    setIsModalOpen(false)
+    setAffiliateName('')
+    setAffiliateCode('')
+    notify(`🚀 Afiliado/Promoter "${row.name}" cadastrado com sucesso!`)
+  }
+
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>REDE DE AFILIADOS OFICIAIS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Afiliados e Promoters — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Gestão de comissionamento automático para promotores parceiros.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Afiliados e Promoters — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Gestão de comissionamento automático para promotores parceiros.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Cadastrando novo parceiro oficial...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
           <Plus size={15} /> Novo Afiliado
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Afiliados Ativos</span><Users size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>28</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>{affiliates.length}</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Vendas dos Parceiros</span><MousePointerClick size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>612</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>{affiliates.reduce((s, a) => s + a.sales, 0)}</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Receita Gerada</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 98.450,00</strong>
+          <strong style={{ color: '#0F172A', fontSize: '20px' }}>R$ {affiliates.reduce((s, a) => s + a.revenue, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Comissão Paga</span><TrendingUp size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>R$ 9.845,00</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>R$ {(affiliates.reduce((s, a) => s + a.revenue, 0) * 0.08).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
         </article>
       </div>
+
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Promoters & Afiliados Cadastrados ({affiliates.length})</h3></div>
+        </div>
+        <table className="growth-table" style={{ margin: 0 }}>
+          <thead><tr><th>Afiliado</th><th>Código UTM / Cupom</th><th>Comissão</th><th>Vendas</th><th>Receita</th><th>Status</th></tr></thead>
+          <tbody>
+            {affiliates.map(a => (
+              <tr key={a.id}>
+                <td><strong>{a.name}</strong></td>
+                <td><code style={{ background: '#F1F5F9', padding: '2px 6px', borderRadius: '4px', color: '#2563EB', fontSize: '11px' }}>{a.code}</code></td>
+                <td><span className="badge-method">{a.commission}</span></td>
+                <td><strong style={{ color: '#0F172A' }}>{a.sales}</strong></td>
+                <td style={{ color: '#16A34A', fontWeight: 700 }}>R$ {a.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                <td><span className="status-badge green">● Ativo</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </article>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>AFILIADOS & PROMOTERS</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Novo Afiliado Parceiro</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleCreateAffiliate} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Nome do Afiliado / Empresa *</label>
+                <input type="text" required placeholder="Ex: Promoter Curitiba VIP" value={affiliateName} onChange={e => setAffiliateName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Código do Cupom / Slug UTM</label>
+                <input type="text" placeholder="Ex: PROMOTER_VIP" value={affiliateCode} onChange={e => setAffiliateCode(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Comissão</label>
+                <select value={affiliateComm} onChange={e => setAffiliateComm(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px' }}>
+                  <option value="8%">8% sobre as vendas</option>
+                  <option value="10%">10% sobre as vendas</option>
+                  <option value="12%">12% sobre as vendas</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#2563EB', borderColor: '#2563EB' }}>Cadastrar Afiliado</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
@@ -1431,37 +1831,123 @@ function ConversionJourneyPage({ events, event, notify }: { events: EventItem[];
 
 // 14. Recuperação de Vendas & Remarketing
 function RecoverySalesPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [abandonedList, setAbandonedList] = useState([
+    { id: 1, name: 'Marcos Vinicius', email: 'marcos.v@email.com', phone: '(41) 99771-4433', items: '2x Pista Premium', value: 360, time: '35 min atrás', channel: 'WhatsApp', status: 'pendente' },
+    { id: 2, name: 'Carla Silveira', email: 'carla.s@email.com', phone: '(41) 98822-1100', items: '1x Camarote VIP', value: 280, time: '1h atrás', channel: 'E-mail', status: 'pendente' },
+    { id: 3, name: 'Lucas Brandão', email: 'lucas.b@email.com', phone: '(41) 99199-8822', items: '4x Pista Promocional', value: 480, time: '3h atrás', channel: 'WhatsApp', status: 'recuperado' }
+  ])
+
+  const [channel, setChannel] = useState('WhatsApp')
+  const [couponCode, setCouponCode] = useState('VOLTA5')
+
+  const handleSendRecovery = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsModalOpen(false)
+    notify(`🚀 Régua de recuperação disparada via ${channel} com cupom ${couponCode} para os carrinhos pendentes!`)
+  }
+
+  const recoverSingle = (id: number, name: string) => {
+    setAbandonedList(abandonedList.map(a => a.id === id ? { ...a, status: 'recuperado' } : a))
+    notify(`Mensagem de recuperação enviada para ${name}!`)
+  }
+
   return (
     <section className="growth-page">
-      <div className="growth-intro growth-actions">
+      <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>RECUPERAÇÃO OPERACIONAL DE VENDAS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Recuperação de Vendas — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Resgate carrinhos e checkouts abandonados com disparos automáticos de WhatsApp e e-mail.</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Recuperação de Vendas — {event.title}</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Resgate carrinhos e checkouts abandonados com disparos automáticos de WhatsApp e e-mail.</p>
         </div>
-        <button className="btn primary" onClick={() => notify('Disparando régua de recuperação para 18 abandonos...')}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
           <Send size={15} /> Disparar Régua de Recuperação
         </button>
       </div>
 
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Carrinhos Abandonados</span><ShieldCheck size={18} /></div>
-          <strong style={{ color: '#EA580C' }}>48</strong>
+          <strong style={{ color: '#EA580C', fontSize: '20px' }}>48</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Recuperados</span><CheckCircle size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>19</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>19</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Taxa de Recuperação</span><TrendingUp size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>39,5%</strong>
+          <strong style={{ color: '#2563EB', fontSize: '20px' }}>39,5%</strong>
         </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Receita Salva</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>R$ 5.890,00</strong>
+          <strong style={{ color: '#16A34A', fontSize: '20px' }}>R$ 5.890,00</strong>
         </article>
       </div>
+
+      <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: 0 }}>
+        <div className="panel-head" style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div><h3 style={{ margin: 0, color: '#0F172A', fontSize: '16px', fontWeight: 800 }}>Abandonos Recentes ({abandonedList.length})</h3></div>
+        </div>
+        <table className="growth-table" style={{ margin: 0 }}>
+          <thead><tr><th>Cliente</th><th>Ingressos no Carrinho</th><th>Valor Total</th><th>Tempo</th><th>Status</th><th>Ação</th></tr></thead>
+          <tbody>
+            {abandonedList.map(a => (
+              <tr key={a.id}>
+                <td><strong>{a.name}</strong><br /><small style={{ color: '#64748B' }}>{a.phone}</small></td>
+                <td>{a.items}</td>
+                <td><strong style={{ color: '#0F172A' }}>R$ {a.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong></td>
+                <td><small style={{ color: '#64748B' }}>{a.time}</small></td>
+                <td>
+                  <span className={`status-badge ${a.status === 'recuperado' ? 'green' : 'orange'}`}>
+                    {a.status === 'recuperado' ? '✓ Recuperado' : '⏳ Pendente'}
+                  </span>
+                </td>
+                <td>
+                  {a.status !== 'recuperado' ? (
+                    <button className="btn primary" style={{ height: '28px', fontSize: '11px', padding: '0 10px' }} onClick={() => recoverSingle(a.id, a.name)}>
+                      <Send size={12} /> Resgatar
+                    </button>
+                  ) : (
+                    <span style={{ fontSize: '11px', color: '#16A34A', fontWeight: 700 }}>Concluído</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </article>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setIsModalOpen(false)}>
+          <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>RÉGUA AUTOMÁTICA</span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Disparar Régua de Recuperação</h3>
+              </div>
+              <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
+            </div>
+            <form onSubmit={handleSendRecovery} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Canal de Envio</label>
+                <select value={channel} onChange={e => setChannel(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '12px' }}>
+                  <option value="WhatsApp">WhatsApp Oficial (API Meta)</option>
+                  <option value="E-mail">E-mail Marketing Transacional</option>
+                  <option value="WhatsApp + E-mail">Multicanal (WhatsApp + E-mail)</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Cupom de Incentivo (Opcional)</label>
+                <input type="text" placeholder="Ex: VOLTA5 (5% OFF)" value={couponCode} onChange={e => setCouponCode(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
+                <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                <button type="submit" className="btn primary" style={{ background: '#2563EB', borderColor: '#2563EB' }}>Enviar Agora</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

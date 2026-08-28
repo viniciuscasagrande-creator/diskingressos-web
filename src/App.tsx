@@ -31,6 +31,9 @@ import AccountingChartPage from './pages/AccountingChartPage'
 import AccountingEntriesPage from './pages/AccountingEntriesPage'
 import AccountingJournalPage from './pages/AccountingJournalPage'
 import AccountingLedgerPage from './pages/AccountingLedgerPage'
+import { SimuladorSpreadModule } from './pages/finance/SimuladorSpreadModule'
+import { SplitFinanceiroModule } from './pages/finance/SplitFinanceiroModule'
+import { GenericFinanceSubView } from './pages/finance/GenericFinanceSubView'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -608,13 +611,10 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-
-        {financePlaceholder.includes(page) && (
-          <ModulePlaceholder
-            title={titleMap[page] || 'Módulo Financeiro'}
-            description="Estrutura e dados corporativos integrados ao padrão DiskIngressos. Partidas dobradas, liquidação e conciliação ativas."
-            onBack={() => setPage('finance-dashboard')}
-          />
+        {page === 'finance-spread' && <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} />}
+        {page === 'finance-split' && <SplitFinanceiroModule onBack={() => setPage('finance-dashboard')} />}
+        {['finance-intelligence', 'finance-methods', 'finance-custom', 'finance-operators', 'finance-negotiations', 'finance-refunds', 'finance-reports'].includes(page) && (
+          <GenericFinanceSubView moduleKey={page as any} onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
 
         {/* CONTABILIDADE PLACEHOLDERS / DASHBOARD */}

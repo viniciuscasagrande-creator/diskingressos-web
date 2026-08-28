@@ -98,9 +98,50 @@ const accountingItems: Item[] = [
   { key: 'accounting-dre', label: 'DRE / Balancete', icon: FileSpreadsheet },
 ]
 
+// 4. MARKETING
+const marketingItems: Item[] = [
+  { key: 'marketing-hub', label: 'Hub Marketing', icon: Megaphone },
+  { key: 'marketing-dashboard', label: 'Dashboard', icon: BarChart3 },
+  { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
+  { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
+  { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },
+  { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
+  { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
+  { key: 'marketing-utm-central', label: 'Central UTM & Conversões', icon: Link2, badge: 'Novo' },
+  { key: 'marketing-whatsapp', label: 'WhatsApp', icon: MessageCircle },
+  { key: 'marketing-email', label: 'E-mail Marketing', icon: Mail },
+  { key: 'marketing-coupons', label: 'Cupons & Descontos', icon: Tags },
+  { key: 'marketing-cashback', label: 'Cashback Promocional', icon: WalletCards },
+  { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
+]
+
+// 5. REMARKETING
+const remarketingItems: Item[] = [
+  { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
+  { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
+  { key: 'remarketing-carts', label: 'Carrinhos Abandonados', icon: ShoppingCart },
+  { key: 'remarketing-flows', label: 'Fluxos de Recuperação', icon: Repeat2 },
+  { key: 'remarketing-whatsapp', label: 'WhatsApp Remarketing', icon: MessageCircle },
+  { key: 'remarketing-email', label: 'E-mail Remarketing', icon: Mail },
+  { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
+]
+
+// 6. ADMINISTRAÇÃO
+const adminItems: Item[] = [
+  { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
+  { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
+  { key: 'admin-producers', label: 'Produtoras', icon: Building },
+  { key: 'admin-permissions', label: 'Perfis e Permissões', icon: ShieldCheck },
+  { key: 'admin-audit', label: 'Logs de Auditoria', icon: ScrollText },
+  { key: 'admin-security', label: 'Segurança', icon: LockKeyhole }
+]
+
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
-  const [openFinance, setOpenFinance] = useState(true)
-  const [openAccounting, setOpenAccounting] = useState(true)
+  const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
+  const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-'))
+  const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
+  const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
+  const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
 
   return (
     <aside className="module-sidebar">
@@ -123,7 +164,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         <span className="tier-tag expert">
           <Sparkles size={11} /> NÍVEL EXPERT ATIVO
         </span>
-        <small>Financeiro + Contabilidade Integrada</small>
+        <small>Marketing + Financeiro + Contabilidade</small>
       </div>
 
       <nav className="module-nav">
@@ -140,6 +181,40 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             />
           )
         })}
+
+        {/* Collapsible Section: Marketing */}
+        <CollapsibleSection
+          label="Marketing & Growth"
+          open={openMarketing}
+          onToggle={() => setOpenMarketing(!openMarketing)}
+        >
+          {marketingItems.map((it, index) => (
+            <NavItem
+              key={`mkt-${it.key}-${index}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+        </CollapsibleSection>
+
+        {/* Collapsible Section: Remarketing */}
+        <CollapsibleSection
+          label="Remarketing & Recuperação"
+          open={openRemarketing}
+          onToggle={() => setOpenRemarketing(!openRemarketing)}
+        >
+          {remarketingItems.map((it, index) => (
+            <NavItem
+              key={`rmk-${it.key}-${index}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+        </CollapsibleSection>
 
         {/* Collapsible Section: Financeiro */}
         <CollapsibleSection
@@ -174,6 +249,25 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             />
           ))}
         </CollapsibleSection>
+
+        {/* Collapsible Section: Administração */}
+        {canAdmin && (
+          <CollapsibleSection
+            label="Administração"
+            open={openAdmin}
+            onToggle={() => setOpenAdmin(!openAdmin)}
+          >
+            {adminItems.map((it, index) => (
+              <NavItem
+                key={`adm-${it.key}-${index}`}
+                item={it}
+                active={page === it.key}
+                onNavigate={onNavigate}
+                indent
+              />
+            ))}
+          </CollapsibleSection>
+        )}
       </nav>
     </aside>
   )

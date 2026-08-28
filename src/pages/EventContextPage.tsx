@@ -35,20 +35,83 @@ function HeaderBlock({eyebrow,title,description,event,action}:{eyebrow:string;ti
 function EventStrip({event}:{event:EventItem}){return <section className="context-event-strip"><div><MapPin size={16}/><span>{event.venue}</span></div><div><CalendarDays size={16}/><span>{event.date}</span></div><div><Ticket size={16}/><span>{event.sales} vendas</span></div><div><Eye size={16}/><span>{event.status}</span></div></section>}
 
 function Tickets({event,people,notify}:{event:EventItem;people:Participant[];notify:(m:string)=>void}){
- const [q,setQ]=useState(''); const filtered=people.filter(p=>`${p.name} ${p.email} ${p.order} ${p.ticket}`.toLowerCase().includes(q.toLowerCase()))
- return <div className="event-context-page"><HeaderBlock eyebrow="INGRESSOS" title="Consultar Ingresso" description="Pesquise pedidos, compradores, ingressos e situação de acesso do evento selecionado." event={event}/>
-  <section className="growth-kpis event-context-kpis"><Kpi icon={Ticket} label="Ingressos emitidos" value={String(event.sales)} note="Vendas confirmadas"/><Kpi icon={Users} label="Participantes" value={String(people.length)} note="Base localizada"/><Kpi icon={CheckCircle2} label="Check-ins" value={String(people.filter(p=>p.checkin==='presente').length)} note="Acessos realizados"/><Kpi icon={CircleDollarSign} label="Receita" value={`R$ ${event.total}`} note="Receita registrada"/></section>
-  <section className="growth-panel"><div className="context-toolbar"><label className="context-search"><Search size={17}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar nome, pedido, e-mail ou ingresso..."/></label><button className="btn secondary" onClick={()=>notify('Exportação de ingressos preparada.') }><Download size={16}/> Exportar</button></div>
-   <div className="context-table-wrap"><table className="context-table"><thead><tr><th>Participante</th><th>Pedido</th><th>Ingresso</th><th>Compra</th><th>Valor</th><th>Acesso</th><th></th></tr></thead><tbody>{filtered.map(p=><tr key={p.id}><td><strong>{p.name}</strong><small>{p.email}</small></td><td>{p.order}</td><td>{p.ticket}</td><td>{p.purchaseDate}</td><td>R$ {p.value.toFixed(2).replace('.',',')}</td><td><span className={`mini-status ${p.checkin}`}>{p.checkin}</span></td><td><button className="table-action" onClick={()=>notify(`Ingresso ${p.order} aberto.`)}>Ver</button></td></tr>)}</tbody></table></div>
-  </section></div>
+  const [q,setQ]=useState('')
+  const [selectedPerson, setSelectedPerson] = useState<Participant | null>(null)
+  const filtered=people.filter(p=>`${p.name} ${p.email} ${p.order} ${p.ticket}`.toLowerCase().includes(q.toLowerCase()))
+  return <div className="event-context-page">
+    <HeaderBlock eyebrow="INGRESSOS" title="Consultar Ingresso" description="Pesquise pedidos, compradores, ingressos e situação de acesso do evento selecionado." event={event}/>
+    <section className="growth-kpis event-context-kpis"><Kpi icon={Ticket} label="Ingressos emitidos" value={String(event.sales)} note="Vendas confirmadas"/><Kpi icon={Users} label="Participantes" value={String(people.length)} note="Base localizada"/><Kpi icon={CheckCircle2} label="Check-ins" value={String(people.filter(p=>p.checkin==='presente').length)} note="Acessos realizados"/><Kpi icon={CircleDollarSign} label="Receita" value={`R$ ${event.total}`} note="Receita registrada"/></section>
+    <section className="growth-panel"><div className="context-toolbar"><label className="context-search"><Search size={17}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar nome, pedido, e-mail ou ingresso..."/></label><button className="btn secondary" onClick={()=>notify('Exportação de ingressos preparada.') }><Download size={16}/> Exportar</button></div>
+      <div className="context-table-wrap"><table className="context-table"><thead><tr><th>Participante</th><th>Pedido</th><th>Ingresso</th><th>Compra</th><th>Valor</th><th>Acesso</th><th></th></tr></thead><tbody>{filtered.map(p=><tr key={p.id}><td><strong>{p.name}</strong><small>{p.email}</small></td><td>{p.order}</td><td>{p.ticket}</td><td>{p.purchaseDate}</td><td>R$ {p.value.toFixed(2).replace('.',',')}</td><td><span className={`mini-status ${p.checkin}`}>{p.checkin}</span></td><td><button className="table-action" onClick={()=>setSelectedPerson(p)}>Ver Ingresso</button></td></tr>)}</tbody></table></div>
+    </section>
+
+    {selectedPerson && (
+      <div className="modal-backdrop" style={{ zIndex: 1200 }} onClick={() => setSelectedPerson(null)}>
+        <div className="utm-modal-card-v2" style={{ width: 'min(480px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>DETALHES DO INGRESSO</span>
+              <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Pedido #{selectedPerson.order}</h3>
+            </div>
+            <button type="button" className="drawer-close-btn" onClick={() => setSelectedPerson(null)}><Plus size={16} style={{ transform: 'rotate(45deg)' }} /></button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
+            <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+              <div style={{ color: '#64748B', fontSize: '11px', fontWeight: 700 }}>TITULAR</div>
+              <strong style={{ fontSize: '15px', color: '#0F172A' }}>{selectedPerson.name}</strong>
+              <div style={{ color: '#64748B' }}>{selectedPerson.email} • {selectedPerson.document || 'CPF: ***.458.919-**'}</div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div style={{ background: '#F8FAFC', padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <div style={{ color: '#64748B', fontSize: '11px', fontWeight: 700 }}>TIPO DE INGRESSO</div>
+                <strong style={{ color: '#0F172A' }}>{selectedPerson.ticket}</strong>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <div style={{ color: '#64748B', fontSize: '11px', fontWeight: 700 }}>VALOR PAGO</div>
+                <strong style={{ color: '#16A34A' }}>R$ {selectedPerson.value.toFixed(2).replace('.', ',')}</strong>
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div style={{ background: '#F8FAFC', padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <div style={{ color: '#64748B', fontSize: '11px', fontWeight: 700 }}>STATUS CHECK-IN</div>
+                <span className={`mini-status ${selectedPerson.checkin}`} style={{ marginTop: '4px', display: 'inline-block' }}>{selectedPerson.checkin}</span>
+              </div>
+              <div style={{ background: '#F8FAFC', padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <div style={{ color: '#64748B', fontSize: '11px', fontWeight: 700 }}>RECONHECIMENTO FACIAL</div>
+                <strong style={{ color: selectedPerson.facial === 'aprovado' ? '#16A34A' : '#D97706' }}>{selectedPerson.facial || 'Aprovado'}</strong>
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '16px', borderTop: '1px solid #E2E8F0', paddingTop: '12px' }}>
+            <button type="button" className="btn secondary" onClick={() => setSelectedPerson(null)}>Fechar</button>
+            <button type="button" className="btn primary" onClick={() => { notify(`Ingresso #${selectedPerson.order} reenviado para ${selectedPerson.email}!`); setSelectedPerson(null) }}>Reenviar por E-mail</button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
 }
 
 function Courtesy({event,people,notify}:{event:EventItem;people:Participant[];notify:(m:string)=>void}){
- const courtesyPeople=people.filter(p=>p.ticket.toLowerCase().includes('cortesia'))
- return <div className="event-context-page"><HeaderBlock eyebrow="CORTESIAS" title="Cortesias" description="Emita e acompanhe cortesias somente deste evento." event={event} action={<button className="btn primary" onClick={()=>notify('Fluxo de nova cortesia iniciado.')}><Plus size={16}/> Nova cortesia</button>}/>
- <section className="growth-kpis event-context-kpis"><Kpi icon={Tags} label="Cortesias disponíveis" value={event.courtesy.toLocaleString('pt-BR')} note="Saldo configurado"/><Kpi icon={Ticket} label="Emitidas" value={String(courtesyPeople.length)} note="Na base atual"/><Kpi icon={CheckCircle2} label="Utilizadas" value={String(courtesyPeople.filter(p=>p.checkin==='presente').length)} note="Check-in realizado"/><Kpi icon={Users} label="Não utilizadas" value={String(courtesyPeople.filter(p=>p.checkin!=='presente').length)} note="Aguardando acesso"/></section>
- <section className="event-context-two-col"><div className="growth-panel"><div className="panel-head"><h3>Emissão rápida</h3><p>Destino já vinculado ao evento {event.code}.</p></div><div className="context-form-grid"><label>Nome<input placeholder="Nome do convidado"/></label><label>E-mail<input placeholder="email@exemplo.com"/></label><label>Quantidade<input type="number" defaultValue="1" min="1"/></label><label>Tipo<select defaultValue="Cortesia"><option>Cortesia</option><option>Imprensa</option><option>Produção</option><option>Patrocinador</option></select></label></div><button className="btn primary" onClick={()=>notify('Cortesia emitida em modo demonstração.')}>Emitir cortesia</button></div>
- <div className="growth-panel"><div className="panel-head"><h3>Regras do evento</h3><p>Controle operacional da distribuição.</p></div><div className="context-operation-list"><Row label="Limite configurado" value={event.courtesy.toLocaleString('pt-BR')}/><Row label="Validação de e-mail" value="Ativa"/><Row label="QR Code individual" value="Ativo"/><Row label="Auditoria de emissão" value="Ativa"/></div></div></section></div>
+  const courtesyPeople=people.filter(p=>p.ticket.toLowerCase().includes('cortesia'))
+  const [cName, setCName] = useState('')
+  const [cEmail, setCEmail] = useState('')
+  const [cQty, setCQty] = useState(1)
+  const [cType, setCType] = useState('Cortesia')
+
+  const handleEmitCourtesy = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!cName || !cEmail) return
+    notify(`🎟️ ${cQty}x ${cType} emitida(s) com sucesso para ${cName} (${cEmail})!`)
+    setCName('')
+    setCEmail('')
+    setCQty(1)
+  }
+
+  return <div className="event-context-page"><HeaderBlock eyebrow="CORTESIAS" title="Cortesias" description="Emita e acompanhe cortesias somente deste evento." event={event} action={<button className="btn primary" onClick={() => { const el = document.getElementById('cortesia-form'); el?.scrollIntoView({ behavior: 'smooth' }) }}><Plus size={16}/> Nova cortesia</button>}/>
+  <section className="growth-kpis event-context-kpis"><Kpi icon={Tags} label="Cortesias disponíveis" value={event.courtesy.toLocaleString('pt-BR')} note="Saldo configurado"/><Kpi icon={Ticket} label="Emitidas" value={String(courtesyPeople.length)} note="Na base atual"/><Kpi icon={CheckCircle2} label="Utilizadas" value={String(courtesyPeople.filter(p=>p.checkin==='presente').length)} note="Check-in realizado"/><Kpi icon={Users} label="Não utilizadas" value={String(courtesyPeople.filter(p=>p.checkin!=='presente').length)} note="Aguardando acesso"/></section>
+  <section className="event-context-two-col"><div className="growth-panel" id="cortesia-form"><div className="panel-head"><h3>Emissão rápida</h3><p>Destino já vinculado ao evento {event.code}.</p></div><form onSubmit={handleEmitCourtesy}><div className="context-form-grid"><label>Nome<input required placeholder="Nome do convidado" value={cName} onChange={e => setCName(e.target.value)} /></label><label>E-mail<input required type="email" placeholder="email@exemplo.com" value={cEmail} onChange={e => setCEmail(e.target.value)} /></label><label>Quantidade<input type="number" min="1" value={cQty} onChange={e => setCQty(Number(e.target.value))} /></label><label>Tipo<select value={cType} onChange={e => setCType(e.target.value)}><option value="Cortesia">Cortesia</option><option value="Imprensa">Imprensa</option><option value="Produção">Produção</option><option value="Patrocinador">Patrocinador</option></select></label></div><button className="btn primary" type="submit" style={{ marginTop: '12px' }}>Emitir cortesia</button></form></div>
+  <div className="growth-panel"><div className="panel-head"><h3>Regras do evento</h3><p>Controle operacional da distribuição.</p></div><div className="context-operation-list"><Row label="Limite configurado" value={event.courtesy.toLocaleString('pt-BR')}/><Row label="Validação de e-mail" value="Ativa"/><Row label="QR Code individual" value="Ativo"/><Row label="Auditoria de emissão" value="Ativa"/></div></div></section></div>
 }
 
 function Reports({event,people,notify}:{event:EventItem;people:Participant[];notify:(m:string)=>void}){
