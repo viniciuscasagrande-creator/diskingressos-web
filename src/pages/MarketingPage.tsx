@@ -120,7 +120,12 @@ function Links({events,initialEventId,notify}:{producerId:number|null;events:Eve
          <p>Nenhum evento encontrado para carregar métricas de UTM.</p>
        </article>
      ) : (
-       <UtmConversionsCenter event={selectedEvent} notify={notify}/>
+       <UtmConversionsCenter 
+         event={selectedEvent}
+         events={events}
+         onSelectEvent={(ev) => setEventId(ev.id)}
+         notify={notify}
+       />
      )}
    </section>
  )

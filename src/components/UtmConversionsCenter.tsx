@@ -6,7 +6,7 @@ import {
   MessageCircle, Mail, Share2, MoreHorizontal, Users, Target, Clock, ArrowUpRight,
   TrendingDown, Info, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
   Edit, Trash2, PauseCircle, PlayCircle, Archive, Check, Send, Smartphone, ShieldCheck,
-  FileSpreadsheet, FileText, CheckCircle
+  FileSpreadsheet, FileText, CheckCircle, Scale
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
@@ -14,7 +14,12 @@ import {
   type TrackingLink, type UtmDashboard, type UtmSummary, type UtmJourneyAction
 } from '../services/api'
 
-type Props = { event: EventItem; notify: (message: string) => void }
+type Props = { 
+  event: EventItem
+  events?: EventItem[]
+  onSelectEvent?: (event: EventItem) => void
+  notify: (message: string) => void 
+}
 
 interface TrackingLinkItem {
   id: number
@@ -139,9 +144,11 @@ const hourlyMock = [
   { hour: '20h', val: 98, count: 96, label: '20h', isPeak: true },
 ]
 
-export default function UtmConversionsCenter({ event, notify }: Props) {
+export default function UtmConversionsCenter({ event, events = [], onSelectEvent, notify }: Props) {
   const [linksList, setLinksList] = useState<TrackingLinkItem[]>(initialLinksData)
   const [selectedId, setSelectedId] = useState<number>(1)
+  const [compareMode, setCompareMode] = useState<boolean>(false)
+  const [comparedIds, setComparedIds] = useState<number[]>([1, 2, 3])
   const [ordersList, setOrdersList] = useState<OrderConversion[]>(initialOrdersData)
   const [abandonedCarts, setAbandonedCarts] = useState<AbandonedCartItem[]>(initialAbandonedCarts)
 
@@ -390,7 +397,26 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
           {/* Event Context */}
           <div className="utm-context-select" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
             <span style={{ color: '#64748B' }}>Evento selecionado</span>
-            <strong style={{ color: '#0F172A' }}>{event.title}</strong>
+            {events.length > 0 && onSelectEvent ? (
+              <select
+                className="utm-period-select"
+                style={{ color: '#0F172A', fontWeight: 700, cursor: 'pointer', maxWidth: '220px' }}
+                value={event.id}
+                onChange={e => {
+                  const ev = events.find(x => x.id === Number(e.target.value))
+                  if (ev) {
+                    onSelectEvent(ev)
+                    notify(`Evento alterado para: ${ev.title}`)
+                  }
+                }}
+              >
+                {events.map(ev => (
+                  <option key={ev.id} value={ev.id}>{ev.title}</option>
+                ))}
+              </select>
+            ) : (
+              <strong style={{ color: '#0F172A' }}>{event.title}</strong>
+            )}
             <small style={{ color: '#16A34A', fontWeight: 700 }}>● Ativo (ID: {event.code})</small>
           </div>
 
@@ -414,6 +440,21 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
           </div>
 
           {/* Action Buttons */}
+          <button 
+            className={`btn ${compareMode ? 'primary' : 'secondary'}`} 
+            onClick={() => {
+              setCompareMode(!compareMode)
+              notify(compareMode ? 'Modo de comparação desativado.' : 'Modo de comparação ativado: selecione as URLs para comparar lado a lado.')
+            }}
+            style={{ 
+              background: compareMode ? '#2563EB' : '#FFFFFF', 
+              borderColor: compareMode ? '#2563EB' : '#CBD5E1', 
+              color: compareMode ? '#FFFFFF' : '#0F172A' 
+            }} 
+            title="Comparar URLs lado a lado"
+          >
+            <Scale size={15} /> {compareMode ? 'Sair da Comparação' : 'Comparar URLs'}
+          </button>
           <button className="btn secondary" onClick={() => setOpenExportModal(true)} title="Exportar dados">
             <Download size={15} /> Exportar <ChevronDown size={13} />
           </button>
@@ -473,6 +514,44 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
         />
       </section>
 
+      {/* 2.1. Executive Performance Insights Strip (Fase 16.10) */}
+      <section style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6, 1fr)',
+        gap: '10px',
+        background: '#FFFFFF',
+        border: '1px solid #E2E8F0',
+        borderRadius: '8px',
+        padding: '12px 16px',
+        margin: '12px 0 16px',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.03)'
+      }}>
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>🏆 Melhor Canal</span>
+          <strong style={{ display: 'block', fontSize: '13px', color: '#16A34A', marginTop: '2px' }}>WhatsApp (14,2% conv.)</strong>
+        </div>
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>💰 Maior Receita</span>
+          <strong style={{ display: 'block', fontSize: '13px', color: '#0F172A', marginTop: '2px' }}>Instagram (R$ 12.480,50)</strong>
+        </div>
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>🎯 Melhor Conversão</span>
+          <strong style={{ display: 'block', fontSize: '13px', color: '#2563EB', marginTop: '2px' }}>WhatsApp (9,8%)</strong>
+        </div>
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>🚀 Mais Tráfego</span>
+          <strong style={{ display: 'block', fontSize: '13px', color: '#7C3AED', marginTop: '2px' }}>Instagram (1.842 vis.)</strong>
+        </div>
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>⚠️ Maior Abandono</span>
+          <strong style={{ display: 'block', fontSize: '13px', color: '#EA580C', marginTop: '2px' }}>Google Ads (12 carr.)</strong>
+        </div>
+        <div>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>💡 Receita Potencial</span>
+          <strong style={{ display: 'block', fontSize: '13px', color: '#059669', marginTop: '2px' }}>R$ 2.840,00</strong>
+        </div>
+      </section>
+
       {/* 3. Main 2-Column Section */}
       <section className="utm-dash-main-grid">
         {/* Left Column: List of all UTMs */}
@@ -524,44 +603,89 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
 
           {/* URL List Rows */}
           <div className="utm-link-rows">
-            {visibleLinks.map(item => (
-              <div
-                key={item.id}
-                className={`utm-link-row ${selectedId === item.id ? 'selected' : ''}`}
-                onClick={() => setSelectedId(item.id)}
-                style={{
-                  background: selectedId === item.id ? '#EFF6FF' : '#FFFFFF',
-                  borderColor: selectedId === item.id ? '#93C5FD' : '#E2E8F0'
-                }}
-              >
-                <div className={`utm-source-avatar ${item.source}`}>
-                  {getSourceIcon(item.source)}
-                </div>
-                <div className="utm-link-row-copy">
-                  <strong style={{ color: '#0F172A' }}>{item.name}</strong>
-                  <small style={{ color: '#64748B' }}>{item.shortUrl}</small>
-                </div>
-                <div className="utm-link-row-stat">
-                  <b style={{ color: '#0F172A' }}>{item.visits.toLocaleString('pt-BR')}</b>
-                  <span>visitas</span>
-                </div>
-                <div className="utm-link-row-stat">
-                  <b style={{ color: '#0F172A' }}>{item.sales}</b>
-                  <span>vendas</span>
-                </div>
-                <div className="utm-link-row-stat revenue">
-                  <b style={{ color: '#0F172A' }}>{`R$ ${(item.revenueCents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}</b>
-                  <span>receita</span>
-                </div>
-                <button
-                  type="button"
-                  className={`utm-row-select ${selectedId === item.id ? 'active' : ''}`}
-                  onClick={(e) => { e.stopPropagation(); setSelectedId(item.id); }}
+            {visibleLinks.map(item => {
+              const isSelected = selectedId === item.id
+              const isCompared = comparedIds.includes(item.id)
+              const isActive = compareMode ? isCompared : isSelected
+
+              return (
+                <div
+                  key={item.id}
+                  className={`utm-link-row ${isActive ? 'selected' : ''}`}
+                  onClick={() => {
+                    if (compareMode) {
+                      if (comparedIds.includes(item.id)) {
+                        if (comparedIds.length > 1) {
+                          setComparedIds(comparedIds.filter(id => id !== item.id))
+                        } else {
+                          notify('Mantenha pelo menos 1 URL para comparação.')
+                        }
+                      } else {
+                        setComparedIds([...comparedIds, item.id])
+                      }
+                    } else {
+                      setSelectedId(item.id)
+                    }
+                  }}
+                  style={{
+                    background: isActive ? '#EFF6FF' : '#FFFFFF',
+                    borderColor: isActive ? '#93C5FD' : '#E2E8F0'
+                  }}
                 >
-                  {selectedId === item.id ? '✓ Selecionado' : 'Selecionar'}
-                </button>
-              </div>
-            ))}
+                  {compareMode && (
+                    <div style={{ display: 'flex', alignItems: 'center', marginRight: '6px' }}>
+                      <input
+                        type="checkbox"
+                        checked={isCompared}
+                        onChange={() => {}}
+                        style={{ cursor: 'pointer', width: '15px', height: '15px' }}
+                      />
+                    </div>
+                  )}
+                  <div className={`utm-source-avatar ${item.source}`}>
+                    {getSourceIcon(item.source)}
+                  </div>
+                  <div className="utm-link-row-copy">
+                    <strong style={{ color: '#0F172A' }}>{item.name}</strong>
+                    <small style={{ color: '#64748B' }}>{item.shortUrl}</small>
+                  </div>
+                  <div className="utm-link-row-stat">
+                    <b style={{ color: '#0F172A' }}>{item.visits.toLocaleString('pt-BR')}</b>
+                    <span>visitas</span>
+                  </div>
+                  <div className="utm-link-row-stat">
+                    <b style={{ color: '#0F172A' }}>{item.sales}</b>
+                    <span>vendas</span>
+                  </div>
+                  <div className="utm-link-row-stat revenue">
+                    <b style={{ color: '#0F172A' }}>{`R$ ${(item.revenueCents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}</b>
+                    <span>receita</span>
+                  </div>
+                  <button
+                    type="button"
+                    className={`utm-row-select ${isActive ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (compareMode) {
+                        if (comparedIds.includes(item.id)) {
+                          if (comparedIds.length > 1) {
+                            setComparedIds(comparedIds.filter(id => id !== item.id))
+                          } else {
+                            notify('Mantenha pelo menos 1 URL para comparação.')
+                          }
+                        } else {
+                          setComparedIds([...comparedIds, item.id])
+                        }
+                      } else {
+                        setSelectedId(item.id)
+                      }
+                    }}
+                  >
+                    {compareMode ? (isCompared ? '✓ Comparando' : '+ Comparar') : (isSelected ? '✓ Selecionado' : 'Selecionar')}
+                  </button>
+                </div>
+              )
+            })}
           </div>
 
           <div style={{ textAlign: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #E2E8F0' }}>
@@ -571,10 +695,63 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
           </div>
         </aside>
 
-        {/* Right Column: Selected UTM Deep Dive */}
+        {/* Right Column: Selected UTM Deep Dive OR URL Comparison Matrix */}
         <main className="utm-dash-analysis">
-          {/* Header of Selected URL */}
-          <section className="utm-dash-panel utm-selected-summary" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', position: 'relative' }}>
+          {compareMode ? (
+            <UrlComparisonMatrix
+              comparedItems={linksList.filter(l => comparedIds.includes(l.id))}
+              onExit={() => setCompareMode(false)}
+            />
+          ) : (
+            <>
+              {/* Automated Campaign Diagnostic Card (Fase 16.10) */}
+              <div style={{
+                background: '#EFF6FF',
+                border: '1px solid #BFDBFE',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                marginBottom: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Sparkles size={20} style={{ color: '#2563EB', flexShrink: 0 }} />
+                  <div>
+                    <strong style={{ fontSize: '13px', color: '#1E3A8A', display: 'block' }}>
+                      💡 Insights & Diagnóstico de Performance: {selectedItem.name}
+                    </strong>
+                    <span style={{ fontSize: '11px', color: '#1E40AF' }}>
+                      Conversão de {((selectedItem.sales / selectedItem.visits) * 100).toFixed(2).replace('.', ',')}% (acima da média geral do evento). {selectedItem.abandoned} abandonos identificados (R$ {((selectedItem.abandoned * 160)).toLocaleString('pt-BR')} em receita potencial). Pico de conversão: 19h–21h. <b>Recomendação:</b> priorizar remarketing no WhatsApp dos checkouts abandonados há menos de 2h.
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRecoveryDrawer(true)}
+                  style={{
+                    background: '#2563EB',
+                    color: '#FFFFFF',
+                    border: 0,
+                    borderRadius: '6px',
+                    padding: '8px 14px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px'
+                  }}
+                >
+                  <MessageCircle size={13} />
+                  Recuperar {selectedItem.abandoned} Abandonos
+                </button>
+              </div>
+
+              {/* Header of Selected URL */}
+              <section className="utm-dash-panel utm-selected-summary" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', position: 'relative' }}>
             <div className="utm-selected-brand">
               <div className={`utm-source-avatar ${selectedItem.source} big`}>
                 {getSourceIcon(selectedItem.source)}
@@ -833,8 +1010,10 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
               </article>
             </div>
           </section>
-        </main>
-      </section>
+        </>
+      )}
+    </main>
+  </section>
 
       {/* 4. Bottom Section: Orders Table & Remarketing Widget */}
       <section className="utm-bottom-grid">
@@ -1059,6 +1238,168 @@ export default function UtmConversionsCenter({ event, notify }: Props) {
           notify={notify}
         />
       )}
+    </div>
+  )
+}
+
+function UrlComparisonMatrix({ comparedItems, onExit }: { comparedItems: TrackingLinkItem[]; onExit: () => void }) {
+  const formatMoney = (cents: number) => `R$ ${(cents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+
+  // Find winners
+  const highestSales = Math.max(...comparedItems.map(i => i.sales))
+  const highestVisits = Math.max(...comparedItems.map(i => i.visits))
+  const highestConv = Math.max(...comparedItems.map(i => i.visits ? (i.sales / i.visits) * 100 : 0))
+  const highestRevenue = Math.max(...comparedItems.map(i => i.revenueCents))
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* Header of Comparison */}
+      <div className="utm-dash-panel" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', textTransform: 'uppercase' }}>
+            ⚖️ COMPARAÇÃO LADO A LADO DE URLs ({comparedItems.length} selecionadas)
+          </span>
+          <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>
+            Matriz Comparativa de Performance & Conversão
+          </h3>
+          <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B' }}>
+            Compare métricas de tráfego, funil e faturamento entre canais para otimizar alocação de verba.
+          </p>
+        </div>
+        <button className="btn secondary" onClick={onExit} style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
+          <X size={15} /> Sair da Comparação
+        </button>
+      </div>
+
+      {/* Comparison Cards Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.max(2, comparedItems.length)}, 1fr)`, gap: '12px' }}>
+        {comparedItems.map(item => {
+          const convRate = item.visits ? (item.sales / item.visits) * 100 : 0
+          const isWinnerSales = item.sales === highestSales && highestSales > 0
+          const isWinnerConv = convRate === highestConv && highestConv > 0
+
+          return (
+            <div key={item.id} className="utm-dash-panel" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '16px', position: 'relative' }}>
+              {isWinnerSales && (
+                <span style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '10px', fontWeight: 800, background: '#DCFCE7', color: '#166534', border: '1px solid #BBF7D0', padding: '2px 6px', borderRadius: '4px' }}>
+                  🏆 Mais Vendas
+                </span>
+              )}
+              {isWinnerConv && !isWinnerSales && (
+                <span style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '10px', fontWeight: 800, background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE', padding: '2px 6px', borderRadius: '4px' }}>
+                  🎯 Maior Conversão
+                </span>
+              )}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <div className={`utm-source-avatar ${item.source}`} style={{ width: '28px', height: '28px' }}>
+                  {getSourceIcon(item.source)}
+                </div>
+                <div>
+                  <strong style={{ fontSize: '13px', color: '#0F172A', display: 'block' }}>{item.name}</strong>
+                  <small style={{ fontSize: '10px', color: '#64748B' }}>{item.shortUrl}</small>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', background: '#F8FAFC', padding: '10px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
+                <div>
+                  <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>Visitas</span>
+                  <strong style={{ fontSize: '14px', color: '#0F172A' }}>{item.visits.toLocaleString('pt-BR')}</strong>
+                </div>
+                <div>
+                  <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>Vendas</span>
+                  <strong style={{ fontSize: '14px', color: '#16A34A' }}>{item.sales}</strong>
+                </div>
+                <div>
+                  <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>Conversão</span>
+                  <strong style={{ fontSize: '14px', color: '#2563EB' }}>{convRate.toFixed(2).replace('.', ',')}%</strong>
+                </div>
+                <div>
+                  <span style={{ fontSize: '10px', color: '#64748B', display: 'block' }}>Receita</span>
+                  <strong style={{ fontSize: '14px', color: '#16A34A' }}>{formatMoney(item.revenueCents)}</strong>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Side by Side Comparative Table */}
+      <div className="utm-dash-panel" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '12px 16px', background: '#F1F5F9', borderBottom: '1px solid #E2E8F0', fontWeight: 700, fontSize: '12px', color: '#334155' }}>
+          Tabela Comparativa de Etapas do Funil
+        </div>
+        <table className="utm-table" style={{ width: '100%' }}>
+          <thead>
+            <tr>
+              <th style={{ width: '25%' }}>Métrica / Etapa</th>
+              {comparedItems.map(item => (
+                <th key={item.id} style={{ textAlign: 'right' }}>
+                  {item.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Visitas Únicas</strong></td>
+              {comparedItems.map(item => (
+                <td key={item.id} style={{ textAlign: 'right', fontWeight: 700 }}>
+                  {item.visits.toLocaleString('pt-BR')}
+                </td>
+              ))}
+            </tr>
+            <tr>
+              <td><strong>2. Adicionaram ao Carrinho</strong></td>
+              {comparedItems.map(item => (
+                <td key={item.id} style={{ textAlign: 'right' }}>
+                  {item.added} <small style={{ color: '#64748B' }}>({item.visits ? ((item.added / item.visits) * 100).toFixed(1) : 0}%)</small>
+                </td>
+              ))}
+            </tr>
+            <tr>
+              <td><strong>3. Checkouts Iniciados</strong></td>
+              {comparedItems.map(item => (
+                <td key={item.id} style={{ textAlign: 'right' }}>
+                  {item.checkout} <small style={{ color: '#64748B' }}>({item.visits ? ((item.checkout / item.visits) * 100).toFixed(1) : 0}%)</small>
+                </td>
+              ))}
+            </tr>
+            <tr>
+              <td><strong>4. Abandonos de Checkout</strong></td>
+              {comparedItems.map(item => (
+                <td key={item.id} style={{ textAlign: 'right', color: '#EA580C' }}>
+                  {item.abandoned}
+                </td>
+              ))}
+            </tr>
+            <tr>
+              <td><strong>5. Compras Concluídas</strong></td>
+              {comparedItems.map(item => (
+                <td key={item.id} style={{ textAlign: 'right', color: '#16A34A', fontWeight: 700 }}>
+                  {item.sales}
+                </td>
+              ))}
+            </tr>
+            <tr>
+              <td><strong>6. Taxa de Conversão Final</strong></td>
+              {comparedItems.map(item => (
+                <td key={item.id} style={{ textAlign: 'right', color: '#2563EB', fontWeight: 800 }}>
+                  {item.visits ? ((item.sales / item.visits) * 100).toFixed(2).replace('.', ',') : 0}%
+                </td>
+              ))}
+            </tr>
+            <tr>
+              <td><strong>7. Receita Total (R$)</strong></td>
+              {comparedItems.map(item => (
+                <td key={item.id} style={{ textAlign: 'right', color: '#16A34A', fontWeight: 800 }}>
+                  {formatMoney(item.revenueCents)}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
