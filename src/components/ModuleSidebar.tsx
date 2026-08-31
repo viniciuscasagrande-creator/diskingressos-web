@@ -7,7 +7,7 @@ import {
   LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
-  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent
+  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Video
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -108,54 +108,47 @@ const accountingFinanceItems: Item[] = [
   { key: 'accounting-trial-balance', label: 'Balancete', icon: Scale },
   { key: 'accounting-balance-sheet', label: 'Balanço Patrimonial', icon: Landmark },
   { key: 'accounting-reconciliation', label: 'Conciliação Contábil', icon: Scale },
-  { key: 'finance-borderos', label: 'Central de Borderôs', icon: ReceiptText },
-  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature },
   { key: 'finance-closing', label: 'Fechamento Contábil', icon: LockKeyhole },
   { key: 'accounting-taxes', label: 'Fiscal & Tributos', icon: FileSpreadsheet },
+  { key: 'accounting-sped', label: 'SPED & ECD / ECF', icon: NotebookTabs },
+  { key: 'finance-borderos', label: 'Central de Borderôs', icon: ReceiptText },
+  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature },
   { key: 'accounting-audit', label: 'Auditoria Contábil', icon: ScrollText },
 ]
 
-// 4. CONTABILIDADE OFICIAL & LIVROS SPED
-const officialAccountingItems: Item[] = [
-  { key: 'accounting-dashboard', label: 'Dashboard Contábil & Balanço', icon: BarChart3, badge: 'ECD' },
-  { key: 'accounting-journal', label: 'Livro Diário Oficial', icon: BookOpenText },
-  { key: 'accounting-ledger', label: 'Livro Razão Analítico', icon: BookMarked },
-  { key: 'accounting-chart', label: 'Plano de Contas em Árvore', icon: ListTree },
-  { key: 'accounting-entries', label: 'Escrituração Contábil', icon: NotebookTabs },
-]
-
-// 5. ADVANCED, SPLIT & OPERADORAS
-const advancedFinanceItems: Item[] = []
-
-// 6. MARKETING & GROWTH
+// 4. MARKETING
 const marketingItems: Item[] = [
+  { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3, badge: 'Mkt' },
   { key: 'marketing-hub', label: 'Hub Marketing', icon: Megaphone },
-  { key: 'marketing-dashboard', label: 'Dashboard', icon: BarChart3 },
   { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
   { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
   { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },
   { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
+  { key: 'marketing-tiktok-ads', label: 'TikTok Ads', icon: Video },
   { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
   { key: 'marketing-utm-central', label: 'Central UTM & Conversões', icon: Link2, badge: 'Novo' },
-  { key: 'marketing-whatsapp', label: 'WhatsApp', icon: MessageCircle },
+  { key: 'marketing-whatsapp', label: 'WhatsApp Marketing', icon: MessageCircle },
   { key: 'marketing-email', label: 'E-mail Marketing', icon: Mail },
   { key: 'marketing-coupons', label: 'Cupons & Descontos', icon: Tags },
   { key: 'marketing-cashback', label: 'Cashback Promocional', icon: WalletCards },
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]
 
-// 7. REMARKETING & RESGATE
+// 5. REMARKETING
 const remarketingItems: Item[] = [
+  { key: 'remarketing-dashboard', label: 'Dashboard Remarketing', icon: BarChart3, badge: 'Resgate' },
   { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
-  { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
   { key: 'remarketing-carts', label: 'Carrinhos Abandonados', icon: ShoppingCart },
-  { key: 'remarketing-flows', label: 'Fluxos de Recuperação', icon: Repeat2 },
+  { key: 'remarketing-audiences', label: 'Públicos & Segmentos', icon: UsersRound },
+  { key: 'remarketing-flows', label: 'Fluxos & Jornadas', icon: Repeat2 },
   { key: 'remarketing-whatsapp', label: 'WhatsApp Remarketing', icon: MessageCircle },
   { key: 'remarketing-email', label: 'E-mail Remarketing', icon: Mail },
-  { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
+  { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 },
+  { key: 'remarketing-inactive', label: 'Clientes Inativos', icon: Users },
+  { key: 'remarketing-reports', label: 'Relatórios de Remarketing', icon: FileSpreadsheet }
 ]
 
-// 8. ADMINISTRAÇÃO & GOVERNANÇA
+// 6. ADMINISTRAÇÃO & GOVERNANÇA
 const adminItems: Item[] = [
   { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
   { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
@@ -168,8 +161,6 @@ const adminItems: Item[] = [
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
   const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
   const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
-  const [openOfficialAccounting, setOpenOfficialAccounting] = useState(page.startsWith('accounting-'))
-  const [openAdvanced, setOpenAdvanced] = useState(['finance-split', 'finance-spread', 'finance-bank-accounts', 'finance-gateways', 'finance-methods', 'finance-operators', 'finance-intelligence', 'finance-refunds'].includes(page))
   const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
   const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
   const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
@@ -198,7 +189,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           )
         })}
 
-        {/* Section: Financeiro - Caixa & Saldos */}
+        {/* Section: Financeiro */}
         <CollapsibleSection
           label="Financeiro"
           open={openFinance}
@@ -215,7 +206,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* Section: Financeiro Contábil & Borderôs */}
+        {/* Section: Contabilidade */}
         <CollapsibleSection
           label="Contabilidade"
           open={openAccounting}
@@ -232,26 +223,9 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* Section: Contabilidade Oficial (SPED / ECD / Livros) */}
-        <CollapsibleSection
-          label="Contabilidade Oficial & SPED"
-          open={openOfficialAccounting}
-          onToggle={() => setOpenOfficialAccounting(!openOfficialAccounting)}
-        >
-          {officialAccountingItems.map((it, index) => (
-            <NavItem
-              key={`off-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
         {/* Section: Marketing */}
         <CollapsibleSection
-          label="Marketing & Growth"
+          label="Marketing"
           open={openMarketing}
           onToggle={() => setOpenMarketing(!openMarketing)}
         >
@@ -268,7 +242,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 
         {/* Section: Remarketing */}
         <CollapsibleSection
-          label="Remarketing & Recuperação"
+          label="Remarketing"
           open={openRemarketing}
           onToggle={() => setOpenRemarketing(!openRemarketing)}
         >
