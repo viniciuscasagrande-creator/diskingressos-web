@@ -42,6 +42,8 @@ import FinanceSpread360Page from './pages/FinanceSpread360Page'
 import FinanceAdvancedTaxesPage from './pages/FinanceAdvancedTaxesPage'
 import FinanceSettlementHubPage from './pages/finance/FinanceSettlementHubPage'
 import FinanceDisputesHubPage from './pages/finance/FinanceDisputesHubPage'
+import AdvancedTaxesRouter from './pages/finance/advanced/AdvancedTaxesRouter'
+import './pages/finance/advanced/advanced-taxes.css'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -625,12 +627,9 @@ export default function App() {
           <FinancePayablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
-        {/* FASE 17.5 & 20.2: CONCILIAÇÃO BANCÁRIA & OPERACIONAL, CONTAS BANCÁRIAS E ANTECIPAÇÕES */}
+        {/* FASE 17.5 & 20.2: CONCILIAÇÃO BANCÁRIA & OPERACIONAL E ANTECIPAÇÕES */}
         {(page === 'finance-reconciliation' || page === 'finance-bank') && (
           <FinanceOperations360Page producerId={scopedProducerId ?? undefined} initialTab="reconciliation" notify={notify} />
-        )}
-        {page === 'finance-bank-accounts' && (
-          <FinanceBankAccountsPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-advance' && (
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="advances" notify={notify} onBack={() => setPage('finance-dashboard')} />
@@ -698,35 +697,15 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-spread' && (
-          <FinanceSpread360Page producerId={scopedProducerId ?? undefined} notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-split' && (
-          <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="split" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-advanced' && (
-          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="overview" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-rates' && (
-          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="rates" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-gateways' && (
-          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="gateways" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-operators' && (
-          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="acquirers" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-methods' && (
-          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="methods" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-refunds' && (
-          <FinanceDisputesHubPage producerId={scopedProducerId ?? undefined} initialTab="refunds" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {(page === 'finance-disputes' || (page as any) === 'finance-chargebacks') && (
-          <FinanceDisputesHubPage producerId={scopedProducerId ?? undefined} initialTab="chargebacks" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {page === 'finance-intelligence' && (
-          <FinanceOperations360Page producerId={scopedProducerId ?? undefined} initialTab="intelligence" notify={notify} />
+        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-bank-accounts', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos'].includes(page) && (
+          <AdvancedTaxesRouter
+            activeModule={page}
+            producerId={scopedProducerId ?? undefined}
+            eventId={selectedEvent?.id}
+            notify={notify}
+            onNavigate={navigate}
+            onBack={() => setPage('finance-dashboard')}
+          />
         )}
         {(page === 'finance-settlement' || (page as any) === 'finance-settlements') && (
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="settlements" notify={notify} onBack={() => setPage('finance-dashboard')} />

@@ -1,2 +1,5 @@
-import React from 'react'; import FinancePayments360Page from '../../FinancePayments360Page';
-export default function MethodsScreen(props:any){return <FinancePayments360Page {...props} initialTab="methods"/>;}
+import React from 'react';
+import FinanceAdvancedTaxesPage from '../../FinanceAdvancedTaxesPage';
+export default function MethodsScreen(props: any) {
+  return <FinanceAdvancedTaxesPage {...props} initialTab="methods" />;
+}

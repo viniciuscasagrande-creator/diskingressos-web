@@ -1,2 +1,5 @@
-import React from 'react'; import FinancePayments360Page from '../../FinancePayments360Page';
-export default function RefundsScreen(props:any){return <FinancePayments360Page {...props} initialTab="refunds"/>;}
+import React from 'react';
+import FinanceDisputesHubPage from '../FinanceDisputesHubPage';
+export default function RefundsScreen(props: any) {
+  return <FinanceDisputesHubPage {...props} initialTab="refunds" />;
+}

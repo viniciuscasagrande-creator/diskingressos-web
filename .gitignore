@@ -4,5 +4,9 @@ dist
 prisma/dev.db
 prisma/dev.db-journal
 *.log
-
+*.zip
 .vercel
+.vercel/
+.vercel.zip
+.DS_Store
+Thumbs.db
