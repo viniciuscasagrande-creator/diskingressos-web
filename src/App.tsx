@@ -14,6 +14,7 @@ import ParticipantsPage from './pages/ParticipantsPage'
 import FacialPage from './pages/FacialPage'
 import FinancePage from './pages/FinancePage'
 import FinanceHubPage from './pages/FinanceHubPage'
+import FinanceCommandCenterPage from './pages/FinanceCommandCenterPage'
 import FinanceDashboardPage from './pages/FinanceDashboardPage'
 import FinanceBalancesPage from './pages/FinanceBalancesPage'
 import FinanceStatementPage from './pages/FinanceStatementPage'
@@ -42,6 +43,8 @@ import FinanceSpread360Page from './pages/FinanceSpread360Page'
 import FinanceAdvancedTaxesPage from './pages/FinanceAdvancedTaxesPage'
 import FinanceSettlementHubPage from './pages/finance/FinanceSettlementHubPage'
 import FinanceDisputesHubPage from './pages/finance/FinanceDisputesHubPage'
+import AdvancedTaxesRouter from './pages/finance/advanced/AdvancedTaxesRouter'
+import './pages/finance/advanced/advanced-taxes.css'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -596,13 +599,7 @@ export default function App() {
           <FinanceHubPage onNavigate={navigate} />
         )}
         {page === 'finance-dashboard' && (
-          <FinanceAccountingHubPage
-            events={visibleEvents}
-            producerId={scopedProducerId}
-            initialTab="dashboard"
-            notify={notify}
-            onBack={() => setPage('finance-hub')}
-          />
+          <FinanceCommandCenterPage events={visibleEvents} producerId={scopedProducerId} notify={notify} onNavigate={navigate} />
         )}
 
         {/* FASE 17.3 & 17.4: OPERAÇÕES FINANCEIRAS INTEGRADAS */}
@@ -666,7 +663,7 @@ export default function App() {
 
         {/* FASE 18.1, 18.2 & 18.3: CONTABILIDADE INTEGRADA */}
         {page === 'accounting-dashboard' && (
-          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dashboard" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dashboard" notify={notify} onBack={() => setPage('profile-dashboard')} />
         )}
         {page === 'accounting-chart' && (
           <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="accounts" notify={notify} onBack={() => setPage('finance-dashboard')} />
@@ -695,55 +692,15 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-advanced' && (
-          <FinanceAdvancedTaxesPage
+        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-bank-accounts', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos'].includes(page) && (
+          <AdvancedTaxesRouter
+            activeModule={page}
             producerId={scopedProducerId ?? undefined}
             eventId={selectedEvent?.id}
-            notify={notify}
-          />
-        )}
-        {page === 'finance-spread' && (
-          <FinanceSpread360Page
-            producerId={scopedProducerId ?? undefined}
-            eventId={selectedEvent?.id}
-            notify={notify}
-          />
-        )}
-        {page === 'finance-split' && (
-          <FinanceSettlementHubPage
-            producerId={scopedProducerId ?? undefined}
-            eventId={selectedEvent?.id}
-            initialTab="split"
-            notify={notify}
-            onBack={() => setPage('finance-dashboard')}
-          />
-        )}
-        {page === 'finance-bank-accounts' && (
-          <FinanceBankAccountsPage
-            events={visibleEvents}
             notify={notify}
             onNavigate={navigate}
+            onBack={() => setPage('finance-dashboard')}
           />
-        )}
-        {page === 'finance-gateways' && (
-          <FinancePayments360Page producerId={scopedProducerId ?? undefined} initialTab="gateways" notify={notify} />
-        )}
-        {page === 'finance-methods' && (
-          <FinancePayments360Page producerId={scopedProducerId ?? undefined} initialTab="methods" notify={notify} />
-        )}
-        {(page === 'finance-operators' || page === 'finance-rates') && (
-          <FinancePayments360Page producerId={scopedProducerId ?? undefined} initialTab="operators" notify={notify} />
-        )}
-        {page === 'finance-intelligence' && (
-          <FinanceOperations360Page
-            producerId={scopedProducerId ?? undefined}
-            eventId={selectedEvent?.id}
-            initialTab="intelligence"
-            notify={notify}
-          />
-        )}
-        {page === 'finance-refunds' && (
-          <FinancePayments360Page producerId={scopedProducerId ?? undefined} initialTab="refunds" notify={notify} />
         )}
         {((page as any) === 'finance-settlement' || (page as any) === 'finance-settlements') && (
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="settlements" notify={notify} onBack={() => setPage('finance-dashboard')} />

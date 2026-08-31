@@ -7,7 +7,7 @@ import {
   LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
-  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs
+  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -69,29 +69,50 @@ const mainItems: Item[] = [
 
 // 2. GESTÃO DE CAIXA & SALDOS
 const cashFinanceItems: Item[] = [
-  { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: BarChart3 },
-  { key: 'finance-hub', label: 'Hub Financeiro 360°', icon: WalletCards },
-  { key: 'finance', label: 'Saldos & Carteira', icon: WalletCards },
-  { key: 'finance-statement', label: 'Extrato Detalhado', icon: ReceiptText },
-  { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
-  { key: 'finance-payouts', label: 'Solicitações de Repasse', icon: HandCoins },
+  { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: BarChart3, badge: 'Novo' },
+  { key: 'finance', label: 'Saldo', icon: WalletCards },
+  { key: 'finance-payouts', label: 'Solicitar Repasse', icon: HandCoins },
   { key: 'finance-advance', label: 'Antecipações', icon: Zap },
-  { key: 'finance-expenses', label: 'Controle de Despesas', icon: TrendingDown },
+  { key: 'finance-advanced', label: 'Financeiro Advanced', icon: ChartNoAxesCombined },
+  { key: 'finance-reconciliation', label: 'Conciliação Bancária', icon: Scale },
+  { key: 'finance-spread', label: 'Financeiro Spread', icon: ChartNoAxesCombined },
+  { key: 'finance-spread', label: 'Simulador de Spread', icon: Percent },
+  { key: 'finance-split', label: 'Split Financeiro', icon: Split },
+  { key: 'finance-intelligence', label: 'Inteligência Financeira', icon: Brain },
+  { key: 'finance-statement', label: 'Extrato', icon: ReceiptText },
+  { key: 'finance-expenses', label: 'Despesas', icon: TrendingDown },
+  { key: 'finance-bank-accounts', label: 'Contas Bancárias', icon: Landmark },
+  { key: 'finance-bordero', label: 'Borderô', icon: FileSignature },
+  { key: 'pos', label: 'Pontos de Venda (PDV)', icon: MonitorSmartphone },
+  { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard },
+  { key: 'finance-custom', label: 'Pagamentos Customizados', icon: SlidersHorizontal },
+  { key: 'finance-negotiations', label: 'Negociações Financeiras', icon: HandCoins },
+  { key: 'finance-refunds', label: 'Devoluções / Estornos', icon: ReceiptText },
+  { key: 'finance-operators', label: 'Operadoras de Cartão', icon: ShieldCheck },
+  { key: 'finance-gateways', label: 'Gateways de Pagamento', icon: WalletCards },
+  { key: 'finance-receivables', label: 'Recebíveis', icon: TrendingUp },
+  { key: 'finance-payables', label: 'Contas a Pagar', icon: TrendingDown },
+  { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
+  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
 ]
 
 // 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
 const accountingFinanceItems: Item[] = [
-  { key: 'finance-accounting', label: 'Visão Contábil Geral', icon: Landmark, badge: 'ERP' },
-  { key: 'finance-cost-centers', label: 'Centros de Custos', icon: Boxes },
+  { key: 'accounting-dashboard', label: 'Dashboard Contábil', icon: BarChart3, badge: 'Contábil' },
   { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck },
+  { key: 'finance-cost-centers', label: 'Centros de Custos', icon: Boxes },
   { key: 'finance-accounting-entries', label: 'Lançamentos Contábeis', icon: FileText },
-  { key: 'finance-reconciliation', label: 'Conciliação Contábil & Bancária', icon: Scale },
-  { key: 'finance-obligations', label: 'Contas a Pagar & Receber', icon: Landmark },
+  { key: 'accounting-journal', label: 'Livro Diário', icon: BookOpenText },
+  { key: 'accounting-ledger', label: 'Livro Razão', icon: BookMarked },
   { key: 'finance-dre', label: 'DRE & Orçamento', icon: BarChart3 },
-  { key: 'finance-borderos', label: 'Central de Borderôs (14 Formatos)', icon: ReceiptText, badge: '14 tipos' },
-  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature, badge: 'Autentique' },
+  { key: 'accounting-trial-balance', label: 'Balancete', icon: Scale },
+  { key: 'accounting-balance-sheet', label: 'Balanço Patrimonial', icon: Landmark },
+  { key: 'accounting-reconciliation', label: 'Conciliação Contábil', icon: Scale },
+  { key: 'finance-borderos', label: 'Central de Borderôs', icon: ReceiptText },
+  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature },
   { key: 'finance-closing', label: 'Fechamento Contábil', icon: LockKeyhole },
-  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
+  { key: 'accounting-taxes', label: 'Fiscal & Tributos', icon: FileSpreadsheet },
+  { key: 'accounting-audit', label: 'Auditoria Contábil', icon: ScrollText },
 ]
 
 // 4. CONTABILIDADE OFICIAL & LIVROS SPED
@@ -104,17 +125,7 @@ const officialAccountingItems: Item[] = [
 ]
 
 // 5. ADVANCED, SPLIT & OPERADORAS
-const advancedFinanceItems: Item[] = [
-  { key: 'finance-advanced', label: 'Financeiro Advanced', icon: BarChart3, badge: '360°' },
-  { key: 'finance-spread', label: 'Spread & Simulador de Taxas', icon: ChartNoAxesCombined },
-  { key: 'finance-split', label: 'Split Financeiro Automático', icon: Split },
-  { key: 'finance-bank-accounts', label: 'Contas Bancárias Cadastradas', icon: Landmark },
-  { key: 'finance-gateways', label: 'Gateway de Pagamentos', icon: WalletCards, badge: 'Novo' },
-  { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard },
-  { key: 'finance-operators', label: 'Operadoras de Cartão & Adquirentes', icon: ShieldCheck },
-  { key: 'finance-intelligence', label: 'Inteligência Financeira', icon: Brain },
-  { key: 'finance-refunds', label: 'Devoluções & Estornos', icon: ReceiptText },
-]
+const advancedFinanceItems: Item[] = []
 
 // 6. MARKETING & GROWTH
 const marketingItems: Item[] = [
@@ -189,7 +200,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 
         {/* Section: Financeiro - Caixa & Saldos */}
         <CollapsibleSection
-          label="Financeiro: Caixa & Saldos"
+          label="Financeiro"
           open={openFinance}
           onToggle={() => setOpenFinance(!openFinance)}
         >
@@ -206,7 +217,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 
         {/* Section: Financeiro Contábil & Borderôs */}
         <CollapsibleSection
-          label="Financeiro: Contábil & Borderôs"
+          label="Contabilidade"
           open={openAccounting}
           onToggle={() => setOpenAccounting(!openAccounting)}
         >
@@ -230,23 +241,6 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           {officialAccountingItems.map((it, index) => (
             <NavItem
               key={`off-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* Section: Financeiro Advanced & Adquirência */}
-        <CollapsibleSection
-          label="Financeiro: Advanced & Taxas"
-          open={openAdvanced}
-          onToggle={() => setOpenAdvanced(!openAdvanced)}
-        >
-          {advancedFinanceItems.map((it, index) => (
-            <NavItem
-              key={`adv-${it.key}-${index}`}
               item={it}
               active={page === it.key}
               onNavigate={onNavigate}
