@@ -272,8 +272,8 @@ function firstPageFor(user: AppUser): PageKey {
 export default function App() {
   const [users, setUsers] = useState<AppUser[]>(seedUsers)
   const [producers, setProducers] = useState(seedProducers)
-  const [user, setUser] = useState<AppUser | null>(seedUsers[1])
-  const [selectedProducer, setSelectedProducer] = useState<number | 'all'>(1)
+  const [user, setUser] = useState<AppUser | null>(null)
+  const [selectedProducer, setSelectedProducer] = useState<number | 'all'>('all')
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState<'ativos' | 'inativos' | 'todos'>('todos')
   const [view, setView] = useState<'horizontal' | 'compact'>('horizontal')
@@ -370,8 +370,8 @@ export default function App() {
         const producerSelection: number | 'all' = isGlobalAdmin(u) ? 'all' : (u.producerId || 'all')
         setSelectedProducer(producerSelection)
         setPage(firstPageFor(u))
-        const tasks: any[] = [loadScopeData(u, producerSelection)]
-        if (isGlobalAdmin(u)) tasks.push(getProducers().then(setProducers), getUsers().then(setUsers))
+        const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
+        if (isGlobalAdmin(u)) tasks.push(getUsers().then(setUsers))
         await Promise.all(tasks)
       } catch {
         // Keep seed default user
@@ -392,25 +392,19 @@ export default function App() {
             setUser(u)
             setSelectedProducer(producerSelection)
             setPage(firstPageFor(u))
-            await loadScopeData(u, producerSelection)
-            if (isGlobalAdmin(u)) {
-              try {
-                const [ps, us] = await Promise.all([getProducers(), getUsers()])
-                setProducers(ps)
-                setUsers(us)
-              } catch {}
-            }
+            // O login só é concluído visualmente depois que o escopo real da produtora
+            // e seus eventos forem carregados da mesma API que autenticou o usuário.
+            const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
+            if (isGlobalAdmin(u)) tasks.push(getUsers().then(setUsers))
+            await Promise.all(tasks)
             window.history.pushState({}, '', isGlobalAdmin(u) ? '/' : '/dashboard')
             return u
           } catch (e) {
-            const seedUser = seedUsers.find(su => su.email.toLowerCase() === email.toLowerCase())
-            if (seedUser) {
-              setUser(seedUser)
-              setSelectedProducer(isGlobalAdmin(seedUser) ? 'all' : (seedUser.producerId || 'all'))
-              setPage(firstPageFor(seedUser))
-              window.history.pushState({}, '', isGlobalAdmin(seedUser) ? '/' : '/dashboard')
-              return seedUser
-            }
+            // Nunca simular login de produtor com seed local quando a API/cloud falhar.
+            // Isso escondia erros de autenticação/escopo e deixava o painel sem dados.
+            clearApiToken()
+            setUser(null)
+            setEvents([])
             throw e
           }
         }}
