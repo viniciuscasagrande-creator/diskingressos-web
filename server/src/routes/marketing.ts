@@ -190,3 +190,28 @@ marketingRouter.get('/integrations/:id/logs',requireRoles(...marketingReadRoles)
 function encryptTrackingToken(token:string){
   const secret=process.env.TRACKING_TOKEN_SECRET||process.env.JWT_SECRET||'dev-only-change-me';const key=crypto.createHash('sha256').update(secret).digest();const iv=crypto.randomBytes(12);const cipher=crypto.createCipheriv('aes-256-gcm',key,iv);const ciphertext=Buffer.concat([cipher.update(token,'utf8'),cipher.final()]);const tag=cipher.getAuthTag();return {ciphertext:ciphertext.toString('base64'),iv:iv.toString('base64'),tag:tag.toString('base64'),last4:token.slice(-4)}
 }
+
+// Fase 21.1.2 — fonte consolidada do Marketing OS.
+// Evita que uma falha em um módulo derrube o Dashboard inteiro e diferencia
+// "sem dados" de "fonte indisponível".
+marketingRouter.get('/os/summary',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
+ const requestedEventId=req.query.eventId?Number(req.query.eventId):undefined
+ let producerId=requestedProducerId(req); let eventId=requestedEventId
+ if(eventId){const event=await prisma.event.findUnique({where:{id:eventId}});if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'});producerId=event.producerId}
+ const sourceHealth:Record<string,{ok:boolean;state:'active'|'empty'|'unavailable';message?:string}>={}
+ const safe=async<T>(name:string,fn:()=>Promise<T>,empty:(value:T)=>boolean,fallback:T):Promise<T>=>{try{const value=await fn();sourceHealth[name]={ok:true,state:empty(value)?'empty':'active'};return value}catch(error){console.error(`[marketing-os] fonte ${name} indisponível`,error);sourceHealth[name]={ok:false,state:'unavailable',message:'Fonte temporariamente indisponível'};return fallback}}
+ const campaignWhere={...(producerId?{producerId}:{}),...(eventId?{eventId}:{})}
+ const [campaigns,ready,tracking,flows,executions,channels]=await Promise.all([
+  safe('campaigns',()=>prisma.marketingCampaign.findMany({where:campaignWhere,include:{event:{select:{id:true,title:true}},producer:{select:{id:true,name:true}}},orderBy:{createdAt:'desc'}}),v=>v.length===0,[] as any[]),
+  safe('readyCampaigns',()=>prisma.readyCampaignActivation.findMany({where:{...(producerId?{producerId}:{}),...(eventId?{eventId}:{})},include:{event:{select:{id:true,title:true,code:true}}},orderBy:{createdAt:'desc'}}),v=>v.length===0,[] as any[]),
+  safe('tracking',async()=>{const rows=await prisma.trackingConfig.findMany({where:{OR:[{scope:'global'},...(producerId?[{scope:'producer',producerId}]:[]),...(eventId?[{scope:'event',eventId}]:[])]}});return providers.map(provider=>{const configs=rows.filter(r=>r.provider===provider);const eventCfg=configs.find(r=>r.scope==='event'&&r.eventId===eventId);const producerCfg=configs.find(r=>r.scope==='producer'&&r.producerId===producerId);const globalCfg=configs.find(r=>r.scope==='global');const selected=[eventCfg,producerCfg,globalCfg].find(c=>c&&c.mode!=='inherit')||globalCfg||producerCfg||eventCfg;return{provider,source:selected?.scope||'none',mode:selected?.mode||'disabled',externalId:selected?.externalId||null,configJson:selected?.configJson||null}})},v=>v.every(x=>x.mode==='disabled'||x.source==='none'),[] as any[]),
+  safe('automationFlows',()=>prisma.automationFlow.findMany({where:{...(producerId?{producerId}:{}),...(eventId?{eventId}:{})}}),v=>v.length===0,[] as any[]),
+  safe('automationExecutions',()=>prisma.automationExecution.findMany({where:{...(producerId?{producerId}:{}),...(eventId?{eventId}:{})},take:500}),v=>v.length===0,[] as any[]),
+  safe('communication',()=>prisma.communicationChannel.findMany({where:{...(producerId?{producerId}:{})}}),v=>v.length===0,[] as any[])
+ ])
+ const readyNormalized=ready.map((r:any)=>({...r,channels:JSON.parse(r.channelsJson||'[]'),campaignIds:JSON.parse(r.campaignIdsJson||'[]'),trackingLinkIds:JSON.parse(r.trackingLinkIdsJson||'[]')}))
+ const automation={activeFlows:flows.filter((f:any)=>f.status==='ativo').length,totalFlows:flows.length,templates:0,executions:executions.length,openRecoveries:0,potentialCents:0,recoveredCount:0,recoveredCents:0,sent:flows.reduce((a:number,f:any)=>a+(f.sentCount||0),0),conversions:flows.reduce((a:number,f:any)=>a+(f.convertedCount||0),0)}
+ const communication={channels:channels.length,activeChannels:channels.filter((x:any)=>x.status==='ativo').length,queued:executions.filter((x:any)=>x.status==='agendado').length,sent:executions.filter((x:any)=>x.status==='enviado').length,failed:executions.filter((x:any)=>x.status==='falhou').length,optOuts:0}
+ const unavailable=Object.entries(sourceHealth).filter(([,v])=>!v.ok).map(([name])=>name)
+ res.json({campaigns,ready:readyNormalized,tracking,automation,communication,health:{ok:unavailable.length===0,unavailable,sourceHealth}})
+})
