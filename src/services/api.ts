@@ -509,3 +509,6 @@ export const getFinanceExpenses=(producerId?:number,eventId?:number)=>request<Fi
 export const createFinanceExpense=(body:any)=>request<FinanceExpense>('/finance/cash/expenses',{method:'POST',body:JSON.stringify(body)})
 export const updateFinanceExpense=(id:number,body:any)=>request<FinanceExpense>(`/finance/cash/expenses/${id}`,{method:'PATCH',body:JSON.stringify(body)})
 export const payFinanceExpense=(id:number)=>request<FinanceExpense>(`/finance/cash/expenses/${id}/pay`,{method:'PATCH'})
+
+export type ScopeDiagnostics={ok:boolean;code?:string;message?:string;user:{id:number;email:string;role:string;producerId:number|null};producer?:{id:number;name:string;status:string;_count:{events:number;marketingCampaigns:number;users:number}}|null;events?:Array<{id:number;code:string;title:string;status:string;_count:{marketingCampaigns:number}}>;totalEvents?:number;totalCampaigns?:number}
+export const getScopeDiagnostics=()=>request<ScopeDiagnostics>('/scope/diagnostics')

@@ -1,0 +1,1 @@
+Aplicar sobre a Fase 21.1.10 preservando a estrutura de pastas. Não refatorar App.tsx nem remover rotas/módulos. Depois publicar backend e executar cloud:scope:check. O bootstrap demo é opt-in e nunca deve ser usado no banco real sem intenção explícita.
