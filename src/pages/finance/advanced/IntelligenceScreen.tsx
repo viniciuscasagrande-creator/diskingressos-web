@@ -1,0 +1,2 @@
+import React from 'react'; import FinanceOperations360Page from '../../FinanceOperations360Page';
+export default function IntelligenceScreen(props:any){return <FinanceOperations360Page {...props} initialTab="intelligence"/>;}

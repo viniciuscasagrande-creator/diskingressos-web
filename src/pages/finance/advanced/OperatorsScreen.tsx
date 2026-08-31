@@ -1,0 +1,2 @@
+import React from 'react'; import FinancePayments360Page from '../../FinancePayments360Page';
+export default function OperatorsScreen(props:any){return <FinancePayments360Page {...props} initialTab="operators"/>;}
