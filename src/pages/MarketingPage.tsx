@@ -161,17 +161,13 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
   /* -------------------------------------------------------------------------
      HUB OVERVIEW (5 GROUPS)
      ------------------------------------------------------------------------- */
-  if (mode === 'hub') {
+  if (mode === 'hub' || mode === 'dashboard') {
     return <MarketingHubOSPage events={events} producerName={producerName} producerId={producerId} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} notify={notify} onNavigate={onNavigate} />
   }
 
   /* -------------------------------------------------------------------------
      1. AQUISIÇÃO & CAMPANHAS
      ------------------------------------------------------------------------- */
-  if (mode === 'dashboard') {
-    return <Dashboard producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} eventName={eventName} notify={notify} onNavigate={onNavigate} />
-  }
-
   if (mode === 'ready-campaigns') {
     return <ReadyCampaignsPage producerId={producerId} events={events} notify={notify} />
   }

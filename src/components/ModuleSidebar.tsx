@@ -125,8 +125,7 @@ const advancedFinanceItems: Item[] = []
 
 // 6. MARKETING & GROWTH
 const marketingItems: Item[] = [
-  { key: 'marketing-hub', label: 'Hub Marketing', icon: Megaphone },
-  { key: 'marketing-dashboard', label: 'Dashboard', icon: BarChart3 },
+  { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
   { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
   { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
   { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },

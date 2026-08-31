@@ -1,0 +1,14 @@
+{
+  "phase": "21.1.1",
+  "name": "Marketing OS - Dashboard Unificado + Refinamento Tipografico",
+  "rules": [
+    "Nao refatorar App.tsx globalmente",
+    "Nao remover rotas existentes",
+    "marketing-hub deve permanecer como alias legado",
+    "Nao alterar Financeiro, Contabilidade ou Remarketing",
+    "Nao adicionar KPIs hardcoded de producao",
+    "Nao aplicar tipografia do Marketing globalmente"
+  ],
+  "mainRoute": "marketing-dashboard",
+  "legacyAlias": "marketing-hub"
+}

@@ -171,7 +171,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'pos-closing': 'Fechamento de Caixa',
 
   // MARKETING (Fase 16.10.1)
-  'marketing-hub': 'Hub Marketing',
+  'marketing-hub': 'Dashboard Marketing', // alias legado
   'marketing-dashboard': 'Dashboard Marketing',
   'marketing-campaigns': 'Campanhas Multicanais',
   'marketing-ready-campaigns': 'Campanhas Prontas',
@@ -823,7 +823,7 @@ export default function App() {
         <button onClick={() => { navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard'); setMobileNavOpen(false) }}><Home size={20}/><span>Início</span></button>
         <button onClick={() => { navigate('events'); setMobileNavOpen(false) }}><CalendarDays size={20}/><span>Eventos</span></button>
         <button onClick={() => { navigate('finance-dashboard'); setMobileNavOpen(false) }}><WalletCards size={20}/><span>Financeiro</span></button>
-        <button onClick={() => { navigate('marketing-hub'); setMobileNavOpen(false) }}><Megaphone size={20}/><span>Marketing</span></button>
+        <button onClick={() => { navigate('marketing-dashboard'); setMobileNavOpen(false) }}><Megaphone size={20}/><span>Marketing</span></button>
         <button onClick={() => setMobileNavOpen(true)}><Menu size={20}/><span>Mais</span></button>
       </nav>
 
