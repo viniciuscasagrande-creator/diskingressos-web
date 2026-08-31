@@ -673,28 +673,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </button>
                 )}
 
-                {[
-                  ['fin-spread', 'Spread & Simulador de Taxas'],
-                  ['fin-bank-accounts', 'Contas Bancárias Cadastradas'],
-                  ['fin-gateways', 'Gateway de Pagamentos'],
-                  ['fin-methods', 'Métodos de Pagamento'],
-                  ['fin-operators', 'Operadoras de Cartão & Adquirentes'],
-                  ['fin-refunds', 'Devoluções & Estornos'],
-                ].map(([key, label]) => (
-                  <button
-                    key={key}
-                    onClick={() => onNavigate(key as any)}
-                    className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                      currentPage === key
-                        ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                        : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                    }`}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
-                    <span>{label}</span>
-                  </button>
-                ))}
-
                 <button
                   onClick={() => onNavigate('fin-inteligencia')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${

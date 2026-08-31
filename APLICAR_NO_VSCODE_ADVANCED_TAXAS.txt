@@ -1,0 +1,34 @@
+CORREÇÃO DIRETA — FINANCEIRO: ADVANCED & TAXAS
+
+Este projeto JÁ ESTÁ ALTERADO.
+NÃO peça ao Gemini para criar ou aplicar as telas.
+
+PASSOS:
+1. Feche o servidor Vite atual.
+2. Extraia este ZIP em uma NOVA pasta.
+3. Abra ESSA NOVA pasta no VS Code (File > Open Folder).
+4. No terminal dessa pasta:
+   npm install
+   npm run dev
+5. Acesse Financeiro > Financeiro: Advanced & Taxas.
+
+O menu ativo (src/components/ModuleSidebar.tsx) agora possui:
+- Financeiro Advanced
+- Spread & Simulador de Taxas
+- Split Financeiro Automático
+- Contas Bancárias Cadastradas
+- Gateway de Pagamentos
+- Métodos de Pagamento
+- Operadoras de Cartão & Adquirentes
+- Inteligência Financeira
+- Devoluções & Estornos
+
+IMPORTANTE:
+As rotas acima agora são renderizadas DIRETAMENTE em src/App.tsx.
+O fluxo principal NÃO depende mais de AdvancedTaxesRouter para abrir essas telas.
+
+Se a tela antiga continuar aparecendo, o VS Code/Vite está executando outra pasta.
+Confira o caminho do terminal com:
+  cd
+ou no PowerShell:
+  Get-Location
