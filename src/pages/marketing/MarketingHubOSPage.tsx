@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Activity, AlertTriangle, ArrowRight, BarChart3, CalendarDays, CheckCircle2, Download, Gift, Link2, Mail, Megaphone, Plus, Rocket, Sparkles, Target, TicketPercent, TrendingUp, Users } from 'lucide-react'
 import type { EventItem } from '../../data/events'
-import { getMarketingOSSummary, type MarketingCampaign } from '../../services/api'
+import { getMarketingOSSummary, getMarketingCampaigns, getReadyCampaignActivations, getResolvedTracking, getAutomationSummary, getCommunicationSummary, type MarketingCampaign } from '../../services/api'
 
 type Props={events:EventItem[];producerName:string;producerId:number|null;eventId:string;setEventId:(v:string)=>void;period:string;setPeriod:(v:string)=>void;notify:(m:string)=>void;onNavigate?:(page:any)=>void}
 const money=(c:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}).format(c/100)
@@ -18,8 +18,42 @@ export default function MarketingHubOSPage(p:Props){
  const [communication,setCommunication]=useState<any|null>(null)
  const [loading,setLoading]=useState(true)
  const [warning,setWarning]=useState('')
- useEffect(()=>{let alive=true;setLoading(true);setWarning('');getMarketingOSSummary(producerId||undefined,selectedEventId,period).then(data=>{if(!alive)return;setCampaigns(data.campaigns||[]);setReady(data.ready||[]);setTracking(data.tracking||[]);setAutomation(data.automation||null);setCommunication(data.communication||null);const unavailable=data.health?.unavailable||[];if(unavailable.length)setWarning(`${unavailable.length} fonte${unavailable.length>1?'s':''} temporariamente indisponível${unavailable.length>1?'eis':''}. O Dashboard continua com as fontes disponíveis.`);setLoading(false)}).catch(()=>{if(!alive)return;setWarning('Não foi possível carregar a fonte consolidada do Marketing. Verifique a publicação da API da Fase 21.1.2.');setLoading(false)})
- return()=>{alive=false}},[producerId,selectedEventId,period])
+ useEffect(()=>{let alive=true
+  const load=async()=>{
+   setLoading(true);setWarning('')
+   const pid=producerId||undefined
+   try{
+    const data=await getMarketingOSSummary(pid,selectedEventId,period)
+    if(!alive)return
+    setCampaigns(data.campaigns||[]);setReady(data.ready||[]);setTracking(data.tracking||[]);setAutomation(data.automation||null);setCommunication(data.communication||null)
+    const unavailable=data.health?.unavailable||[]
+    if(unavailable.length)setWarning(`${unavailable.length} fonte${unavailable.length>1?'s':''} temporariamente indisponível${unavailable.length>1?'eis':''}. O Dashboard continua com as fontes disponíveis.`)
+   }catch(consolidatedError){
+    // Fase 21.1.6: fallback real para as APIs operacionais já usadas pelas telas internas.
+    // Assim um backend ainda sem /os/summary não zera o Dashboard.
+    const results=await Promise.allSettled([
+     getMarketingCampaigns(pid,selectedEventId),
+     getReadyCampaignActivations(pid,selectedEventId),
+     getResolvedTracking(pid,selectedEventId),
+     getAutomationSummary(pid),
+     getCommunicationSummary(pid)
+    ])
+    if(!alive)return
+    const [campaignResult,readyResult,trackingResult,automationResult,communicationResult]=results
+    if(campaignResult.status==='fulfilled')setCampaigns(campaignResult.value||[]);else setCampaigns([])
+    if(readyResult.status==='fulfilled')setReady(readyResult.value||[]);else setReady([])
+    if(trackingResult.status==='fulfilled')setTracking(trackingResult.value||[]);else setTracking([])
+    if(automationResult.status==='fulfilled')setAutomation(automationResult.value||null);else setAutomation(null)
+    if(communicationResult.status==='fulfilled')setCommunication(communicationResult.value||null);else setCommunication(null)
+    const failed=results.filter(r=>r.status==='rejected').length
+    if(campaignResult.status==='rejected')setWarning('Campanhas não puderam ser carregadas para o evento selecionado. Verifique API, autenticação e banco local.')
+    else if(failed)setWarning(`Dashboard carregado pelas fontes operacionais. ${failed} fonte${failed>1?'s':''} complementar${failed>1?'es':''} indisponível${failed>1?'eis':''}.`)
+    else setWarning('Dashboard carregado pelas fontes operacionais. Publique /api/marketing/os/summary para reativar a fonte consolidada.')
+   }finally{if(alive)setLoading(false)}
+  }
+  load()
+  return()=>{alive=false}
+ },[producerId,selectedEventId,period])
  const k=useMemo(()=>{const active=campaigns.filter(c=>['ativa','active','ativo'].includes(c.status.toLowerCase()));const spent=campaigns.reduce((s,c)=>s+(c.spentCents||0),0);const revenue=campaigns.reduce((s,c)=>s+(c.revenueCents||0),0);const conv=campaigns.reduce((s,c)=>s+(c.conversions||0),0);const clicks=campaigns.reduce((s,c)=>s+(c.clicks||0),0);return{active,spent,revenue,conv,clicks,roas:spent?revenue/spent:0,cpa:conv?spent/conv:0,rate:clicks?conv/clicks*100:0}},[campaigns])
  const providers=tracking.filter(t=>t.mode!=='disabled'&&t.source!=='none')
  const healthParts=[campaigns.length?90:45,k.conv?85:55,automation?.activeFlows?80:50,providers.length?88:40];const health=Math.round(healthParts.reduce((a,b)=>a+b,0)/healthParts.length)
