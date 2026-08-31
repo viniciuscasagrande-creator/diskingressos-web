@@ -66,4 +66,4 @@ app.use('/api/audit',auditRouter)
 app.use((_req,res)=>res.status(404).json({message:'Rota não encontrada.'}))
 
 const port=Number(process.env.PORT||process.env.API_PORT||3333)
-app.listen(port,()=>console.log(`DiskIngressos API Fase 21.1.11: http://localhost:${port}/api`))
+app.listen(port,'0.0.0.0',()=>console.log(`DiskIngressos API Fase 21.1.11: http://0.0.0.0:${port}/api`))
