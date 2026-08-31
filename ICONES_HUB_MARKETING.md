@@ -29,5 +29,6 @@ Documentação das rotas e ícones integrados ao Hub Marketing.
 ---
 
 ## 🔄 Validação
+
 - **TypeScript:** Validado sem erros (`npm run build`).
 - **Deploy:** Integrado e publicado em **[https://safesaff.vercel.app/](https://safesaff.vercel.app/)**.

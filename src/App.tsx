@@ -36,6 +36,12 @@ import { SimuladorSpreadModule } from './pages/finance/SimuladorSpreadModule'
 import { SplitFinanceiroModule } from './pages/finance/SplitFinanceiroModule'
 import { GenericFinanceSubView } from './pages/finance/GenericFinanceSubView'
 import FinanceAccountingHubPage from './pages/FinanceAccountingHubPage'
+import FinancePayments360Page from './pages/FinancePayments360Page'
+import FinanceOperations360Page from './pages/FinanceOperations360Page'
+import FinanceSpread360Page from './pages/FinanceSpread360Page'
+import FinanceAdvancedTaxesPage from './pages/FinanceAdvancedTaxesPage'
+import FinanceSettlementHubPage from './pages/finance/FinanceSettlementHubPage'
+import FinanceDisputesHubPage from './pages/finance/FinanceDisputesHubPage'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -125,6 +131,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'finance-operators': 'Operadoras de Cartão',
   'finance-negotiations': 'Negociações Financeiras',
   'finance-refunds': 'Devoluções / Estornos',
+  'finance-gateways': 'Gateway de Pagamentos',
 
   // CONTABILIDADE
   'accounting-dashboard': 'Dashboard Contábil',
@@ -606,27 +613,27 @@ export default function App() {
           <FinanceStatementPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-payouts' && (
-          <FinancePayoutsPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+          <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="payouts" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
         {page === 'finance-cashflow' && (
           <FinanceCashFlowPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-receivables' && (
-          <FinanceReceivablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+          <FinanceOperations360Page producerId={scopedProducerId ?? undefined} initialTab="receivables" notify={notify} />
         )}
         {page === 'finance-payables' && (
           <FinancePayablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
-        {/* FASE 17.5: CONCILIAÇÃO BANCÁRIA, CONTAS BANCÁRIAS E ANTECIPAÇÕES */}
+        {/* FASE 17.5 & 20.2: CONCILIAÇÃO BANCÁRIA & OPERACIONAL, CONTAS BANCÁRIAS E ANTECIPAÇÕES */}
         {(page === 'finance-reconciliation' || page === 'finance-bank') && (
-          <FinanceReconciliationPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+          <FinanceOperations360Page producerId={scopedProducerId ?? undefined} initialTab="reconciliation" notify={notify} />
         )}
         {page === 'finance-bank-accounts' && (
           <FinanceBankAccountsPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-advance' && (
-          <FinanceAdvancePage events={visibleEvents} notify={notify} onNavigate={navigate} />
+          <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="advances" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
 
         {/* FASE 17.6: DESPESAS, BORDERÔ E CONSOLIDAÇÃO FINAL */}
@@ -691,9 +698,40 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-spread' && <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} notify={notify} />}
-        {page === 'finance-split' && <SplitFinanceiroModule onBack={() => setPage('finance-dashboard')} />}
-        {['finance-intelligence', 'finance-methods', 'finance-custom', 'finance-operators', 'finance-negotiations', 'finance-refunds', 'finance-reports'].includes(page) && (
+        {page === 'finance-spread' && (
+          <FinanceSpread360Page producerId={scopedProducerId ?? undefined} notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-split' && (
+          <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="split" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-advanced' && (
+          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="overview" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-rates' && (
+          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="rates" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-gateways' && (
+          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="gateways" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-operators' && (
+          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="acquirers" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-methods' && (
+          <FinanceAdvancedTaxesPage producerId={scopedProducerId ?? undefined} initialTab="methods" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-refunds' && (
+          <FinanceDisputesHubPage producerId={scopedProducerId ?? undefined} initialTab="refunds" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {(page === 'finance-disputes' || (page as any) === 'finance-chargebacks') && (
+          <FinanceDisputesHubPage producerId={scopedProducerId ?? undefined} initialTab="chargebacks" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {page === 'finance-intelligence' && (
+          <FinanceOperations360Page producerId={scopedProducerId ?? undefined} initialTab="intelligence" notify={notify} />
+        )}
+        {(page === 'finance-settlement' || (page as any) === 'finance-settlements') && (
+          <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="settlements" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+        {['finance-custom', 'finance-negotiations', 'finance-reports'].includes(page) && (
           <GenericFinanceSubView moduleKey={page as any} onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
 

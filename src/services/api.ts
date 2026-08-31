@@ -151,3 +151,295 @@ export const getDreSummary=(producerId?:number,eventId?:number)=>request<DreSumm
 export const getFinancialClosings=(producerId?:number,eventId?:number)=>request<FinancialClosing[]>(`/finance/accounting/closings${financeQs(producerId,eventId)}`)
 export const createFinancialClosing=(body:any)=>request<FinancialClosing>('/finance/accounting/closings',{method:'POST',body:JSON.stringify(body)})
 export const closeFinancialClosing=(id:number)=>request<FinancialClosing>(`/finance/accounting/closings/${id}/close`,{method:'PATCH',body:'{}'})
+
+// ===== Fase 20.1 — Financeiro 360° / Pagamentos =====
+export type FinancePaymentsSummary={gateways:number;activeGateways:number;acquirers:number;activeAcquirers:number;methods:number;pendingRefunds:number;refundedCents:number}
+export type PaymentGatewayConfig={id:number;name:string;provider:string;environment:string;status:string;isPrimary:boolean;webhookUrl:string|null;publicKeyMasked:string|null;credentialsConfigured:boolean;lastValidationAt:string|null;lastValidationStatus:string|null;producerId:number}
+export type CardAcquirer={id:number;name:string;code:string;status:string;creditCashMdrBps:number;creditInstallmentMdrBps:number;debitMdrBps:number;pixFeeBps:number;settlementDays:number;anticipationBps:number;approvalRateBps:number;producerId:number}
+export type PaymentMethodRule={id:number;method:string;label:string;status:string;minInstallments:number;maxInstallments:number;customerInterestBps:number;producerInterestBps:number;minimumCents:number;gatewayId:number|null;acquirerId:number|null;producerId:number}
+export type RefundRequest={id:number;code:string;orderCode:string;transactionRef:string|null;eventId:number|null;amountCents:number;kind:string;method:string;reason:string;status:string;gatewayId:number|null;acquirerId:number|null;gatewayProtocol:string|null;requestedBy:string|null;approvedBy:string|null;approvedAt:string|null;sentToGatewayAt:string|null;completedAt:string|null;producerId:number;createdAt:string;message?:string}
+export const getFinancePaymentsSummary=(producerId?:number)=>request<FinancePaymentsSummary>(`/finance/payments/summary${qs({producerId})}`)
+export const getPaymentGateways=(producerId?:number)=>request<PaymentGatewayConfig[]>(`/finance/payments/gateways${qs({producerId})}`)
+export const createPaymentGateway=(body:any)=>request<PaymentGatewayConfig>('/finance/payments/gateways',{method:'POST',body:JSON.stringify(body)})
+export const updatePaymentGateway=(id:number,body:any)=>request<PaymentGatewayConfig>(`/finance/payments/gateways/${id}`,{method:'PATCH',body:JSON.stringify(body)})
+export const validatePaymentGateway=(id:number)=>request<{ok:boolean;status:string;message:string;checks:any}>(`/finance/payments/gateways/${id}/validate`,{method:'POST'})
+export const getCardAcquirers=(producerId?:number)=>request<CardAcquirer[]>(`/finance/payments/acquirers${qs({producerId})}`)
+export const createCardAcquirer=(body:any)=>request<CardAcquirer>('/finance/payments/acquirers',{method:'POST',body:JSON.stringify(body)})
+export const updateCardAcquirer=(id:number,body:any)=>request<CardAcquirer>(`/finance/payments/acquirers/${id}`,{method:'PATCH',body:JSON.stringify(body)})
+export const getPaymentMethodRules=(producerId?:number)=>request<PaymentMethodRule[]>(`/finance/payments/methods${qs({producerId})}`)
+export const createPaymentMethodRule=(body:any)=>request<PaymentMethodRule>('/finance/payments/methods',{method:'POST',body:JSON.stringify(body)})
+export const updatePaymentMethodRule=(id:number,body:any)=>request<PaymentMethodRule>(`/finance/payments/methods/${id}`,{method:'PATCH',body:JSON.stringify(body)})
+export const getRefundRequests=(producerId?:number)=>request<RefundRequest[]>(`/finance/payments/refunds${qs({producerId})}`)
+export const createRefundRequest=(body:any)=>request<RefundRequest>('/finance/payments/refunds',{method:'POST',body:JSON.stringify(body)})
+export const approveRefundRequest=(id:number)=>request<RefundRequest>(`/finance/payments/refunds/${id}/approve`,{method:'PATCH'})
+export const sendRefundToGateway=(id:number)=>request<RefundRequest>(`/finance/payments/refunds/${id}/send-to-gateway`,{method:'PATCH'})
+
+// ===== Fase 20.2 & 20.2.1 — Spread, Recebíveis, Conciliação e Inteligência =====
+export type SpreadSimulationResult={id?:number;saved:boolean;grossCents:number;paymentMethod:string;installments:number;serviceFeeBps:number;mdrBps:number;anticipationBps:number;gatewayCostCents:number;mdrCostCents:number;anticipationCents:number;serviceRevenueCents:number;totalCostCents:number;netMarginCents:number;marginBps:number;settlementDays:number;acquirer:{id:number;name:string}}
+export type SpreadAcquirerSummary={acquirerId:number;name:string;simulations:number;volumeCents:number;totalCostCents:number;netMarginCents:number;marginBps:number}
+export type SpreadDashboard={simulations:number;volumeCents:number;serviceRevenueCents:number;totalCostCents:number;netMarginCents:number;avgMarginBps:number;avgServiceFeeBps:number;byAcquirer:SpreadAcquirerSummary[]}
+export type FinanceOperations360Summary={receivables:{open:number;dueCents:number};reconciliation:{items:number;reconciledCents:number;divergences:number;divergenceCents:number};refunds:{pendingCents:number};spread:{simulations:number;avgMarginBps:number};acquirers:Array<{id:number;name:string;status:string;approvalRateBps:number;settlementDays:number;creditCashMdrBps:number;creditInstallmentMdrBps:number}>;insights:Array<{level:string;title:string;message:string}>}
+
+export const simulateFinanceSpread=(body:any)=>request<SpreadSimulationResult>('/finance/payments/spread/simulate',{method:'POST',body:JSON.stringify(body)})
+export const compareFinanceSpread=(body:any)=>request<SpreadSimulationResult[]>('/finance/payments/spread/compare',{method:'POST',body:JSON.stringify(body)})
+export const getFinanceSpreadDashboard=(producerId?:number,eventId?:number)=>request<SpreadDashboard>(`/finance/payments/spread/dashboard${qs({producerId,eventId})}`)
+export const getFinanceSpreadHistory=(producerId?:number,eventId?:number)=>request<any[]>(`/finance/payments/spread/history${qs({producerId,eventId})}`)
+export const getFinanceOperations360Summary=(producerId?:number,eventId?:number)=>request<FinanceOperations360Summary>(`/finance/payments/operations/summary${qs({producerId,eventId})}`)
+
+// ===== Fase 20.2.2 — Advanced & Taxas Operacional =====
+export type FinanceGateway = {
+  id: number
+  producerId: number
+  name: string
+  provider: string
+  environment: string
+  status: string
+  configured?: boolean
+  publicKeyMasked?: string | null
+  merchantId?: string | null
+  webhookUrl?: string | null
+  createdAt?: string
+  updatedAt?: string
+}
+
+export type FinancePaymentMethod = {
+  id: number
+  producerId: number
+  code?: string
+  name?: string
+  method?: string
+  label?: string
+  status: string
+  maxInstallments: number
+  minInstallments?: number
+  minInstallmentCents?: number
+  minimumCents?: number
+  fixedFeeCents?: number
+  variableFeeBps?: number
+  createdAt?: string
+  updatedAt?: string
+}
+
+export const getFinanceGateways = (producerId?: number) =>
+  request<FinanceGateway[]>(`/finance/payments/gateways${qs({ producerId })}`)
+export const createFinanceGateway = (body: any) =>
+  request<FinanceGateway>('/finance/payments/gateways', { method: 'POST', body: JSON.stringify(body) })
+export const updateFinanceGateway = (id: number, body: any) =>
+  request<FinanceGateway>(`/finance/payments/gateways/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
+export const validateFinanceGateway = (id: number, producerId?: number) =>
+  request<{ ok: boolean; message: string; status?: string }>(`/finance/payments/gateways/${id}/validate`, { method: 'POST', body: JSON.stringify({ producerId }) })
+
+export const getFinancePaymentMethods = (producerId?: number) =>
+  request<FinancePaymentMethod[]>(`/finance/payments/methods${qs({ producerId })}`)
+export const createFinancePaymentMethod = (body: any) =>
+  request<FinancePaymentMethod>('/finance/payments/methods', { method: 'POST', body: JSON.stringify(body) })
+export const updateFinancePaymentMethod = (id: number, body: any) =>
+  request<FinancePaymentMethod>(`/finance/payments/methods/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
+
+
+
+// ===== Fase 20.3 — Split, Repasses, Antecipações e Liquidação =====
+export type FinanceSettlementSummary = {
+  availableBalanceCents: number
+  blockedBalanceCents: number
+  futureBalanceCents: number
+  totalSplits: number
+  activeSplitsCount: number
+  payoutsCount: number
+  pendingPayoutsCount: number
+  pendingPayoutsCents: number
+  advancesCount: number
+  contractedAdvancesCents: number
+  settlementsCount: number
+  expectedSettlementCents: number
+  reconciledSettlementCents: number
+}
+
+export type FinanceSplitRule = {
+  id: number
+  code: string
+  title: string
+  recipientName: string
+  recipientDocument: string | null
+  recipientAccount: string | null
+  splitType: 'percentage' | 'fixed'
+  splitValueBps: number
+  fixedCents: number
+  feeDeductionMode: 'gross' | 'net'
+  priority: number
+  status: 'draft' | 'active' | 'inactive' | 'expired'
+  eventId: number | null
+  producerId: number
+  notes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type SplitSimulationResult = {
+  rule: { id: number; code: string; title: string; recipientName: string; splitType: string; splitValueBps: number; fixedCents: number }
+  grossAmountCents: number
+  platformFeeCents: number
+  netAmountCents: number
+  recipientShareCents: number
+  producerRemainingCents: number
+  feeDeductionMode: string
+}
+
+export type FinanceAdvance = {
+  id: number
+  code: string
+  requestedAmountCents: number
+  feeBps: number
+  feeCents: number
+  netAmountCents: number
+  status: 'simulated' | 'requested' | 'approved' | 'contracted' | 'settled' | 'rejected' | 'cancelled'
+  eligibleReceivablesCount: number
+  bankAccount: string | null
+  contractedAt: string | null
+  approvedBy: string | null
+  notes: string | null
+  eventId: number | null
+  producerId: number
+  createdAt: string
+}
+
+export type AdvanceSimulationResult = {
+  eligibleReceivablesCount: number
+  totalEligibleCents: number
+  feeBps: number
+  feeCents: number
+  netAmountCents: number
+}
+
+export type FinanceSettlement = {
+  id: number
+  code: string
+  gatewayName: string
+  acquirerName: string | null
+  batchRef: string | null
+  expectedCents: number
+  receivedCents: number
+  feeCents: number
+  differenceCents: number
+  expectedDate: string
+  settledDate: string | null
+  status: 'pending' | 'expected' | 'received' | 'reconciled' | 'divergent' | 'cancelled'
+  reconciliationRef: string | null
+  eventId: number | null
+  producerId: number
+  createdAt: string
+}
+
+export const getFinanceSettlementSummary = (producerId?: number, eventId?: number) =>
+  request<FinanceSettlementSummary>(`/finance/settlement/summary${qs({ producerId, eventId })}`)
+
+export const getFinanceSplits = (producerId?: number, eventId?: number) =>
+  request<FinanceSplitRule[]>(`/finance/settlement/splits${qs({ producerId, eventId })}`)
+export const createFinanceSplit = (body: any) =>
+  request<FinanceSplitRule>('/finance/settlement/splits', { method: 'POST', body: JSON.stringify(body) })
+export const updateFinanceSplit = (id: number, body: any) =>
+  request<FinanceSplitRule>(`/finance/settlement/splits/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
+export const simulateFinanceSplit = (id: number, body: any) =>
+  request<SplitSimulationResult>(`/finance/settlement/splits/${id}/simulate`, { method: 'POST', body: JSON.stringify(body) })
+
+export const getFinanceSettlementPayouts = (producerId?: number) =>
+  request<any[]>(`/finance/settlement/payouts${qs({ producerId })}`)
+export const createFinanceSettlementPayout = (body: any) =>
+  request<any>('/finance/settlement/payouts', { method: 'POST', body: JSON.stringify(body) })
+export const approveFinanceSettlementPayout = (id: number) =>
+  request<any>(`/finance/settlement/payouts/${id}/approve`, { method: 'PATCH' })
+export const scheduleFinanceSettlementPayout = (id: number) =>
+  request<any>(`/finance/settlement/payouts/${id}/schedule`, { method: 'PATCH' })
+export const payFinanceSettlementPayout = (id: number) =>
+  request<any>(`/finance/settlement/payouts/${id}/pay`, { method: 'PATCH' })
+export const cancelFinanceSettlementPayout = (id: number) =>
+  request<any>(`/finance/settlement/payouts/${id}/cancel`, { method: 'PATCH' })
+
+export const getFinanceAdvances = (producerId?: number, eventId?: number) =>
+  request<FinanceAdvance[]>(`/finance/settlement/advances${qs({ producerId, eventId })}`)
+export const simulateFinanceAdvance = (producerId?: number, eventId?: number) =>
+  request<AdvanceSimulationResult>(`/finance/settlement/advances/simulate`, { method: 'POST', body: JSON.stringify({ producerId, eventId }) })
+export const createFinanceAdvance = (body: any) =>
+  request<FinanceAdvance>('/finance/settlement/advances', { method: 'POST', body: JSON.stringify(body) })
+export const approveFinanceAdvance = (id: number) =>
+  request<FinanceAdvance>(`/finance/settlement/advances/${id}/approve`, { method: 'PATCH' })
+export const contractFinanceAdvance = (id: number) =>
+  request<FinanceAdvance>(`/finance/settlement/advances/${id}/contract`, { method: 'PATCH' })
+
+export const getFinanceSettlements = (producerId?: number, eventId?: number) =>
+  request<FinanceSettlement[]>(`/finance/settlement/settlements${qs({ producerId, eventId })}`)
+export const createFinanceSettlement = (body: any) =>
+  request<FinanceSettlement>('/finance/settlement/settlements', { method: 'POST', body: JSON.stringify(body) })
+export const reconcileFinanceSettlement = (id: number, body: any) =>
+  request<FinanceSettlement>(`/finance/settlement/settlements/${id}/reconcile`, { method: 'PATCH', body: JSON.stringify(body) })
+
+// ===== Fase 20.4 — Estornos, Chargebacks, Devoluções e Disputas =====
+export type FinanceDisputesSummary = {
+  totalRefundsCount: number
+  pendingRefundsCount: number
+  totalRequestedRefundCents: number
+  totalCompletedRefundCents: number
+  partialRefundsCount: number
+  totalChargebacksCount: number
+  openChargebacksCount: number
+  openChargebacksCents: number
+  wonChargebacksCount: number
+  wonChargebacksCents: number
+  lostChargebacksCount: number
+  lostChargebacksCents: number
+  recoveryRatePct: number
+}
+
+export type FinanceChargeback = {
+  id: number
+  code: string
+  disputeId: string | null
+  orderCode: string
+  cardBrand: string | null
+  cardLast4: string | null
+  amountCents: number
+  feeCents: number
+  reason: string
+  status: 'disputed' | 'evidence_required' | 'evidence_sent' | 'chargeback_won' | 'chargeback_lost' | 'cancelled'
+  slaDeadline: string | null
+  evidenceNotes: string | null
+  evidenceUrls: string | null
+  resolutionNotes: string | null
+  resolvedAt: string | null
+  gatewayId: number | null
+  acquirerId: number | null
+  eventId: number | null
+  producerId: number
+  createdAt: string
+  updatedAt: string
+}
+
+export const getFinanceDisputesSummary = (producerId?: number, eventId?: number) =>
+  request<FinanceDisputesSummary>(`/finance/disputes/summary${qs({ producerId, eventId })}`)
+
+export const getFinanceDisputesRefunds = (producerId?: number, eventId?: number, status?: string, kind?: string) =>
+  request<RefundRequest[]>(`/finance/disputes/refunds${qs({ producerId, eventId, status, kind })}`)
+export const createFinanceDisputesRefund = (body: any) =>
+  request<RefundRequest>('/finance/disputes/refunds', { method: 'POST', body: JSON.stringify(body) })
+export const approveFinanceDisputesRefund = (id: number) =>
+  request<RefundRequest>(`/finance/disputes/refunds/${id}/approve`, { method: 'POST' })
+export const processFinanceDisputesRefund = (id: number) =>
+  request<RefundRequest>(`/finance/disputes/refunds/${id}/process`, { method: 'POST' })
+export const completeFinanceDisputesRefund = (id: number) =>
+  request<RefundRequest>(`/finance/disputes/refunds/${id}/complete`, { method: 'POST' })
+
+export const getFinanceChargebacks = (producerId?: number, eventId?: number, status?: string) =>
+  request<FinanceChargeback[]>(`/finance/disputes/chargebacks${qs({ producerId, eventId, status })}`)
+export const createFinanceChargeback = (body: any) =>
+  request<FinanceChargeback>('/finance/disputes/chargebacks', { method: 'POST', body: JSON.stringify(body) })
+export const submitChargebackEvidence = (id: number, body: { evidenceNotes: string; evidenceUrls?: string }) =>
+  request<FinanceChargeback>(`/finance/disputes/chargebacks/${id}/evidence`, { method: 'POST', body: JSON.stringify(body) })
+export const resolveFinanceChargeback = (id: number, body: { decision: 'chargeback_won' | 'chargeback_lost'; resolutionNotes?: string }) =>
+  request<FinanceChargeback>(`/finance/disputes/chargebacks/${id}/resolve`, { method: 'POST', body: JSON.stringify(body) })
+
+export const sendPaymentWebhook = (body: any) =>
+  request<{ ok: boolean; webhookId?: number; status: string; message?: string }>('/finance/disputes/payment-events/webhook', { method: 'POST', body: JSON.stringify(body) })
+
+
+
+

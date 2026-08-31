@@ -765,3 +765,226 @@ model ContactConsent {
   @@unique([producerId, contact, channel])
   @@index([producerId, status])
 }
+
+// ===== Fase 20.1 — Financeiro 360° / Pagamentos, Gateways, Adquirentes e Estornos =====
+model PaymentGatewayConfig {
+  id                    Int      @id @default(autoincrement())
+  name                  String
+  provider              String
+  environment           String   @default("sandbox")
+  status                String   @default("inativo")
+  isPrimary             Boolean  @default(false)
+  webhookUrl            String?
+  publicKeyMasked       String?
+  credentialsConfigured Boolean  @default(false)
+  lastValidationAt      DateTime?
+  lastValidationStatus  String?
+  producerId            Int
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  @@index([producerId, status])
+  @@index([producerId, provider])
+}
+
+model CardAcquirer {
+  id                       Int      @id @default(autoincrement())
+  name                     String
+  code                     String
+  status                   String   @default("ativo")
+  creditCashMdrBps         Int      @default(0)
+  creditInstallmentMdrBps  Int      @default(0)
+  debitMdrBps              Int      @default(0)
+  pixFeeBps                Int      @default(0)
+  settlementDays           Int      @default(30)
+  anticipationBps          Int      @default(0)
+  approvalRateBps          Int      @default(0)
+  producerId               Int
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+  @@unique([producerId, code])
+  @@index([producerId, status])
+}
+
+model PaymentMethodRule {
+  id                  Int      @id @default(autoincrement())
+  method              String
+  label               String
+  status              String   @default("ativo")
+  minInstallments     Int      @default(1)
+  maxInstallments     Int      @default(1)
+  customerInterestBps Int      @default(0)
+  producerInterestBps Int      @default(0)
+  minimumCents        Int      @default(0)
+  gatewayId           Int?
+  acquirerId          Int?
+  producerId          Int
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  @@index([producerId, status])
+  @@index([producerId, method])
+}
+
+model RefundRequest {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  orderCode       String
+  transactionRef  String?
+  eventId         Int?
+  amountCents     Int
+  kind            String   @default("total")
+  method          String
+  reason          String
+  status          String   @default("solicitado")
+  gatewayId       Int?
+  acquirerId      Int?
+  gatewayProtocol String?
+  requestedBy     String?
+  approvedBy      String?
+  approvedAt      DateTime?
+  sentToGatewayAt DateTime?
+  completedAt     DateTime?
+  producerId      Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  @@index([producerId, status])
+  @@index([producerId, orderCode])
+  @@index([eventId])
+}
+
+// ===== Fase 20.2 — Spread, Recebíveis, Conciliação e Inteligência Financeira =====
+model FinanceSpreadSimulation {
+  id                  Int      @id @default(autoincrement())
+  grossCents          Int
+  paymentMethod       String
+  installments        Int      @default(1)
+  serviceFeeBps       Int      @default(0)
+  mdrBps              Int      @default(0)
+  anticipationBps     Int      @default(0)
+  gatewayCostCents    Int      @default(0)
+  mdrCostCents        Int      @default(0)
+  anticipationCents   Int      @default(0)
+  serviceRevenueCents Int      @default(0)
+  netMarginCents      Int      @default(0)
+  acquirerId          Int?
+  gatewayId           Int?
+  eventId             Int?
+  producerId          Int
+  createdBy           String?
+  createdAt           DateTime @default(now())
+  @@index([producerId, createdAt])
+  @@index([producerId, eventId])
+}
+
+// ===== Fase 20.3 — Split, Repasses, Antecipações e Liquidação =====
+model FinanceSplitRule {
+  id                Int      @id @default(autoincrement())
+  code              String   @unique
+  title             String
+  recipientName     String
+  recipientDocument String?
+  recipientAccount  String?
+  splitType         String   @default("percentage")
+  splitValueBps     Int      @default(0)
+  fixedCents        Int      @default(0)
+  feeDeductionMode  String   @default("net")
+  priority          Int      @default(1)
+  status            String   @default("active")
+  eventId           Int?
+  producerId        Int
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([producerId, status])
+  @@index([producerId, eventId])
+}
+
+model FinanceAdvance {
+  id                       Int       @id @default(autoincrement())
+  code                     String    @unique
+  requestedAmountCents     Int
+  feeBps                   Int       @default(0)
+  feeCents                 Int       @default(0)
+  netAmountCents           Int
+  status                   String    @default("requested")
+  eligibleReceivablesCount Int       @default(0)
+  bankAccount              String?
+  contractedAt             DateTime?
+  approvedBy               String?
+  notes                    String?
+  eventId                  Int?
+  producerId               Int
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  @@index([producerId, status])
+  @@index([producerId, eventId])
+}
+
+model FinanceSettlement {
+  id                Int       @id @default(autoincrement())
+  code              String    @unique
+  gatewayName       String
+  acquirerName      String?
+  batchRef          String?
+  expectedCents     Int
+  receivedCents     Int       @default(0)
+  feeCents          Int       @default(0)
+  differenceCents   Int       @default(0)
+  expectedDate      DateTime
+  settledDate       DateTime?
+  status            String    @default("expected")
+  reconciliationRef String?
+  eventId           Int?
+  producerId        Int
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([producerId, status])
+  @@index([producerId, expectedDate])
+}
+
+// ===== Fase 20.4 — Estornos, Chargebacks, Devoluções e Disputas =====
+model FinanceChargeback {
+  id              Int       @id @default(autoincrement())
+  code            String    @unique
+  disputeId       String?
+  orderCode       String
+  cardBrand       String?
+  cardLast4       String?
+  amountCents     Int
+  feeCents        Int       @default(0)
+  reason          String
+  status          String    @default("disputed")
+  slaDeadline     DateTime?
+  evidenceNotes   String?
+  evidenceUrls    String?
+  resolutionNotes String?
+  resolvedAt      DateTime?
+  gatewayId       Int?
+  acquirerId      Int?
+  eventId         Int?
+  producerId      Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([producerId, status])
+  @@index([producerId, orderCode])
+  @@index([eventId])
+}
+
+model PaymentWebhookEvent {
+  id          Int      @id @default(autoincrement())
+  provider    String
+  eventId     String   @unique
+  eventType   String
+  payload     String
+  status      String   @default("processed")
+  processedAt DateTime @default(now())
+  producerId  Int?
+  orderCode   String?
+}
+
+
+
+

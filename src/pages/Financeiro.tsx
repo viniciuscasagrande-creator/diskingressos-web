@@ -31,6 +31,11 @@ import { BorderoAssinaturasModule } from './finance/BorderoAssinaturasModule';
 import { ContasBancariasModule } from './finance/ContasBancariasModule';
 import { AntecipacoesModule } from './finance/AntecipacoesModule';
 import { GenericFinanceSubView } from './finance/GenericFinanceSubView';
+import FinanceSpread360Page from './FinanceSpread360Page';
+import FinanceSettlementHubPage from './finance/FinanceSettlementHubPage';
+import FinanceDisputesHubPage from './finance/FinanceDisputesHubPage';
+import FinanceAdvancedTaxesPage from './FinanceAdvancedTaxesPage';
+import FinanceOperations360Page from './FinanceOperations360Page';
 
 export type FinanceTab = 'hub' | 'overview' | 'sales' | 'payouts' | 'cashflow' | 'statement';
 
@@ -144,20 +149,43 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
 
   // Route specialized modules
   if (tab === 'hub' && activeModule !== 'hub') {
-    if (activeModule === 'simulador-spread') {
-      return <SimuladorSpreadModule onBack={() => setActiveModule('hub')} />;
+    if (activeModule === 'simulador-spread' || activeModule === 'financeiro-spread') {
+      return <FinanceSpread360Page notify={notify} onBack={() => setActiveModule('hub')} />;
     }
     if (activeModule === 'split-financeiro') {
-      return <SplitFinanceiroModule onBack={() => setActiveModule('hub')} />;
+      return <FinanceSettlementHubPage initialTab="split" notify={notify} onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'solicitar-repasse') {
+      return <FinanceSettlementHubPage initialTab="payouts" notify={notify} onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'antecipacoes') {
+      return <FinanceSettlementHubPage initialTab="advances" notify={notify} onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'devolucoes-estornos') {
+      return <FinanceDisputesHubPage initialTab="refunds" notify={notify} onBack={() => setActiveModule('hub')} />;
+    }
+    if (activeModule === 'financeiro-advanced' || activeModule === 'operadoras-cartao' || activeModule === 'metodos-pagamento') {
+      return (
+        <FinanceAdvancedTaxesPage
+          initialTab={activeModule === 'operadoras-cartao' ? 'acquirers' : activeModule === 'metodos-pagamento' ? 'methods' : 'overview'}
+          notify={notify}
+          onBack={() => setActiveModule('hub')}
+        />
+      );
+    }
+    if (activeModule === 'conciliacao-bancaria' || activeModule === 'inteligencia-financeira') {
+      return (
+        <FinanceOperations360Page
+          initialTab={activeModule === 'inteligencia-financeira' ? 'intelligence' : 'reconciliation'}
+          notify={notify}
+        />
+      );
     }
     if (activeModule === 'bordero-assinaturas') {
       return <BorderoAssinaturasModule events={events} onBack={() => setActiveModule('hub')} />;
     }
     if (activeModule === 'contas-bancarias') {
       return <ContasBancariasModule onBack={() => setActiveModule('hub')} />;
-    }
-    if (activeModule === 'antecipacoes') {
-      return <AntecipacoesModule onBack={() => setActiveModule('hub')} />;
     }
     // Generic subviews for all other modules
     return (

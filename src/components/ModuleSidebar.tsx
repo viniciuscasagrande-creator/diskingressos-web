@@ -19,7 +19,7 @@ export type PageKey =
   // FINANCEIRO
   | 'finance-dashboard' | 'finance-hub' | 'finance' | 'finance-statement' | 'finance-cashflow' | 'finance-receivables' | 'finance-payables'
   | 'finance-payouts' | 'finance-advance' | 'finance-reconciliation' | 'finance-bank-accounts' | 'finance-expenses' | 'finance-bordero' | 'finance-consolidated'
-  | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds'
+  | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds' | 'finance-gateways' | 'finance-advanced' | 'finance-rates'
   | 'finance-accounting' | 'finance-cost-centers' | 'finance-chart-accounts' | 'finance-accounting-entries' | 'finance-obligations' | 'finance-dre' | 'finance-borderos' | 'finance-signatures' | 'finance-closing'
   // CONTABILIDADE
   | 'accounting-dashboard' | 'accounting-chart' | 'accounting-journal' | 'accounting-ledger' | 'accounting-entries' | 'accounting-cost-centers'
@@ -108,6 +108,7 @@ const advancedFinanceItems: Item[] = [
   { key: 'finance-spread', label: 'Spread & Simulador de Taxas', icon: ChartNoAxesCombined },
   { key: 'finance-split', label: 'Split Financeiro Automático', icon: Split },
   { key: 'finance-bank-accounts', label: 'Contas Bancárias Cadastradas', icon: Landmark },
+  { key: 'finance-gateways', label: 'Gateway de Pagamentos', icon: WalletCards, badge: 'Novo' },
   { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard },
   { key: 'finance-operators', label: 'Operadoras de Cartão & Adquirentes', icon: ShieldCheck },
   { key: 'finance-intelligence', label: 'Inteligência Financeira', icon: Brain },
@@ -156,7 +157,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
   const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
   const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
   const [openOfficialAccounting, setOpenOfficialAccounting] = useState(page.startsWith('accounting-'))
-  const [openAdvanced, setOpenAdvanced] = useState(['finance-split', 'finance-spread', 'finance-bank-accounts', 'finance-methods', 'finance-operators', 'finance-intelligence', 'finance-refunds'].includes(page))
+  const [openAdvanced, setOpenAdvanced] = useState(['finance-split', 'finance-spread', 'finance-bank-accounts', 'finance-gateways', 'finance-methods', 'finance-operators', 'finance-intelligence', 'finance-refunds'].includes(page))
   const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
   const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
   const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
