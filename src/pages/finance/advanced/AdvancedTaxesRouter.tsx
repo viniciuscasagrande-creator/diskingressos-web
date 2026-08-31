@@ -1,52 +1,54 @@
-import React from 'react';
-import AdvancedFinanceHome from './AdvancedFinanceHome';
-import SpreadScreen from './SpreadScreen'; import SplitScreen from './SplitScreen';
-import BankAccountsScreen from './BankAccountsScreen'; import MethodsScreen from './MethodsScreen';
-import OperatorsScreen from './OperatorsScreen'; import GatewaysScreen from './GatewaysScreen';
-import IntelligenceScreen from './IntelligenceScreen'; import RefundsScreen from './RefundsScreen';
+import React from 'react'
+import FinanceAdvancedTaxesPage from '../../FinanceAdvancedTaxesPage'
+import FinanceSpread360Page from '../../FinanceSpread360Page'
+import FinanceBankAccountsPage from '../../FinanceBankAccountsPage'
+import FinancePayments360Page from '../../FinancePayments360Page'
+import FinanceOperations360Page from '../../FinanceOperations360Page'
+import FinanceSettlementHubPage from '../FinanceSettlementHubPage'
+import FinanceDisputesHubPage from '../FinanceDisputesHubPage'
 
 export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props }: any) {
   switch (activeModule) {
     case 'fin-advanced':
     case 'finance-advanced':
     case 'advanced':
-      return <AdvancedFinanceHome onNavigate={onNavigate} {...props} />;
+      return <FinanceAdvancedTaxesPage onNavigate={onNavigate} {...props} />
     case 'fin-spread':
     case 'simulador-spread':
     case 'finance-spread':
-      return <SpreadScreen onNavigate={onNavigate} {...props} />;
+      return <FinanceSpread360Page onNavigate={onNavigate} {...props} />
     case 'fin-split':
     case 'split-financeiro':
     case 'finance-split':
-      return <SplitScreen onNavigate={onNavigate} {...props} />;
+      return <FinanceSettlementHubPage initialTab="split" onNavigate={onNavigate} {...props} />
     case 'fin-bank-accounts':
     case 'contas-bancarias':
     case 'finance-bank-accounts':
-      return <BankAccountsScreen onNavigate={onNavigate} {...props} />;
+      return <FinanceBankAccountsPage events={props.events || []} notify={props.notify} onNavigate={onNavigate} />
     case 'fin-methods':
     case 'metodos-pagamento':
     case 'finance-methods':
-      return <MethodsScreen onNavigate={onNavigate} {...props} />;
+      return <FinancePayments360Page initialTab="methods" notify={props.notify} {...props} />
     case 'fin-operators':
     case 'operadoras-cartao':
     case 'finance-operators':
     case 'finance-rates':
-      return <OperatorsScreen onNavigate={onNavigate} {...props} />;
+      return <FinancePayments360Page initialTab="operators" notify={props.notify} {...props} />
     case 'fin-gateways':
     case 'gateway-pagamentos':
     case 'finance-gateways':
-      return <GatewaysScreen onNavigate={onNavigate} {...props} />;
+      return <FinancePayments360Page initialTab="gateways" notify={props.notify} {...props} />
     case 'fin-inteligencia':
     case 'inteligencia-financeira':
     case 'finance-intelligence':
-      return <IntelligenceScreen onNavigate={onNavigate} {...props} />;
+      return <FinanceOperations360Page initialTab="intelligence" notify={props.notify} {...props} />
     case 'fin-refunds':
     case 'devolucoes-estornos':
     case 'finance-refunds':
     case 'finance-disputes':
     case 'finance-chargebacks':
-      return <RefundsScreen onNavigate={onNavigate} {...props} />;
+      return <FinanceDisputesHubPage initialTab="refunds" notify={props.notify} {...props} />
     default:
-      return null;
+      return null
   }
 }
