@@ -29,7 +29,10 @@
     "db:local:seed": "tsx prisma/seed.ts && tsx prisma/seed-marketing-test.ts",
     "db:local:studio": "prisma studio --schema prisma/schema.postgresql.prisma",
     "db:local:setup": "npm run db:local:activate && npm run db:local:generate && npm run db:local:push && npm run db:local:seed",
-    "db:local:activate": "node scripts/use-local-postgres.mjs"
+    "db:local:activate": "node scripts/use-local-postgres.mjs",
+    "db:local:check": "node scripts/check-local-marketing.mjs",
+    "local:prepare": "npm run db:local:setup && npm run db:local:check",
+    "local:dev": "node scripts/start-local-stack.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

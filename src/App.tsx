@@ -278,7 +278,7 @@ export default function App() {
   const [status, setStatus] = useState<'ativos' | 'inativos' | 'todos'>('todos')
   const [view, setView] = useState<'horizontal' | 'compact'>('horizontal')
   const [page, setPage] = useState<PageKey>('events')
-  const [events, setEvents] = useState<EventItem[]>(seedEvents)
+  const [events, setEvents] = useState<EventItem[]>([])
   const [participants, setParticipants] = useState<Participant[]>(seedParticipants)
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null)
   const [toast, setToast] = useState('')
@@ -348,7 +348,10 @@ export default function App() {
       const requested = isGlobalAdmin(u) ? (producerSelection === 'all' ? undefined : producerSelection) : (u.producerId || undefined)
       const rows = await getEvents(requested)
       if (rows) setEvents(normalizeEvents(rows))
-    } catch {}
+    } catch (error) {
+      setEvents([])
+      console.error('Falha ao carregar eventos da API/banco:', error)
+    }
   }
 
   useEffect(() => {

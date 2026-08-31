@@ -1,5 +1,5 @@
 import type { AppUser, Producer } from '../auth/model'
-const API=import.meta.env.VITE_API_URL||'http://localhost:3333/api'
+const API=import.meta.env.VITE_API_URL||'/api'
 let token=(typeof window!=='undefined'?(sessionStorage.getItem('disk_token')||localStorage.getItem('disk_token')||''):'')
 export function setApiToken(value:string,remember=false){token=value;if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token');(remember?localStorage:sessionStorage).setItem('disk_token',value)}}
 export function clearApiToken(){token='';if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token')}}

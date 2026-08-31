@@ -38,7 +38,7 @@ app.use(cors({
 }))
 app.use(express.json({limit:'1mb'}))
 
-app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'20.4'}))
+app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'21.1.7',database:process.env.DATABASE_URL?.startsWith('postgresql://')?'postgresql':'other'}))
 app.use('/api/tracking',trackingPublicRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/producers',producersRouter)
