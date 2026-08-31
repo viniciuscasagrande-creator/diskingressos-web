@@ -152,12 +152,20 @@ const hubGroups: HubGroup[] = [
 ]
 
 export default function MarketingPage({ events, producerName, producerId, mode, notify, onNavigate }: Props) {
-  const [eventId, setEventId] = useState<string>('all')
-  const [period, setPeriod] = useState('30')
+  const contextKey = `diskingressos:marketing-context:${producerId ?? 'all'}`
+  const readContext = () => {
+    try { return JSON.parse(sessionStorage.getItem(contextKey) || '{}') as { eventId?: string; period?: string } } catch { return {} }
+  }
+  const initialContext = readContext()
+  const [eventId, setEventId] = useState<string>(initialContext.eventId || 'all')
+  const [period, setPeriod] = useState(initialContext.period || '30')
   const selectedEventId = eventId === 'all' ? undefined : Number(eventId)
   useEffect(() => {
     if (eventId !== 'all' && !events.some(e => String(e.id) === eventId)) setEventId('all')
   }, [events, eventId])
+  useEffect(() => {
+    sessionStorage.setItem(contextKey, JSON.stringify({ eventId, period }))
+  }, [contextKey, eventId, period])
   const selectedEvent = events.find(e => String(e.id) === eventId) || events[0]
   const eventName = useMemo(() => eventId === 'all' ? 'Todos os eventos' : events.find(e => String(e.id) === eventId)?.title || 'Evento', [eventId, events])
 
@@ -172,11 +180,11 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
      1. AQUISIÇÃO & CAMPANHAS
      ------------------------------------------------------------------------- */
   if (mode === 'ready-campaigns') {
-    return <ReadyCampaignsPage producerId={producerId} events={events} notify={notify} />
+    return <ReadyCampaignsPage producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
   }
 
   if (mode === 'campaigns' || mode === 'create') {
-    return <MarketingCampaignsPage events={events} notify={notify} />
+    return <MarketingCampaignsPage events={events} initialEventId={selectedEventId} notify={notify} />
   }
 
   if (mode === 'meta-ads') {

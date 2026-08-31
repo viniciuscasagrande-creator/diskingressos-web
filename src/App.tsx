@@ -284,6 +284,23 @@ export default function App() {
   const [toast, setToast] = useState('')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
+  // Fase 21.1.5: cada tela vira uma entrada real no histórico do navegador.
+  // Isso faz Voltar/Avançar restaurarem a tela anterior sem perder o contexto do Marketing.
+  useEffect(() => {
+    const current = window.history.state || {}
+    if (!current.page) window.history.replaceState({ ...current, page }, '', window.location.href)
+    const onPopState = (ev: PopStateEvent) => {
+      const previous = ev.state?.page as PageKey | undefined
+      if (previous) {
+        setMobileNavOpen(false)
+        setPage(previous)
+        window.scrollTo({ top: 0 })
+      }
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
   const module = useMemo(() => moduleFor(page, user), [page, user])
   const notify = (m: string) => {
     setToast(m)
@@ -403,7 +420,7 @@ export default function App() {
   const openEventContext = (e: EventItem) => {
     setSelectedEvent(e)
     setPage('event-dashboard')
-    window.history.pushState({}, '', `/eventos/${e.code}/dashboard`)
+    window.history.pushState({ page: 'event-dashboard' }, '', `/eventos/${e.code}/dashboard`)
     window.scrollTo({ top: 0 })
   }
   const openDashboard = openEventContext
@@ -428,9 +445,11 @@ export default function App() {
     if (next === 'new-event') setSelectedEvent(null)
     setPage(next)
     if (selectedEvent && eventContextPages.has(next)) {
-      window.history.pushState({}, '', `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`)
+      window.history.pushState({ page: next }, '', `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`)
     } else if (next === 'events') {
-      window.history.pushState({}, '', '/eventos')
+      window.history.pushState({ page: next }, '', '/eventos')
+    } else {
+      window.history.pushState({ page: next }, '', `/app/${next}`)
     }
     window.scrollTo({ top: 0 })
   }

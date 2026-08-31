@@ -14,6 +14,7 @@ type Props = {
   producerId: number | null
   events: EventItem[]
   notify: (message: string) => void
+  initialEventId?: number
 }
 
 const channelLabels: Record<string, string> = {
@@ -39,11 +40,11 @@ const audienceLabels: Record<string, string> = {
 const money = (cents = 0) =>
   (Number(cents || 0) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
-export default function ReadyCampaignsPage({ producerId, events, notify }: Props) {
+export default function ReadyCampaignsPage({ producerId, events, notify, initialEventId }: Props) {
   const [templates, setTemplates] = useState<ReadyCampaignTemplate[]>([])
   const [activations, setActivations] = useState<ReadyCampaignActivation[]>([])
   const [selected, setSelected] = useState<ReadyCampaignTemplate | null>(null)
-  const [eventId, setEventId] = useState<number | undefined>(events[0]?.id)
+  const [eventId, setEventId] = useState<number | undefined>(initialEventId || events[0]?.id)
   const [channels, setChannels] = useState<string[]>([])
   const [audience, setAudience] = useState('todos')
   const [budget, setBudget] = useState('')

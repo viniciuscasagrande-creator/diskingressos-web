@@ -17,6 +17,7 @@ import { mockMarketingCampaigns, mockCampaignTemplates } from '../../data/market
 interface MarketingCampaignsPageProps {
   events: EventItem[]
   notify?: (msg: string) => void
+  initialEventId?: number
 }
 
 const channelMeta: Record<MarketingChannel, { label: string; color: string; bg: string; border: string }> = {
@@ -44,14 +45,14 @@ const statusMeta: Record<CampaignStatus, { label: string; bg: string; color: str
   finished: { label: 'Finalizada', bg: '#F3F4F6', color: '#374151', border: '#E5E7EB' }
 }
 
-export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ events, notify }) => {
+export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ events, notify, initialEventId }) => {
   const [activeTab, setActiveTab] = useState<'campaigns' | 'templates'>('campaigns')
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>(mockMarketingCampaigns)
   const [templates] = useState<CampaignTemplate[]>(mockCampaignTemplates)
   
   // Filters
   const [search, setSearch] = useState('')
-  const [selectedEventId, setSelectedEventId] = useState<string>('all')
+  const [selectedEventId, setSelectedEventId] = useState<string>(initialEventId ? String(initialEventId) : 'all')
   const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [selectedTemplateCategory, setSelectedTemplateCategory] = useState<string>('all')
 
@@ -63,7 +64,7 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
 
   // Wizard Step State
   const [wizardStep, setWizardStep] = useState<number>(1)
-  const [wizardEventId, setWizardEventId] = useState<number>(events[0]?.id || 1)
+  const [wizardEventId, setWizardEventId] = useState<number>(initialEventId || events[0]?.id || 1)
   const [wizardName, setWizardName] = useState('')
   const [wizardBudget, setWizardBudget] = useState('6000')
   const [wizardObjective, setWizardObjective] = useState<MarketingCampaign['objective']>('vendas')
