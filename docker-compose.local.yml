@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: diskingressos-postgres-local
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: diskingressos_local
+      POSTGRES_USER: diskingressos
+      POSTGRES_PASSWORD: diskingressos_local_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - diskingressos_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U diskingressos -d diskingressos_local"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+volumes:
+  diskingressos_postgres_data:

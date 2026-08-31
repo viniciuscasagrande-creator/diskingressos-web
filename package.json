@@ -23,7 +23,12 @@
     "deploy:prepare": "npm run db:generate:prod && npm run build:web",
     "check:lucide": "node scripts/check-lucide-imports.mjs",
     "validate:frontend": "npm run check:lucide && npm run build",
-    "db:seed:marketing-test": "tsx prisma/seed-marketing-test.ts"
+    "db:seed:marketing-test": "tsx prisma/seed-marketing-test.ts",
+    "db:local:generate": "prisma generate --schema prisma/schema.postgresql.prisma",
+    "db:local:push": "prisma db push --schema prisma/schema.postgresql.prisma",
+    "db:local:seed": "tsx prisma/seed.ts && tsx prisma/seed-marketing-test.ts",
+    "db:local:studio": "prisma studio --schema prisma/schema.postgresql.prisma",
+    "db:local:setup": "npm run db:local:generate && npm run db:local:push && npm run db:local:seed"
   },
   "dependencies": {
     "@prisma/client": "latest",
