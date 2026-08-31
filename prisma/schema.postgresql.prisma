@@ -28,6 +28,7 @@ model Producer {
   payouts               Payout[]
   financeBankAccounts   FinanceBankAccount[]
   marketingCampaigns    MarketingCampaign[]
+  readyCampaignActivations ReadyCampaignActivation[]
   trackingConfigs       TrackingConfig[]
   trackingLinks         TrackingLink[]
   trackingJourneyActions TrackingJourneyAction[]
@@ -45,6 +46,16 @@ model Producer {
   contactConsents       ContactConsent[]
   trackingIntegrations  TrackingIntegration[]
   trackingDeliveryLogs  TrackingDeliveryLog[]
+  costCenters           CostCenter[]
+  chartAccounts         ChartAccount[]
+  accountingEntries     AccountingEntry[]
+  reconciliationItems   ReconciliationItem[]
+  financialObligations  FinancialObligation[]
+  budgets               BudgetLine[]
+  financialClosings     FinancialClosing[]
+  borderoDocuments      BorderoDocument[]
+  signatureRequests     SignatureRequest[]
+  signatureSigners      SignatureSigner[]
 }
 
 model User {
@@ -94,6 +105,7 @@ model Event {
   posTransactions       PosTransaction[]
   financialTransactions FinancialTransaction[]
   marketingCampaigns    MarketingCampaign[]
+  readyCampaignActivations ReadyCampaignActivation[]
   trackingConfigs       TrackingConfig[]
   trackingLinks         TrackingLink[]
   trackingJourneyActions TrackingJourneyAction[]
@@ -106,6 +118,14 @@ model Event {
   serviceTickets        ServiceTicket[]
   trackingIntegrationEvents TrackingIntegrationEvent[]
   trackingDeliveryLogs  TrackingDeliveryLog[]
+  costCenters           CostCenter[]
+  accountingEntries     AccountingEntry[]
+  reconciliationItems   ReconciliationItem[]
+  financialObligations  FinancialObligation[]
+  budgets               BudgetLine[]
+  financialClosings     FinancialClosing[]
+  borderoDocuments      BorderoDocument[]
+  signatureRequests     SignatureRequest[]
 
   @@index([producerId])
   @@index([producerId, status])
@@ -343,6 +363,250 @@ model FinancialTransaction {
   @@index([producerId, type])
 }
 
+
+model CostCenter {
+  id          Int      @id @default(autoincrement())
+  code        String
+  name        String
+  description String?
+  type        String   @default("operacional")
+  status      String   @default("ativo")
+  parentId    Int?
+  parent      CostCenter? @relation("CostCenterTree", fields: [parentId], references: [id])
+  children    CostCenter[] @relation("CostCenterTree")
+  producerId  Int
+  eventId     Int?
+  producer    Producer @relation(fields: [producerId], references: [id])
+  event       Event?   @relation(fields: [eventId], references: [id])
+  entries     AccountingEntry[]
+  obligations FinancialObligation[]
+  budgets     BudgetLine[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([producerId, code])
+  @@index([producerId])
+  @@index([eventId])
+}
+
+model ChartAccount {
+  id          Int      @id @default(autoincrement())
+  code        String
+  name        String
+  nature      String
+  accountType String
+  level       Int      @default(1)
+  parentCode  String?
+  status      String   @default("ativo")
+  producerId  Int
+  producer    Producer @relation(fields: [producerId], references: [id])
+  entries     AccountingEntry[]
+  obligations FinancialObligation[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([producerId, code])
+  @@index([producerId])
+}
+
+model AccountingEntry {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  competence    String
+  entryDate     DateTime @default(now())
+  description   String
+  debitCents    Int      @default(0)
+  creditCents   Int      @default(0)
+  status        String   @default("lancado")
+  source        String   @default("manual")
+  documentRef   String?
+  notes         String?
+  producerId    Int
+  eventId       Int?
+  costCenterId  Int?
+  chartAccountId Int?
+  producer      Producer @relation(fields: [producerId], references: [id])
+  event         Event?   @relation(fields: [eventId], references: [id])
+  costCenter    CostCenter? @relation(fields: [costCenterId], references: [id])
+  chartAccount  ChartAccount? @relation(fields: [chartAccountId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([costCenterId])
+  @@index([chartAccountId])
+}
+
+model ReconciliationItem {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  sourceType    String
+  sourceRef     String?
+  externalRef   String?
+  expectedCents Int
+  receivedCents Int      @default(0)
+  differenceCents Int    @default(0)
+  status        String   @default("pendente")
+  reason        String?
+  reconciledBy  String?
+  reconciledAt  DateTime?
+  occurredAt    DateTime @default(now())
+  producerId    Int
+  eventId       Int?
+  producer      Producer @relation(fields: [producerId], references: [id])
+  event         Event?   @relation(fields: [eventId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, status])
+}
+
+model FinancialObligation {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  kind          String
+  category      String
+  description   String
+  amountCents   Int
+  dueDate       DateTime
+  paidAt        DateTime?
+  status        String   @default("aberto")
+  counterparty  String?
+  documentRef   String?
+  producerId    Int
+  eventId       Int?
+  costCenterId  Int?
+  chartAccountId Int?
+  producer      Producer @relation(fields: [producerId], references: [id])
+  event         Event?   @relation(fields: [eventId], references: [id])
+  costCenter    CostCenter? @relation(fields: [costCenterId], references: [id])
+  chartAccount  ChartAccount? @relation(fields: [chartAccountId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, kind, status])
+}
+
+model BudgetLine {
+  id           Int      @id @default(autoincrement())
+  competence   String
+  category     String
+  plannedCents Int
+  realizedCents Int     @default(0)
+  notes        String?
+  producerId   Int
+  eventId      Int?
+  costCenterId Int?
+  producer     Producer @relation(fields: [producerId], references: [id])
+  event        Event?   @relation(fields: [eventId], references: [id])
+  costCenter   CostCenter? @relation(fields: [costCenterId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+}
+
+model FinancialClosing {
+  id          Int      @id @default(autoincrement())
+  competence  String
+  status      String   @default("aberto")
+  checklistJson String @default("{}")
+  notes       String?
+  closedBy    String?
+  closedAt    DateTime?
+  producerId  Int
+  eventId     Int?
+  producer    Producer @relation(fields: [producerId], references: [id])
+  event       Event?   @relation(fields: [eventId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+}
+
+model BorderoDocument {
+  id             Int      @id @default(autoincrement())
+  code           String   @unique
+  reportType     String   @default("completo")
+  version        Int      @default(1)
+  status         String   @default("rascunho")
+  title          String
+  summaryJson    String   @default("{}")
+  snapshotJson   String   @default("{}")
+  generatedAt    DateTime @default(now())
+  approvedAt     DateTime?
+  approvedBy     String?
+  lockedAt       DateTime?
+  producerId     Int
+  eventId        Int
+  producer       Producer @relation(fields: [producerId], references: [id])
+  event          Event    @relation(fields: [eventId], references: [id])
+  signatureRequests SignatureRequest[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, status])
+}
+
+model SignatureRequest {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  provider        String   @default("autentique")
+  providerDocumentId String?
+  status          String   @default("rascunho")
+  subject         String
+  message         String?
+  signingOrder    Boolean  @default(false)
+  webhookStatus   String?
+  documentUrl     String?
+  signedFileUrl   String?
+  hash            String?
+  sentAt          DateTime?
+  completedAt     DateTime?
+  producerId      Int
+  eventId         Int?
+  borderoId       Int?
+  producer        Producer @relation(fields: [producerId], references: [id])
+  event           Event?   @relation(fields: [eventId], references: [id])
+  bordero         BorderoDocument? @relation(fields: [borderoId], references: [id])
+  signers         SignatureSigner[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([borderoId])
+}
+
+model SignatureSigner {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  role        String?
+  orderIndex  Int      @default(1)
+  status      String   @default("aguardando")
+  signedAt    DateTime?
+  providerSignerId String?
+  signatureRequestId Int
+  producerId  Int
+  request     SignatureRequest @relation(fields: [signatureRequestId], references: [id], onDelete: Cascade)
+  producer    Producer @relation(fields: [producerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([signatureRequestId])
+  @@index([producerId])
+}
+
 model AuditLog {
   id         Int       @id @default(autoincrement())
   userId     Int?
@@ -361,6 +625,32 @@ model AuditLog {
   @@index([producerId])
 }
 
+
+model ReadyCampaignActivation {
+  id              Int      @id @default(autoincrement())
+  templateKey     String
+  name            String
+  objective       String   @default("conversao")
+  status          String   @default("configurada")
+  audience        String   @default("todos")
+  channelsJson    String   @default("[]")
+  campaignIdsJson String   @default("[]")
+  trackingLinkIdsJson String @default("[]")
+  budgetCents     Int      @default(0)
+  startsAt        DateTime?
+  endsAt          DateTime?
+  producerId      Int
+  eventId         Int
+  producer        Producer @relation(fields: [producerId], references: [id])
+  event           Event    @relation(fields: [eventId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([producerId])
+  @@index([eventId])
+  @@index([producerId, eventId])
+  @@index([status])
+}
 
 model MarketingCampaign {
   id              Int      @id @default(autoincrement())
