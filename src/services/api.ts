@@ -450,3 +450,12 @@ export const sendPaymentWebhook = (body: any) =>
 
 
 
+
+
+export type FinanceDashboardSummary={
+ availableBalanceCents:number;futureBalanceCents:number;payablesCents:number;pendingPayoutsCents:number;pendingPayoutsCount:number;
+ avgMarginBps:number;spreadSimulations:number;divergences:number;activeGateways:number;activeAcquirers:number;methods:number;
+ refundsCents:number;receivablesCents:number;health:{ok:number;total:number;unavailable:string[]}
+}
+export const getFinanceDashboardSummary=(producerId?:number,eventId?:number)=>
+ request<FinanceDashboardSummary>(`/finance/dashboard${qs({producerId,eventId})}`)
