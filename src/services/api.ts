@@ -1,10 +1,28 @@
 import type { AppUser, Producer } from '../auth/model'
 const API=import.meta.env.VITE_API_URL||'/api'
-let token=(typeof window!=='undefined'?(sessionStorage.getItem('disk_token')||localStorage.getItem('disk_token')||''):'')
-export function setApiToken(value:string,remember=false){token=value;if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token');(remember?localStorage:sessionStorage).setItem('disk_token',value)}}
-export function clearApiToken(){token='';if(typeof window!=='undefined'){sessionStorage.removeItem('disk_token');localStorage.removeItem('disk_token')}}
+// Fase 21.1.8: sessão isolada por origem da API. Evita reutilizar token local na Vercel (e vice-versa).
+const apiNamespace=(()=>{
+  if(typeof window==='undefined') return 'server'
+  try {
+    const resolved=new URL(API,window.location.origin)
+    return `${resolved.protocol}//${resolved.host}${resolved.pathname.replace(/\/$/,'')}`
+  } catch { return String(API) }
+})()
+const tokenKey=`disk_token:${apiNamespace}`
+const legacyTokenKey='disk_token'
+function readStoredToken(){
+  if(typeof window==='undefined') return ''
+  const current=sessionStorage.getItem(tokenKey)||localStorage.getItem(tokenKey)||''
+  // Tokens antigos sem namespace são descartados de propósito ao mudar para 21.1.8.
+  sessionStorage.removeItem(legacyTokenKey);localStorage.removeItem(legacyTokenKey)
+  return current
+}
+let token=readStoredToken()
+export function setApiToken(value:string,remember=false){token=value;if(typeof window!=='undefined'){sessionStorage.removeItem(tokenKey);localStorage.removeItem(tokenKey);sessionStorage.removeItem(legacyTokenKey);localStorage.removeItem(legacyTokenKey);(remember?localStorage:sessionStorage).setItem(tokenKey,value)}}
+export function clearApiToken(){token='';if(typeof window!=='undefined'){sessionStorage.removeItem(tokenKey);localStorage.removeItem(tokenKey);sessionStorage.removeItem(legacyTokenKey);localStorage.removeItem(legacyTokenKey)}}
 export function hasStoredToken(){return !!token}
-async function request<T>(path:string,options:RequestInit={}){const r=await fetch(`${API}${path}`,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.message||'Erro na API');return data as T}
+export function getApiBaseUrl(){return API}
+async function request<T>(path:string,options:RequestInit={}){const r=await fetch(`${API}${path}`,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});const data=await r.json().catch(()=>({}));if(r.status===401){clearApiToken()}if(!r.ok)throw new Error(data.message||'Erro na API');return data as T}
 export async function login(email:string,password:string){return request<{token:string;user:AppUser}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})})}
 export const getMe=()=>request<AppUser>('/auth/me')
 export const getProducers=()=>request<Producer[]>('/producers')

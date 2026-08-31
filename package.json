@@ -32,7 +32,10 @@
     "db:local:activate": "node scripts/use-local-postgres.mjs",
     "db:local:check": "node scripts/check-local-marketing.mjs",
     "local:prepare": "npm run db:local:setup && npm run db:local:check",
-    "local:dev": "node scripts/start-local-stack.mjs"
+    "local:dev": "node scripts/start-local-stack.mjs",
+    "cloud:check": "node scripts/check-cloud-env.mjs",
+    "cloud:db:prepare": "npm run cloud:check && npm run db:generate:prod && npm run db:push:prod",
+    "cloud:start": "npm run cloud:check && npm run db:generate:prod && npm run start:api"
   },
   "dependencies": {
     "@prisma/client": "latest",
