@@ -38,7 +38,7 @@ app.use(cors({
 }))
 app.use(express.json({limit:'1mb'}))
 
-app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'21.1.8',database:process.env.DATABASE_URL?.startsWith('postgresql://')?'postgresql':'other'}))
+app.get('/api/health',(_req,res)=>res.json({ok:true,service:'DiskIngressos API',phase:'21.1.9',database:process.env.DATABASE_URL?.startsWith('postgresql://')?'postgresql':'other'}))
 app.use('/api/tracking',trackingPublicRouter)
 app.use('/api/auth',authRouter)
 app.use('/api/producers',producersRouter)
@@ -64,4 +64,4 @@ app.use('/api/audit',auditRouter)
 app.use((_req,res)=>res.status(404).json({message:'Rota não encontrada.'}))
 
 const port=Number(process.env.PORT||process.env.API_PORT||3333)
-app.listen(port,()=>console.log(`DiskIngressos API Fase 21.1.8: http://localhost:${port}/api`))
+app.listen(port,()=>console.log(`DiskIngressos API Fase 21.1.9: http://localhost:${port}/api`))
