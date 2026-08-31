@@ -41,6 +41,47 @@ financeOperationsRouter.get('/dashboard',async(req:AuthRequest,res)=>{
   health:{ok:sources.filter(x=>x.ok).length,total:sources.length,unavailable:sources.filter(x=>!x.ok).map(x=>x.name)}
  })
 })
+
+
+// ===== Fase 20.2.5.3 — Advanced, Conciliação, Spread, Split e Inteligência =====
+financeOperationsRouter.get('/advanced/summary', async (req: AuthRequest, res) => {
+  const producerId=requestedProducerId(req), eventId=req.query.eventId?Number(req.query.eventId):undefined
+  const scope={...(producerId?{producerId}:{}),...(eventId?{eventId}:{})}, producerScope=producerId?{producerId}:{}
+  const safe=async<T>(name:string,fn:()=>Promise<T>,fallback:T)=>{try{return {name,ok:true as const,data:await fn()}}catch(error){console.error(`[finance-advanced] ${name}`,error);return {name,ok:false as const,data:fallback}}}
+  const [oblR,recR,spreadR,settlementR,payoutR,acquirerR,gatewayR]=await Promise.all([
+    safe('receivables',()=>prisma.financialObligation.findMany({where:{...scope,kind:'receber'},select:{amountCents:true,status:true}}),[]),
+    safe('reconciliation',()=>prisma.reconciliationItem.findMany({where:scope,select:{status:true,differenceCents:true}}),[]),
+    safe('spread',()=>prisma.financeSpreadSimulation.findMany({where:scope,select:{grossCents:true,netMarginCents:true}}),[]),
+    safe('settlements',()=>prisma.financeSettlement.findMany({where:scope,select:{expectedCents:true,receivedCents:true,status:true}}),[]),
+    safe('payouts',()=>prisma.payout.findMany({where:producerScope,select:{amountCents:true,status:true}}),[]),
+    safe('acquirers',()=>prisma.cardAcquirer.findMany({where:producerScope,select:{id:true,name:true,status:true,approvalRateBps:true,creditCashMdrBps:true,settlementDays:true}}),[]),
+    safe('gateways',()=>prisma.paymentGatewayConfig.findMany({where:producerScope,select:{status:true}}),[])
+  ])
+  const receivables=oblR.data.filter(x=>!['pago','cancelado'].includes(x.status)), recs=recR.data, spreads=spreadR.data
+  const gross=spreads.reduce((a,x)=>a+x.grossCents,0), margin=spreads.reduce((a,x)=>a+x.netMarginCents,0)
+  const openSettlements=settlementR.data.filter(x=>!['reconciled','liquidado','settled'].includes(x.status))
+  const pendingPayouts=payoutR.data.filter(x=>!['pago','paid','cancelado','cancelled','rejeitado','rejected'].includes(x.status))
+  const divergences=recs.filter(x=>x.status==='divergente'||x.differenceCents!==0), divergenceCents=divergences.reduce((a,x)=>a+Math.abs(x.differenceCents),0)
+  const avgMarginBps=gross?Math.round(margin/gross*10000):0
+  const insights:Array<{level:'ok'|'warning'|'critical';title:string;message:string}>=[]
+  if(divergences.length) insights.push({level:divergenceCents>500000?'critical':'warning',title:'Divergências de conciliação',message:`${divergences.length} item(ns) somam R$ ${(divergenceCents/100).toLocaleString('pt-BR',{minimumFractionDigits:2})}.`})
+  if(receivables.length) insights.push({level:'warning',title:'Recebíveis em aberto',message:`${receivables.length} título(s) ainda aguardam liquidação.`})
+  if(spreads.length && avgMarginBps<200) insights.push({level:'warning',title:'Margem de Spread baixa',message:`A margem média simulada está em ${(avgMarginBps/100).toFixed(2)}%.`})
+  if(!acquirerR.data.some(x=>x.status==='ativo')) insights.push({level:'critical',title:'Adquirente não configurada',message:'Nenhuma adquirente ativa foi encontrada para o produtor.'})
+  if(!gatewayR.data.some(x=>x.status==='ativo')) insights.push({level:'warning',title:'Gateway inativo',message:'Nenhum gateway de pagamento está ativo para o produtor.'})
+  const sources=[oblR,recR,spreadR,settlementR,payoutR,acquirerR,gatewayR]
+  res.json({
+    receivablesCents:receivables.reduce((a,x)=>a+x.amountCents,0),receivablesCount:receivables.length,
+    divergences:divergences.length,divergenceCents,avgMarginBps,spreadSimulations:spreads.length,
+    settlementExpectedCents:openSettlements.reduce((a,x)=>a+Math.max(0,x.expectedCents-x.receivedCents),0),
+    settlementReconciledCents:settlementR.data.reduce((a,x)=>a+x.receivedCents,0),
+    pendingPayoutsCents:pendingPayouts.reduce((a,x)=>a+x.amountCents,0),pendingPayoutsCount:pendingPayouts.length,
+    activeAcquirers:acquirerR.data.filter(x=>x.status==='ativo').length,activeGateways:gatewayR.data.filter(x=>x.status==='ativo').length,
+    acquirers:acquirerR.data.map(x=>({id:x.id,name:x.name,status:x.status,approvalRateBps:x.approvalRateBps,creditMdrBps:x.creditCashMdrBps,settlementDays:x.settlementDays})),
+    insights,health:{ok:sources.filter(x=>x.ok).length,total:sources.length,unavailable:sources.filter(x=>!x.ok).map(x=>x.name)}
+  })
+})
+
 financeOperationsRouter.get('/transactions',async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req),eventId=req.query.eventId?Number(req.query.eventId):undefined,type=typeof req.query.type==='string'?req.query.type:undefined;res.json(await prisma.financialTransaction.findMany({where:{...(producerId?{producerId}:{}),...(eventId?{eventId}:{}),...(type?{type}:{})},include:{event:{select:{id:true,title:true}},order:{select:{id:true,code:true}},payout:{select:{id:true,code:true}}},orderBy:{occurredAt:'desc'}}))})
 financeOperationsRouter.get('/balance',async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req);const rows=await prisma.financialTransaction.findMany({where:{...(producerId?{producerId}:{}),status:'liquidado'},select:{type:true,amountCents:true}});const entries=rows.filter(r=>r.type==='entrada').reduce((a,r)=>a+r.amountCents,0),exits=rows.filter(r=>r.type==='saida').reduce((a,r)=>a+r.amountCents,0);res.json({entriesCents:entries,exitsCents:exits,balanceCents:entries-exits})})
 financeOperationsRouter.get('/payouts',async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req);res.json(await prisma.payout.findMany({where:producerId?{producerId}:undefined,include:{producer:{select:{name:true}}},orderBy:{requestedAt:'desc'}}))})

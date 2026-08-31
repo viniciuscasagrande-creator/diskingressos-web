@@ -1,18 +1,18 @@
 import React from 'react'
-import FinanceAdvancedTaxesPage from '../../FinanceAdvancedTaxesPage'
 import FinanceSpread360Page from '../../FinanceSpread360Page'
 import FinanceBankAccountsPage from '../../FinanceBankAccountsPage'
 import FinancePayments360Page from '../../FinancePayments360Page'
 import FinanceOperations360Page from '../../FinanceOperations360Page'
 import FinanceSettlementHubPage from '../FinanceSettlementHubPage'
 import FinanceDisputesHubPage from '../FinanceDisputesHubPage'
+import FinanceAdvancedCommandPage from '../FinanceAdvancedCommandPage'
 
 export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props }: any) {
   switch (activeModule) {
     case 'fin-advanced':
     case 'finance-advanced':
     case 'advanced':
-      return <FinanceAdvancedTaxesPage onNavigate={onNavigate} {...props} />
+      return <FinanceAdvancedCommandPage onNavigate={onNavigate} {...props} />
     case 'fin-spread':
     case 'simulador-spread':
     case 'finance-spread':

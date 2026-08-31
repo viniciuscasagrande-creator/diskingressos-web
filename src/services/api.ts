@@ -193,6 +193,18 @@ export const getFinanceSpreadDashboard=(producerId?:number,eventId?:number)=>req
 export const getFinanceSpreadHistory=(producerId?:number,eventId?:number)=>request<any[]>(`/finance/payments/spread/history${qs({producerId,eventId})}`)
 export const getFinanceOperations360Summary=(producerId?:number,eventId?:number)=>request<FinanceOperations360Summary>(`/finance/payments/operations/summary${qs({producerId,eventId})}`)
 
+
+// ===== Fase 20.2.5.3 — Advanced, Conciliação, Spread, Split e Inteligência =====
+export type FinanceAdvancedSummary={
+  receivablesCents:number;receivablesCount:number;divergences:number;divergenceCents:number;
+  avgMarginBps:number;spreadSimulations:number;settlementExpectedCents:number;settlementReconciledCents:number;
+  pendingPayoutsCents:number;pendingPayoutsCount:number;activeAcquirers:number;activeGateways:number;
+  acquirers:Array<{id:number;name:string;status:string;approvalRateBps:number;creditMdrBps:number;settlementDays:number}>;
+  insights:Array<{level:'ok'|'warning'|'critical';title:string;message:string}>;
+  health:{ok:number;total:number;unavailable:string[]}
+}
+export const getFinanceAdvancedSummary=(producerId?:number,eventId?:number)=>request<FinanceAdvancedSummary>(`/finance/advanced/summary${qs({producerId,eventId})}`)
+
 // ===== Fase 20.2.2 — Advanced & Taxas Operacional =====
 export type FinanceGateway = {
   id: number
