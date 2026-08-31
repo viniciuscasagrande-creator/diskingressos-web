@@ -9,13 +9,13 @@ import {
   type CardAcquirer, type SpreadDashboard, type SpreadSimulationResult
 } from '../services/api'
 
-type Props = { producerId?: number; eventId?: number; notify?: (message: string) => void; onBack?: () => void }
+type Props = { producerId?: number; eventId?: number; notify?: (message: string) => void; onBack?: () => void; initialView?: View }
 type View = 'dashboard' | 'simulator' | 'acquirers' | 'history' | 'rates'
 const money = (c = 0) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c / 100)
 const pct = (bps = 0) => `${(bps / 100).toFixed(2)}%`
 
-export default function FinanceSpread360Page({ producerId, eventId, notify }: Props) {
-  const [view, setView] = useState<View>('dashboard')
+export default function FinanceSpread360Page({ producerId, eventId, notify, initialView = 'dashboard' }: Props) {
+  const [view, setView] = useState<View>(initialView)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [dashboard, setDashboard] = useState<SpreadDashboard | null>(null)

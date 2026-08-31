@@ -124,6 +124,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'finance-expenses': 'Controle de Despesas',
   'finance-bordero': 'Borderô Financeiro',
   'finance-spread': 'Financeiro Spread & Adquirentes',
+  'finance-spread-simulator': 'Simulador de Spread',
   'finance-split': 'Split Financeiro',
   'finance-methods': 'Métodos de Pagamento',
   'finance-reports': 'Relatórios Financeiros',
@@ -666,22 +667,22 @@ export default function App() {
           <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dashboard" notify={notify} onBack={() => setPage('profile-dashboard')} />
         )}
         {page === 'accounting-chart' && (
-          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="accounts" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="accounts" notify={notify} onBack={() => setPage('accounting-dashboard')} />
         )}
         {page === 'accounting-entries' && (
-          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="entries" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="entries" notify={notify} onBack={() => setPage('accounting-dashboard')} />
         )}
         {page === 'accounting-cost-centers' && (
-          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="cost-centers" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="cost-centers" notify={notify} onBack={() => setPage('accounting-dashboard')} />
         )}
         {page === 'accounting-reconciliation' && (
-          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="reconciliation" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="reconciliation" notify={notify} onBack={() => setPage('accounting-dashboard')} />
         )}
         {page === 'accounting-closing' && (
-          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="closing" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="closing" notify={notify} onBack={() => setPage('accounting-dashboard')} />
         )}
         {page === 'accounting-dre' && (
-          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dre" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dre" notify={notify} onBack={() => setPage('accounting-dashboard')} />
         )}
         {page === 'accounting-journal' && (
           <AccountingJournalPage events={visibleEvents} notify={notify} onNavigate={navigate} />
@@ -692,6 +693,9 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
+        {page === 'finance-spread-simulator' && (
+          <FinanceSpread360Page producerId={scopedProducerId ?? undefined} initialView="simulator" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
         {['finance-advanced', 'finance-spread', 'finance-split', 'finance-bank-accounts', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos'].includes(page) && (
           <AdvancedTaxesRouter
             activeModule={page}

@@ -25,7 +25,7 @@ const base:{title:string;subtitle:string;items:Shortcut[]}[]=[
 {title:'Operadoras de Cartão',desc:'MDR, aprovação, antecipação e liquidação.',page:'finance-operators',icon:ShieldCheck,tone:'cyan'},
 {title:'Gateway de Pagamentos',desc:'Provedores, ambientes, prioridade e validação.',page:'finance-gateways',icon:ServerCog,tone:'blue'}]},
 {title:'SIMULADORES, MÉTODOS & LIQUIDAÇÕES',subtitle:'Pagamentos, split, borderô e pontos de venda',items:[
-{title:'Simulador de Spread',desc:'Preço, taxas, MDR, parcelamento e lucro líquido.',page:'finance-spread',icon:Calculator,tone:'orange'},
+{title:'Simulador de Spread',desc:'Preço, taxas, MDR, parcelamento e lucro líquido.',page:'finance-spread-simulator',icon:Calculator,tone:'orange'},
 {title:'Split Financeiro',desc:'Partilha automatizada entre beneficiários.',page:'finance-split',icon:Split,tone:'purple'},
 {title:'Métodos de Pagamento',desc:'PIX, crédito, débito, boleto e parcelamento.',page:'finance-methods',icon:CreditCard,tone:'green'},
 {title:'Pagamentos Customizados',desc:'Cortesias, permutas e regras especiais.',page:'finance-custom',icon:Settings2,tone:'purple'},
