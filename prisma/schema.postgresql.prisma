@@ -26,6 +26,7 @@ model Producer {
   posTransactions       PosTransaction[]
   financialTransactions FinancialTransaction[]
   payouts               Payout[]
+  financeBankAccounts   FinanceBankAccount[]
   marketingCampaigns    MarketingCampaign[]
   trackingConfigs       TrackingConfig[]
   trackingLinks         TrackingLink[]
@@ -290,6 +291,30 @@ model Payout {
 
   @@index([producerId])
   @@index([producerId, status])
+}
+
+
+model FinanceBankAccount {
+  id             Int      @id @default(autoincrement())
+  bankCode       String
+  bankName       String
+  agency         String
+  accountNumber  String
+  accountType    String   @default("corrente")
+  holderName     String
+  holderDocument String
+  pixType        String?
+  pixKey         String?
+  isPrimary      Boolean  @default(false)
+  status         String   @default("ativo")
+  verifiedAt     DateTime?
+  producerId     Int
+  producer       Producer @relation(fields: [producerId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([producerId, status])
+  @@index([producerId, isPrimary])
 }
 
 model FinancialTransaction {

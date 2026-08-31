@@ -459,3 +459,21 @@ export type FinanceDashboardSummary={
 }
 export const getFinanceDashboardSummary=(producerId?:number,eventId?:number)=>
  request<FinanceDashboardSummary>(`/finance/dashboard${qs({producerId,eventId})}`)
+
+
+// ===== Fase 20.2.5.2 — Operações de Caixa Financeiro =====
+export type FinanceEventBalance={eventId:number|null;eventName:string;entriesCents:number;exitsCents:number;availableCents:number;pendingCents:number;receivableCents:number}
+export type FinanceCashSummary={availableCents:number;pendingPayoutCents:number;futureCents:number;expensesOpenCents:number;expensesPaidCents:number;events:FinanceEventBalance[]}
+export type FinanceBankAccount={id:number;bankCode:string;bankName:string;agency:string;accountNumber:string;accountType:string;holderName:string;holderDocument:string;pixType:string|null;pixKey:string|null;isPrimary:boolean;status:string;verifiedAt:string|null;producerId:number;createdAt:string;updatedAt:string}
+export type FinanceExpense={id:number;code:string;kind:string;category:string;description:string;amountCents:number;dueDate:string;paidAt:string|null;status:string;counterparty:string|null;documentRef:string|null;producerId:number;eventId:number|null;event?:{id:number;title:string}|null;createdAt:string;updatedAt:string}
+export type FinanceTransaction={id:number;code:string;type:string;category:string;description:string;amountCents:number;status:string;occurredAt:string;producerId:number;eventId:number|null;event?:{id:number;title:string}|null;order?:{id:number;code:string}|null;payout?:{id:number;code:string}|null}
+export const getFinanceCashSummary=(producerId?:number,eventId?:number)=>request<FinanceCashSummary>(`/finance/cash/summary${qs({producerId,eventId})}`)
+export const getFinanceCashTransactions=(producerId?:number,eventId?:number,type?:string,category?:string)=>request<FinanceTransaction[]>(`/finance/cash/transactions${qs({producerId,eventId,type,category})}`)
+export const getFinanceBankAccounts=(producerId?:number)=>request<FinanceBankAccount[]>(`/finance/cash/bank-accounts${qs({producerId})}`)
+export const createFinanceBankAccount=(body:any)=>request<FinanceBankAccount>('/finance/cash/bank-accounts',{method:'POST',body:JSON.stringify(body)})
+export const updateFinanceBankAccount=(id:number,body:any)=>request<FinanceBankAccount>(`/finance/cash/bank-accounts/${id}`,{method:'PATCH',body:JSON.stringify(body)})
+export const setFinancePrimaryBankAccount=(id:number)=>request<FinanceBankAccount>(`/finance/cash/bank-accounts/${id}/primary`,{method:'PATCH'})
+export const getFinanceExpenses=(producerId?:number,eventId?:number)=>request<FinanceExpense[]>(`/finance/cash/expenses${qs({producerId,eventId})}`)
+export const createFinanceExpense=(body:any)=>request<FinanceExpense>('/finance/cash/expenses',{method:'POST',body:JSON.stringify(body)})
+export const updateFinanceExpense=(id:number,body:any)=>request<FinanceExpense>(`/finance/cash/expenses/${id}`,{method:'PATCH',body:JSON.stringify(body)})
+export const payFinanceExpense=(id:number)=>request<FinanceExpense>(`/finance/cash/expenses/${id}/pay`,{method:'PATCH'})

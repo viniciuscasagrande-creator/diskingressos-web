@@ -8,9 +8,9 @@ import {
   getFinanceSettlementPayouts, createFinanceSettlementPayout, approveFinanceSettlementPayout, scheduleFinanceSettlementPayout,
   payFinanceSettlementPayout, cancelFinanceSettlementPayout, getFinanceAdvances, simulateFinanceAdvance,
   createFinanceAdvance, approveFinanceAdvance, contractFinanceAdvance, getFinanceSettlements, createFinanceSettlement,
-  reconcileFinanceSettlement,
+  reconcileFinanceSettlement, getFinanceBankAccounts,
   type FinanceSettlementSummary, type FinanceSplitRule, type SplitSimulationResult,
-  type FinanceAdvance, type AdvanceSimulationResult, type FinanceSettlement
+  type FinanceAdvance, type AdvanceSimulationResult, type FinanceSettlement, type FinanceBankAccount
 } from '../../services/api'
 
 type Tab = 'split' | 'payouts' | 'advances' | 'settlements'
@@ -35,6 +35,7 @@ export default function FinanceSettlementHubPage({ producerId, eventId, initialT
   const [payouts, setPayouts] = useState<any[]>([])
   const [advances, setAdvances] = useState<FinanceAdvance[]>([])
   const [settlements, setSettlements] = useState<FinanceSettlement[]>([])
+  const [bankAccounts, setBankAccounts] = useState<FinanceBankAccount[]>([])
 
   const flash = (m: string) => notify?.(m)
 
@@ -42,18 +43,20 @@ export default function FinanceSettlementHubPage({ producerId, eventId, initialT
     setLoading(true)
     setError('')
     try {
-      const [s, sp, po, adv, st] = await Promise.all([
+      const [s, sp, po, adv, st, ba] = await Promise.all([
         getFinanceSettlementSummary(producerId, eventId),
         getFinanceSplits(producerId, eventId),
         getFinanceSettlementPayouts(producerId),
         getFinanceAdvances(producerId, eventId),
-        getFinanceSettlements(producerId, eventId)
+        getFinanceSettlements(producerId, eventId),
+        getFinanceBankAccounts(producerId)
       ])
       setSummary(s)
       setSplits(sp)
       setPayouts(po)
       setAdvances(adv)
       setSettlements(st)
+      setBankAccounts(ba)
     } catch (e: any) {
       setError(e.message || 'Falha ao carregar dados operacionais da liquidação.')
     } finally {
@@ -160,6 +163,7 @@ export default function FinanceSettlementHubPage({ producerId, eventId, initialT
               payouts={payouts}
               availableBalanceCents={summary?.availableBalanceCents || 0}
               producerId={producerId}
+              bankAccounts={bankAccounts}
               reload={load}
               flash={flash}
             />
@@ -512,12 +516,14 @@ function PayoutsTab({
   payouts,
   availableBalanceCents,
   producerId,
+  bankAccounts,
   reload,
   flash
 }: {
   payouts: any[]
   availableBalanceCents: number
   producerId?: number
+  bankAccounts: FinanceBankAccount[]
   reload: () => Promise<void>
   flash: (m: string) => void
 }) {
@@ -599,7 +605,7 @@ function PayoutsTab({
           <h2>Central de Repasses & Transferências</h2>
           <p>Solicite, aprove e efetue a liquidação de repasses para a conta bancária do produtor.</p>
         </div>
-        <button className="fa-btn primary" onClick={() => setShowRequest(!showRequest)}>
+        <button className="fa-btn primary" onClick={() => { if (!showRequest && !bankAccount) { const primary=bankAccounts.find(b=>b.isPrimary&&b.status==='ativo')||bankAccounts.find(b=>b.status==='ativo'); if(primary) setBankAccount(`${primary.bankName} - Ag ${primary.agency} Conta ${primary.accountNumber}${primary.pixKey?` - PIX ${primary.pixKey}`:''}`) } setShowRequest(!showRequest) }}>
           {showRequest ? <X size={16} /> : <Plus size={16} />}
           {showRequest ? 'Fechar' : 'Solicitar Repasse'}
         </button>
@@ -627,12 +633,14 @@ function PayoutsTab({
             </div>
             <div className="finance360-field">
               <span>Conta Destino / Chave PIX</span>
-              <input
-                type="text"
-                placeholder="Ex: Banco Itaú - Ag 1234 CC 56789-0 ou PIX"
-                value={bankAccount}
-                onChange={e => setBankAccount(e.target.value)}
-              />
+              {bankAccounts.filter(b=>b.status==='ativo').length ? (
+                <select value={bankAccount} onChange={e=>setBankAccount(e.target.value)} required>
+                  <option value="">Selecione a conta cadastrada</option>
+                  {bankAccounts.filter(b=>b.status==='ativo').map(b=>{const label=`${b.bankName} - Ag ${b.agency} Conta ${b.accountNumber}${b.pixKey?` - PIX ${b.pixKey}`:''}`;return <option key={b.id} value={label}>{b.isPrimary?'★ ':''}{label}</option>})}
+                </select>
+              ) : (
+                <input type="text" placeholder="Cadastre uma conta bancária ou informe o destino" value={bankAccount} onChange={e=>setBankAccount(e.target.value)} required />
+              )}
             </div>
             <div className="finance360-field" style={{ gridColumn: 'span 2' }}>
               <span>Observações Operacionais</span>
