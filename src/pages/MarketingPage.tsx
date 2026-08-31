@@ -155,6 +155,9 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
   const [eventId, setEventId] = useState<string>('all')
   const [period, setPeriod] = useState('30')
   const selectedEventId = eventId === 'all' ? undefined : Number(eventId)
+  useEffect(() => {
+    if (eventId !== 'all' && !events.some(e => String(e.id) === eventId)) setEventId('all')
+  }, [events, eventId])
   const selectedEvent = events.find(e => String(e.id) === eventId) || events[0]
   const eventName = useMemo(() => eventId === 'all' ? 'Todos os eventos' : events.find(e => String(e.id) === eventId)?.title || 'Evento', [eventId, events])
 

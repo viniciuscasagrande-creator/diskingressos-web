@@ -106,6 +106,24 @@ async function main(){
     {name:'Conferência 2027',channel:'google',objective:'vendas',status:'rascunho',budgetCents:250000,producerId:fep.id,eventId:conferencia.id}
   ]})
 
+  // Fase 21.1.3 — massa de teste de Marketing para TODOS os eventos da produtora Disk.
+  // Permite validar o Dashboard trocando o seletor de evento sem cair em telas vazias.
+  const diskEventsForMarketing = await prisma.event.findMany({where:{producerId:disk.id},select:{id:true,title:true,code:true}})
+  const eventsAlreadySeeded = new Set([maiden.id])
+  for (const [index,event] of diskEventsForMarketing.entries()) {
+    if (eventsAlreadySeeded.has(event.id)) continue
+    const base = 120000 + (index * 17000)
+    const spentMeta = base
+    const spentGoogle = Math.round(base * 0.62)
+    const spentWhatsapp = Math.round(base * 0.22)
+    const factor = 4.1 + ((index % 5) * 0.55)
+    await prisma.marketingCampaign.createMany({data:[
+      {name:`Meta • ${event.title}`,channel:'meta',objective:'conversao',status:'ativa',budgetCents:Math.round(spentMeta*1.8),spentCents:spentMeta,revenueCents:Math.round(spentMeta*factor),impressions:28000+(index*4100),clicks:1200+(index*170),conversions:72+(index*9),producerId:disk.id,eventId:event.id},
+      {name:`Google • ${event.title}`,channel:'google',objective:'vendas',status:index%4===0?'pausada':'ativa',budgetCents:Math.round(spentGoogle*1.7),spentCents:spentGoogle,revenueCents:Math.round(spentGoogle*(factor-.45)),impressions:19000+(index*2700),clicks:850+(index*120),conversions:49+(index*7),producerId:disk.id,eventId:event.id},
+      {name:`WhatsApp • ${event.title}`,channel:'whatsapp',objective:'remarketing',status:'ativa',budgetCents:Math.round(spentWhatsapp*1.5),spentCents:spentWhatsapp,revenueCents:Math.round(spentWhatsapp*(factor+1.2)),impressions:6200+(index*850),clicks:510+(index*65),conversions:38+(index*5),producerId:disk.id,eventId:event.id}
+    ]})
+  }
+
   await prisma.trackingConfig.createMany({data:[
     {provider:'ga4',scope:'global',mode:'own',externalId:'G-DISKGLOBAL'},
     {provider:'meta_pixel',scope:'producer',mode:'own',externalId:'PIXEL-DISK-001',producerId:disk.id},

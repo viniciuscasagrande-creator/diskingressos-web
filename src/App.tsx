@@ -330,7 +330,7 @@ export default function App() {
     try {
       const requested = isGlobalAdmin(u) ? (producerSelection === 'all' ? undefined : producerSelection) : (u.producerId || undefined)
       const rows = await getEvents(requested)
-      if (rows && rows.length) setEvents(normalizeEvents(rows))
+      if (rows) setEvents(normalizeEvents(rows))
     } catch {}
   }
 

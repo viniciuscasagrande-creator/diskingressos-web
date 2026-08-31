@@ -22,7 +22,8 @@
     "db:seed:prod": "tsx prisma/seed.ts",
     "deploy:prepare": "npm run db:generate:prod && npm run build:web",
     "check:lucide": "node scripts/check-lucide-imports.mjs",
-    "validate:frontend": "npm run check:lucide && npm run build"
+    "validate:frontend": "npm run check:lucide && npm run build",
+    "db:seed:marketing-test": "tsx prisma/seed-marketing-test.ts"
   },
   "dependencies": {
     "@prisma/client": "latest",
