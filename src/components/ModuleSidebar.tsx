@@ -2,7 +2,7 @@ import { useState, type ComponentType, type ReactNode } from 'react'
 import { canAccess, type AppUser } from '../auth/model'
 import {
   ArrowLeft, WalletCards, HandCoins, TrendingUp, ReceiptText, TrendingDown, Landmark, Scale,
-  ChartNoAxesCombined, Split, Brain, CreditCard, ShieldCheck, Ticket,
+  ChartNoAxesCombined, Split, Brain, CreditCard, ShieldCheck, Ticket, Gauge,
   PlusSquare, SlidersHorizontal, Users, ScanFace, BarChart3, MonitorSmartphone, ShoppingCart,
   LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
@@ -105,6 +105,7 @@ const officialAccountingItems: Item[] = [
 
 // 5. ADVANCED, SPLIT & OPERADORAS
 const advancedFinanceItems: Item[] = [
+  { key: 'finance-advanced', label: 'Financeiro Advanced', icon: Gauge, badge: '360°' },
   { key: 'finance-spread', label: 'Spread & Simulador de Taxas', icon: ChartNoAxesCombined },
   { key: 'finance-split', label: 'Split Financeiro Automático', icon: Split },
   { key: 'finance-bank-accounts', label: 'Contas Bancárias Cadastradas', icon: Landmark },
@@ -157,7 +158,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
   const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
   const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
   const [openOfficialAccounting, setOpenOfficialAccounting] = useState(page.startsWith('accounting-'))
-  const [openAdvanced, setOpenAdvanced] = useState(['finance-split', 'finance-spread', 'finance-bank-accounts', 'finance-gateways', 'finance-methods', 'finance-operators', 'finance-intelligence', 'finance-refunds'].includes(page))
+  const [openAdvanced, setOpenAdvanced] = useState(['finance-advanced', 'finance-split', 'finance-spread', 'finance-bank-accounts', 'finance-gateways', 'finance-methods', 'finance-operators', 'finance-intelligence', 'finance-refunds'].includes(page))
   const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
   const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
   const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))

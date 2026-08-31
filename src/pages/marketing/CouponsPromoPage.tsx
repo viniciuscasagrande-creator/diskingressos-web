@@ -13,6 +13,7 @@ import { Modal } from '../../components/ui/Modal';
 
 interface CouponsPromoPageProps {
   events: EventItem[];
+  producerId?: number;
   notify?: (msg: string) => void;
 }
 

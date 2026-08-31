@@ -222,7 +222,7 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
 
       {/* 3. Campaigns View */}
       {activeTab === 'mkt-campaigns' && (
-        <MarketingCampaignsPage events={events} notify={notify} />
+        <MarketingCampaignsPage events={events as any} notify={notify} />
       )}
 
       {/* 4. Automations View (Fase 13) */}

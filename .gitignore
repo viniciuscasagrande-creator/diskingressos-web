@@ -8,5 +8,6 @@ prisma/dev.db-journal
 .vercel
 .vercel/
 .vercel.zip
+*.tsbuildinfo
 .DS_Store
 Thumbs.db

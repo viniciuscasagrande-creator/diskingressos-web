@@ -14,7 +14,14 @@ export const getAudit=()=>request<any[]>('/audit')
 
 
 export type OperationalSummary={events:number;lots:number;orders:number;tickets:number;participants:number;checkins:number;terminals:number;payouts:number;balanceCents:number}
-function qs(values:Record<string,number|undefined>){const p=new URLSearchParams();Object.entries(values).forEach(([k,v])=>{if(v!==undefined)p.set(k,String(v))});const q=p.toString();return q?`?${q}`:''}
+function qs(values: Record<string, string | number | undefined | null>) {
+  const p = new URLSearchParams();
+  Object.entries(values).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== '') p.set(k, String(v));
+  });
+  const q = p.toString();
+  return q ? `?${q}` : '';
+}
 export const getOperationalSummary=(producerId?:number)=>request<OperationalSummary>(`/operations/summary${qs({producerId})}`)
 export const getLots=(eventId?:number,producerId?:number)=>request<any[]>(`/lots${qs({eventId,producerId})}`)
 export const getOrders=(eventId?:number,producerId?:number)=>request<any[]>(`/orders${qs({eventId,producerId})}`)

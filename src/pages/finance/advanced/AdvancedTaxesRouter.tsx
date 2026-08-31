@@ -4,6 +4,7 @@ import SpreadScreen from './SpreadScreen'; import SplitScreen from './SplitScree
 import BankAccountsScreen from './BankAccountsScreen'; import MethodsScreen from './MethodsScreen';
 import OperatorsScreen from './OperatorsScreen'; import GatewaysScreen from './GatewaysScreen';
 import IntelligenceScreen from './IntelligenceScreen'; import RefundsScreen from './RefundsScreen';
+import FinanceOperations360Page from '../../FinanceOperations360Page';
 
 export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props }: any) {
   switch (activeModule) {
@@ -40,6 +41,10 @@ export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props
     case 'inteligencia-financeira':
     case 'finance-intelligence':
       return <IntelligenceScreen onNavigate={onNavigate} {...props} />;
+    case 'fin-conciliacao':
+    case 'conciliacao-bancaria':
+    case 'finance-reconciliation':
+      return <FinanceOperations360Page {...props} initialTab="reconciliation" />;
     case 'fin-refunds':
     case 'devolucoes-estornos':
     case 'finance-refunds':

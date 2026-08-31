@@ -60,7 +60,7 @@ export default function FinancePage({ events, initialTab = 'overview', notify }:
       gross,
       fees,
       net,
-      status: 'Processando'
+      status: 'Processando' as const
     }
 
     setPayoutList([newP, ...payoutList])

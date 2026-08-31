@@ -697,7 +697,7 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-bank-accounts', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos'].includes(page) && (
+        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-bank-accounts', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos', 'fin-conciliacao'].includes(page) && (
           <AdvancedTaxesRouter
             activeModule={page}
             producerId={scopedProducerId ?? undefined}
@@ -707,7 +707,7 @@ export default function App() {
             onBack={() => setPage('finance-dashboard')}
           />
         )}
-        {(page === 'finance-settlement' || (page as any) === 'finance-settlements') && (
+        {((page as any) === 'finance-settlement' || (page as any) === 'finance-settlements') && (
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="settlements" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
         {['finance-custom', 'finance-negotiations', 'finance-reports'].includes(page) && (

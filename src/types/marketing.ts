@@ -64,6 +64,7 @@ export interface MarketingCampaign {
   utmCampaign: string;
   audienceName?: string;
   channels: CampaignChannelDetail[];
+  channelLabel?: string;
   isTemplate?: boolean;
 }
 
@@ -132,14 +133,19 @@ export interface CouponPromo {
   id: string;
   code: string;
   discountType: 'percentage' | 'fixed';
-  value: number;
+  value?: number;
+  discountValue?: number;
   eventId: number | null;
   eventName?: string;
-  usageLimit: number;
-  usageCount: number;
+  usageLimit?: number;
+  maxUses?: number;
+  usageCount?: number;
+  currentUses?: number;
+  totalDiscountGiven?: number;
   revenueGenerated: number;
   status: 'active' | 'expired' | 'paused';
-  expiresAt: string;
+  expiresAt?: string;
+  validUntil?: string;
 }
 
 export interface TrackingTagConfig {

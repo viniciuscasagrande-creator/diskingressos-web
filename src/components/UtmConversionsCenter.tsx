@@ -1672,7 +1672,7 @@ function QrCodeModal({ modal, onClose, onCopy, notify }: { modal: { name: string
 /* =========================================================================
    MODAL 3: Atribuição Completa do Pedido / Sessão
    ========================================================================= */
-function OrderAttributionModal({ order, onClose, onCopy, notify }: { order: OrderConversion; onClose: () => void; onCopy: (t: string) => void; notify: (m: string) => void }) {
+function OrderAttributionModal({ order, onClose, onCopy, notify }: { order: OrderConversion; onClose: () => void; onCopy: (t: string, msg?: string) => void; notify: (m: string) => void }) {
   return (
     <div className="utm-modal-backdrop" onClick={onClose}>
       <div className="utm-modal-card-v2 wide" onClick={e => e.stopPropagation()} style={{ width: '680px' }}>
@@ -1755,7 +1755,7 @@ function OrderAttributionModal({ order, onClose, onCopy, notify }: { order: Orde
 /* =========================================================================
    MODAL 4: Compartilhar Relatório com Link Seguro
    ========================================================================= */
-function ShareReportModal({ eventTitle, period, onClose, onCopy }: { eventTitle: string; period: string; onClose: () => void; onCopy: (t: string) => void }) {
+function ShareReportModal({ eventTitle, period, onClose, onCopy }: { eventTitle: string; period: string; onClose: () => void; onCopy: (t: string, msg?: string) => void }) {
   const shareLink = `https://safesaff.vercel.app/relatorio-utm?token=sec_99af2810cd&event=4amigos`
 
   return (

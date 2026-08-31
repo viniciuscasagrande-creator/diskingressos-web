@@ -1,2 +1,12 @@
-import React,{useState} from 'react'; import {Box} from './shared';
-export default function BankAccountsScreen(){const [rows,setRows]=useState<any[]>([]);return <div className="fat-page"><header><small>ADVANCED & TAXAS</small><h1>Contas Bancárias Cadastradas</h1><p>Gerencie contas de recebimento e repasse.</p></header><Box title="Cadastrar conta"><div className="fat-form"><input placeholder="Banco"/><input placeholder="Agência"/><input placeholder="Conta"/><input placeholder="Titular"/><input placeholder="CPF/CNPJ"/><input placeholder="Chave PIX"/><button onClick={()=>setRows([...rows,{banco:'Nova conta',status:'Pendente'}])}>Cadastrar</button></div></Box><Box title="Contas"><div className="fat-table">{rows.length?rows.map((r,i)=><div className="fat-row" key={i}><strong>{r.banco}</strong><span>{r.status}</span><button>Definir principal</button><button>Validar</button></div>):<p>Nenhuma conta cadastrada.</p>}</div></Box></div>}
+import React from 'react';
+import FinanceBankAccountsPage from '../../FinanceBankAccountsPage';
+
+export default function BankAccountsScreen(props: any) {
+  return (
+    <FinanceBankAccountsPage
+      events={props.events || []}
+      notify={props.notify || (() => {})}
+      onNavigate={props.onNavigate}
+    />
+  );
+}
