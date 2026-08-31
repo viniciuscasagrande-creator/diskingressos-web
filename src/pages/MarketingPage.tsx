@@ -16,6 +16,7 @@ import { MarketingCampaignsPage } from './marketing/MarketingCampaignsPage'
 import ReadyCampaignsPage from './marketing/ReadyCampaignsPage'
 import { CouponsPromoPage } from './marketing/CouponsPromoPage'
 import { CommunicationPage } from './marketing/CommunicationPage'
+import MarketingHubOSPage from './marketing/MarketingHubOSPage'
 import {
   createMarketingCampaign, getMarketingCampaigns, getResolvedTracking,
   getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign,
@@ -161,85 +162,7 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
      HUB OVERVIEW (5 GROUPS)
      ------------------------------------------------------------------------- */
   if (mode === 'hub') {
-    return (
-      <section className="growth-page" style={{ background: '#F8FAFC' }}>
-        <Context producerName={producerName} events={events} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} />
-
-        <div className="growth-intro" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '8px' }}>
-          <div>
-            <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>MARKETING & GROWTH • CENTRAL UNIFICADA</p>
-            <h2 style={{ color: '#0F172A', fontSize: '24px', fontWeight: 800 }}>Hub Marketing Operacional</h2>
-            <p style={{ color: '#64748B', fontSize: '13px' }}>
-              Centralize aquisição, tráfego pago, comunicação, programas de fidelidade, atribuição UTM e inteligência de vendas.
-            </p>
-          </div>
-          <div className="page-actions">
-            <button className="btn secondary" onClick={() => notify('Gerando relatório completo do Hub em PDF...')}>
-              <Download size={15} /> Exportar Hub
-            </button>
-            <button className="btn primary" onClick={() => onNavigate ? onNavigate('marketing-create') : notify('Criar nova campanha...')}>
-              <Plus size={16} /> Nova Campanha
-            </button>
-          </div>
-        </div>
-
-        {/* 5 Categorized Hub Groups */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-          {hubGroups.map((group, gIndex) => (
-            <section key={gIndex} className="hub-category-block">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '12px', paddingBottom: '6px', borderBottom: '2px solid #E2E8F0' }}>
-                <div>
-                  <span style={{ fontSize: '11px', fontWeight: 800, color: group.badgeColor, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {group.name}
-                  </span>
-                  <p style={{ margin: '2px 0 0', color: '#64748B', fontSize: '12px' }}>{group.description}</p>
-                </div>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: '#94A3B8' }}>
-                  {group.modules.length} módulos disponíveis
-                </span>
-              </div>
-
-              <div className="module-card-grid">
-                {group.modules.map(item => {
-                  const Icon = item.icon
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className="finance-module-card marketing-card interactive-hub-card"
-                      style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: '8px' }}
-                      onClick={() => {
-                        if (onNavigate) {
-                          onNavigate(item.id)
-                        } else {
-                          notify(`Abrindo ${item.title}...`)
-                        }
-                      }}
-                    >
-                      <span className="module-card-icon" style={{ background: '#EFF6FF', color: group.badgeColor }}>
-                        <Icon size={24} />
-                      </span>
-                      <span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <strong style={{ color: '#0F172A', fontSize: '14px' }}>{item.title}</strong>
-                          {item.badge && (
-                            <span style={{ fontSize: '9px', fontWeight: 800, background: '#DCFCE7', color: '#166534', padding: '1px 5px', borderRadius: '4px' }}>
-                              {item.badge}
-                            </span>
-                          )}
-                        </div>
-                        <small style={{ color: '#64748B', fontSize: '11px' }}>{item.description}</small>
-                      </span>
-                      <ArrowUpRight size={18} className="card-arrow-icon" style={{ color: '#94A3B8' }} />
-                    </button>
-                  )
-                })}
-              </div>
-            </section>
-          ))}
-        </div>
-      </section>
-    )
+    return <MarketingHubOSPage events={events} producerName={producerName} producerId={producerId} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} notify={notify} onNavigate={onNavigate} />
   }
 
   /* -------------------------------------------------------------------------
