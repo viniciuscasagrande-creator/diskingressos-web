@@ -51,13 +51,14 @@ app.get('/api', (_req, res) => {
 })
 
 app.get('/api/health', async (_req, res) => {
-  const databaseType = process.env.DATABASE_URL?.startsWith('postgresql://') || process.env.DATABASE_URL?.startsWith('postgres://')
+  const effectiveDbUrl = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING
+  const databaseType = effectiveDbUrl?.startsWith('postgresql://') || effectiveDbUrl?.startsWith('postgres://')
     ? 'postgresql'
-    : process.env.DATABASE_URL?.startsWith('file:')
+    : effectiveDbUrl?.startsWith('file:')
       ? 'sqlite'
       : 'not-configured'
 
-  if (!process.env.DATABASE_URL) {
+  if (!effectiveDbUrl) {
     return res.status(503).json({
       ok: false,
       service: 'DiskIngressos API',

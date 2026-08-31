@@ -7,7 +7,8 @@ import { audit } from '../audit.js'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 export const authRouter=Router()
 authRouter.post('/login',async(req,res)=>{
-  if(!process.env.DATABASE_URL) return res.status(503).json({message:'DATABASE_URL não configurada no ambiente da API.'})
+  const effectiveDbUrl = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING
+  if(!effectiveDbUrl) return res.status(503).json({message:'DATABASE_URL não configurada no ambiente da API.'})
   const parsed=z.object({email:z.string().email(),password:z.string().min(8)}).safeParse(req.body);if(!parsed.success)return res.status(400).json({message:'Dados inválidos.'})
  const user=await prisma.user.findUnique({where:{email:parsed.data.email.toLowerCase()},include:{producer:true}})
  if(!user||user.status!=='ativo'||!(await bcrypt.compare(parsed.data.password,user.passwordHash)))return res.status(401).json({message:'E-mail ou senha inválidos.'})
