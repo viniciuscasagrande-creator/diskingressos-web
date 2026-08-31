@@ -33,6 +33,7 @@ import { AntecipacoesModule } from './finance/AntecipacoesModule';
 import { GenericFinanceSubView } from './finance/GenericFinanceSubView';
 import FinanceSpread360Page from './FinanceSpread360Page';
 import FinanceSettlementHubPage from './finance/FinanceSettlementHubPage';
+import FinanceBankAccountsPage from './FinanceBankAccountsPage';
 import FinanceDisputesHubPage from './finance/FinanceDisputesHubPage';
 import FinanceAdvancedTaxesPage from './FinanceAdvancedTaxesPage';
 import FinanceOperations360Page from './FinanceOperations360Page';
@@ -172,7 +173,7 @@ export const FinanceiroPage: React.FC<FinanceiroPageProps> = ({
       return <BorderoAssinaturasModule events={events} onBack={() => setActiveModule('hub')} />;
     }
     if (activeModule === 'contas-bancarias') {
-      return <ContasBancariasModule onBack={() => setActiveModule('hub')} />;
+      return <FinanceBankAccountsPage events={events as any} notify={notify} onNavigate={(p: string) => setActiveModule(p as any)} />;
     }
     // Generic subviews for all other modules
     return (
