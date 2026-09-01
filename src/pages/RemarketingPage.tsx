@@ -1,11 +1,27 @@
+import React, { useState, useMemo } from 'react'
 import {
   ArrowUpRight, Clock3, Mail, MessageCircle, Repeat2, ShoppingCart,
-  Target, TrendingUp, Users, Sparkles, Zap, BarChart3, UserCheck
+  Target, TrendingUp, Users, Sparkles, Zap, BarChart3, UserCheck,
+  CheckCircle2, AlertCircle, DollarSign, Filter, RefreshCw, Send,
+  ChevronRight, ArrowRight, ShieldCheck, PieChart, WalletCards
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import RecoveryCenterPage from './RecoveryCenterPage'
 
-type Mode = 'hub' | 'dashboard' | 'carts' | 'audiences' | 'segments' | 'flows' | 'whatsapp' | 'email' | 'payments' | 'inactive' | 'postevent' | 'automation' | 'reports'
+type Mode =
+  | 'hub'
+  | 'dashboard'
+  | 'carts'
+  | 'audiences'
+  | 'segments'
+  | 'flows'
+  | 'whatsapp'
+  | 'email'
+  | 'payments'
+  | 'inactive'
+  | 'postevent'
+  | 'automation'
+  | 'reports'
 
 type Props = {
   events: EventItem[]
@@ -17,32 +33,43 @@ type Props = {
 }
 
 const remarketingModules = [
-  { id: 'remarketing-dashboard', title: 'Dashboard', description: 'Recuperação, receita e conversão.', icon: BarChart3 },
-  { id: 'remarketing-carts', title: 'Carrinhos Abandonados', description: 'Sessões interrompidas e recuperação.', icon: ShoppingCart },
-  { id: 'remarketing-audiences', title: 'Públicos', description: 'Audiências prontas para ativação.', icon: Users },
-  { id: 'remarketing-segments', title: 'Segmentações', description: 'Regras e grupos inteligentes.', icon: Target },
-  { id: 'remarketing-flows', title: 'Fluxos de Recuperação', description: 'Jornadas automatizadas multicanal.', icon: Repeat2 },
-  { id: 'remarketing-whatsapp', title: 'WhatsApp Remarketing', description: 'Mensagens de recuperação.', icon: MessageCircle },
-  { id: 'remarketing-email', title: 'E-mail Remarketing', description: 'Jornadas e campanhas de retorno.', icon: Mail },
-  { id: 'remarketing-payments', title: 'Recuperação de Pagamento', description: 'PIX, cartão e pagamentos pendentes.', icon: Clock3 },
-  { id: 'remarketing-inactive', title: 'Clientes Inativos', description: 'Reativação e recorrência.', icon: UserCheck },
-  { id: 'remarketing-postevent', title: 'Pós-Evento', description: 'Relacionamento depois do evento.', icon: Sparkles },
-  { id: 'remarketing-automation', title: 'Remarketing Automático', description: 'Gatilhos e regras contínuas.', icon: Zap },
-  { id: 'remarketing-reports', title: 'Relatórios', description: 'Performance e receita recuperada.', icon: TrendingUp }
+  { id: 'remarketing-dashboard', title: 'Dashboard', description: 'Recuperação, receita e conversão.', icon: BarChart3, badge: 'Visão Geral' },
+  { id: 'remarketing-carts', title: 'Carrinhos Abandonados', description: 'Sessões interrompidas e resgate.', icon: ShoppingCart, badge: '🔥 Alta Prioridade' },
+  { id: 'remarketing-payments', title: 'Recuperação de Pix & Pagamentos', description: 'Pix e cartões pendentes com timer.', icon: Clock3, badge: '⚡ Resgate Imediato' },
+  { id: 'remarketing-flows', title: 'Régua de Fluxos de Resgate', description: 'Jornadas automatizadas de 3 etapas.', icon: Repeat2, badge: 'Automação' },
+  { id: 'remarketing-whatsapp', title: 'WhatsApp Remarketing', description: 'Mensagens diretas de recuperação.', icon: MessageCircle, badge: 'Conversão 38%' },
+  { id: 'remarketing-email', title: 'E-mail Remarketing', description: 'Jornadas e campanhas de retorno.', icon: Mail, badge: 'Base Própria' },
+  { id: 'remarketing-inactive', title: 'Clientes Inativos', description: 'Reativação de edições anteriores.', icon: UserCheck, badge: 'Fidelização' },
+  { id: 'remarketing-reports', title: 'Relatórios de Resgate', description: 'Performance e receita recuperada.', icon: TrendingUp, badge: 'Atribuição UTM' }
 ]
 
 export default function RemarketingPage({ events, producerName, producerId, mode, notify, onNavigate }: Props) {
+  const [selectedEventId, setSelectedEventId] = useState<number | 'all'>('all')
+  const [period, setPeriod] = useState<'7d' | '14d' | '30d' | 'all'>('30d')
+
   if (mode === 'hub') {
     return (
       <section className="growth-page">
-        <div className="growth-intro">
+        <div className="growth-intro" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '16px' }}>
           <div>
-            <p className="eyebrow remarketing">REMARKETING</p>
-            <h2>Hub Remarketing</h2>
-            <p>Recupere oportunidades e reengaje participantes com fluxos automatizados.</p>
+            <p className="eyebrow remarketing" style={{ color: '#D97706', fontWeight: 800 }}>MOTOR DE RESGATE & CONVERSÃO</p>
+            <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Hub de Remarketing & Recuperação</h2>
+            <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Recupere carrinhos abandonados, Pix não pagos e reative clientes sem custo extra de tráfego.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (onNavigate) onNavigate('remarketing-carts')
+                else notify('Abrindo Carrinhos Abandonados...')
+              }}
+              className="h-10 px-4 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-amber-600 cursor-pointer"
+            >
+              <ShoppingCart size={15} /> Ver Carrinhos Abertos
+            </button>
           </div>
         </div>
-        <div className="module-card-grid">
+
+        <div className="module-card-grid" style={{ marginTop: '20px' }}>
           {remarketingModules.map(item => {
             const Icon = item.icon
             return (
@@ -58,12 +85,19 @@ export default function RemarketingPage({ events, producerName, producerId, mode
                   }
                 }}
               >
-                <span className="module-card-icon">
+                <span className="module-card-icon" style={{ background: '#FEF3C7', color: '#D97706' }}>
                   <Icon size={24} />
                 </span>
                 <span>
-                  <strong>{item.title}</strong>
-                  <small>{item.description}</small>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <strong style={{ fontSize: '14px', color: '#0F172A' }}>{item.title}</strong>
+                    {item.badge && (
+                      <span style={{ fontSize: '9px', fontWeight: 800, padding: '1px 6px', borderRadius: '4px', background: '#F1F5F9', color: '#475569' }}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+                  <small style={{ color: '#64748B', fontSize: '12px' }}>{item.description}</small>
                 </span>
                 <ArrowUpRight size={18} className="card-arrow-icon" />
               </button>
@@ -74,114 +108,224 @@ export default function RemarketingPage({ events, producerName, producerId, mode
     )
   }
 
-  if (['carts', 'flows', 'whatsapp', 'email', 'payments', 'inactive', 'postevent', 'automation', 'audiences', 'segments'].includes(mode)) {
-    const targetMode = mode === 'audiences' || mode === 'segments' ? 'flows' : mode
+  if (['carts', 'flows', 'whatsapp', 'email', 'payments', 'inactive', 'postevent', 'automation', 'audiences', 'segments', 'reports'].includes(mode)) {
+    const targetMode = mode === 'audiences' || mode === 'segments' ? 'flows' : mode === 'reports' ? 'carts' : mode
     return <RecoveryCenterPage producerId={producerId} events={events} mode={targetMode as any} notify={notify} />
   }
 
+  // Dashboard Remarketing View
   return (
     <section className="growth-page">
-      <div className="growth-intro">
+      {/* 1. Header & Context */}
+      <div className="growth-intro" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <p className="eyebrow remarketing">REMARKETING</p>
-          <h2>Dashboard Remarketing</h2>
-          <p>Visão consolidada das oportunidades de recuperação e reengajamento.</p>
+          <p className="eyebrow remarketing" style={{ color: '#D97706', fontWeight: 800 }}>MOTOR DE RESGATE & CONVERSÃO</p>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Dashboard de Remarketing</h2>
+          <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Visão consolidada de oportunidades abertas, taxa de recuperação e receita resgatada.</p>
         </div>
-      </div>
-      <div className="growth-kpis">
-        <Kpi icon={ShoppingCart} label="Carrinhos abandonados" value="1.248" sub="R$ 86.420 em potencial" />
-        <Kpi icon={TrendingUp} label="Receita recuperada" value="R$ 31.580" sub="↑ 21,6% no período" />
-        <Kpi icon={Target} label="Taxa de recuperação" value="18,7%" sub="234 vendas recuperadas" />
-        <Kpi icon={Users} label="Públicos ativos" value="12" sub="8 automações em execução" />
-      </div>
-      <div className="growth-grid">
-        <article className="growth-panel">
-          <div className="panel-head">
-            <div>
-              <h3>Recuperação por canal</h3>
-              <p>Participação na receita recuperada</p>
-            </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {/* Event Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '13px' }}>
+            <Filter size={14} color="#64748B" />
+            <select
+              value={selectedEventId}
+              onChange={e => setSelectedEventId(e.target.value === 'all' ? 'all' : Number(e.target.value))}
+              style={{ background: 'transparent', border: 0, fontWeight: 600, color: '#0F172A', cursor: 'pointer', outline: 'none' }}
+            >
+              <option value="all">Todos os eventos ({events.length})</option>
+              {events.map(ev => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.title}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="remarketing-channel">
-            <Channel icon={MessageCircle} name="WhatsApp" value="R$ 17.420" pct="55%" />
-            <Channel icon={Mail} name="E-mail" value="R$ 8.840" pct="28%" />
-            <Channel icon={Clock3} name="Recuperação de pagamento" value="R$ 5.320" pct="17%" />
-          </div>
-        </article>
-        <article className="growth-panel">
-          <div className="panel-head">
-            <div>
-              <h3>Fluxos ativos</h3>
-              <p>Automações com melhor desempenho</p>
-            </div>
-          </div>
-          <div className="flow-list">
-            {[
-              ['Carrinho 30 min', '124 recuperações', 'Ativo'],
-              ['PIX pendente 15 min', '68 recuperações', 'Ativo'],
-              ['Último lote', '42 recuperações', 'Ativo'],
-              ['Pós-evento +30 dias', '1.480 contatos', 'Ativo']
-            ].map(r => (
-              <div className="flow-row" key={r[0]}>
-                <span>
-                  <b>{r[0]}</b>
-                  <small>{r[1]}</small>
-                </span>
-                <i>{r[2]}</i>
-              </div>
+
+          {/* Period Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F1F5F9', padding: '4px', borderRadius: '8px', fontSize: '12px', fontWeight: 600 }}>
+            {['7d', '14d', '30d', 'all'].map(p => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p as any)}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  border: 0,
+                  cursor: 'pointer',
+                  background: period === p ? '#FFFFFF' : 'transparent',
+                  color: period === p ? '#0F172A' : '#64748B',
+                  fontWeight: period === p ? 800 : 600,
+                  boxShadow: period === p ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'
+                }}
+              >
+                {p === 'all' ? 'Tudo' : p}
+              </button>
             ))}
           </div>
+
+          {/* Quick Trigger */}
+          <button
+            onClick={() => notify('Processando fila de resgate multicanal (WhatsApp e E-mail)...')}
+            className="h-10 px-4 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-amber-600 cursor-pointer"
+          >
+            <Zap size={15} /> Processar Fila
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Top 4 Recovery KPIs */}
+      <div className="growth-kpis" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginTop: '16px' }}>
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '16px', borderRadius: '12px' }}>
+          <div className="kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748B' }}>Receita Recuperada</span>
+            <span style={{ padding: '6px', background: '#DCFCE7', color: '#16A34A', borderRadius: '8px' }}>
+              <TrendingUp size={18} />
+            </span>
+          </div>
+          <strong style={{ fontSize: '22px', fontWeight: 900, color: '#16A34A', display: 'block', margin: '4px 0 2px' }}>
+            R$ 38.450,00
+          </strong>
+          <small style={{ color: '#16A34A', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px' }}>
+            <ArrowUpRight size={13} /> +22.4% no período
+          </small>
         </article>
+
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '16px', borderRadius: '12px' }}>
+          <div className="kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748B' }}>Oportunidades em Aberto</span>
+            <span style={{ padding: '6px', background: '#FEF3C7', color: '#D97706', borderRadius: '8px' }}>
+              <ShoppingCart size={18} />
+            </span>
+          </div>
+          <strong style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', display: 'block', margin: '4px 0 2px' }}>
+            1.280 checkouts
+          </strong>
+          <small style={{ color: '#64748B' }}>R$ 96.200,00 em potencial recuperável</small>
+        </article>
+
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '16px', borderRadius: '12px' }}>
+          <div className="kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748B' }}>Taxa de Conversão</span>
+            <span style={{ padding: '6px', background: '#EFF6FF', color: '#2563EB', borderRadius: '8px' }}>
+              <Target size={18} />
+            </span>
+          </div>
+          <strong style={{ fontSize: '22px', fontWeight: 900, color: '#2563EB', display: 'block', margin: '4px 0 2px' }}>
+            24,8%
+          </strong>
+          <small style={{ color: '#64748B' }}>318 pedidos concluídos após lembrete</small>
+        </article>
+
+        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '16px', borderRadius: '12px' }}>
+          <div className="kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748B' }}>Pix & Boletos Salvos</span>
+            <span style={{ padding: '6px', background: '#F3E8FF', color: '#9333EA', borderRadius: '8px' }}>
+              <Clock3 size={18} />
+            </span>
+          </div>
+          <strong style={{ fontSize: '22px', fontWeight: 900, color: '#9333EA', display: 'block', margin: '4px 0 2px' }}>
+            R$ 19.820,00
+          </strong>
+          <small style={{ color: '#64748B' }}>142 reservas pagas via Copia e Cola</small>
+        </article>
+      </div>
+
+      {/* 3. Recovery Financial Extra Profit Card */}
+      <div style={{ background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)', border: '1px solid #FDE68A', padding: '18px 22px', borderRadius: '14px', marginTop: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: '#D97706', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Sparkles size={24} />
+          </div>
+          <div>
+            <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#92400E' }}>
+              Faturamento Extra Gerado sem Custo Adicional de Mídia
+            </h4>
+            <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#B45309' }}>
+              O motor automático de recuperação adicionou <strong>R$ 38.450,00 líquidos</strong> ao caixa do produtor reimpactando quem já tinha interesse de compra.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            if (onNavigate) onNavigate('remarketing-flows')
+            else notify('Abrindo Régua de Fluxos...')
+          }}
+          style={{ padding: '8px 16px', background: '#D97706', color: '#FFFFFF', border: 0, borderRadius: '8px', fontSize: '12px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+        >
+          Otimizar Régua de Disparos <ChevronRight size={14} />
+        </button>
+      </div>
+
+      {/* 4. Automated Recovery Journey (3 Stages Timeline) */}
+      <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '20px', borderRadius: '14px', marginTop: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>Régua de Recuperação Automatizada (Jornada em 3 Etapas)</h3>
+            <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748B' }}>Tempo de disparo inteligente baseado no momento de abandono do checkout</p>
+          </div>
+          <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 8px', borderRadius: '999px', background: '#DCFCE7', color: '#16A34A' }}>
+            ● 3 Gatilhos Ativos
+          </span>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
+          {/* Stage 1 */}
+          <div style={{ padding: '16px', background: '#F8FAFC', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', background: '#EFF6FF', padding: '2px 8px', borderRadius: '6px' }}>
+                ETAPA 1 · 15 MINUTOS
+              </span>
+              <strong style={{ fontSize: '13px', color: '#16A34A' }}>34% Conv.</strong>
+            </div>
+            <h4 style={{ margin: '10px 0 4px', fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Lembrete Amigável de Reserva</h4>
+            <p style={{ margin: 0, fontSize: '12px', color: '#64748B' }}>
+              Dispara WhatsApp & E-mail lembrando que os ingressos ainda estão guardados no carrinho.
+            </p>
+            <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #E2E8F0', fontSize: '11px', color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Canal: <strong>WhatsApp + E-mail</strong></span>
+              <span>Resgatados: <strong>R$ 14.800</strong></span>
+            </div>
+          </div>
+
+          {/* Stage 2 */}
+          <div style={{ padding: '16px', background: '#FFFBEB', borderRadius: '10px', border: '1px solid #FDE68A' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#D97706', background: '#FEF3C7', padding: '2px 8px', borderRadius: '6px' }}>
+                ETAPA 2 · 2 HORAS
+              </span>
+              <strong style={{ fontSize: '13px', color: '#16A34A' }}>46% Conv. 🔥</strong>
+            </div>
+            <h4 style={{ margin: '10px 0 4px', fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Incentivo com Cupom VIP 10% OFF</h4>
+            <p style={{ margin: 0, fontSize: '12px', color: '#64748B' }}>
+              Oferece cupom dinâmico e link direto de pagamento com validade de 60 minutos.
+            </p>
+            <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #FDE68A', fontSize: '11px', color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Cupom: <strong>DISK10</strong></span>
+              <span>Resgatados: <strong>R$ 18.250</strong></span>
+            </div>
+          </div>
+
+          {/* Stage 3 */}
+          <div style={{ padding: '16px', background: '#F8FAFC', borderRadius: '10px', border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#9333EA', background: '#F3E8FF', padding: '2px 8px', borderRadius: '6px' }}>
+                ETAPA 3 · 24 HORAS
+              </span>
+              <strong style={{ fontSize: '13px', color: '#16A34A' }}>20% Conv.</strong>
+            </div>
+            <h4 style={{ margin: '10px 0 4px', fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>Último Aviso de Esgotamento</h4>
+            <p style={{ margin: 0, fontSize: '12px', color: '#64748B' }}>
+              Alerta de liberação de vaga para o próximo cliente da fila caso o pedido não seja pago.
+            </p>
+            <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #E2E8F0', fontSize: '11px', color: '#475569', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Gatilho: <strong>Urgência Máxima</strong></span>
+              <span>Resgatados: <strong>R$ 5.400</strong></span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
 }
-
-function Kpi({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub: string }) {
-  return (
-    <article className="growth-kpi">
-      <div className="kpi-top">
-        <span>{label}</span>
-        <Icon size={19} />
-      </div>
-      <strong>{value}</strong>
-      <small>{sub}</small>
-    </article>
-  )
-}
-
-function Channel({ icon: Icon, name, value, pct }: { icon: any; name: string; value: string; pct: string }) {
-  return (
-    <div className="remarketing-channel-row">
-      <span className="channel-icon">
-        <Icon size={20} />
-      </span>
-      <div>
-        <b>{name}</b>
-        <small>{value}</small>
-      </div>
-      <strong>{pct}</strong>
-    </div>
-  )
-}
-
-function title(mode: Mode) {
-  return (
-    {
-      hub: 'Hub Remarketing',
-      dashboard: 'Dashboard Remarketing',
-      carts: 'Carrinhos Abandonados',
-      audiences: 'Públicos',
-      segments: 'Segmentações',
-      flows: 'Fluxos de Recuperação',
-      whatsapp: 'WhatsApp Remarketing',
-      email: 'E-mail Remarketing',
-      payments: 'Recuperação de Pagamento',
-      inactive: 'Clientes Inativos',
-      postevent: 'Pós-Evento',
-      automation: 'Remarketing Automático',
-      reports: 'Relatórios'
-    } as Record<string, string>
-  )[mode] || 'Remarketing'
-}
-
