@@ -5,11 +5,44 @@ import {
   Send, UserCheck, Sparkles, Filter, ChevronRight, ArrowRight, ExternalLink,
   Flame, HelpCircle, FileText, CheckCheck, PlayCircle, XCircle, AlertCircle, Headphones, Link2, Sparkle,
   Layers3, ArrowRightLeft, UserPlus, CheckSquare, Gauge, Calendar, BellRing, SlidersHorizontal, Zap,
-  BarChart3, Activity, ShieldCheck, LifeBuoy
+  BarChart3, Activity, ShieldCheck, LifeBuoy, MessagesSquare, Tag, ShoppingBag, WalletCards, ScanLine,
+  UserRound, CalendarDays, Workflow, Play, PauseCircle
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
-export type ServiceTab = 'hub' | 'dashboard' | 'tickets' | 'new' | 'sla' | 'incidents' | 'knowledge' | 'teams' | 'client360'
+export type ServiceTab =
+  | 'hub'
+  | 'dashboard'
+  | 'inbox'
+  | 'tickets'
+  | 'new'
+  | 'sla'
+  | 'client360'
+  | 'workflows'
+  | 'incidents'
+  | 'knowledge'
+  | 'teams'
+
+interface ConversationItem {
+  id: number
+  channel: 'WHATSAPP' | 'EMAIL' | 'CHAT'
+  contactName: string
+  contactValue: string
+  lastMessage: string
+  unreadCount: number
+  ticketNumber?: string
+  priority?: 'P1' | 'P2' | 'P3' | 'P4'
+  status: 'OPEN' | 'WAITING_CUSTOMER' | 'WAITING_AGENT' | 'RESOLVED'
+  updatedAt: string
+  messages: Array<{
+    id: number
+    senderName: string
+    direction: 'INBOUND' | 'OUTBOUND'
+    body: string
+    deliveryStatus: 'SENT' | 'DELIVERED' | 'READ' | 'FAILED'
+    createdAt: string
+  }>
+}
 
 interface TicketItem {
   id: number
@@ -43,6 +76,30 @@ interface TicketItem {
     body: string
     createdAt: string
   }>
+}
+
+interface WorkflowRule {
+  id: number
+  name: string
+  code: string
+  description: string
+  triggerEvent: 'TICKET_CREATED' | 'SLA_RISK' | 'SLA_BREACHED' | 'EVENT_NEAR' | 'PAYMENT_APPROVED' | 'REFUND_PROCESSED' | 'MANUAL'
+  priority: number
+  isActive: boolean
+  runsCount: number
+  successCount: number
+  failedCount: number
+  actions: string[]
+}
+
+interface WorkflowRun {
+  id: number
+  workflowName: string
+  ticketNumber?: string
+  triggerEvent: string
+  status: 'SUCCESS' | 'FAILED' | 'RUNNING'
+  executionTimeMs: number
+  createdAt: string
 }
 
 interface IncidentItem {
@@ -155,6 +212,121 @@ const initialQueues: QueueItem[] = [
   { id: 2, name: 'Pagamentos & Pix', code: 'QUEUE_PAYMENTS', strategy: 'LEAST_LOAD', agentsCount: 3, openTickets: 6 },
   { id: 3, name: 'Reembolsos & Estornos', code: 'QUEUE_REFUNDS', strategy: 'LEAST_LOAD', agentsCount: 2, openTickets: 5 },
   { id: 4, name: 'Acesso & Catracas (Portão)', code: 'QUEUE_ACCESS', strategy: 'SKILL_BASED', agentsCount: 2, openTickets: 2 }
+]
+
+const initialConversations: ConversationItem[] = [
+  {
+    id: 1,
+    channel: 'WHATSAPP',
+    contactName: 'João Silva Oliveira',
+    contactValue: '+55 41 99882-1144',
+    lastMessage: 'Olá, paguei via Pix e não recebi meu QR Code no e-mail.',
+    unreadCount: 1,
+    ticketNumber: 'DS-2026-984221',
+    priority: 'P2',
+    status: 'OPEN',
+    updatedAt: '10:45',
+    messages: [
+      { id: 101, senderName: 'João Silva Oliveira', direction: 'INBOUND', body: 'Olá, paguei via Pix e não recebi meu QR Code no e-mail.', deliveryStatus: 'READ', createdAt: '10:45' },
+      { id: 102, senderName: 'Disk Copilot (IA)', direction: 'OUTBOUND', body: 'Olá João! Localizei seu pedido DI-984221 com pagamento aprovado. Estou transferindo para um atendente.', deliveryStatus: 'DELIVERED', createdAt: '10:46' },
+      { id: 103, senderName: 'Lucas Atendente (N1)', direction: 'OUTBOUND', body: 'Olá João! Estou forçando o reenvio do seu ingresso para seu e-mail e WhatsApp agora mesmo.', deliveryStatus: 'READ', createdAt: '10:50' }
+    ]
+  },
+  {
+    id: 2,
+    channel: 'EMAIL',
+    contactName: 'Carlos Eduardo Mendes',
+    contactValue: 'carlos.mendes@adv.com.br',
+    lastMessage: 'Gostaria de mudar o nome do titular do ingresso.',
+    unreadCount: 0,
+    ticketNumber: 'DS-2026-983950',
+    priority: 'P3',
+    status: 'WAITING_CUSTOMER',
+    updatedAt: '09:00',
+    messages: [
+      { id: 201, senderName: 'Carlos Eduardo Mendes', direction: 'INBOUND', body: 'Gostaria de mudar o nome do titular do meu ingresso para Roberto Mendes.', deliveryStatus: 'READ', createdAt: '08:15' },
+      { id: 202, senderName: 'Beatriz Castro (N2)', direction: 'OUTBOUND', body: 'Enviamos o link de validação biométrica para seu e-mail.', deliveryStatus: 'DELIVERED', createdAt: '09:00' }
+    ]
+  },
+  {
+    id: 3,
+    channel: 'CHAT',
+    contactName: 'Fernanda Lima Souza',
+    contactValue: 'fernanda.lima@gmail.com',
+    lastMessage: 'Perfeito, o estorno duplicado já caiu no meu cartão!',
+    unreadCount: 0,
+    ticketNumber: 'DS-2026-983110',
+    priority: 'P2',
+    status: 'RESOLVED',
+    updatedAt: 'Ontem 17:15',
+    messages: [
+      { id: 301, senderName: 'Fernanda Lima Souza', direction: 'INBOUND', body: 'Apareceram duas cobranças de R$ 350,00 no meu cartão.', deliveryStatus: 'READ', createdAt: 'Ontem 16:30' },
+      { id: 302, senderName: 'Rodrigo Financeiro', direction: 'OUTBOUND', body: 'A cobrança duplicada sofreu timeout e foi estornada com sucesso.', deliveryStatus: 'READ', createdAt: 'Ontem 17:10' },
+      { id: 303, senderName: 'Fernanda Lima Souza', direction: 'INBOUND', body: 'Perfeito, o estorno duplicado já caiu no meu cartão!', deliveryStatus: 'READ', createdAt: 'Ontem 17:15' }
+    ]
+  }
+]
+
+const initialWorkflows: WorkflowRule[] = [
+  {
+    id: 1,
+    name: 'QR Code Crítico Próximo do Evento',
+    code: 'WF_QR_CRITICAL_NEAR_EVENT',
+    description: 'Quando um ticket de problema de QR Code é criado para um show nas próximas 2 horas, eleva a prioridade para P1 e move para fila de Catracas.',
+    triggerEvent: 'EVENT_NEAR',
+    priority: 1,
+    isActive: true,
+    runsCount: 42,
+    successCount: 42,
+    failedCount: 0,
+    actions: ['SET_PRIORITY(P1)', 'MOVE_QUEUE(QUEUE_ACCESS)', 'CREATE_ESCALATION(SUPERVISOR)']
+  },
+  {
+    id: 2,
+    name: 'Alerta de Risco de SLA 85%',
+    code: 'WF_SLA_RISK_85',
+    description: 'Quando um ticket atinge 85% do tempo limite de SLA, envia alerta sonoro e notifica o supervisor de plantão via Push.',
+    triggerEvent: 'SLA_RISK',
+    priority: 2,
+    isActive: true,
+    runsCount: 18,
+    successCount: 18,
+    failedCount: 0,
+    actions: ['CREATE_ESCALATION(MANAGER)', 'SEND_INTERNAL_NOTE', 'OUTBOUND_WEBHOOK']
+  },
+  {
+    id: 3,
+    name: 'Auto-Reenvio de Ingresso após Pix Aprovado',
+    code: 'WF_AUTO_RESEND_PIX',
+    description: 'Quando o cliente pergunta sobre Pix pelo WhatsApp e o pagamento já consta como aprovado, dispara mensagem de autoatendimento com PDF/QR Code.',
+    triggerEvent: 'PAYMENT_APPROVED',
+    priority: 3,
+    isActive: true,
+    runsCount: 156,
+    successCount: 154,
+    failedCount: 2,
+    actions: ['SEND_MESSAGE(WHATSAPP)', 'ADD_TICKET_TAG(AUTO_SOLVED)', 'SET_STATUS(RESOLVIDO)']
+  },
+  {
+    id: 4,
+    name: 'Reembolso Processado - Notificação Imediata',
+    code: 'WF_REFUND_NOTIFY',
+    description: 'Dispara comprovante bancário de estorno por WhatsApp e E-mail assim que o gateway confirmar a devolução.',
+    triggerEvent: 'REFUND_PROCESSED',
+    priority: 4,
+    isActive: true,
+    runsCount: 28,
+    successCount: 28,
+    failedCount: 0,
+    actions: ['SEND_MESSAGE(WHATSAPP)', 'SEND_MESSAGE(EMAIL)', 'ADD_CUSTOMER_TAG(REFUND_COMPLETED)']
+  }
+]
+
+const initialWorkflowRuns: WorkflowRun[] = [
+  { id: 101, workflowName: 'Auto-Reenvio de Ingresso após Pix Aprovado', ticketNumber: 'DS-2026-984221', triggerEvent: 'PAYMENT_APPROVED', status: 'SUCCESS', executionTimeMs: 142, createdAt: 'Há 12 min' },
+  { id: 102, workflowName: 'QR Code Crítico Próximo do Evento', ticketNumber: 'DS-2026-984180', triggerEvent: 'EVENT_NEAR', status: 'SUCCESS', executionTimeMs: 88, createdAt: 'Há 25 min' },
+  { id: 103, workflowName: 'Alerta de Risco de SLA 85%', ticketNumber: 'DS-2026-983950', triggerEvent: 'SLA_RISK', status: 'SUCCESS', executionTimeMs: 110, createdAt: 'Há 1 hora' },
+  { id: 104, workflowName: 'Reembolso Processado - Notificação Imediata', ticketNumber: 'DS-2026-983110', triggerEvent: 'REFUND_PROCESSED', status: 'SUCCESS', executionTimeMs: 195, createdAt: 'Ontem 17:15' }
 ]
 
 const mockTickets: TicketItem[] = [
@@ -324,6 +496,19 @@ type Props = {
 
 export default function SupportPage({ events, producerId, producerName, mode = 'hub', notify, onNavigate }: Props) {
   const [activeTab, setActiveTab] = useState<ServiceTab>('hub')
+  const [conversations, setConversations] = useState<ConversationItem[]>(initialConversations)
+  const [selectedConversation, setSelectedConversation] = useState<ConversationItem | null>(initialConversations[0])
+  const [inboxChannelFilter, setInboxChannelFilter] = useState<string>('ALL')
+  const [inboxSearch, setInboxSearch] = useState('')
+  const [inboxReply, setInboxReply] = useState('')
+
+  const [workflows, setWorkflows] = useState<WorkflowRule[]>(initialWorkflows)
+  const [workflowRuns, setWorkflowRuns] = useState<WorkflowRun[]>(initialWorkflowRuns)
+
+  const [customerSearchQuery, setCustomerSearchQuery] = useState('João Silva Oliveira')
+  const [customerTags, setCustomerTags] = useState<string[]>(['VIP Diamond', 'Biometria Facial OK', 'NPS 10 Promotor', 'Comprador Frequente'])
+  const [newCustomerTag, setNewCustomerTag] = useState('')
+
   const [tickets, setTickets] = useState<TicketItem[]>(mockTickets)
   const [agents, setAgents] = useState<AgentItem[]>(initialAgents)
   const [queues, setQueues] = useState<QueueItem[]>(initialQueues)
@@ -339,13 +524,15 @@ export default function SupportPage({ events, producerId, producerName, mode = '
     if (!mode) return
     if (mode === 'hub') setActiveTab('hub')
     else if (mode === 'dashboard') setActiveTab('dashboard')
+    else if (mode === 'inbox' || mode === 'integrations') setActiveTab('inbox')
     else if (mode === 'tickets') setActiveTab('tickets')
     else if (mode === 'new') setActiveTab('new')
     else if (mode === 'sla') setActiveTab('sla')
+    else if (mode === 'client360' || mode === 'reports') setActiveTab('client360')
+    else if (mode === 'workflows') setActiveTab('workflows')
     else if (mode === 'incidents') setActiveTab('incidents')
     else if (mode === 'knowledge') setActiveTab('knowledge')
-    else if (mode === 'integrations' || mode === 'teams') setActiveTab('teams')
-    else if (mode === 'reports' || mode === 'client360') setActiveTab('client360')
+    else if (mode === 'teams') setActiveTab('teams')
   }, [mode])
 
   // Simulador SLA Event-Aware
@@ -374,8 +561,9 @@ export default function SupportPage({ events, producerId, producerName, mode = '
     const resolved = tickets.filter(t => t.status === 'RESOLVIDO').length
     const compliance = 96.4
     const onlineAgents = agents.filter(a => a.status === 'ONLINE' || a.status === 'BUSY').length
-    return { total, open, p1, resolved, compliance, onlineAgents }
-  }, [tickets, agents])
+    const unreadOmnichannel = conversations.reduce((acc, c) => acc + c.unreadCount, 0)
+    return { total, open, p1, resolved, compliance, onlineAgents, unreadOmnichannel }
+  }, [tickets, agents, conversations])
 
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {
@@ -391,6 +579,18 @@ export default function SupportPage({ events, producerId, producerName, mode = '
       return matchSearch && matchPriority && matchStatus
     })
   }, [tickets, ticketSearch, priorityFilter, statusFilter])
+
+  const filteredConversations = useMemo(() => {
+    return conversations.filter(c => {
+      const matchChannel = inboxChannelFilter === 'ALL' || c.channel === inboxChannelFilter
+      const matchSearch =
+        c.contactName.toLowerCase().includes(inboxSearch.toLowerCase()) ||
+        c.contactValue.toLowerCase().includes(inboxSearch.toLowerCase()) ||
+        c.lastMessage.toLowerCase().includes(inboxSearch.toLowerCase()) ||
+        (c.ticketNumber && c.ticketNumber.toLowerCase().includes(inboxSearch.toLowerCase()))
+      return matchChannel && matchSearch
+    })
+  }, [conversations, inboxChannelFilter, inboxSearch])
 
   // Recálculo SLA Event-Aware
   const simulatedPriority = useMemo(() => {
@@ -462,6 +662,61 @@ export default function SupportPage({ events, producerId, producerName, mode = '
     notify(`Resposta enviada ao cliente via ${selectedTicket.channel}!`)
   }
 
+  const handleSendInboxMessage = () => {
+    if (!inboxReply.trim() || !selectedConversation) return
+    const updated: ConversationItem = {
+      ...selectedConversation,
+      unreadCount: 0,
+      lastMessage: inboxReply,
+      updatedAt: 'Agora',
+      messages: [
+        ...selectedConversation.messages,
+        {
+          id: Date.now(),
+          senderName: 'Atendimento DiskIngressos',
+          direction: 'OUTBOUND',
+          body: inboxReply,
+          deliveryStatus: 'DELIVERED',
+          createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]
+    }
+    setSelectedConversation(updated)
+    setConversations(conversations.map(c => c.id === updated.id ? updated : c))
+    setInboxReply('')
+    notify(`Mensagem enviada com sucesso via ${selectedConversation.channel}! Status: DELIVERED.`)
+  }
+
+  const handleToggleWorkflow = (wfId: number) => {
+    setWorkflows(workflows.map(w => w.id === wfId ? { ...w, isActive: !w.isActive } : w))
+    const wf = workflows.find(w => w.id === wfId)
+    notify(`Regra "${wf?.name}" ${wf?.isActive ? 'desativada' : 'ativada com sucesso'}!`)
+  }
+
+  const handleTestWorkflow = (wf: WorkflowRule) => {
+    const newRun: WorkflowRun = {
+      id: Date.now(),
+      workflowName: wf.name,
+      ticketNumber: 'DS-2026-984221',
+      triggerEvent: wf.triggerEvent,
+      status: 'SUCCESS',
+      executionTimeMs: Math.floor(45 + Math.random() * 90),
+      createdAt: 'Agora'
+    }
+    setWorkflowRuns([newRun, ...workflowRuns])
+    setWorkflows(workflows.map(w => w.id === wf.id ? { ...w, runsCount: w.runsCount + 1, successCount: w.successCount + 1 } : w))
+    notify(`Workflow "${wf.name}" executado com sucesso em ${newRun.executionTimeMs}ms! Ações disparadas: ${wf.actions.join(', ')}`)
+  }
+
+  const handleAddCustomerTag = () => {
+    if (!newCustomerTag.trim()) return
+    if (!customerTags.includes(newCustomerTag.trim())) {
+      setCustomerTags([...customerTags, newCustomerTag.trim()])
+      notify(`Tag "${newCustomerTag.trim()}" adicionada ao perfil do cliente!`)
+    }
+    setNewCustomerTag('')
+  }
+
   const handleResolveTicket = (ticketId: number) => {
     setTickets(tickets.map(t => t.id === ticketId ? { ...t, status: 'RESOLVIDO' as const, resolvedAt: 'Agora mesmo' } : t))
     if (selectedTicket?.id === ticketId) {
@@ -521,10 +776,10 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         <div className="header-brand-block">
           <div className="service-badge">
             <Headphones size={18} />
-            <span>DISK SERVICE • SAC + SLA + ITIL ENTERPRISE HUB</span>
+            <span>DISK SERVICE • SAC + SLA + ITIL + OMNICHANNEL + CLIENTE 360°</span>
           </div>
           <h1>Central de Atendimento & Suporte</h1>
-          <p>Motor de SLA Event-Aware, gestão de tickets omnichannel, escalonamento automático e incidentes ITIL.</p>
+          <p>Inbox WhatsApp/E-mail/Chat, Visão 360° do Comprador, Motor de SLA Event-Aware e Automação de Workflows.</p>
         </div>
 
         <div className="header-status-block">
@@ -539,32 +794,41 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
       </header>
 
-      {/* Sub-Navegação em Abas Modernas */}
+      {/* Sub-Navegação em Abas Modernas com Fases 22.1 a 22.6 */}
       <nav className="service-nav-tabs">
         <button className={`service-tab-btn ${activeTab === 'hub' ? 'active' : ''}`} onClick={() => setActiveTab('hub')}>
           <LifeBuoy size={17} />
           <span>Hub de Atendimento</span>
         </button>
-        <button className={`service-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
-          <LayoutDashboard size={17} />
-          <span>Dashboard Operacional</span>
+        <button className={`service-tab-btn ${activeTab === 'inbox' ? 'active' : ''}`} onClick={() => setActiveTab('inbox')}>
+          <MessagesSquare size={17} />
+          <span>Inbox Omnichannel</span>
+          {stats.unreadOmnichannel > 0 && <span className="tab-pill danger">{stats.unreadOmnichannel}</span>}
         </button>
         <button className={`service-tab-btn ${activeTab === 'tickets' ? 'active' : ''}`} onClick={() => setActiveTab('tickets')}>
           <Ticket size={17} />
           <span>Chamados & Fila</span>
           <span className="tab-pill">{stats.open}</span>
         </button>
-        <button className={`service-tab-btn ${activeTab === 'new' ? 'active' : ''}`} onClick={() => setActiveTab('new')}>
-          <Plus size={17} />
-          <span>Novo Atendimento</span>
+        <button className={`service-tab-btn ${activeTab === 'client360' ? 'active' : ''}`} onClick={() => setActiveTab('client360')}>
+          <UserRound size={17} />
+          <span>Cliente 360°</span>
+        </button>
+        <button className={`service-tab-btn ${activeTab === 'workflows' ? 'active' : ''}`} onClick={() => setActiveTab('workflows')}>
+          <Workflow size={17} />
+          <span>Automações & Regras</span>
         </button>
         <button className={`service-tab-btn ${activeTab === 'sla' ? 'active' : ''}`} onClick={() => setActiveTab('sla')}>
           <Gauge size={17} />
-          <span>Motor de SLA (Event-Aware)</span>
+          <span>Motor de SLA</span>
+        </button>
+        <button className={`service-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
+          <LayoutDashboard size={17} />
+          <span>Dashboard SAC</span>
         </button>
         <button className={`service-tab-btn ${activeTab === 'incidents' ? 'active' : ''}`} onClick={() => setActiveTab('incidents')}>
           <Flame size={17} />
-          <span>Incidentes ITIL (War Room)</span>
+          <span>Incidentes ITIL</span>
           {mockIncidents.filter(i => i.status === 'INVESTIGANDO').length > 0 && <span className="tab-pill danger">1 P1</span>}
         </button>
         <button className={`service-tab-btn ${activeTab === 'knowledge' ? 'active' : ''}`} onClick={() => setActiveTab('knowledge')}>
@@ -575,18 +839,13 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           <Users size={17} />
           <span>Filas & Agentes</span>
         </button>
-        <button className={`service-tab-btn ${activeTab === 'client360' ? 'active' : ''}`} onClick={() => setActiveTab('client360')}>
-          <Search size={17} />
-          <span>Comprador 360°</span>
-        </button>
       </nav>
 
       {/* CONTEÚDO DAS ABAS */}
 
-      {/* 0. ABA: HUB DE ATENDIMENTO (VISÃO GERAL DO DISK SERVICE) */}
+      {/* 0. ABA: HUB DE ATENDIMENTO (CENTRAL EXECUTIVA) */}
       {activeTab === 'hub' && (
         <div className="service-content-body">
-          {/* Hero Banner do Hub */}
           <div style={{
             background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
             borderRadius: '16px',
@@ -602,7 +861,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <span style={{ background: '#38bdf8', color: '#0f172a', padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
-                  CENTRAL UNIFICADA
+                  CENTRAL UNIFICADA FASE 22.6
                 </span>
                 <span style={{ color: '#94a3b8', fontSize: '13px' }}>Produtora: {producerName}</span>
               </div>
@@ -610,285 +869,550 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 Disk Service Omnichannel Desk
               </h2>
               <p style={{ margin: 0, color: '#cbd5e1', fontSize: '14px', maxWidth: '650px' }}>
-                Atendimento integrado ao ERP com motor SLA inteligente, distribuição automática por menor carga e suporte 360° aos participantes.
+                Atendimento integrado ao ERP com Inbox WhatsApp/E-mail/Chat, Cliente 360°, motor de regras automatizadas e gestão ITIL.
               </p>
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                className="primary-service-btn"
-                onClick={() => setActiveTab('tickets')}
-                style={{ background: '#3b82f6' }}
-              >
-                <Ticket size={16} />
-                <span>Ver Todos os Chamados ({stats.open})</span>
+              <button className="primary-service-btn" onClick={() => setActiveTab('inbox')} style={{ background: '#2563eb' }}>
+                <MessagesSquare size={16} />
+                <span>Inbox Omnichannel ({stats.unreadOmnichannel})</span>
               </button>
-              <button
-                className="primary-service-btn"
-                onClick={() => setActiveTab('new')}
-                style={{ background: '#10b981' }}
-              >
-                <Plus size={16} />
-                <span>Novo Atendimento</span>
+              <button className="primary-service-btn" onClick={() => setActiveTab('client360')} style={{ background: '#059669' }}>
+                <UserRound size={16} />
+                <span>Cliente 360°</span>
+              </button>
+              <button className="primary-service-btn" onClick={() => setActiveTab('workflows')} style={{ background: '#7c3aed' }}>
+                <Workflow size={16} />
+                <span>Automações</span>
               </button>
             </div>
           </div>
 
-          {/* Cards Rápidos dos 6 Pilares do Atendimento */}
+          {/* Grid de Acesso aos Módulos */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '16px',
             marginBottom: '20px'
           }}>
-            {/* Pilar 1: Chamados */}
-            <div
-              className="service-card-panel"
-              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #3b82f6' }}
-              onClick={() => setActiveTab('tickets')}
-            >
+            {/* Inbox */}
+            <div className="service-card-panel" style={{ cursor: 'pointer', borderLeft: '4px solid #2563eb' }} onClick={() => setActiveTab('inbox')}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#eff6ff', color: '#2563eb', display: 'grid', placeItems: 'center' }}>
-                  <Ticket size={20} />
+                  <MessagesSquare size={20} />
                 </div>
-                <span className="badge-count">{stats.open} abertos</span>
+                <span className="badge-count">{conversations.length} conversas</span>
               </div>
-              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Fila de Chamados</h3>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Inbox Omnichannel (Fase 22.4)</h3>
               <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Workspace split com timeline, canais WhatsApp/E-mail e ações rápidas com 1 clique.
+                WhatsApp Cloud API, E-mail transacional e Chat Web com status de entrega SENT/READ.
               </p>
               <span style={{ fontSize: '12px', color: '#2563eb', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Acessar Workspace <ArrowRight size={14} />
+                Abrir Inbox <ArrowRight size={14} />
               </span>
             </div>
 
-            {/* Pilar 2: Motor de SLA */}
-            <div
-              className="service-card-panel"
-              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #10b981' }}
-              onClick={() => setActiveTab('sla')}
-            >
+            {/* Cliente 360 */}
+            <div className="service-card-panel" style={{ cursor: 'pointer', borderLeft: '4px solid #059669' }} onClick={() => setActiveTab('client360')}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ecfdf5', color: '#059669', display: 'grid', placeItems: 'center' }}>
-                  <Gauge size={20} />
+                  <UserRound size={20} />
                 </div>
-                <span className="badge-count" style={{ background: '#ecfdf5', color: '#047857' }}>96.4% Compliance</span>
+                <span className="badge-count" style={{ background: '#ecfdf5', color: '#047857' }}>ERPAdapter Ativo</span>
               </div>
-              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Motor de SLA & Event-Aware</h3>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Cliente 360° (Fase 22.5)</h3>
               <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Cálculo automático de prioridades P1-P4 ajustado pela proximidade do show.
+                Consolidação de perfil, histórico de compras, ingressos emitidos, check-ins e tags.
               </p>
               <span style={{ fontSize: '12px', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Configurar SLA <ArrowRight size={14} />
+                Consultar Comprador <ArrowRight size={14} />
               </span>
             </div>
 
-            {/* Pilar 3: War Room Incidentes */}
-            <div
-              className="service-card-panel"
-              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #ef4444' }}
-              onClick={() => setActiveTab('incidents')}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fef2f2', color: '#dc2626', display: 'grid', placeItems: 'center' }}>
-                  <Flame size={20} />
-                </div>
-                <span className="badge-count danger">1 Ativo</span>
-              </div>
-              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Incidentes ITIL (War Room)</h3>
-              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Declaração de falhas massivas em catracas, agrupamento de tickets e broadcast.
-              </p>
-              <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Abrir War Room <ArrowRight size={14} />
-              </span>
-            </div>
-
-            {/* Pilar 4: Base de Conhecimento */}
-            <div
-              className="service-card-panel"
-              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #8b5cf6' }}
-              onClick={() => setActiveTab('knowledge')}
-            >
+            {/* Automação & Workflows */}
+            <div className="service-card-panel" style={{ cursor: 'pointer', borderLeft: '4px solid #7c3aed' }} onClick={() => setActiveTab('workflows')}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f5f3ff', color: '#7c3aed', display: 'grid', placeItems: 'center' }}>
-                  <BookOpen size={20} />
+                  <Workflow size={20} />
                 </div>
-                <span className="badge-count">{mockArticles.length} Artigos</span>
+                <span className="badge-count">{workflows.filter(w => w.isActive).length} ativas</span>
               </div>
-              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Base de Conhecimento</h3>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Automação & Workflows (Fase 22.6)</h3>
               <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Procedimentos de reenvio, estornos, biometria e FAQ com índice de utilidade.
+                Gatilhos automáticos (SLA Risk, Event Near, Pix Aprovado), ações em lote e webhooks.
               </p>
               <span style={{ fontSize: '12px', color: '#7c3aed', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Consultar Artigos <ArrowRight size={14} />
+                Gerenciar Regras <ArrowRight size={14} />
               </span>
             </div>
 
-            {/* Pilar 5: Agentes & Equipes */}
-            <div
-              className="service-card-panel"
-              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #f59e0b' }}
-              onClick={() => setActiveTab('teams')}
-            >
+            {/* SLA Engine */}
+            <div className="service-card-panel" style={{ cursor: 'pointer', borderLeft: '4px solid #ea580c' }} onClick={() => setActiveTab('sla')}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fffbeb', color: '#d97706', display: 'grid', placeItems: 'center' }}>
-                  <Users size={20} />
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fff7ed', color: '#ea580c', display: 'grid', placeItems: 'center' }}>
+                  <Gauge size={20} />
                 </div>
-                <span className="badge-count">{agents.length} Agentes</span>
+                <span className="badge-count">{stats.compliance}% Compliance</span>
               </div>
-              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Filas, Agentes & Presença</h3>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Motor de SLA Event-Aware</h3>
               <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Presença operacional em tempo real (ONLINE/BUSY/AWAY) e distribuição Least-Load.
+                Ajuste automático de prioridades P1-P4 conforme a contagem regressiva para o evento.
               </p>
-              <span style={{ fontSize: '12px', color: '#d97706', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Gerenciar Equipe <ArrowRight size={14} />
-              </span>
-            </div>
-
-            {/* Pilar 6: Comprador 360 */}
-            <div
-              className="service-card-panel"
-              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #06b6d4' }}
-              onClick={() => setActiveTab('client360')}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ecfeff', color: '#0891b2', display: 'grid', placeItems: 'center' }}>
-                  <Search size={20} />
-                </div>
-                <span className="badge-count">Visão 360°</span>
-              </div>
-              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Comprador 360°</h3>
-              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Histórico completo de pedidos, ingressos emitidos, biometria facial e CSAT.
-              </p>
-              <span style={{ fontSize: '12px', color: '#0891b2', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Buscar Comprador <ArrowRight size={14} />
+              <span style={{ fontSize: '12px', color: '#ea580c', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Acessar SLA Engine <ArrowRight size={14} />
               </span>
             </div>
           </div>
         </div>
       )}
 
-      {/* 1. ABA: DASHBOARD OPERACIONAL */}
-      {activeTab === 'dashboard' && (
+      {/* 1. ABA: INBOX OMNICHANNEL (FASE 22.4) */}
+      {activeTab === 'inbox' && (
         <div className="service-content-body">
-          {/* Grid de KPIs */}
-          <div className="service-kpi-grid">
-            <div className="service-kpi-card blue">
-              <div className="kpi-icon-wrap"><Ticket size={22} /></div>
-              <div className="kpi-info">
-                <span>Chamados em Aberto</span>
-                <strong>{stats.open}</strong>
-                <small>Backlog com SLA ativo</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card green">
-              <div className="kpi-icon-wrap"><Clock3 size={22} /></div>
-              <div className="kpi-info">
-                <span>Conformidade de SLA</span>
-                <strong>{stats.compliance}%</strong>
-                <small>Meta operacional ≥ 95%</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card red">
-              <div className="kpi-icon-wrap"><Flame size={22} /></div>
-              <div className="kpi-info">
-                <span>Incidentes Críticos P1</span>
-                <strong>{stats.p1}</strong>
-                <small>Resposta em até 15 min</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card purple">
-              <div className="kpi-icon-wrap"><Sparkles size={22} /></div>
-              <div className="kpi-info">
-                <span>Satisfação CSAT</span>
-                <strong>4,8 ★</strong>
-                <small>Avaliações positivas: 96%</small>
-              </div>
-            </div>
-          </div>
-
-          {/* Grid de 2 Colunas: Fila em Tempo Real vs Saúde SLA */}
-          <div className="service-two-col-grid">
-            {/* Coluna 1: Filas e Estratégia de Roteamento */}
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Filas de Atendimento & Estratégia</h3>
-                  <p>Distribuição automática (Round-Robin & Least-Load).</p>
+          <div className="ticket-split-layout">
+            {/* Lista de Conversas Omnichannel */}
+            <div className="ticket-list-panel">
+              <div className="list-count-header">
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
+                  <button
+                    className={`fast-action-chip ${inboxChannelFilter === 'ALL' ? 'active' : ''}`}
+                    onClick={() => setInboxChannelFilter('ALL')}
+                    style={{ background: inboxChannelFilter === 'ALL' ? '#2563eb' : '#fff', color: inboxChannelFilter === 'ALL' ? '#fff' : '#334155' }}
+                  >
+                    Todos
+                  </button>
+                  <button
+                    className={`fast-action-chip ${inboxChannelFilter === 'WHATSAPP' ? 'active' : ''}`}
+                    onClick={() => setInboxChannelFilter('WHATSAPP')}
+                    style={{ background: inboxChannelFilter === 'WHATSAPP' ? '#25d366' : '#fff', color: inboxChannelFilter === 'WHATSAPP' ? '#fff' : '#334155' }}
+                  >
+                    <MessageCircle size={13} /> WhatsApp
+                  </button>
+                  <button
+                    className={`fast-action-chip ${inboxChannelFilter === 'EMAIL' ? 'active' : ''}`}
+                    onClick={() => setInboxChannelFilter('EMAIL')}
+                    style={{ background: inboxChannelFilter === 'EMAIL' ? '#2563eb' : '#fff', color: inboxChannelFilter === 'EMAIL' ? '#fff' : '#334155' }}
+                  >
+                    <Mail size={13} /> E-mail
+                  </button>
+                  <button
+                    className={`fast-action-chip ${inboxChannelFilter === 'CHAT' ? 'active' : ''}`}
+                    onClick={() => setInboxChannelFilter('CHAT')}
+                    style={{ background: inboxChannelFilter === 'CHAT' ? '#7c3aed' : '#fff', color: inboxChannelFilter === 'CHAT' ? '#fff' : '#334155' }}
+                  >
+                    <MessagesSquare size={13} /> Chat Web
+                  </button>
                 </div>
-                <span className="live-pill">AO VIVO</span>
+
+                <div className="search-input-wrap" style={{ height: '38px' }}>
+                  <Search size={16} />
+                  <input
+                    type="text"
+                    placeholder="Buscar contato ou mensagem..."
+                    value={inboxSearch}
+                    onChange={e => setInboxSearch(e.target.value)}
+                  />
+                </div>
               </div>
 
-              <div className="queue-list">
-                {queues.map(q => (
-                  <div key={q.id} className="queue-item">
-                    <div className="queue-title-block">
-                      <span className="queue-dot blue" />
-                      <div>
-                        <strong>{q.name}</strong>
-                        <small style={{ display: 'block', color: '#64748b' }}>Estratégia: {q.strategy}</small>
-                      </div>
+              <div className="tickets-scroll-container">
+                {filteredConversations.map(c => (
+                  <div
+                    key={c.id}
+                    className={`ticket-summary-card ${selectedConversation?.id === c.id ? 'active' : ''}`}
+                    onClick={() => { setSelectedConversation(c); setConversations(conversations.map(cv => cv.id === c.id ? { ...cv, unreadCount: 0 } : cv)) }}
+                  >
+                    <div className="ticket-top-row">
+                      <span className={`channel-badge ${c.channel.toLowerCase()}`}>
+                        {c.channel === 'WHATSAPP' && <MessageCircle size={12} />}
+                        {c.channel === 'EMAIL' && <Mail size={12} />}
+                        {c.channel === 'CHAT' && <MessagesSquare size={12} />}
+                        {' '}{c.channel}
+                      </span>
+                      {c.ticketNumber && <span className="ticket-protocol">#{c.ticketNumber}</span>}
+                      {c.unreadCount > 0 && <span className="badge-count danger">{c.unreadCount} novas</span>}
                     </div>
-                    <div className="queue-metric-block">
-                      <span className="badge-count">{q.openTickets} tickets</span>
-                      <small>{q.agentsCount} agentes</small>
+
+                    <strong style={{ display: 'block', fontSize: '13px', color: '#0f172a', margin: '4px 0 2px' }}>{c.contactName}</strong>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {c.lastMessage}
+                    </p>
+
+                    <div className="ticket-bottom-info" style={{ marginTop: '8px' }}>
+                      <span>{c.contactValue}</span>
+                      <small>{c.updatedAt}</small>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Coluna 2: Saúde do SLA e Copilot */}
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Saúde do SLA Operacional</h3>
-                  <p>Cumprimento de 1ª resposta e resolução no prazo.</p>
+            {/* Painel do Chat Omnichannel */}
+            <div className="ticket-detail-panel">
+              {selectedConversation ? (
+                <div className="ticket-workspace">
+                  <div className="workspace-header">
+                    <div>
+                      <div className="protocol-meta">
+                        <span className="channel-badge">{selectedConversation.channel}</span>
+                        {selectedConversation.ticketNumber && <span className="protocol-num">Ticket #{selectedConversation.ticketNumber}</span>}
+                        <span className="status-tag RESOLVIDO">CANAL CONECTADO</span>
+                      </div>
+                      <h2>{selectedConversation.contactName}</h2>
+                      <span style={{ fontSize: '13px', color: '#64748b' }}>{selectedConversation.contactValue}</span>
+                    </div>
+
+                    <div className="workspace-actions">
+                      <button className="fast-action-chip" onClick={() => { setActiveTab('client360'); setCustomerSearchQuery(selectedConversation.contactName) }}>
+                        <UserRound size={14} /> Ver Perfil 360°
+                      </button>
+                      <button className="fast-action-chip" onClick={() => notify('Ingresso com QR Code reenviado no canal ' + selectedConversation.channel)}>
+                        <Mail size={14} /> Reenviar Voucher
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mensagens da Conversa */}
+                  <div className="messages-stream">
+                    {selectedConversation.messages.map(m => (
+                      <div key={m.id} className={`message-bubble-wrap ${m.direction === 'INBOUND' ? 'customer' : 'agent'}`}>
+                        <div className="bubble-header">
+                          <strong>{m.senderName}</strong>
+                          <span>{m.createdAt}</span>
+                        </div>
+                        <div className="bubble-body">{m.body}</div>
+                        {m.direction === 'OUTBOUND' && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px', marginTop: '4px', opacity: 0.85, justifyContent: 'flex-end' }}>
+                            <CheckCheck size={12} />
+                            <span>{m.deliveryStatus}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Compositor de Resposta */}
+                  <div className="reply-composer-box">
+                    <textarea
+                      rows={3}
+                      placeholder={`Escrever mensagem direta para ${selectedConversation.contactName} (${selectedConversation.channel})...`}
+                      value={inboxReply}
+                      onChange={e => setInboxReply(e.target.value)}
+                    />
+                    <div className="composer-footer">
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button
+                          type="button"
+                          className="fast-action-chip"
+                          onClick={() => setInboxReply('Olá! Seu pedido já está aprovado e enviamos o QR Code atualizado para seu WhatsApp.')}
+                          style={{ fontSize: '11px', padding: '3px 8px' }}
+                        >
+                          ⚡ Template: QR Code Reenviado
+                        </button>
+                        <button
+                          type="button"
+                          className="fast-action-chip"
+                          onClick={() => setInboxReply('Olá! Seu estorno Pix foi solicitado ao setor financeiro com prazo de devolução imediata.')}
+                          style={{ fontSize: '11px', padding: '3px 8px' }}
+                        >
+                          ⚡ Template: Estorno Pix
+                        </button>
+                      </div>
+                      <button className="send-reply-btn" onClick={handleSendInboxMessage}>
+                        <Send size={15} />
+                        <span>Enviar no {selectedConversation.channel}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="no-ticket-selected">
+                  <MessagesSquare size={48} />
+                  <h3>Selecione uma conversa ao lado</h3>
+                  <p>Interaja em tempo real com clientes do WhatsApp, E-mail e Chat.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. ABA: CLIENTE 360° (FASE 22.5) */}
+      {activeTab === 'client360' && (
+        <div className="service-content-body">
+          {/* Barra de Busca de Comprador */}
+          <div className="service-filters-bar" style={{ marginBottom: '18px' }}>
+            <div className="search-input-wrap">
+              <Search size={18} />
+              <input
+                type="text"
+                placeholder="Buscar cliente por nome, e-mail, CPF ou telefone..."
+                value={customerSearchQuery}
+                onChange={e => setCustomerSearchQuery(e.target.value)}
+              />
+            </div>
+            <button className="primary-service-btn" onClick={() => notify(`Carregando perfil 360° para: ${customerSearchQuery}`)}>
+              <RefreshCw size={16} />
+              <span>Carregar Dados ERP</span>
+            </button>
+          </div>
+
+          <div className="service-card-panel">
+            {/* Header Perfil do Cliente */}
+            <div className="client-profile-header">
+              <div className="client-avatar">JS</div>
+              <div className="client-main-data">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <h3 style={{ margin: 0 }}>João Silva Oliveira</h3>
+                  <span className="client-pill vip">VIP DIAMOND</span>
+                  <span className="client-pill verified">RISCO: BAIXO</span>
+                </div>
+                <span style={{ display: 'block', margin: '4px 0', color: '#64748b' }}>
+                  CPF: 123.456.789-00 • joao.silva@email.com • (41) 99882-1144 • Curitiba/PR
+                </span>
+                <small style={{ color: '#94a3b8' }}>Cliente cadastrado desde 15/01/2024 via App DiskIngressos</small>
+              </div>
+            </div>
+
+            {/* KPIs de Compras e SAC */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: '12px',
+              margin: '20px 0'
+            }}>
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
+                <ShoppingBag size={20} style={{ color: '#2563eb', margin: '0 auto 6px' }} />
+                <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>PEDIDOS TOTAIS</span>
+                <strong style={{ fontSize: '18px', color: '#0f172a' }}>6 pedidos</strong>
+              </div>
+
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
+                <Ticket size={20} style={{ color: '#059669', margin: '0 auto 6px' }} />
+                <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>INGRESSOS</span>
+                <strong style={{ fontSize: '18px', color: '#0f172a' }}>14 emitidos</strong>
+              </div>
+
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
+                <WalletCards size={20} style={{ color: '#7c3aed', margin: '0 auto 6px' }} />
+                <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>TOTAL GASTO</span>
+                <strong style={{ fontSize: '18px', color: '#0f172a' }}>R$ 2.480,00</strong>
+              </div>
+
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
+                <ScanLine size={20} style={{ color: '#0891b2', margin: '0 auto 6px' }} />
+                <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>CHECK-INS REALIZADOS</span>
+                <strong style={{ fontSize: '18px', color: '#0f172a' }}>12 acessos</strong>
+              </div>
+
+              <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '14px', textAlign: 'center' }}>
+                <Headphones size={20} style={{ color: '#ea580c', margin: '0 auto 6px' }} />
+                <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>SAC ABERTO</span>
+                <strong style={{ fontSize: '18px', color: '#ea580c' }}>1 chamado</strong>
+              </div>
+            </div>
+
+            {/* Gerenciamento de Tags do Cliente */}
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                <Tag size={16} style={{ color: '#2563eb' }} />
+                <strong style={{ fontSize: '13px' }}>Tags de Relacionamento (Atendimento & Marketing):</strong>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+                {customerTags.map(tag => (
+                  <span key={tag} className="client-pill verified" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    {tag}
+                  </span>
+                ))}
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input
+                    type="text"
+                    placeholder="Nova tag..."
+                    value={newCustomerTag}
+                    onChange={e => setNewCustomerTag(e.target.value)}
+                    style={{ border: '1px solid #cbd5e1', borderRadius: '6px', padding: '4px 8px', fontSize: '12px' }}
+                  />
+                  <button type="button" className="fast-action-chip" onClick={handleAddCustomerTag} style={{ padding: '4px 10px', fontSize: '12px' }}>
+                    Adicionar Tag
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Tabelas de Pedidos & Ingressos */}
+            <div className="client-360-grid">
+              <div className="client-orders-box">
+                <h4>Histórico de Pedidos ERP</h4>
+                <div className="client-order-item">
+                  <div className="order-head">
+                    <strong>#DI-984221 • Festival Sertanejo Curitiba</strong>
+                    <span className="status-pill green">Pix Aprovado</span>
+                  </div>
+                  <p>2 × Pista Premium • R$ 480,00 • Pago em 01/09/2026</p>
+                </div>
+
+                <div className="client-order-item">
+                  <div className="order-head">
+                    <strong>#DI-876120 • Stand Up Comedy Night</strong>
+                    <span className="status-pill green">Cartão de Crédito</span>
+                  </div>
+                  <p>1 × Cadeira Central • R$ 120,00 • Check-in realizado</p>
+                </div>
+
+                <div className="client-order-item">
+                  <div className="order-head">
+                    <strong>#DI-765430 • Rock Arena Festival 2025</strong>
+                    <span className="status-pill green">Pix Aprovado</span>
+                  </div>
+                  <p>4 × Pista VIP • R$ 1.880,00 • Concluído</p>
                 </div>
               </div>
 
-              <div className="sla-ring-container">
-                <div className="sla-ring-graphic">
-                  <span className="ring-value">96.4%</span>
-                  <span className="ring-label">SLA GLOBAL</span>
+              <div className="client-tickets-history-box">
+                <h4>Ingressos Emitidos & Validação Catraca</h4>
+                <div className="client-order-item">
+                  <div className="order-head">
+                    <strong>Pista Premium - Setor B</strong>
+                    <span className="status-pill green">QR Code Ativo</span>
+                  </div>
+                  <p>Código: QR-984221-01 • Biometria Vinculada: Sim</p>
                 </div>
-                <div className="sla-metrics-summary">
-                  <div className="sla-mini-stat">
-                    <span>1ª Resposta Média (FRT)</span>
-                    <strong>8 minutos</strong>
-                  </div>
-                  <div className="sla-mini-stat">
-                    <span>Tempo Médio Resolução (MTTR)</span>
-                    <strong>42 minutos</strong>
-                  </div>
-                  <div className="sla-mini-stat">
-                    <span>Resolução no 1º Contato (FCR)</span>
-                    <strong>78.2%</strong>
-                  </div>
-                </div>
-              </div>
 
-              <div className="copilot-tip-box">
-                <div className="copilot-head">
-                  <Sparkles size={16} />
-                  <strong>Disk Copilot (IA) Ativado</strong>
+                <div className="client-order-item">
+                  <div className="order-head">
+                    <strong>Pista Premium - Setor B</strong>
+                    <span className="status-pill green">QR Code Ativo</span>
+                  </div>
+                  <p>Código: QR-984221-02 • Portador: Mariana Silva</p>
                 </div>
-                <p>82% das solicitações de reenvio de ingresso foram solucionadas automaticamente pelo bot de autoatendimento do WhatsApp sem intervenção humana.</p>
+
+                <div className="client-order-item">
+                  <div className="order-head">
+                    <strong>Cadeira Central - Fila D</strong>
+                    <span className="badge-count">Check-in OK</span>
+                  </div>
+                  <p>Validado na Catraca 02 em 15/08/2026 às 19:42</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* 2. ABA: CHAMADOS & FILA COM TIMERS DE SLA EM TEMPO REAL */}
+      {/* 3. ABA: AUTOMAÇÃO E WORKFLOWS (FASE 22.6) */}
+      {activeTab === 'workflows' && (
+        <div className="service-content-body">
+          <div className="incidents-hero-bar" style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <Workflow size={20} style={{ color: '#c084fc' }} />
+                <h3 style={{ margin: 0, color: '#fff' }}>Motor de Automação & Regras de Atendimento</h3>
+              </div>
+              <p style={{ margin: 0, color: '#cbd5e1' }}>
+                Gatilhos de SLA, proximidade de evento, roteamento de tickets e disparos de webhook configurados para execução automática.
+              </p>
+            </div>
+            <button className="primary-service-btn" onClick={() => notify('Abrindo modal para criação de nova regra de workflow...')}>
+              <Plus size={16} />
+              <span>Nova Regra de Automação</span>
+            </button>
+          </div>
+
+          {/* Grid de Regras vs Execuções Recentes */}
+          <div className="service-two-col-grid" style={{ marginTop: '20px' }}>
+            {/* Lista de Regras */}
+            <div className="service-card-panel">
+              <div className="panel-header-row">
+                <div>
+                  <h3>Regras Operacionais Configuradas</h3>
+                  <p>Ative, desative ou execute um teste instantâneo da regra.</p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {workflows.map(wf => (
+                  <div key={wf.id} style={{ border: '1px solid #e2e8f0', borderRadius: '12px', padding: '16px', background: wf.isActive ? '#fff' : '#f8fafc' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: wf.isActive ? '#22c55e' : '#94a3b8' }} />
+                        <strong style={{ fontSize: '14px', color: '#0f172a' }}>{wf.name}</strong>
+                      </div>
+                      <span className="channel-badge" style={{ background: '#f5f3ff', color: '#7c3aed' }}>{wf.triggerEvent}</span>
+                    </div>
+
+                    <p style={{ margin: '0 0 10px', fontSize: '12px', color: '#64748b', lineHeight: 1.5 }}>{wf.description}</p>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
+                      {wf.actions.map(act => (
+                        <span key={act} style={{ background: '#eff6ff', color: '#1d4ed8', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px' }}>
+                          ⚡ {act}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
+                      <small style={{ color: '#94a3b8', fontSize: '11px' }}>
+                        {wf.runsCount} execuções • {wf.successCount} sucessos • {wf.failedCount} falhas
+                      </small>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button type="button" className="fast-action-chip" onClick={() => handleTestWorkflow(wf)} style={{ padding: '4px 10px', fontSize: '11px' }}>
+                          <Play size={12} /> Testar Agora
+                        </button>
+                        <button
+                          type="button"
+                          className="fast-action-chip"
+                          onClick={() => handleToggleWorkflow(wf.id)}
+                          style={{
+                            background: wf.isActive ? '#fee2e2' : '#dcfce7',
+                            color: wf.isActive ? '#dc2626' : '#15803d',
+                            borderColor: wf.isActive ? '#fca5a5' : '#86efac',
+                            padding: '4px 10px',
+                            fontSize: '11px'
+                          }}
+                        >
+                          {wf.isActive ? 'Desativar' : 'Ativar'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Histórico de Execuções */}
+            <div className="service-card-panel">
+              <div className="panel-header-row">
+                <div>
+                  <h3>Log de Execuções em Tempo Real (Runs)</h3>
+                  <p>Auditoria de disparos automáticos e tempos de resposta.</p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {workflowRuns.map(run => (
+                  <div key={run.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '13px', color: '#0f172a' }}>{run.workflowName}</strong>
+                      <small style={{ color: '#64748b' }}>Gatilho: {run.triggerEvent} {run.ticketNumber ? `• Ticket: ${run.ticketNumber}` : ''}</small>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span className="status-pill green" style={{ fontSize: '10px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <CheckCheck size={12} /> {run.status} ({run.executionTimeMs}ms)
+                      </span>
+                      <small style={{ display: 'block', color: '#94a3b8', fontSize: '10px', marginTop: '2px' }}>{run.createdAt}</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. ABA: CHAMADOS & FILA (FASE 22.1 + 22.2) */}
       {activeTab === 'tickets' && (
         <div className="service-content-body">
-          {/* Filtros e Busca */}
           <div className="service-filters-bar">
             <div className="search-input-wrap">
               <Search size={18} />
@@ -919,7 +1443,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             </div>
           </div>
 
-          {/* Grid de Split: Lista de Tickets na Esquerda, Detalhes na Direita */}
           <div className="ticket-split-layout">
             <div className="ticket-list-panel">
               <div className="list-count-header">
@@ -941,7 +1464,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
                     <h4 className="ticket-card-subject">{t.subject}</h4>
 
-                    {/* Timer SLA Bar */}
                     <div style={{ margin: '8px 0 4px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#64748b' }}>
                         <span>SLA Consumido: {t.slaProgressPercent}%</span>
@@ -973,11 +1495,9 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
             </div>
 
-            {/* Painel do Chamado Selecionado */}
             <div className="ticket-detail-panel">
               {selectedTicket ? (
                 <div className="ticket-workspace">
-                  {/* Cabeçalho do Ticket */}
                   <div className="workspace-header">
                     <div>
                       <div className="protocol-meta">
@@ -1003,7 +1523,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     </div>
                   </div>
 
-                  {/* Contexto do Comprador e Evento */}
                   <div className="workspace-context-card">
                     <div className="ctx-item">
                       <span>Comprador</span>
@@ -1024,7 +1543,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     </div>
                   </div>
 
-                  {/* Ações Rápidas de Operação & Transferência */}
                   <div className="fast-actions-bar">
                     <button className="fast-action-chip" onClick={() => notify('Ingresso com QR Code reenviado com sucesso por E-mail e WhatsApp!')}>
                       <Mail size={14} /> Reenviar Ingresso & QR Code
@@ -1040,7 +1558,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     </button>
                   </div>
 
-                  {/* Histórico de Mensagens / Timeline */}
                   <div className="messages-stream">
                     {selectedTicket.messages.map(m => (
                       <div key={m.id} className={`message-bubble-wrap ${m.authorType.toLowerCase()}`}>
@@ -1048,14 +1565,11 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                           <strong>{m.author}</strong>
                           <span>{m.channel} • {m.createdAt}</span>
                         </div>
-                        <div className="bubble-body">
-                          {m.body}
-                        </div>
+                        <div className="bubble-body">{m.body}</div>
                       </div>
                     ))}
                   </div>
 
-                  {/* Caixa de Resposta */}
                   {selectedTicket.status !== 'RESOLVIDO' ? (
                     <div className="reply-composer-box">
                       <textarea
@@ -1093,10 +1607,9 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
       )}
 
-      {/* 3. ABA: MOTOR DE SLA & EVENT-AWARE (FASE 22.3) */}
+      {/* 5. ABA: MOTOR DE SLA (FASE 22.3) */}
       {activeTab === 'sla' && (
         <div className="service-content-body">
-          {/* Top Hero & Recálculo */}
           <div className="incidents-hero-bar" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
@@ -1113,7 +1626,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             </button>
           </div>
 
-          {/* Simulador SLA Event-Aware */}
           <div className="service-card-panel" style={{ marginTop: '20px' }}>
             <div className="panel-header-row">
               <div>
@@ -1182,7 +1694,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </button>
             </div>
 
-            {/* Resultado da Simulação */}
             <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
               <div>
                 <span style={{ fontSize: '12px', color: '#64748b' }}>Resultado Calculado pelo Motor:</span>
@@ -1202,86 +1713,13 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
             </div>
           </div>
-
-          {/* Matriz de Políticas P1-P4 e Escalonamento */}
-          <div className="service-two-col-grid" style={{ marginTop: '20px' }}>
-            {/* Políticas de SLA */}
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Matriz de Políticas Contratuais (P1 a P4)</h3>
-                  <p>Metas contratuais de tempo de atendimento.</p>
-                </div>
-              </div>
-
-              <div className="sla-matrix-list">
-                {slaPolicies.map(pol => (
-                  <div key={pol.id} className={`sla-matrix-card ${pol.priority.toLowerCase()}`}>
-                    <div className="matrix-top">
-                      <strong>{pol.name}</strong>
-                      <span className={`priority-tag ${pol.priority}`}>{pol.priority}</span>
-                    </div>
-                    <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 10px' }}>{pol.example}</p>
-                    <div className="matrix-times">
-                      <div><span>1ª Resposta:</span> <strong>{pol.firstResponseMinutes < 60 ? `${pol.firstResponseMinutes} min` : `${pol.firstResponseMinutes / 60} h`}</strong></div>
-                      <div><span>Resolução:</span> <strong>{pol.resolutionMinutes < 60 ? `${pol.resolutionMinutes} min` : `${pol.resolutionMinutes / 60} h`}</strong></div>
-                      <div><span>Calendário:</span> <strong>{pol.calendar === '24x7_EVENT' ? '24x7 Ininterrupto' : 'Comercial 08-18h'}</strong></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Escalonamento e Alertas Automáticos */}
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Gatilhos de Escalonamento Automático</h3>
-                  <p>Regras acionadas conforme o tempo do SLA é consumido.</p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ border: '1px solid #fef3c7', background: '#fffbeb', borderRadius: '8px', padding: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <BellRing size={16} style={{ color: '#d97706' }} />
-                    <strong style={{ color: '#b45309', fontSize: '13px' }}>70% do SLA Consumido &bull; Alerta Amarelo</strong>
-                  </div>
-                  <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#78350f' }}>
-                    Disparo de notificação sonora no painel do atendente e aviso na fila do Supervisor N2.
-                  </p>
-                </div>
-
-                <div style={{ border: '1px solid #fed7aa', background: '#fff7ed', borderRadius: '8px', padding: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <AlertTriangle size={16} style={{ color: '#ea580c' }} />
-                    <strong style={{ color: '#c2410c', fontSize: '13px' }}>85% do SLA Consumido &bull; Alerta Laranja (Risco Alto)</strong>
-                  </div>
-                  <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#7c2d12' }}>
-                    Chamado recebe destaque piscante no topo da fila e SMS/Push para o Coordenador Operacional de Plantão.
-                  </p>
-                </div>
-
-                <div style={{ border: '1px solid #fecaca', background: '#fef2f2', borderRadius: '8px', padding: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <AlertCircle size={16} style={{ color: '#dc2626' }} />
-                    <strong style={{ color: '#b91c1c', fontSize: '13px' }}>100% do SLA Consumido &bull; SLA Violado (Crítico)</strong>
-                  </div>
-                  <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#7f1d1d' }}>
-                    Ticket é marcado com flag de Violação no BI, redistribuído para nível N3 com prioridade máxima e registrado em log imutável de auditoria.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       )}
 
-      {/* 4. ABA: ABRIR NOVO CHAMADO */}
+      {/* 6. ABA: ABRIR NOVO CHAMADO */}
       {activeTab === 'new' && (
         <div className="service-content-body">
           <form className="create-ticket-form-grid" onSubmit={handleCreateTicket}>
-            {/* Coluna 1: Informações do Chamado */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
@@ -1322,7 +1760,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
 
               <div className="form-group">
-                <label>Descrição do Problema / Relato do Cliente</label>
+                <label>Descrição do Problema</label>
                 <textarea
                   rows={4}
                   required
@@ -1343,7 +1781,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
             </div>
 
-            {/* Coluna 2: Dados do Cliente e Pedido */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
@@ -1402,7 +1839,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
             </div>
 
-            {/* Coluna 3: Diagnóstico Copilot & SLA */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
@@ -1438,7 +1874,50 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
       )}
 
-      {/* 5. ABA: INCIDENTES ITIL (WAR ROOM) */}
+      {/* 7. ABA: DASHBOARD SAC */}
+      {activeTab === 'dashboard' && (
+        <div className="service-content-body">
+          <div className="service-kpi-grid">
+            <div className="service-kpi-card blue">
+              <div className="kpi-icon-wrap"><Ticket size={22} /></div>
+              <div className="kpi-info">
+                <span>Chamados em Aberto</span>
+                <strong>{stats.open}</strong>
+                <small>Backlog com SLA ativo</small>
+              </div>
+            </div>
+
+            <div className="service-kpi-card green">
+              <div className="kpi-icon-wrap"><Clock3 size={22} /></div>
+              <div className="kpi-info">
+                <span>Conformidade de SLA</span>
+                <strong>{stats.compliance}%</strong>
+                <small>Meta operacional ≥ 95%</small>
+              </div>
+            </div>
+
+            <div className="service-kpi-card red">
+              <div className="kpi-icon-wrap"><Flame size={22} /></div>
+              <div className="kpi-info">
+                <span>Incidentes Críticos P1</span>
+                <strong>{stats.p1}</strong>
+                <small>Resposta em até 15 min</small>
+              </div>
+            </div>
+
+            <div className="service-kpi-card purple">
+              <div className="kpi-icon-wrap"><Sparkles size={22} /></div>
+              <div className="kpi-info">
+                <span>Satisfação CSAT</span>
+                <strong>4,8 ★</strong>
+                <small>Avaliações positivas: 96%</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8. ABA: INCIDENTES ITIL (WAR ROOM) */}
       {activeTab === 'incidents' && (
         <div className="service-content-body">
           <div className="incidents-hero-bar">
@@ -1504,7 +1983,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
       )}
 
-      {/* 6. ABA: BASE DE CONHECIMENTO */}
+      {/* 9. ABA: BASE DE CONHECIMENTO */}
       {activeTab === 'knowledge' && (
         <div className="service-content-body">
           <div className="kb-search-hero">
@@ -1545,11 +2024,10 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
       )}
 
-      {/* 7. ABA: FILAS, AGENTES & ESCALAÇÃO */}
+      {/* 10. ABA: FILAS & AGENTES */}
       {activeTab === 'teams' && (
         <div className="service-content-body">
           <div className="service-two-col-grid">
-            {/* Tabela de Agentes & Presença Interativa */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
@@ -1592,7 +2070,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
             </div>
 
-            {/* Filas & Estratégias */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
@@ -1615,70 +2092,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 8. ABA: COMPRADOR 360° */}
-      {activeTab === 'client360' && (
-        <div className="service-content-body">
-          <div className="service-card-panel">
-            <div className="panel-header-row">
-              <div>
-                <h3>Visão 360° do Comprador & Histórico</h3>
-                <p>Consulte todos os pedidos, ingressos, check-ins e atendimentos anteriores do cliente.</p>
-              </div>
-            </div>
-
-            <div className="client-360-preview">
-              <div className="client-profile-header">
-                <div className="client-avatar">JS</div>
-                <div className="client-main-data">
-                  <h3>João Silva Oliveira</h3>
-                  <span>CPF: 123.456.789-00 • joao.silva@email.com • (41) 99882-1144</span>
-                  <div className="client-badges-row">
-                    <span className="client-pill vip">Cliente VIP • 6 Pedidos</span>
-                    <span className="client-pill verified">Biometria Facial Cadastrada</span>
-                    <span className="client-pill csat">NPS 10 Promotor</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="client-360-grid">
-                <div className="client-orders-box">
-                  <h4>Pedidos & Ingressos Recentes</h4>
-                  <div className="client-order-item">
-                    <div className="order-head">
-                      <strong>#DI-984221 • Festival Sertanejo Curitiba</strong>
-                      <span className="status-pill green">Pix Aprovado</span>
-                    </div>
-                    <p>2 × Pista Premium • R$ 480,00 • QR Codes emitidos e ativos</p>
-                  </div>
-
-                  <div className="client-order-item">
-                    <div className="order-head">
-                      <strong>#DI-876120 • Stand Up Comedy Night</strong>
-                      <span className="status-pill green">Cartão de Crédito</span>
-                    </div>
-                    <p>1 × Cadeira Central • R$ 120,00 • Check-in realizado</p>
-                  </div>
-                </div>
-
-                <div className="client-tickets-history-box">
-                  <h4>Histórico de Chamados no SAC</h4>
-                  <div className="hist-ticket-row">
-                    <span>#DS-2026-984221</span>
-                    <strong>Ingresso não recebido após Pix</strong>
-                    <span className="badge-status orange">Em Atendimento</span>
-                  </div>
-                  <div className="hist-ticket-row">
-                    <span>#DS-2025-441200</span>
-                    <strong>Dúvida sobre horário de abertura de portão</strong>
-                    <span className="badge-status green">Resolvido</span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
