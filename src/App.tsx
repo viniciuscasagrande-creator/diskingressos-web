@@ -717,10 +717,11 @@ export default function App() {
         {page === 'finance-spread-simulator' && (
           <FinanceSpread360Page producerId={scopedProducerId ?? undefined} initialView="simulator" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
-        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos'].includes(page) && (
+        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos', 'fin-reports', 'relatorios-financeiros'].includes(page) && (
           <AdvancedTaxesRouter
             activeModule={page}
             producerId={scopedProducerId ?? undefined}
+            events={visibleEvents}
             eventId={selectedEvent?.id}
             notify={notify}
             onNavigate={navigate}
@@ -729,9 +730,6 @@ export default function App() {
         )}
         {((page as any) === 'finance-settlement' || (page as any) === 'finance-settlements') && (
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="settlements" notify={notify} onBack={() => setPage('finance-dashboard')} />
-        )}
-        {['finance-custom', 'finance-negotiations', 'finance-reports'].includes(page) && (
-          <GenericFinanceSubView moduleKey={page as any} onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
 
         {/* CONTABILIDADE ADVANCED */}

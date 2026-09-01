@@ -6,6 +6,7 @@ import FinanceOperations360Page from '../../FinanceOperations360Page'
 import FinanceSettlementHubPage from '../FinanceSettlementHubPage'
 import FinanceDisputesHubPage from '../FinanceDisputesHubPage'
 import FinanceAdvancedCommandPage from '../FinanceAdvancedCommandPage'
+import FinanceReportsExecutivePage from '../FinanceReportsExecutivePage'
 
 export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props }: any) {
   switch (activeModule) {
@@ -29,6 +30,14 @@ export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props
     case 'metodos-pagamento':
     case 'finance-methods':
       return <FinancePayments360Page initialTab="methods" notify={props.notify} {...props} />
+    case 'fin-custom':
+    case 'pagamentos-customizados':
+    case 'finance-custom':
+      return <FinancePayments360Page initialTab="custom" notify={props.notify} {...props} />
+    case 'fin-negotiations':
+    case 'negociacoes-financeiras':
+    case 'finance-negotiations':
+      return <FinancePayments360Page initialTab="negotiations" notify={props.notify} {...props} />
     case 'fin-operators':
     case 'operadoras-cartao':
     case 'finance-operators':
@@ -48,6 +57,10 @@ export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props
     case 'finance-disputes':
     case 'finance-chargebacks':
       return <FinanceDisputesHubPage initialTab="refunds" notify={props.notify} {...props} />
+    case 'fin-reports':
+    case 'relatorios-financeiros':
+    case 'finance-reports':
+      return <FinanceReportsExecutivePage events={props.events || []} producerId={props.producerId} notify={props.notify} onBack={() => onNavigate?.('finance-dashboard')} />
     default:
       return null
   }
