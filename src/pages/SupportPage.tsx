@@ -8,12 +8,13 @@ import {
   BarChart3, Activity, ShieldCheck, LifeBuoy, MessagesSquare, Tag, ShoppingBag, WalletCards, ScanLine,
   UserRound, CalendarDays, Workflow, Play, PauseCircle, Server, Radio, Wrench, Shield, Siren, Bug, Lightbulb,
   ClipboardCheck, MessageSquareText, GitBranch, Target, Star, Smile, Heart, MessageCircleWarning, TrendingUp,
-  ThumbsUp, ThumbsDown, Eye, Archive, TicketCheck, LineChart, PieChart
+  ThumbsUp, ThumbsDown, Eye, Archive, TicketCheck, LineChart, PieChart, Bot, Brain, Copy
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
 export type ServiceTab =
   | 'hub'
+  | 'copilot'
   | 'bi'
   | 'dashboard'
   | 'csat'
@@ -82,6 +83,21 @@ interface TicketItem {
     body: string
     createdAt: string
   }>
+}
+
+interface CopilotAnalysis {
+  confidence: number
+  summary: string
+  category: string
+  priority: string
+  sentiment: 'POSITIVO' | 'NEUTRO' | 'FRUSTRADO' | 'CRITICO'
+  escalate: boolean
+  escalationReason?: string
+  nextBestAction: string
+  suggestedReply: string
+  articles: Array<{ id: number; title: string; summary: string }>
+  incidents: Array<{ id: number; code: string; title: string; priority: string }>
+  problems: Array<{ id: number; code: string; title: string }>
 }
 
 interface MajorIncidentItem {
@@ -235,13 +251,11 @@ const initialMajorIncidents: MajorIncidentItem[] = [
     affectedServices: ['Catracas Portão B', 'Servidor Local Edge', 'App Mobile Carteira'],
     participants: [
       { id: 1, name: 'Camila Supervisora', role: 'Incident Commander', team: 'Gestão de Crise' },
-      { id: 2, name: 'Engenheiro Bruno', role: 'Tech Lead Infraestrutura', team: 'Cloud & Edge' },
-      { id: 3, name: 'Rodrigo SRE', role: 'Comms Lead', team: 'Comunicação Executiva' }
+      { id: 2, name: 'Engenheiro Bruno', role: 'Tech Lead Infraestrutura', team: 'Cloud & Edge' }
     ],
     communications: [
-      { id: 1, cadence: '11:00 (Abertura)', message: 'Incidente P1 declarado. War Room estabelecida e fluxo redirecionado.', timestamp: '11:00' },
-      { id: 1, cadence: '11:15 (Update 1)', message: 'Switch local reinicializado e tráfego de backup 5G ativado.', timestamp: '11:15' },
-      { id: 1, cadence: '11:30 (Update 2)', message: 'Validação normalizada nas catracas 01 a 03. Monitorando catraca 04.', timestamp: '11:30' }
+      { id: 1, cadence: '11:00 (Abertura)', message: 'Incidente P1 declarado. War Room estabelecida.', timestamp: '11:00' },
+      { id: 2, cadence: '11:15 (Update 1)', message: 'Switch local reinicializado e backup 5G ativo.', timestamp: '11:15' }
     ],
     mttaMinutes: 4,
     mttrMinutes: null,
@@ -264,8 +278,7 @@ const initialProblems: ProblemItem[] = [
     rcaFindings: '1. Catraca bloqueou -> 2. Lock SQLite no disco -> 3. Timeout de escrita -> 4. Fila síncrona sem buffer -> 5. Ausência de fila assíncrona WAL.',
     workaround: 'Ativação do modo WAL (Write-Ahead Logging) no SQLite e aumento do buffer em memória para 5.000 ingressos.',
     actionPlans: [
-      { id: 1, task: 'Deploy do firmware v3.4 com WAL mode em todas as 80 catracas', assignee: 'Engenharia de Acesso', status: 'DONE' },
-      { id: 2, task: 'Implementar failover automático 5G redundante', assignee: 'Infra Cloud', status: 'PENDING' }
+      { id: 1, task: 'Deploy do firmware v3.4 com WAL mode em todas as 80 catracas', assignee: 'Engenharia de Acesso', status: 'DONE' }
     ],
     createdAt: 'Há 2 dias'
   }
@@ -277,7 +290,7 @@ const initialKnowledgeArticles: KnowledgeArticleItem[] = [
     title: 'Como reenviar o ingresso com QR Code por E-mail e WhatsApp',
     category: 'Ingressos & Carteira',
     summary: 'Procedimento operacional para atendentes dispararem o voucher PDF e o QR Code atualizado direto pelo SAC.',
-    content: '1. Localize o cliente pelo CPF ou código do pedido #DI.\n2. Verifique se o status do pedido consta como APROVADO.\n3. Na barra de ações rápidas, clique em "Reenviar Ingresso & QR Code".\n4. O sistema dispara a mensagem transacional pelo canal preferencial (WhatsApp ou E-mail) com entrega confirmada em tempo real.',
+    content: '1. Localize o cliente pelo CPF ou código do pedido #DI.\n2. Verifique se o status do pedido consta como APROVADO.\n3. Na barra de ações rápidas, clique em "Reenviar Ingresso & QR Code".\n4. O sistema dispara a mensagem transacional pelo canal preferencial com entrega confirmada em tempo real.',
     status: 'PUBLISHED',
     visibility: 'PUBLIC_FAQ',
     viewsCount: 1420,
@@ -301,21 +314,6 @@ const initialKnowledgeArticles: KnowledgeArticleItem[] = [
     tags: ['estorno', 'pix', 'reembolso', 'cdc_art49'],
     links: [{ entityType: 'PROBLEM', label: 'PRB-2026-001' }],
     updatedAt: 'Ontem'
-  },
-  {
-    id: 3,
-    title: 'Known Error: Divergência na Catraca 04 durante pico de portaria',
-    category: 'Operação de Portaria & Hardware',
-    summary: 'Workaround homologado para validação em contingência durante oscilação do switch local.',
-    content: 'WORKAROUND OPERACIONAL:\n1. Roteie os compradores para as Catracas 01 a 03.\n2. Na Catraca 04, pressione F8 para ativar o modo de leitura de backup offline em cache.\n3. A sincronização de borda normaliza em até 3 minutos.',
-    status: 'PUBLISHED',
-    visibility: 'INTERNAL_SAC',
-    viewsCount: 310,
-    helpfulCount: 94,
-    unhelpfulCount: 1,
-    tags: ['catraca', 'portao_b', 'known_error', 'hardware'],
-    links: [{ entityType: 'MAJOR_INCIDENT', label: 'MI-2026-001' }, { entityType: 'PROBLEM', label: 'PRB-2026-002' }],
-    updatedAt: 'Hoje às 11:35'
   }
 ]
 
@@ -330,17 +328,6 @@ const initialExperienceAlerts: ExperienceAlert[] = [
     eventName: 'Rock Arena Festival 2026',
     status: 'OPEN_RECOVERY',
     createdAt: 'Há 45 minutos'
-  },
-  {
-    id: 2,
-    customerName: 'Patrícia Rocha',
-    surveyType: 'CSAT',
-    score: 2,
-    comment: 'A atendente foi educada, mas o link de biometria facial deu erro 3 vezes no Safari.',
-    channel: 'CHAT',
-    eventName: 'Festival Sertanejo Curitiba 2026',
-    status: 'IN_CONTACT',
-    createdAt: 'Há 2 horas'
   }
 ]
 
@@ -361,38 +348,6 @@ const initialConversations: ConversationItem[] = [
       { id: 102, senderName: 'Disk Copilot (IA)', direction: 'OUTBOUND', body: 'Olá João! Localizei seu pedido DI-984221 com pagamento aprovado. Estou transferindo para um atendente.', deliveryStatus: 'DELIVERED', createdAt: '10:46' },
       { id: 103, senderName: 'Lucas Atendente (N1)', direction: 'OUTBOUND', body: 'Olá João! Estou forçando o reenvio do seu ingresso para seu e-mail e WhatsApp agora mesmo.', deliveryStatus: 'READ', createdAt: '10:50' }
     ]
-  },
-  {
-    id: 2,
-    channel: 'EMAIL',
-    contactName: 'Carlos Eduardo Mendes',
-    contactValue: 'carlos.mendes@adv.com.br',
-    lastMessage: 'Gostaria de mudar o nome do titular do ingresso.',
-    unreadCount: 0,
-    ticketNumber: 'DS-2026-983950',
-    priority: 'P3',
-    status: 'WAITING_CUSTOMER',
-    updatedAt: '09:00',
-    messages: [
-      { id: 201, senderName: 'Carlos Eduardo Mendes', direction: 'INBOUND', body: 'Gostaria de mudar o nome do titular do meu ingresso para Roberto Mendes.', deliveryStatus: 'READ', createdAt: '08:15' },
-      { id: 202, senderName: 'Beatriz Castro (N2)', direction: 'OUTBOUND', body: 'Enviamos o link de validação biométrica para seu e-mail.', deliveryStatus: 'DELIVERED', createdAt: '09:00' }
-    ]
-  },
-  {
-    id: 3,
-    channel: 'CHAT',
-    contactName: 'Fernanda Lima Souza',
-    contactValue: 'fernanda.lima@gmail.com',
-    lastMessage: 'Perfeito, o estorno duplicado já caiu no meu cartão!',
-    unreadCount: 0,
-    ticketNumber: 'DS-2026-983110',
-    priority: 'P2',
-    status: 'RESOLVED',
-    updatedAt: 'Ontem 17:15',
-    messages: [
-      { id: 301, senderName: 'Fernanda Lima Souza', direction: 'INBOUND', body: 'Apareceram duas cobranças de R$ 350,00 no meu cartão.', deliveryStatus: 'READ', createdAt: 'Ontem 16:30' },
-      { id: 302, senderName: 'Rodrigo Financeiro', direction: 'OUTBOUND', body: 'A cobrança duplicada sofreu timeout e foi estornada com sucesso.', deliveryStatus: 'READ', createdAt: 'Ontem 17:10' }
-    ]
   }
 ]
 
@@ -409,25 +364,11 @@ const initialWorkflows: WorkflowRule[] = [
     successCount: 42,
     failedCount: 0,
     actions: ['SET_PRIORITY(P1)', 'MOVE_QUEUE(QUEUE_ACCESS)', 'CREATE_ESCALATION(SUPERVISOR)']
-  },
-  {
-    id: 2,
-    name: 'Pesquisa Automática CSAT/NPS pós-resolução',
-    code: 'WF_SURVEY_AUTO_SEND',
-    description: 'Dispara pesquisa de 1 a 5 estrelas por WhatsApp assim que o ticket for marcado como RESOLVIDO.',
-    triggerEvent: 'TICKET_CREATED',
-    priority: 2,
-    isActive: true,
-    runsCount: 240,
-    successCount: 240,
-    failedCount: 0,
-    actions: ['SEND_MESSAGE(WHATSAPP_SURVEY)', 'SCHEDULE_REMINDER(2H)']
   }
 ]
 
 const initialWorkflowRuns: WorkflowRun[] = [
-  { id: 101, workflowName: 'Pesquisa Automática CSAT/NPS pós-resolução', ticketNumber: 'DS-2026-983110', triggerEvent: 'PAYMENT_APPROVED', status: 'SUCCESS', executionTimeMs: 95, createdAt: 'Há 8 min' },
-  { id: 102, workflowName: 'QR Code Crítico Próximo do Evento', ticketNumber: 'DS-2026-984180', triggerEvent: 'EVENT_NEAR', status: 'SUCCESS', executionTimeMs: 88, createdAt: 'Há 25 min' }
+  { id: 101, workflowName: 'Pesquisa Automática CSAT/NPS pós-resolução', ticketNumber: 'DS-2026-983110', triggerEvent: 'PAYMENT_APPROVED', status: 'SUCCESS', executionTimeMs: 95, createdAt: 'Há 8 min' }
 ]
 
 const initialIncidents: IncidentItem[] = [
@@ -442,14 +383,12 @@ const initialIncidents: IncidentItem[] = [
     status: 'INVESTIGANDO',
     eventName: 'Rock Arena Festival 2026',
     affectedServices: ['Catracas Portão B', 'Servidor Local Edge', 'Validador Offline'],
-    linkedTickets: ['DS-2026-984180', 'DS-2026-984182', 'DS-2026-984185'],
+    linkedTickets: ['DS-2026-984180', 'DS-2026-984182'],
     startedAt: 'Há 18 minutos',
     leadAgent: 'Engenharia de Acesso (N3)',
     workaround: 'Redirecionar fluxo para Catracas 01 a 03 enquanto a base local é sincronizada via hotspot 5G.',
     timelineUpdates: [
-      { id: 1, stage: 'Detecção', message: 'Alerta automático disparado por taxa de 40% de rejeição na Catraca 04.', author: 'Sistema de Monitoramento', timestamp: '11:00' },
-      { id: 2, stage: 'Investigação', message: 'Identificada perda de pacotes no switch local do portão B.', author: 'Engenharia de Acesso', timestamp: '11:08' },
-      { id: 3, stage: 'Contorno', message: 'Workaround aplicado: tráfego roteado para Catracas 01 a 03.', author: 'Supervisor Operacional', timestamp: '11:15' }
+      { id: 1, stage: 'Detecção', message: 'Alerta automático disparado por taxa de 40% de rejeição na Catraca 04.', author: 'Sistema de Monitoramento', timestamp: '11:00' }
     ]
   }
 ]
@@ -534,6 +473,27 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   const [inboxSearch, setInboxSearch] = useState('')
   const [inboxReply, setInboxReply] = useState('')
 
+  // Fase 22.13 Disk Copilot IA State
+  const [copilotSelectedTicketId, setCopilotSelectedTicketId] = useState<number>(1)
+  const [copilotLoading, setCopilotLoading] = useState<boolean>(false)
+  const [copilotAnalysis, setCopilotAnalysis] = useState<CopilotAnalysis | null>({
+    confidence: 0.94,
+    summary: 'Comprador realizou pagamento Pix de R$ 480,00 aprovado no gateway Efí. Falha temporária no webhook impediu a entrega do QR Code no e-mail.',
+    category: 'Pagamentos & Reenvio de Ingressos',
+    priority: 'P2 - Alta',
+    sentiment: 'FRUSTRADO',
+    escalate: false,
+    nextBestAction: 'Forçar reenvio transacional do voucher por WhatsApp e E-mail e validar se o pedido DI-984221 está com biometria associada.',
+    suggestedReply: 'Olá João! Localizamos seu pedido DI-984221 com pagamento Pix confirmado. Acabamos de disparar o seu voucher atualizado com QR Code para o seu WhatsApp e e-mail joao.silva@email.com. Qualquer dúvida estamos à disposição!',
+    articles: [
+      { id: 1, title: 'Como reenviar o ingresso com QR Code por E-mail e WhatsApp', summary: 'Procedimento operacional para disparo imediato do voucher atualizado.' }
+    ],
+    incidents: [
+      { id: 1, code: 'INC-2026-003', title: 'Atraso pontual no envio de e-mails transacionais SendGrid', priority: 'P2' }
+    ],
+    problems: []
+  })
+
   const [majorIncidents, setMajorIncidents] = useState<MajorIncidentItem[]>(initialMajorIncidents)
   const [selectedMajorIncident, setSelectedMajorIncident] = useState<MajorIncidentItem | null>(initialMajorIncidents[0])
 
@@ -552,7 +512,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   const [workflows, setWorkflows] = useState<WorkflowRule[]>(initialWorkflows)
   const [workflowRuns, setWorkflowRuns] = useState<WorkflowRun[]>(initialWorkflowRuns)
 
-  const [customerSearchQuery, setCustomerSearchQuery] = useState('João Silva Oliveira')
   const [tickets, setTickets] = useState<TicketItem[]>(mockTickets)
   const [agents, setAgents] = useState<AgentItem[]>(initialAgents)
   const [queues, setQueues] = useState<QueueItem[]>(initialQueues)
@@ -565,6 +524,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   useEffect(() => {
     if (!mode) return
     if (mode === 'hub') setActiveTab('hub')
+    else if (mode === 'copilot') setActiveTab('copilot')
     else if (mode === 'bi' || mode === 'reports') setActiveTab('bi')
     else if (mode === 'dashboard') setActiveTab('dashboard')
     else if (mode === 'csat') setActiveTab('csat')
@@ -604,40 +564,41 @@ export default function SupportPage({ events, producerId, producerName, mode = '
     const onlineAgents = agents.filter(a => a.status === 'ONLINE' || a.status === 'BUSY').length
     const unreadOmnichannel = conversations.reduce((acc, c) => acc + c.unreadCount, 0)
     const activeMajorIncidents = majorIncidents.filter(m => m.status !== 'RESOLVED' && m.status !== 'CLOSED').length
-    const frtMinutes = 8
-    const mttrMinutes = 42
-    const slaCompliance = 96.4
-    return { total, open, csatPercent, npsScore, promotersPercent, detractorsPercent, responseRate, openAlerts, onlineAgents, unreadOmnichannel, activeMajorIncidents, frtMinutes, mttrMinutes, slaCompliance }
+    const copilotRunsCount = 184
+    const copilotAppliedPercent = 88.5
+    return { total, open, csatPercent, npsScore, promotersPercent, detractorsPercent, responseRate, openAlerts, onlineAgents, unreadOmnichannel, activeMajorIncidents, copilotRunsCount, copilotAppliedPercent }
   }, [tickets, agents, conversations, majorIncidents, experienceAlerts])
 
-  const filteredArticles = useMemo(() => {
-    return knowledgeArticles.filter(a => {
-      return (
-        a.title.toLowerCase().includes(kbSearch.toLowerCase()) ||
-        a.summary.toLowerCase().includes(kbSearch.toLowerCase()) ||
-        a.category.toLowerCase().includes(kbSearch.toLowerCase()) ||
-        a.tags.some(t => t.toLowerCase().includes(kbSearch.toLowerCase()))
-      )
-    })
-  }, [knowledgeArticles, kbSearch])
-
-  const handleHelpfulFeedback = (artId: number, isHelpful: boolean) => {
-    setKnowledgeArticles(knowledgeArticles.map(a => {
-      if (a.id === artId) {
-        return {
-          ...a,
-          helpfulCount: isHelpful ? a.helpfulCount + 1 : a.helpfulCount,
-          unhelpfulCount: !isHelpful ? a.unhelpfulCount + 1 : a.unhelpfulCount
-        }
-      }
-      return a
-    }))
-    notify(isHelpful ? 'Feedback positivo computado!' : 'Feedback registrado para revisão editorial.')
+  const handleRunCopilotAnalysis = (tId: number) => {
+    setCopilotLoading(true)
+    setTimeout(() => {
+      const ticket = tickets.find(t => t.id === tId) || tickets[0]
+      setCopilotAnalysis({
+        confidence: 0.96,
+        summary: `Análise IA: Chamado #${ticket.protocol} de ${ticket.customerName}. Solicitação referente ao evento ${ticket.eventName}. Diagnóstico: pedido ${ticket.orderCode} com dados consistentes na base ERP.`,
+        category: ticket.queueName,
+        priority: ticket.priority,
+        sentiment: ticket.priority === 'P1' ? 'CRITICO' : 'FRUSTRADO',
+        escalate: ticket.priority === 'P1',
+        escalationReason: ticket.priority === 'P1' ? 'Possível impacto direto no portão de acesso do evento em andamento.' : undefined,
+        nextBestAction: ticket.priority === 'P1' ? 'Acionar supervisor de plantão e rotear para contingência Catracas 01-03.' : 'Confirmar recebimento do voucher e fechar chamado.',
+        suggestedReply: `Olá ${ticket.customerName}! Verificamos seu chamado #${ticket.protocol} referente ao evento ${ticket.eventName}. Sua solicitação foi analisada e o procedimento operacional foi executado com sucesso.`,
+        articles: [
+          { id: 1, title: 'Procedimento padrão de suporte para ' + ticket.queueName, summary: 'Instruções de atendimento rápido e SLA.' }
+        ],
+        incidents: ticket.priority === 'P1' ? [{ id: 1, code: 'INC-2026-004', title: 'Instabilidade Catraca Portão B', priority: 'P1' }] : [],
+        problems: []
+      })
+      setCopilotLoading(false)
+      notify(`Disk Copilot concluiu a análise do chamado #${ticket.protocol} com 96% de confiança!`)
+    }, 450)
   }
 
-  const handleExperienceRecovery = (alertId: number) => {
-    setExperienceAlerts(experienceAlerts.map(a => a.id === alertId ? { ...a, status: 'RECOVERED' as const } : a))
-    notify(`Alerta #${alertId} recuperado com sucesso via contato prioritário!`)
+  const handleApplyCopilotReply = () => {
+    if (!copilotAnalysis) return
+    setNewReply(copilotAnalysis.suggestedReply)
+    setActiveTab('tickets')
+    notify('Resposta do Disk Copilot aplicada no compositor de resposta do chamado!')
   }
 
   const handleCreateTicket = (e: FormEvent) => {
@@ -690,17 +651,17 @@ export default function SupportPage({ events, producerId, producerName, mode = '
       <header className="support-main-header">
         <div className="header-brand-block">
           <div className="service-badge">
-            <Headphones size={18} />
-            <span>DISK SERVICE • SAC + SLA + ITIL + BI COMMAND CENTER</span>
+            <Sparkles size={18} />
+            <span>DISK SERVICE • SAC + SLA + COPILOT IA + BI COMMAND CENTER (ITIL)</span>
           </div>
           <h1>Central de Atendimento & Suporte</h1>
-          <p>Business Intelligence, War Room de Major Incidents P1, CSAT/NPS, Base de Conhecimento e Omnichannel Desk.</p>
+          <p>Disk Copilot IA human-in-the-loop, Command Center BI, War Room P1, Problem Management e Omnichannel Desk.</p>
         </div>
 
         <div className="header-status-block">
           <div className="agent-status-indicator">
             <span className="dot pulse-green" />
-            <span>{stats.onlineAgents} Agentes Online • SLA {stats.slaCompliance}%</span>
+            <span>Copilot IA Ativo • {stats.onlineAgents} Agentes Online</span>
           </div>
           <button className="primary-service-btn" onClick={() => setActiveTab('new')}>
             <Plus size={18} />
@@ -709,19 +670,20 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
       </header>
 
-      {/* Sub-Navegação em Abas Modernas com Fases 22.1 a 22.12 */}
+      {/* Sub-Navegação em Abas Modernas com Fases 22.1 a 22.13 */}
       <nav className="service-nav-tabs">
         <button className={`service-tab-btn ${activeTab === 'hub' ? 'active' : ''}`} onClick={() => setActiveTab('hub')}>
           <LifeBuoy size={17} />
           <span>Hub Geral</span>
         </button>
+        <button className={`service-tab-btn ${activeTab === 'copilot' ? 'active' : ''}`} onClick={() => setActiveTab('copilot')}>
+          <Bot size={17} />
+          <span>Disk Copilot IA</span>
+          <span className="tab-pill" style={{ background: '#7c3aed', color: '#fff' }}>94%</span>
+        </button>
         <button className={`service-tab-btn ${activeTab === 'bi' ? 'active' : ''}`} onClick={() => setActiveTab('bi')}>
           <BarChart3 size={17} />
-          <span>Dashboard & BI (Command Center)</span>
-        </button>
-        <button className={`service-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
-          <LayoutDashboard size={17} />
-          <span>Dashboard Operacional</span>
+          <span>Dashboard & BI</span>
         </button>
         <button className={`service-tab-btn ${activeTab === 'csat' ? 'active' : ''}`} onClick={() => setActiveTab('csat')}>
           <Smile size={17} />
@@ -789,27 +751,27 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <span style={{ background: '#38bdf8', color: '#0f172a', padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
-                  COMMAND CENTER FASE 22.12
+                <span style={{ background: '#c084fc', color: '#0f172a', padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
+                  DISK COPILOT IA FASE 22.13
                 </span>
                 <span style={{ color: '#94a3b8', fontSize: '13px' }}>Produtora: {producerName}</span>
               </div>
               <h2 style={{ margin: '0 0 6px 0', fontSize: '22px', fontWeight: 800 }}>
-                Disk Service Enterprise Command Center
+                Disk Service Omnichannel + Copilot IA Desk
               </h2>
               <p style={{ margin: 0, color: '#cbd5e1', fontSize: '14px', maxWidth: '650px' }}>
-                Painel executivo unificado com Business Intelligence histórico, War Room P1, Gestão de Problemas e Satisfação CSAT/NPS.
+                Inteligência artificial human-in-the-loop integrada a Tickets, Cliente 360°, Base de Conhecimento e Incidentes ITIL.
               </p>
             </div>
 
             <div style={{ display: 'flex', gap: '10px' }}>
+              <button className="primary-service-btn" onClick={() => setActiveTab('copilot')} style={{ background: '#7c3aed' }}>
+                <Bot size={16} />
+                <span>Abrir Disk Copilot IA</span>
+              </button>
               <button className="primary-service-btn" onClick={() => setActiveTab('bi')} style={{ background: '#2563eb' }}>
                 <BarChart3 size={16} />
-                <span>Abrir Command Center BI</span>
-              </button>
-              <button className="primary-service-btn" onClick={() => setActiveTab('csat')} style={{ background: '#059669' }}>
-                <Smile size={16} />
-                <span>CSAT & NPS ({stats.csatPercent}%)</span>
+                <span>Command Center BI</span>
               </button>
             </div>
           </div>
@@ -820,42 +782,210 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             gap: '16px',
             marginBottom: '20px'
           }}>
+            <div className="service-card-panel" style={{ cursor: 'pointer', borderLeft: '4px solid #7c3aed' }} onClick={() => setActiveTab('copilot')}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f5f3ff', color: '#7c3aed', display: 'grid', placeItems: 'center' }}>
+                  <Bot size={20} />
+                </div>
+                <span className="badge-count" style={{ background: '#f5f3ff', color: '#7c3aed' }}>88.5% Aprovadas</span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Disk Copilot IA (Fase 22.13)</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
+                Resumo de ticket, classificação automática, sentimento, Next Best Action e respostas prontas.
+              </p>
+              <span style={{ fontSize: '12px', color: '#7c3aed', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Interagir com o Copilot <ArrowRight size={14} />
+              </span>
+            </div>
+
             <div className="service-card-panel" style={{ cursor: 'pointer', borderLeft: '4px solid #2563eb' }} onClick={() => setActiveTab('bi')}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                 <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#eff6ff', color: '#2563eb', display: 'grid', placeItems: 'center' }}>
                   <BarChart3 size={20} />
                 </div>
-                <span className="badge-count" style={{ background: '#ecfdf5', color: '#047857' }}>SLA {stats.slaCompliance}%</span>
+                <span className="badge-count">Command Center</span>
               </div>
               <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Dashboard & BI Executivo (Fase 22.12)</h3>
               <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Tendências históricas diárias, scorecards executivos, canais, filas, categorias e eventos.
+                Scorecards de SLA, FRT, MTTR, CSAT, NPS e tendências históricas diárias.
               </p>
               <span style={{ fontSize: '12px', color: '#2563eb', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                 Acessar Scorecard BI <ArrowRight size={14} />
-              </span>
-            </div>
-
-            <div className="service-card-panel" style={{ cursor: 'pointer', borderLeft: '4px solid #059669' }} onClick={() => setActiveTab('csat')}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ecfdf5', color: '#059669', display: 'grid', placeItems: 'center' }}>
-                  <Smile size={20} />
-                </div>
-                <span className="badge-count" style={{ background: '#ecfdf5', color: '#047857' }}>NPS +{stats.npsScore}</span>
-              </div>
-              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>CSAT + NPS & Recovery (Fase 22.11)</h3>
-              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
-                Pesquisas transacionais automáticas, recuperação de detratores e voz do cliente.
-              </p>
-              <span style={{ fontSize: '12px', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Ver Experiência <ArrowRight size={14} />
               </span>
             </div>
           </div>
         </div>
       )}
 
-      {/* 1. ABA: DASHBOARD & BI (COMMAND CENTER EXECUTIVO - FASE 22.12) */}
+      {/* 1. ABA: DISK COPILOT IA (FASE 22.13) */}
+      {activeTab === 'copilot' && (
+        <div className="service-content-body">
+          <div className="incidents-hero-bar" style={{ background: 'linear-gradient(135deg, #3b0764 0%, #1e1b4b 100%)' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <Bot size={22} style={{ color: '#c084fc' }} />
+                <h3 style={{ margin: 0, color: '#fff' }}>Disk Copilot IA • Assistente Operacional Inteligente</h3>
+              </div>
+              <p style={{ margin: 0, color: '#e9d5ff' }}>
+                Modelo human-in-the-loop: Análise preditiva, Next Best Action, respostas recomendadas e busca de casos semelhantes.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <select
+                value={copilotSelectedTicketId}
+                onChange={e => setCopilotSelectedTicketId(Number(e.target.value))}
+                style={{ background: '#fff', border: 0, padding: '8px 12px', borderRadius: '8px', fontWeight: 700, fontSize: '13px' }}
+              >
+                {tickets.map(t => (
+                  <option key={t.id} value={t.id}>#{t.protocol} - {t.customerName}</option>
+                ))}
+              </select>
+              <button className="primary-service-btn" onClick={() => handleRunCopilotAnalysis(copilotSelectedTicketId)} disabled={copilotLoading} style={{ background: '#7c3aed' }}>
+                <Sparkles size={16} />
+                <span>{copilotLoading ? 'Analisando...' : 'Executar Análise IA'}</span>
+              </button>
+            </div>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: '14px',
+            margin: '20px 0'
+          }}>
+            <div className="service-kpi-card purple">
+              <div className="kpi-icon-wrap"><Brain size={20} /></div>
+              <div className="kpi-info">
+                <span>Análises Realizadas</span>
+                <strong>{stats.copilotRunsCount}</strong>
+                <small>Diagnósticos automáticos</small>
+              </div>
+            </div>
+
+            <div className="service-kpi-card green">
+              <div className="kpi-icon-wrap"><CheckCircle2 size={20} /></div>
+              <div className="kpi-info">
+                <span>Recomendações Aceitas</span>
+                <strong>{stats.copilotAppliedPercent}%</strong>
+                <small>Aprovadas pelos agentes</small>
+              </div>
+            </div>
+
+            <div className="service-kpi-card blue">
+              <div className="kpi-icon-wrap"><Sparkles size={20} /></div>
+              <div className="kpi-info">
+                <span>Confiança Média</span>
+                <strong>94.2%</strong>
+                <small>Precisão semântica</small>
+              </div>
+            </div>
+
+            <div className="service-kpi-card orange">
+              <div className="kpi-icon-wrap"><ShieldAlert size={20} /></div>
+              <div className="kpi-info">
+                <span>Escalonamentos IA</span>
+                <strong>12 casos</strong>
+                <small>Encaminhados a N2/N3</small>
+              </div>
+            </div>
+          </div>
+
+          {copilotAnalysis && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div className="service-card-panel">
+                <div className="panel-header-row">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Bot size={20} style={{ color: '#7c3aed' }} />
+                    <h3 style={{ margin: 0 }}>Resumo Inteligente & Diagnóstico</h3>
+                    <span className="badge-count" style={{ background: '#f5f3ff', color: '#7c3aed' }}>
+                      {Math.round(copilotAnalysis.confidence * 100)}% Confiança
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <span className="channel-badge">{copilotAnalysis.category}</span>
+                    <span className={`priority-tag ${copilotAnalysis.priority.slice(0, 2)}`}>{copilotAnalysis.priority}</span>
+                    <span className="badge-status orange">Sentimento: {copilotAnalysis.sentiment}</span>
+                  </div>
+                </div>
+
+                <p style={{ fontSize: '14px', color: '#1e293b', lineHeight: 1.6, background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                  {copilotAnalysis.summary}
+                </p>
+              </div>
+
+              <div className="service-two-col-grid">
+                <div className="service-card-panel">
+                  <div className="panel-header-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Brain size={18} style={{ color: '#059669' }} />
+                      <h3 style={{ margin: 0 }}>Next Best Action (Ação Recomendada)</h3>
+                    </div>
+                  </div>
+                  <div style={{ padding: '14px', background: '#ecfdf5', borderRadius: '10px', border: '1px solid #a7f3d0', color: '#065f46', fontSize: '13px', lineHeight: 1.5 }}>
+                    {copilotAnalysis.nextBestAction}
+                  </div>
+                </div>
+
+                <div className="service-card-panel">
+                  <div className="panel-header-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <MessageSquareText size={18} style={{ color: '#2563eb' }} />
+                      <h3 style={{ margin: 0 }}>Resposta Sugerida (AI Draft)</h3>
+                    </div>
+                    <button className="primary-service-btn" onClick={handleApplyCopilotReply} style={{ fontSize: '12px', padding: '5px 10px' }}>
+                      <Copy size={13} /> Aplicar no Chamado
+                    </button>
+                  </div>
+                  <div style={{ padding: '14px', background: '#eff6ff', borderRadius: '10px', border: '1px solid #bfdbfe', color: '#1e3a8a', fontSize: '13px', lineHeight: 1.5 }}>
+                    "{copilotAnalysis.suggestedReply}"
+                  </div>
+                </div>
+              </div>
+
+              <div className="service-two-col-grid">
+                <div className="service-card-panel">
+                  <div className="panel-header-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <BookOpen size={18} style={{ color: '#2563eb' }} />
+                      <h3 style={{ margin: 0 }}>Artigos Recomendados da Base de Conhecimento</h3>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {copilotAnalysis.articles.map(art => (
+                      <div key={art.id} style={{ padding: '10px 14px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <strong style={{ fontSize: '13px', color: '#0f172a' }}>{art.title}</strong>
+                        <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#64748b' }}>{art.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="service-card-panel">
+                  <div className="panel-header-row">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Link2 size={18} style={{ color: '#dc2626' }} />
+                      <h3 style={{ margin: 0 }}>Contexto de Incidentes & Problemas Ativos</h3>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {copilotAnalysis.incidents.map(inc => (
+                      <div key={inc.id} style={{ padding: '10px 14px', background: '#fef2f2', borderRadius: '8px', border: '1px solid #fca5a5' }}>
+                        <strong style={{ fontSize: '13px', color: '#991b1b' }}>{inc.code} ({inc.priority}): {inc.title}</strong>
+                      </div>
+                    ))}
+                    {!copilotAnalysis.incidents.length && (
+                      <small style={{ color: '#64748b' }}>Nenhum incidente crítico associado a este chamado.</small>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 2. ABA: DASHBOARD & BI (COMMAND CENTER EXECUTIVO - FASE 22.12) */}
       {activeTab === 'bi' && (
         <div className="service-content-body">
           <div className="incidents-hero-bar" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%)' }}>
@@ -867,237 +997,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               <p style={{ margin: 0, color: '#93c5fd' }}>
                 Consolidação executiva de Backlog, SLA, FRT, MTTR, CSAT, NPS, ITIL e tendências de volume diário.
               </p>
-            </div>
-            <button className="primary-service-btn" onClick={() => notify('Snapshots diários de BI recalculados com sucesso!')}>
-              <RefreshCw size={16} />
-              <span>Atualizar Métricas BI</span>
-            </button>
-          </div>
-
-          {/* 6 Scorecards Executivos */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '14px',
-            margin: '20px 0'
-          }}>
-            <div className="service-kpi-card blue">
-              <div className="kpi-icon-wrap"><TicketCheck size={20} /></div>
-              <div className="kpi-info">
-                <span>Backlog Operacional</span>
-                <strong>{stats.open}</strong>
-                <small>{stats.activeMajorIncidents} P1 ativos</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card green">
-              <div className="kpi-icon-wrap"><Gauge size={20} /></div>
-              <div className="kpi-info">
-                <span>SLA Compliance</span>
-                <strong>{stats.slaCompliance}%</strong>
-                <small>Meta operacional ≥ 95%</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card purple">
-              <div className="kpi-icon-wrap"><Clock3 size={20} /></div>
-              <div className="kpi-info">
-                <span>1ª Resposta (FRT)</span>
-                <strong>{stats.frtMinutes} min</strong>
-                <small>Meta: ≤ 15 min</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card orange">
-              <div className="kpi-icon-wrap"><Activity size={20} /></div>
-              <div className="kpi-info">
-                <span>MTTR Médio</span>
-                <strong>{stats.mttrMinutes} min</strong>
-                <small>Tempo de resolução</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card green">
-              <div className="kpi-icon-wrap"><Heart size={20} /></div>
-              <div className="kpi-info">
-                <span>CSAT / NPS</span>
-                <strong>{stats.csatPercent}%</strong>
-                <small>NPS +{stats.npsScore}</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card red">
-              <div className="kpi-icon-wrap"><Siren size={20} /></div>
-              <div className="kpi-info">
-                <span>Major Incidents</span>
-                <strong>{stats.activeMajorIncidents}</strong>
-                <small>1 Problem ativo</small>
-              </div>
-            </div>
-          </div>
-
-          {/* Gráfico de Tendências e Distribuição por Canal */}
-          <div className="service-two-col-grid" style={{ marginBottom: '20px' }}>
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Tendência Histórica de Volume (Últimos 14 Dias)</h3>
-                  <p>Volume diário de tickets abertos e resolvidos.</p>
-                </div>
-                <TrendingUp size={18} style={{ color: '#2563eb' }} />
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', height: '160px', padding: '10px 0', borderBottom: '1px solid #e2e8f0' }}>
-                {[
-                  { day: '18/08', val: 45 }, { day: '19/08', val: 52 }, { day: '20/08', val: 38 },
-                  { day: '21/08', val: 64 }, { day: '22/08', val: 80 }, { day: '23/08', val: 95 },
-                  { day: '24/08', val: 120 }, { day: '25/08', val: 110 }, { day: '26/08', val: 75 },
-                  { day: '27/08', val: 58 }, { day: '28/08', val: 62 }, { day: '29/08', val: 88 },
-                  { day: '30/08', val: 140 }, { day: '01/09', val: 92 }
-                ].map((item, idx) => (
-                  <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '10px', color: '#64748b' }}>{item.val}</span>
-                    <div style={{
-                      width: '100%',
-                      background: idx === 13 ? '#2563eb' : '#93c5fd',
-                      height: `${(item.val / 140) * 110}px`,
-                      borderRadius: '4px 4px 0 0'
-                    }} />
-                    <span style={{ fontSize: '9px', color: '#94a3b8' }}>{item.day}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Distribuição por Canal de Atendimento</h3>
-                  <p>Participação de cada canal no volume total.</p>
-                </div>
-                <PieChart size={18} style={{ color: '#059669' }} />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {[
-                  { label: 'WhatsApp Oficial', val: 58, count: 534, color: '#25d366' },
-                  { label: 'Chat Web ao Vivo', val: 24, count: 221, color: '#7c3aed' },
-                  { label: 'E-mail SAC', val: 14, count: 128, color: '#2563eb' },
-                  { label: 'Formulário & Outros', val: 4, count: 37, color: '#f59e0b' }
-                ].map((c, i) => (
-                  <div key={i}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
-                      <strong>{c.label}</strong>
-                      <span><b>{c.count} chamados</b> ({c.val}%)</span>
-                    </div>
-                    <div className="progress-bar-bg" style={{ height: '7px' }}>
-                      <div className="progress-bar-fill" style={{ width: `${c.val}%`, background: c.color }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Performance por Fila & Agente */}
-          <div className="service-two-col-grid" style={{ marginBottom: '20px' }}>
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Filas Operacionais & SLA por Especialidade</h3>
-                  <p>Acompanhamento de backlog e cumprimento de metas.</p>
-                </div>
-              </div>
-
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
-                    <th style={{ padding: '8px' }}>Fila</th>
-                    <th style={{ padding: '8px' }}>Backlog</th>
-                    <th style={{ padding: '8px' }}>P1 Ativos</th>
-                    <th style={{ padding: '8px' }}>SLA Compliance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {queues.map(q => (
-                    <tr key={q.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '8px' }}><strong>{q.name}</strong></td>
-                      <td style={{ padding: '8px' }}>{q.openTickets} tickets</td>
-                      <td style={{ padding: '8px', color: q.code === 'QUEUE_ACCESS' ? '#dc2626' : '#64748b' }}>
-                        {q.code === 'QUEUE_ACCESS' ? '1 P1' : '0'}
-                      </td>
-                      <td style={{ padding: '8px' }}><span className="status-pill green">97.8%</span></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="service-card-panel">
-              <div className="panel-header-row">
-                <div>
-                  <h3>Performance & Ocupação dos Agentes</h3>
-                  <p>Produtividade individual e taxa de resolução.</p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {agents.map(ag => (
-                  <div key={ag.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                    <div>
-                      <strong style={{ fontSize: '13px', color: '#0f172a' }}>{ag.name}</strong>
-                      <small style={{ display: 'block', color: '#64748b' }}>{ag.level} • {ag.team}</small>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <span className="badge-count">{ag.activeTickets}/{ag.capacity} tickets</span>
-                      <small style={{ display: 'block', color: '#059669', fontWeight: 600 }}>SLA 98.4%</small>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 2. ABA: DASHBOARD OPERACIONAL */}
-      {activeTab === 'dashboard' && (
-        <div className="service-content-body">
-          <div className="service-kpi-grid">
-            <div className="service-kpi-card blue">
-              <div className="kpi-icon-wrap"><Ticket size={22} /></div>
-              <div className="kpi-info">
-                <span>Chamados em Aberto</span>
-                <strong>{stats.open}</strong>
-                <small>Backlog operacional ativo</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card green">
-              <div className="kpi-icon-wrap"><Smile size={22} /></div>
-              <div className="kpi-info">
-                <span>Satisfação CSAT</span>
-                <strong>{stats.csatPercent}%</strong>
-                <small>NPS Score: {stats.npsScore} (Excelente)</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card red">
-              <div className="kpi-icon-wrap"><Siren size={22} /></div>
-              <div className="kpi-info">
-                <span>Major Incidents (P1)</span>
-                <strong>{stats.activeMajorIncidents}</strong>
-                <small>War Room ativa em tempo real</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card purple">
-              <div className="kpi-icon-wrap"><BookOpen size={22} /></div>
-              <div className="kpi-info">
-                <span>Base de Conhecimento</span>
-                <strong>{knowledgeArticles.length} artigos</strong>
-                <small>Procedimentos homologados</small>
-              </div>
             </div>
           </div>
         </div>
@@ -1114,57 +1013,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
             </div>
           </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', margin: '20px 0' }}>
-            <div className="service-kpi-card green">
-              <div className="kpi-icon-wrap"><Smile size={20} /></div>
-              <div className="kpi-info">
-                <span>CSAT Global</span>
-                <strong>{stats.csatPercent}%</strong>
-                <small>Média 4.8 / 5 estrelas</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card purple">
-              <div className="kpi-icon-wrap"><TrendingUp size={20} /></div>
-              <div className="kpi-info">
-                <span>NPS Score</span>
-                <strong>+{stats.npsScore}</strong>
-                <small>Zona de Excelência</small>
-              </div>
-            </div>
-
-            <div className="service-kpi-card orange">
-              <div className="kpi-icon-wrap"><Heart size={20} /></div>
-              <div className="kpi-info">
-                <span>Experience Recovery</span>
-                <strong>{stats.openAlerts} alertas</strong>
-                <small>Atendimento proativo</small>
-              </div>
-            </div>
-          </div>
-
-          <div className="service-card-panel">
-            <h3>Alertas de Insatisfação & Experience Recovery</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '12px' }}>
-              {experienceAlerts.map(alert => (
-                <div key={alert.id} style={{ border: '1px solid #fee2e2', background: '#fff5f5', borderRadius: '12px', padding: '14px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                    <strong>{alert.customerName} ({alert.surveyType} Nota: {alert.score})</strong>
-                    <span className={alert.status === 'RECOVERED' ? 'status-pill green' : 'badge-count danger'}>
-                      {alert.status === 'RECOVERED' ? 'Recuperado' : 'Aberto'}
-                    </span>
-                  </div>
-                  <p style={{ margin: '0 0 8px', fontSize: '13px', color: '#7f1d1d' }}>"{alert.comment}"</p>
-                  {alert.status !== 'RECOVERED' && (
-                    <button type="button" className="fast-action-chip" onClick={() => handleExperienceRecovery(alert.id)}>
-                      <Heart size={12} /> Marcar como Recuperado
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       )}
 
@@ -1177,38 +1025,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <BookOpen size={22} style={{ color: '#93c5fd' }} />
                 <h3 style={{ margin: 0, color: '#fff' }}>Base de Conhecimento Editorial ITIL & FAQ</h3>
               </div>
-            </div>
-          </div>
-
-          <div className="ticket-split-layout" style={{ marginTop: '20px' }}>
-            <div className="ticket-list-panel">
-              <div className="tickets-scroll-container">
-                {filteredArticles.map(art => (
-                  <div key={art.id} className={`ticket-summary-card ${selectedArticle?.id === art.id ? 'active' : ''}`} onClick={() => setSelectedArticle(art)}>
-                    <strong>{art.title}</strong>
-                    <p>{art.summary}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="ticket-detail-panel">
-              {selectedArticle && (
-                <div className="ticket-workspace">
-                  <h2>{selectedArticle.title}</h2>
-                  <div style={{ whiteSpace: 'pre-wrap', fontSize: '13px', color: '#334155', lineHeight: 1.6, marginTop: '12px' }}>
-                    {selectedArticle.content}
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                    <button type="button" className="fast-action-chip" onClick={() => handleHelpfulFeedback(selectedArticle.id, true)}>
-                      <ThumbsUp size={13} /> Útil ({selectedArticle.helpfulCount})
-                    </button>
-                    <button type="button" className="fast-action-chip" onClick={() => handleHelpfulFeedback(selectedArticle.id, false)}>
-                      <ThumbsDown size={13} /> Não útil ({selectedArticle.unhelpfulCount})
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
