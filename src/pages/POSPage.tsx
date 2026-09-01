@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { CreditCard, MonitorSmartphone, ReceiptText, CircleDollarSign, Wifi, WifiOff, ShoppingCart, Search, SlidersHorizontal, Printer, CheckCircle2, Clock3, Banknote, Smartphone, XCircle, LockKeyhole, RotateCcw } from 'lucide-react'
+import { CreditCard, MonitorSmartphone, ReceiptText, CircleDollarSign, Wifi, WifiOff, ShoppingCart, Search, SlidersHorizontal, Printer, CheckCircle2, Clock3, Banknote, Smartphone, XCircle, LockKeyhole, RotateCcw, ArrowLeft } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
 type Tab = 'overview'|'terminals'|'sales'|'closing'
-type Props = { events: EventItem[]; initialTab?: Tab; notify:(message:string)=>void }
+type Props = { events: EventItem[]; initialTab?: Tab; notify:(message:string)=>void; onNavigate?: (page: any) => void }
 
 type Terminal = {id:string;name:string;event:string;operator:string;status:'online'|'offline';battery:number;lastSync:string;sales:number;total:number}
 type Sale = {id:string;time:string;terminal:string;event:string;item:string;payment:'Crédito'|'Débito'|'Pix'|'Dinheiro';status:'Aprovada'|'Cancelada'|'Pendente';value:number}
@@ -24,7 +24,7 @@ const salesSeed:Sale[]=[
  {id:'#PDV-92837',time:'16:31',terminal:'POS-004',event:'SEM PARAR - EXPERIÊNCIA MÚSICA E NATUREZA',item:'Ingresso Inteira',payment:'Crédito',status:'Cancelada',value:180},
 ]
 
-export default function POSPage({events,initialTab='overview',notify}:Props){
+export default function POSPage({events,initialTab='overview',notify,onNavigate}:Props){
  const [tab,setTab]=useState<Tab>(initialTab)
  const [terminals,setTerminals]=useState(terminalSeed)
  const [sales,setSales]=useState(salesSeed)
@@ -40,6 +40,15 @@ export default function POSPage({events,initialTab='overview',notify}:Props){
  const toggleTerminal=(id:string)=>{setTerminals(t=>t.map(x=>x.id===id?{...x,status:x.status==='online'?'offline':'online',lastSync:'Agora'}:x));notify('Status do terminal atualizado.')}
  const tabs:[Tab,string][]=[['overview','Visão Geral'],['terminals','Terminais'],['sales','Vendas Presenciais'],['closing','Fechamento de Caixa']]
  return <>
+  <div className="flex items-center gap-2 mb-3">
+    <button
+      onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}
+      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+    >
+      <ArrowLeft size={14} className="text-[#06B6D4]"/>
+      <span>Voltar ao Dashboard</span>
+    </button>
+  </div>
   <div className="page-head pos-head"><div><p className="eyebrow">OPERAÇÃO PRESENCIAL</p><h1>Terminais POS</h1><p className="page-subtitle">Controle terminais, vendas presenciais e fechamento de caixa dos eventos.</p></div><div className="toolbar"><button className="secondary-btn" onClick={()=>notify('Sincronização solicitada para todos os terminais.')}><RotateCcw size={16}/>Sincronizar</button><button className="primary-btn" onClick={simulateSale}><ShoppingCart size={16}/>Nova venda PDV</button></div></div>
   <div className="finance-tabs">{tabs.map(([key,label])=><button key={key} className={tab===key?'active':''} onClick={()=>setTab(key)}>{label}</button>)}</div>
 

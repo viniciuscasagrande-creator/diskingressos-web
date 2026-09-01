@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import {
   ReceiptText, Search, Filter, Download, ArrowDownLeft, ArrowUpRight,
   CreditCard, Calendar, Eye, FileSpreadsheet, X, CheckCircle2,
-  Clock, AlertCircle, Sparkles, Building2, User
+  Clock, AlertCircle, Sparkles, Building2, User, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
@@ -77,6 +77,17 @@ export default function FinanceStatementPage({ events, notify, onNavigate }: Pro
 
   return (
     <div className="finance-dashboard-wrapper">
+      {/* Back to Dashboard bar */}
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => onNavigate ? onNavigate('finance-dashboard') : window.history.back()}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
+        </button>
+      </div>
+
       {/* Header Section */}
       <section className="finance-header-section card-surface">
         <div className="finance-header-left">

@@ -10,7 +10,7 @@ import {
   ClipboardCheck, MessageSquareText, GitBranch, Target, Star, Smile, Heart, MessageCircleWarning, TrendingUp,
   ThumbsUp, ThumbsDown, Eye, Archive, TicketCheck, LineChart, PieChart, Bot, Brain, Copy, DoorOpen, WifiOff,
   CalendarClock, ChartNoAxesCombined, Bell, ChevronLeft, ChevronDown, ListFilter, Grid, LayoutGrid, Download,
-  RotateCcw, ShoppingCart, SendHorizontal, Paperclip, Check, AlertOctagon, Terminal, Award, X, QrCode
+  RotateCcw, ShoppingCart, SendHorizontal, Paperclip, Check, AlertOctagon, Terminal, Award, X, QrCode, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
@@ -305,7 +305,17 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         {/* Topbar / Greeting */}
         <header className="ds-topbar">
           <div className="ds-topbar-left">
-            <h1>👋 Bem-vindo de volta, {producerName || 'Fernando'}!</h1>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => onNavigate ? onNavigate('profile-dashboard') : window.history.back()}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-200 border border-slate-700/80 transition cursor-pointer"
+                title="Voltar ao Painel Principal"
+              >
+                <ArrowLeft size={14} className="text-[#06B6D4]" />
+                <span>Voltar ao Dashboard</span>
+              </button>
+              <h1 className="m-0 text-xl font-bold">👋 Bem-vindo de volta, {producerName || 'Fernando'}!</h1>
+            </div>
             <p>Visão integrada e cockpit de alta performance do SAC Disk Service</p>
           </div>
 

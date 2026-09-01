@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CalendarDays, Home, Megaphone, Menu, WalletCards } from 'lucide-react'
+import { ArrowLeft, CalendarDays, Home, Megaphone, Menu, WalletCards } from 'lucide-react'
 import Header from './components/Header'
 import ModuleSidebar, { type ModuleKey, type PageKey } from './components/ModuleSidebar'
 import EventContextSidebar from './components/EventContextSidebar'
@@ -137,6 +137,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'finance-negotiations': 'Negociações Financeiras',
   'finance-refunds': 'Devoluções / Estornos',
   'finance-gateways': 'Gateway de Pagamentos',
+  'finance-pdv': 'Pontos de Venda (PDV)',
 
   // CONTABILIDADE
   'accounting-dashboard': 'Dashboard Contábil',
@@ -536,7 +537,51 @@ export default function App() {
       )}
 
       <div className={`module-titlebar ${mobileInternalHeaderPages.has(page) ? 'mobile-titlebar-hidden' : ''}`}>
-        <h1>{titleMap[page] || 'DiskIngressos'}</h1>
+        <div className="flex items-center gap-3">
+          {page !== 'profile-dashboard' && page !== 'global-dashboard' && (
+            <button
+              onClick={() => {
+                if (inEventContext && selectedEvent) {
+                  setSelectedEvent(null)
+                  setPage('events')
+                } else if (page === 'finance-dashboard' || page === 'finance-hub') {
+                  setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
+                } else if (page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread') {
+                  setPage('finance-dashboard')
+                } else if (page.startsWith('accounting')) {
+                  setPage('accounting-dashboard')
+                } else if (page.startsWith('marketing')) {
+                  setPage('marketing-dashboard')
+                } else if (page.startsWith('remarketing')) {
+                  setPage('remarketing-dashboard')
+                } else if (page.startsWith('sac')) {
+                  setPage('sac-hub')
+                } else if (page.startsWith('admin')) {
+                  setPage('admin-hub')
+                } else if (['lots', 'participants', 'edit-event', 'event-dashboard', 'new-event'].includes(page)) {
+                  setPage('events')
+                } else {
+                  setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
+                }
+                window.scrollTo({ top: 0 })
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#17212F] hover:bg-[#253245] text-slate-300 hover:text-white border border-slate-700/70 transition shadow-xs cursor-pointer select-none"
+              title="Voltar ao Painel Anterior"
+            >
+              <ArrowLeft size={14} className="text-[#06B6D4]" />
+              <span>
+                {page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread'
+                  ? page === 'finance-dashboard' || page === 'finance-hub'
+                    ? 'Voltar ao Início'
+                    : 'Voltar ao Dashboard'
+                  : inEventContext
+                  ? 'Voltar aos Eventos'
+                  : 'Voltar'}
+              </span>
+            </button>
+          )}
+          <h1>{titleMap[page] || 'DiskIngressos'}</h1>
+        </div>
         <div className="scope-pill">
           {inEventContext && selectedEvent
             ? `Evento ${selectedEvent.code}`
@@ -585,6 +630,7 @@ export default function App() {
             producerId={scopedProducerId}
             producerName={scopedProducerId === null ? 'Todas as produtoras' : (producers.find(p => p.id === scopedProducerId)?.name || 'Produtora')}
             notify={notify}
+            onNavigate={navigate}
           />
         )}
         {page === 'events' && (
@@ -605,7 +651,8 @@ export default function App() {
         {page === 'edit-event' && <EventFormPage mode="edit" event={selectedEvent} onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'lots' && <LotsPage events={visibleEvents} selectedEvent={selectedEvent} onSelect={setSelectedEvent} onBack={() => setPage('events')} />}
         {page === 'participants' && <ParticipantsPage events={visibleEvents} participants={visibleParticipants} onToggleCheckin={toggleCheckin} />}
-        {page === 'facial' && <FacialPage participants={visibleParticipants} />}
+        {page === 'facial' && <FacialPage participants={visibleParticipants} onNavigate={navigate} />}
+        {page === 'pos' && <POSPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
 
         {/* EVENT CONTEXT */}
         {selectedEvent && eventContextPages.has(page) && visibleEvents.some(e => e.id === selectedEvent.id) && (
@@ -717,7 +764,7 @@ export default function App() {
         {(page === 'finance-spread-simulator' || (page as string) === 'simulador-spread') && (
           <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
-        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos', 'fin-reports', 'relatorios-financeiros'].includes(page) && (
+        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos', 'fin-reports', 'relatorios-financeiros', 'finance-pdv', 'fin-pdv', 'pdv'].includes(page) && (
           <AdvancedTaxesRouter
             activeModule={page}
             producerId={scopedProducerId ?? undefined}

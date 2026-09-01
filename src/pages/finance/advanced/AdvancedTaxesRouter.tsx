@@ -1,75 +1,103 @@
 import React from 'react'
-import { SimuladorSpreadModule } from '../SimuladorSpreadModule'
-import FinanceReconciliationPage from '../../FinanceReconciliationPage'
-import FinanceSpread360Page from '../../FinanceSpread360Page'
+import FinanceSimulatorPage from '../FinanceSimulatorPage'
+import FinanceConciliationPage from '../FinanceConciliationPage'
+import FinanceSpreadPage from '../FinanceSpreadPage'
 import FinanceBankAccountsPage from '../../FinanceBankAccountsPage'
-import FinancePayments360Page from '../../FinancePayments360Page'
-import FinanceOperations360Page from '../../FinanceOperations360Page'
-import FinanceSettlementHubPage from '../FinanceSettlementHubPage'
-import FinanceDisputesHubPage from '../FinanceDisputesHubPage'
-import FinanceAdvancedCommandPage from '../FinanceAdvancedCommandPage'
+import FinancePayMethodsPage from '../FinancePayMethodsPage'
+import FinanceCustomPayPage from '../FinanceCustomPayPage'
+import FinanceNegotiationsPage from '../FinanceNegotiationsPage'
+import FinanceOperatorsGatewaysPage from '../FinanceOperatorsGatewaysPage'
+import FinanceIntelligencePage from '../FinanceIntelligencePage'
+import FinanceRefundsPage from '../FinanceRefundsPage'
+import FinanceAdvancedPage from '../FinanceAdvancedPage'
+import FinanceSplitPage from '../FinanceSplitPage'
+import FinancePDVPage from '../FinancePDVPage'
 import FinanceReportsExecutivePage from '../FinanceReportsExecutivePage'
 
-export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props }: any) {
+export default function AdvancedTaxesRouter({ activeModule, onNavigate, onBack, ...props }: any) {
+  const handleBack = onBack || (() => onNavigate?.('finance-dashboard'))
+
   switch (activeModule) {
     case 'fin-advanced':
     case 'finance-advanced':
     case 'advanced':
-      return <FinanceAdvancedCommandPage onNavigate={onNavigate} {...props} />
+      return <FinanceAdvancedPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
+    case 'fin-pdv':
+    case 'finance-pdv':
+    case 'pdv':
+      return <FinancePDVPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-spread':
-    case 'simulador-spread':
     case 'finance-spread':
     case 'spread':
-      return <SimuladorSpreadModule onBack={props.onBack || (() => onNavigate?.('hub'))} notify={props.notify} />
+      return <FinanceSpreadPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
+    case 'simulador-spread':
+    case 'finance-spread-simulator':
+    case 'simulador':
+      return <FinanceSimulatorPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-conciliacao':
     case 'conciliacao-bancaria':
     case 'finance-reconciliation':
     case 'conciliacao':
-      return <FinanceReconciliationPage onBack={props.onBack || (() => onNavigate?.('hub'))} notify={props.notify} onNavigate={onNavigate} />
+      return <FinanceConciliationPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-split':
     case 'split-financeiro':
     case 'finance-split':
-      return <FinanceSettlementHubPage initialTab="split" onNavigate={onNavigate} {...props} />
+    case 'split':
+      return <FinanceSplitPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-bank-accounts':
     case 'contas-bancarias':
     case 'finance-bank-accounts':
+    case 'fin-contas':
       return <FinanceBankAccountsPage events={props.events || []} notify={props.notify} onNavigate={onNavigate} />
+
     case 'fin-methods':
     case 'metodos-pagamento':
     case 'finance-methods':
-      return <FinancePayments360Page initialTab="methods" notify={props.notify} {...props} />
+      return <FinancePayMethodsPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-custom':
     case 'pagamentos-customizados':
     case 'finance-custom':
-      return <FinancePayments360Page initialTab="custom" notify={props.notify} {...props} />
+      return <FinanceCustomPayPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-negotiations':
     case 'negociacoes-financeiras':
     case 'finance-negotiations':
-      return <FinancePayments360Page initialTab="negotiations" notify={props.notify} {...props} />
+      return <FinanceNegotiationsPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-operators':
     case 'operadoras-cartao':
     case 'finance-operators':
     case 'finance-rates':
-      return <FinancePayments360Page initialTab="operators" notify={props.notify} {...props} />
     case 'fin-gateways':
     case 'gateway-pagamentos':
     case 'finance-gateways':
-      return <FinancePayments360Page initialTab="gateways" notify={props.notify} {...props} />
+      return <FinanceOperatorsGatewaysPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-inteligencia':
     case 'inteligencia-financeira':
     case 'finance-intelligence':
-      return <FinanceOperations360Page initialTab="intelligence" notify={props.notify} {...props} />
+      return <FinanceIntelligencePage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-refunds':
     case 'devolucoes-estornos':
     case 'finance-refunds':
     case 'finance-disputes':
     case 'finance-chargebacks':
-      return <FinanceDisputesHubPage initialTab="refunds" notify={props.notify} {...props} />
+      return <FinanceRefundsPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+
     case 'fin-reports':
     case 'relatorios-financeiros':
     case 'finance-reports':
-      return <FinanceReportsExecutivePage events={props.events || []} producerId={props.producerId} notify={props.notify} onBack={() => onNavigate?.('finance-dashboard')} />
+      return <FinanceReportsExecutivePage events={props.events || []} producerId={props.producerId} notify={props.notify} onBack={handleBack} />
+
     default:
-      return null
+      return <FinanceAdvancedPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
   }
 }

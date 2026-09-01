@@ -7,7 +7,7 @@ import {
   LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
-  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent
+  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -19,7 +19,7 @@ export type PageKey =
   // FINANCEIRO
   | 'finance-dashboard' | 'finance-hub' | 'finance' | 'finance-statement' | 'finance-cashflow' | 'finance-receivables' | 'finance-payables' | 'finance-spread-simulator'
   | 'finance-payouts' | 'finance-advance' | 'finance-reconciliation' | 'finance-bank-accounts' | 'finance-expenses' | 'finance-bordero' | 'finance-consolidated'
-  | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds' | 'finance-gateways' | 'finance-advanced' | 'finance-rates'
+  | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds' | 'finance-gateways' | 'finance-advanced' | 'finance-rates' | 'finance-pdv'
   | 'finance-accounting' | 'finance-cost-centers' | 'finance-chart-accounts' | 'finance-accounting-entries' | 'finance-obligations' | 'finance-dre' | 'finance-borderos' | 'finance-signatures' | 'finance-closing'
   // CONTABILIDADE
   | 'accounting-dashboard' | 'accounting-chart' | 'accounting-journal' | 'accounting-ledger' | 'accounting-entries' | 'accounting-cost-centers'
@@ -65,11 +65,14 @@ const mainItems: Item[] = [
   { key: 'admin-hub', label: 'Administração', icon: Building2 },
 ]
 
-// 2. FINANCEIRO: REDUZIDO AOS 5 PILARES PRINCIPAIS
+// 2. FINANCEIRO: MÓDULOS DE GESTÃO E CAIXA
 const cashFinanceItems: Item[] = [
-  { key: 'finance-dashboard', label: 'Saldos, Extrato & Repasses', icon: WalletCards, badge: 'Caixa' },
+  { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards },
+  { key: 'finance-pdv', label: 'Pontos de Venda (PDV)', icon: Store },
   { key: 'finance-advance', label: 'Antecipação & Spread', icon: Zap },
   { key: 'finance-split', label: 'Split & Coprodução', icon: Split },
+  { key: 'finance-operators', label: 'Operadoras & Gateways', icon: ShieldCheck },
+  { key: 'finance-negotiations', label: 'Negociações & Taxas', icon: Building2 },
   { key: 'finance-methods', label: 'Meios de Pagamento & Taxas', icon: CreditCard },
   { key: 'finance-bordero', label: 'Borderô & Relatórios DRE', icon: FileSignature },
 ]

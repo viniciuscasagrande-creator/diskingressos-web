@@ -71,13 +71,16 @@ export const SplitFinanceiroModule: React.FC<{ onBack: () => void }> = ({ onBack
 
   return (
     <div className="w-full space-y-6">
-      <button
-        onClick={onBack}
-        className="flex items-center gap-1.5 text-xs font-bold text-[#1677FF] hover:underline"
-      >
-        <ArrowLeft size={16} />
-        Voltar para o Hub Financeiro
-      </button>
+      {/* Back Button */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => (onBack ? onBack() : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
+        </button>
+      </div>
 
       <PageHeader
         eyebrow="ADVANCED & INTELIGÊNCIA"

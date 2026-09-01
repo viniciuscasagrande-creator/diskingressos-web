@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import {
   FileSpreadsheet, FileText, Download, TrendingUp, DollarSign,
   Filter, Calendar, ChevronRight, CheckCircle2, AlertCircle,
-  Building2, Landmark, PieChart, BarChart3, Scale, Receipt
+  Building2, Landmark, PieChart, BarChart3, Scale, Receipt, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../../data/events'
 
@@ -104,6 +104,17 @@ export default function FinanceReportsExecutivePage({ events, producerId, produc
 
   return (
     <section className="growth-page">
+      {/* Back Button */}
+      <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button
+          onClick={() => (onBack ? onBack() : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
+        </button>
+      </div>
+
       {/* 1. Header & Actions */}
       <div className="growth-intro" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div>

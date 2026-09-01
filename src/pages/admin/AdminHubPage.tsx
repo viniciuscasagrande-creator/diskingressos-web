@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Building2, ShieldCheck, UserCog, ScrollText, LockKeyhole, 
-  ArrowRight, Shield, KeyRound, Sliders, Users, FileText
+  ArrowRight, Shield, KeyRound, Sliders, Users, FileText, ArrowLeft
 } from 'lucide-react';
 import type { NavigationPage } from '../../types/producer';
 import { PageHeader } from '../../components/ui/PageHeader';
@@ -62,6 +62,16 @@ export const AdminHubPage: React.FC<AdminHubPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="w-full space-y-6">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => (onNavigate ? onNavigate('profile-dashboard' as any) : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard</span>
+        </button>
+      </div>
+
       <PageHeader
         eyebrow="GOVERNANÇA & SEGURANÇA"
         title="Central Administrativa"

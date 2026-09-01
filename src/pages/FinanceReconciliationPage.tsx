@@ -111,16 +111,17 @@ export default function FinanceReconciliationPage({ events, notify, onNavigate, 
   const activeCount = divergences.filter(d => d.status !== 'Conciliado').length
 
   return (
-    <div className="w-full space-y-4">
-      {onBack && (
+    <div className="ds-finance-page-wrapper w-full space-y-4">
+      {/* Back Button */}
+      <div className="flex items-center gap-2 mb-3">
         <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 text-xs font-bold text-[#2563eb] hover:underline mb-2"
+          onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
         >
-          <ArrowLeft size={16} />
-          Voltar para o Hub Financeiro
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
         </button>
-      )}
+      </div>
 
       {/* Top Header Card */}
       <div className="ds-finance-header-card">

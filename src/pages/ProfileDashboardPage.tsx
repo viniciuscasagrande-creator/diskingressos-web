@@ -16,7 +16,7 @@ type Shortcut={label:string;description:string;page:PageKey;icon:any;area:'event
 
 const shortcuts:Shortcut[]=[
  {label:'Meus Eventos',description:'Acesse os eventos disponíveis para sua conta.',page:'events',icon:CalendarDays,area:'events'},
- {label:'Financeiro',description:'Saldo, vendas, repasses e extratos.',page:'finance-hub',icon:WalletCards,area:'finance'},
+ {label:'Dashboard Financeiro',description:'Saldo consolidado, vendas, repasses e extratos.',page:'finance-hub',icon:WalletCards,area:'finance'},
  {label:'Terminais POS',description:'Operação presencial e fechamento de caixa.',page:'pos',icon:MonitorSmartphone,area:'pos'},
  {label:'Marketing',description:'Campanhas, pixels, links e automações.',page:'marketing-hub',icon:Megaphone,area:'marketing'},
  {label:'Remarketing',description:'Recuperação, públicos e jornadas.',page:'remarketing-hub',icon:TrendingUp,area:'remarketing'},

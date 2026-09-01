@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { CalendarDays, Layers3, ShoppingCart, Ticket, Users, ScanLine, MonitorSmartphone, HandCoins, WalletCards, RefreshCw } from 'lucide-react'
+import { CalendarDays, Layers3, ShoppingCart, Ticket, Users, ScanLine, MonitorSmartphone, HandCoins, WalletCards, RefreshCw, ArrowLeft } from 'lucide-react'
 import { getOperationalSummary, type OperationalSummary } from '../services/api'
 
 const empty:OperationalSummary={events:0,lots:0,orders:0,tickets:0,participants:0,checkins:0,terminals:0,payouts:0,balanceCents:0}
 const brl=(cents:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(cents/100)
 
-type Props={producerId:number|null;producerName:string;notify:(message:string)=>void}
-export default function OperationsPage({producerId,producerName,notify}:Props){
+type Props={producerId:number|null;producerName:string;notify:(message:string)=>void;onNavigate?:(page:any)=>void}
+export default function OperationsPage({producerId,producerName,notify,onNavigate}:Props){
  const [data,setData]=useState<OperationalSummary>(empty),[loading,setLoading]=useState(true)
  const load=async()=>{setLoading(true);try{setData(await getOperationalSummary(producerId||undefined))}catch(e){notify(e instanceof Error?e.message:'Falha ao carregar núcleo operacional.')}finally{setLoading(false)}}
  useEffect(()=>{void load()},[producerId])
@@ -16,6 +16,15 @@ export default function OperationsPage({producerId,producerName,notify}:Props){
   {label:'Terminais POS',value:data.terminals,icon:MonitorSmartphone},{label:'Repasses',value:data.payouts,icon:HandCoins}
  ]
  return <section className="operations-page">
+   <div className="flex items-center gap-2 mb-3">
+     <button
+       onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}
+       className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+     >
+       <ArrowLeft size={14} className="text-[#06B6D4]"/>
+       <span>Voltar ao Dashboard</span>
+     </button>
+   </div>
    <div className="page-heading-row"><div><p className="eyebrow">NÚCLEO OPERACIONAL</p><h2>Operação integrada</h2><p className="muted">Dados reais da API para <strong>{producerName}</strong>, sempre respeitando o escopo da produtora autenticada.</p></div><button className="secondary-btn" onClick={()=>void load()} disabled={loading}><RefreshCw size={17}/>{loading?'Atualizando...':'Atualizar dados'}</button></div>
    <div className="ops-balance"><div className="ops-icon"><WalletCards size={24}/></div><div><span>Saldo operacional liquidado</span><strong>{brl(data.balanceCents)}</strong><small>Entradas liquidadas menos saídas liquidadas</small></div></div>
    <div className="ops-grid">{cards.map(({label,value,icon:Icon})=><article className="ops-card" key={label}><div className="ops-card-icon"><Icon size={21}/></div><div><span>{label}</span><strong>{loading?'—':value.toLocaleString('pt-BR')}</strong></div></article>)}</div>

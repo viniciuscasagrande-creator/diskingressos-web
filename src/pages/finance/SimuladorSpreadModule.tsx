@@ -43,15 +43,16 @@ export const SimuladorSpreadModule: React.FC<SimuladorSpreadModuleProps> = ({ on
 
   return (
     <div className="w-full space-y-4">
-      {onBack && (
+      {/* Back Button */}
+      <div className="flex items-center gap-2 mb-2">
         <button
-          onClick={onBack}
-          className="flex items-center gap-1.5 text-xs font-bold text-[#2563eb] hover:underline mb-2"
+          onClick={() => (onBack ? onBack() : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
         >
-          <ArrowLeft size={16} />
-          Voltar para o Hub Financeiro
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
         </button>
-      )}
+      </div>
 
       {/* Top Header Card */}
       <div className="ds-finance-header-card">

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   ArrowRightLeft, CheckCircle2, Clock, DollarSign,
-  Plus, RefreshCw, Send, ShieldCheck, TrendingUp, AlertTriangle, X, Play
+  Plus, RefreshCw, Send, ShieldCheck, TrendingUp, AlertTriangle, X, Play, ArrowLeft
 } from 'lucide-react'
 import {
   getFinanceSettlementSummary, getFinanceSplits, createFinanceSplit, updateFinanceSplit, simulateFinanceSplit,
@@ -25,7 +25,7 @@ type Props = {
 const money = (c = 0) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c / 100)
 const pct = (bps = 0) => `${(bps / 100).toFixed(2)}%`
 
-export default function FinanceSettlementHubPage({ producerId, eventId, initialTab = 'split', notify }: Props) {
+export default function FinanceSettlementHubPage({ producerId, eventId, initialTab = 'split', notify, onBack }: Props) {
   const [tab, setTab] = useState<Tab>(initialTab)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -74,6 +74,17 @@ export default function FinanceSettlementHubPage({ producerId, eventId, initialT
 
   return (
     <div className="finset-page">
+      {/* Back Button */}
+      <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <button
+          onClick={() => (onBack ? onBack() : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
+        </button>
+      </div>
+
       <header className="finset-hero">
         <div>
           <span>FINANCEIRO 360° · FASE 20.3</span>

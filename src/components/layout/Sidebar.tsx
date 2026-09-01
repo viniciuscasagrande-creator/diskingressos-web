@@ -322,8 +322,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
     'fin-antecipacoes', 'fin-extrato', 'fin-despesas', 
     'fin-contas', 'fin-bordero', 'fin-negociacoes', 
     'fin-advanced', 'fin-split', 'fin-inteligencia', 
-    'fin-conciliacao', 'fin-spread', 'saldo', 'vendas', 
-    'recebimentos', 'repasses', 'conciliacao', 'fluxo-caixa', 'extrato'
+    'fin-conciliacao', 'fin-spread', 'simulador-spread',
+    'fin-methods', 'fin-custom', 'fin-operators', 'fin-gateways',
+    'fin-refunds', 'fin-pdv', 'fin-reports',
+    'saldo', 'vendas', 'recebimentos', 'repasses', 'conciliacao',
+    'fluxo-caixa', 'extrato', 'finance', 'finance-dashboard',
+    'finance-hub', 'finance-statement', 'finance-cashflow',
+    'finance-receivables', 'finance-payables', 'finance-spread-simulator',
+    'finance-payouts', 'finance-advance', 'finance-reconciliation',
+    'finance-bank-accounts', 'finance-expenses', 'finance-bordero',
+    'finance-spread', 'finance-split', 'finance-methods', 'finance-reports',
+    'finance-intelligence', 'finance-custom', 'finance-operators',
+    'finance-negotiations', 'finance-refunds', 'finance-gateways',
+    'finance-advanced', 'finance-pdv'
   ].includes(currentPage);
 
   const isPOSActive = [
@@ -551,7 +562,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {/* Financeiro Submenu */}
             {!collapsed && financeiroOpen && (
-              <div className="ml-3 pl-3 border-l border-slate-700/60 my-1 space-y-0.5">
+              <div className="ml-3 pl-3 border-l border-slate-700/60 my-1 space-y-0.5 max-h-[420px] overflow-y-auto sidebar-scroll pr-1">
                 <button
                   onClick={() => onNavigate('fin-hub')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
@@ -561,7 +572,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   }`}
                 >
                   <LayoutGrid size={13} className="text-[#06B6D4]" />
-                  <span>Hub Financeiro</span>
+                  <span>Dashboard Financeiro</span>
                 </button>
 
                 <button
@@ -616,6 +627,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span>Extrato Detalhado</span>
                 </button>
 
+                <button
+                  onClick={() => onNavigate('fin-pdv')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-pdv' || (currentPage as string) === 'finance-pdv'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  <span>Pontos de Venda (PDV)</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('fin-refunds')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-refunds' || (currentPage as string) === 'finance-refunds'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+                  <span>Devoluções / Estornos</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('fin-despesas')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-despesas'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Despesas</span>
+                </button>
+
                 {can('finance', 'viewBankAccounts') && (
                   <button
                     onClick={() => onNavigate('fin-contas')}
@@ -642,9 +689,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span>Borderô / Assinaturas</span>
                 </button>
 
-                {/* Header Seção: OPERAÇÕES AVANÇADAS */}
+                {/* Header Seção: OPERAÇÕES AVANÇADAS & GESTÃO */}
                 <div className="pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-orange-400/90 pl-1">
-                  Operações Avançadas
+                  Operações Avançadas & Gestão
                 </div>
 
                 <button
@@ -659,6 +706,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span>Financeiro Advanced</span>
                 </button>
 
+                <button
+                  onClick={() => onNavigate('fin-conciliacao')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-conciliacao'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+                  <span>Conciliação Bancária</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('fin-spread')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-spread'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-pink-400" />
+                  <span>Financeiro Spread</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('simulador-spread')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'simulador-spread' || (currentPage as string) === 'finance-spread-simulator'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  <span>Simulador de Spread</span>
+                </button>
+
                 {can('finance', 'manageSplit') && (
                   <button
                     onClick={() => onNavigate('fin-split')}
@@ -668,7 +751,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                     }`}
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
                     <span>Split Financeiro</span>
                   </button>
                 )}
@@ -681,20 +764,56 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
                   <span>Inteligência Financeira</span>
                 </button>
 
                 <button
-                  onClick={() => onNavigate('fin-conciliacao')}
+                  onClick={() => onNavigate('fin-operators')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-conciliacao'
+                    currentPage === 'fin-operators' || (currentPage as string) === 'finance-operators'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
-                  <span>Conciliação Bancária</span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
+                  <span>Operadoras & Gateways</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('fin-methods')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-methods' || (currentPage as string) === 'finance-methods'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  <span>Métodos de Pagamento</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('fin-custom')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-custom' || (currentPage as string) === 'finance-custom'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+                  <span>Pagamentos Customizados</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('fin-negociacoes')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'fin-negociacoes' || (currentPage as string) === 'finance-negotiations'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-teal-400" />
+                  <span>Negociações Financeiras</span>
                 </button>
               </div>
             )}
