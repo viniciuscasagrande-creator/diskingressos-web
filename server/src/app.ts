@@ -114,6 +114,7 @@ app.use('/api/operations', operationsRouter)
 app.use('/api/marketing', marketingRouter)
 app.use('/api/automation', automationRouter)
 app.use('/api/support', supportRouter)
+app.use('/api/service', supportRouter)
 app.use('/api/communication', communicationRouter)
 app.use('/api/audit', auditRouter)
 
