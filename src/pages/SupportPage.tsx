@@ -10,7 +10,7 @@ import {
   ClipboardCheck, MessageSquareText, GitBranch, Target, Star, Smile, Heart, MessageCircleWarning, TrendingUp,
   ThumbsUp, ThumbsDown, Eye, Archive, TicketCheck, LineChart, PieChart, Bot, Brain, Copy, DoorOpen, WifiOff,
   CalendarClock, ChartNoAxesCombined, Bell, ChevronLeft, ChevronDown, ListFilter, Grid, LayoutGrid, Download,
-  RotateCcw, ShoppingCart, SendHorizontal, Paperclip, Check, AlertOctagon, Terminal, Award
+  RotateCcw, ShoppingCart, SendHorizontal, Paperclip, Check, AlertOctagon, Terminal, Award, X, QrCode
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
@@ -159,7 +159,6 @@ const mockCustomer360: Customer360Data = {
   ]
 }
 
-// Mock Submodules Data
 const mockTicketsList = [
   { id: 1, code: 'DS-2026-001', customer: 'Mariana Costa', channel: 'WhatsApp', subject: 'Dificuldade para acessar QR Code no app', priority: 'P1', status: 'EM_ATENDIMENTO', agent: 'Lucas SAC', slaDue: '18 min', event: 'Festival XPTO 2026' },
   { id: 2, code: 'DS-2026-002', customer: 'Rodrigo Mendonça', channel: 'Email', subject: 'Comprovante de meia-entrada enviado', priority: 'P3', status: 'EM_ABERTO', agent: 'Fila N1', slaDue: '1h 45m', event: 'Rock Arena Festival 2026' },
@@ -212,13 +211,14 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   const [customer360, setCustomer360] = useState<Customer360Data | null>(mockCustomer360)
   const [searchLoading, setSearchLoading] = useState(false)
 
+  // Order Details Modal State
+  const [selectedOrderModal, setSelectedOrderModal] = useState<any | null>(null)
+
   // Submodules Filter States
   const [ticketFilter, setTicketFilter] = useState<'TODOS' | 'P1' | 'ABERTOS' | 'ATRASADOS' | 'RESOLVIDOS'>('TODOS')
   const [selectedConv, setSelectedConv] = useState(mockConversations[0])
   const [chatInput, setChatInput] = useState('')
   const [selectedKnowledgeCat, setSelectedKnowledgeCat] = useState('TODAS')
-
-  // Auto-routing toggle
   const [autoRouting, setAutoRouting] = useState(true)
 
   const handleGlobalSearch = (queryOverride?: string) => {
@@ -254,7 +254,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
     }, 200)
   }
 
-  const handleOperatorAction = (action: string) => {
+  const handleOperatorAction = (action: string, orderData?: any) => {
     if (action === 'OPEN_TICKET') {
       setActiveTab('new')
     } else if (action === 'SEND_WHATSAPP') {
@@ -267,7 +267,9 @@ export default function SupportPage({ events, producerId, producerName, mode = '
     } else if (action === 'REQUEST_REFUND') {
       notify('Solicitação de estorno protocolada no gateway Efí Pix com sucesso!')
     } else if (action === 'VIEW_ORDER') {
-      notify('Abrindo detalhes do pedido #DI-984221!')
+      const orderToOpen = orderData || customer360?.orders[0] || mockCustomer360.orders[0]
+      setSelectedOrderModal(orderToOpen)
+      notify(`Detalhes do pedido #${orderToOpen.order_number} abertos na tela!`)
     }
   }
 
@@ -728,7 +730,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                         </div>
 
                         <div className="ds-cockpit-order-actions">
-                          <button onClick={() => handleOperatorAction('VIEW_ORDER')}>Ver pedido</button>
+                          <button onClick={() => handleOperatorAction('VIEW_ORDER', o)}>Ver pedido</button>
                           <button onClick={() => handleOperatorAction('SEND_WHATSAPP')}>Enviar WhatsApp</button>
                           <button onClick={() => handleOperatorAction('RESEND_EMAIL')}>Reenviar Ingressos</button>
                         </div>
@@ -1860,6 +1862,126 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <Plus size={16} /> Protocolar Chamado com SLA Ativo
               </button>
             </form>
+          </div>
+        )}
+
+        {/* ========================================================
+            MODAL DE DETALHES DO PEDIDO
+            ======================================================== */}
+        {selectedOrderModal && (
+          <div className="ds-modal-backdrop" onClick={() => setSelectedOrderModal(null)}>
+            <div className="ds-order-modal" onClick={e => e.stopPropagation()}>
+              
+              <div className="ds-order-modal-header">
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <span className="status-pill green">{selectedOrderModal.payment_status || 'APROVADO'}</span>
+                    <span className="ds-badge blue">Pedido #{selectedOrderModal.order_number}</span>
+                  </div>
+                  <h2>Detalhes do Pedido #{selectedOrderModal.order_number}</h2>
+                  <p>{selectedOrderModal.event_name} • Realizado {selectedOrderModal.created_at || 'Hoje às 10:30'}</p>
+                </div>
+                <button className="ds-order-modal-close" onClick={() => setSelectedOrderModal(null)}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="ds-order-modal-body">
+                {/* 1. Dados do Comprador */}
+                <div>
+                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Titular da Compra</span>
+                  <div className="ds-order-info-grid">
+                    <div className="ds-order-info-box">
+                      <span>Nome Completo</span>
+                      <strong>{customer360?.customer.name || 'João Silva Oliveira'}</strong>
+                    </div>
+                    <div className="ds-order-info-box">
+                      <span>CPF / Documento</span>
+                      <strong>{customer360?.customer.cpfMasked || '***.***.***-00'}</strong>
+                    </div>
+                    <div className="ds-order-info-box">
+                      <span>Telefone & E-mail</span>
+                      <strong>{customer360?.customer.phoneMasked || '(41) *****-8899'}</strong>
+                      <div style={{ fontSize: '11px', color: '#64748b' }}>{customer360?.customer.emailMasked || 'jo***@email.com'}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Ingressos do Pedido */}
+                <div>
+                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Vouchers & Ingressos Emitidos ({selectedOrderModal.ingresso_count || 2})</span>
+                  <div className="ds-order-tickets-list">
+                    {(customer360?.ingressos.filter(i => i.order_number === selectedOrderModal.order_number) || [
+                      { id: 1, ticket_code: 'ING-88101', event_name: selectedOrderModal.event_name, status: 'ACTIVE', checkin_status: 'NÃO UTILIZADO' },
+                      { id: 2, ticket_code: 'ING-88102', event_name: selectedOrderModal.event_name, status: 'ACTIVE', checkin_status: 'NÃO UTILIZADO' }
+                    ]).map(ing => (
+                      <div key={ing.id} className="ds-order-ticket-row">
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <strong style={{ fontSize: '14px', color: '#0f172a' }}>{ing.ticket_code}</strong>
+                            <span className="ds-badge green">{ing.status}</span>
+                          </div>
+                          <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>Pista Premium • Inteira • Check-in: <b>{ing.checkin_status}</b></div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button onClick={() => notify(`Visualizando QR Code em alta resolução para ${ing.ticket_code}!`)} className="ds-operator-btn" style={{ padding: '4px 10px', fontSize: '11px' }}>
+                            <QrCode size={13} /> Ver QR Code
+                          </button>
+                          <button onClick={() => notify(`Voucher ${ing.ticket_code} enviado para o WhatsApp!`)} className="ds-operator-btn primary" style={{ padding: '4px 10px', fontSize: '11px' }}>
+                            <Phone size={13} /> Enviar
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Extrato Financeiro & Gateway */}
+                <div>
+                  <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', display: 'block', marginBottom: '6px' }}>Extrato Financeiro da Transação</span>
+                  <div className="ds-order-info-grid">
+                    <div className="ds-order-info-box">
+                      <span>Método de Pagamento</span>
+                      <strong>{selectedOrderModal.payment_method || 'PIX (Efí Bank)'}</strong>
+                    </div>
+                    <div className="ds-order-info-box">
+                      <span>ID da Transação E2E</span>
+                      <strong style={{ fontSize: '11px', fontFamily: 'monospace' }}>E00416968202609011030a8f9b2c3d4e5</strong>
+                    </div>
+                    <div className="ds-order-info-box">
+                      <span>Valor Total Pago</span>
+                      <strong style={{ fontSize: '16px', color: '#059669' }}>R$ {(selectedOrderModal.total_amount || 480).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div className="ds-order-modal-footer">
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => notify(`Ingressos do pedido #${selectedOrderModal.order_number} reenviados por WhatsApp!`)} className="ds-operator-btn" style={{ color: '#16a34a', borderColor: '#bbf7d0', background: '#f0fdf4' }}>
+                    <Phone size={14} /> Reenviar WhatsApp
+                  </button>
+                  <button onClick={() => notify(`Ingressos do pedido #${selectedOrderModal.order_number} reenviados por e-mail!`)} className="ds-operator-btn" style={{ color: '#2563eb', borderColor: '#bfdbfe', background: '#eff6ff' }}>
+                    <Mail size={14} /> Reenviar E-mail
+                  </button>
+                  <button onClick={() => notify(`Download do lote de vouchers PDF iniciado!`)} className="ds-operator-btn">
+                    <Download size={14} /> Baixar PDF
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => notify(`Estorno integral solicitado para o pedido #${selectedOrderModal.order_number}!`)} className="ds-operator-btn" style={{ color: '#dc2626', borderColor: '#fecaca', background: '#fef2f2' }}>
+                    <RotateCcw size={14} /> Solicitar Reembolso
+                  </button>
+                  <button onClick={() => setSelectedOrderModal(null)} className="ds-search360-btn" style={{ background: '#475569' }}>
+                    Fechar
+                  </button>
+                </div>
+              </div>
+
+            </div>
           </div>
         )}
 
