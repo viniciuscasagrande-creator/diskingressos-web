@@ -4,11 +4,11 @@ import {
   RefreshCw, CheckCircle2, MessageCircle, Mail, Phone, Globe, ShieldAlert,
   Send, UserCheck, Sparkles, Filter, ChevronRight, ArrowRight, ExternalLink,
   Flame, HelpCircle, FileText, CheckCheck, PlayCircle, XCircle, AlertCircle, Headphones, Link2, Sparkle,
-  Layers3, ArrowRightLeft, UserPlus, CheckSquare
+  Layers3, ArrowRightLeft, UserPlus, CheckSquare, Gauge, Calendar, BellRing, SlidersHorizontal, Zap
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
-export type ServiceTab = 'dashboard' | 'tickets' | 'new' | 'incidents' | 'knowledge' | 'teams' | 'client360'
+export type ServiceTab = 'dashboard' | 'tickets' | 'new' | 'sla' | 'incidents' | 'knowledge' | 'teams' | 'client360'
 
 interface TicketItem {
   id: number
@@ -28,6 +28,8 @@ interface TicketItem {
   queueName: string
   slaResponseMinutes: number
   slaResolutionMinutes: number
+  slaProgressPercent: number
+  slaTimeRemaining: string
   createdAt: string
   firstResponseAt?: string
   resolvedAt?: string
@@ -88,6 +90,65 @@ interface QueueItem {
   openTickets: number
 }
 
+interface SLAPolicy {
+  id: string
+  priority: 'P1' | 'P2' | 'P3' | 'P4'
+  name: string
+  example: string
+  firstResponseMinutes: number
+  resolutionMinutes: number
+  calendar: '24x7_EVENT' | 'BUSINESS_HOURS'
+  escalateSupervisorPercent: number
+  escalateManagerPercent: number
+}
+
+const initialSLAPolicies: SLAPolicy[] = [
+  {
+    id: 'sla-p1',
+    priority: 'P1',
+    name: 'P1 - Crítica (Portão & Catracas)',
+    example: 'Evento em andamento, catraca offline, acesso bloqueado',
+    firstResponseMinutes: 15,
+    resolutionMinutes: 120,
+    calendar: '24x7_EVENT',
+    escalateSupervisorPercent: 70,
+    escalateManagerPercent: 85
+  },
+  {
+    id: 'sla-p2',
+    priority: 'P2',
+    name: 'P2 - Alta (Ingresso & Pagamento)',
+    example: 'Ingresso não recebido < 24h, erro de checkout Pix',
+    firstResponseMinutes: 60,
+    resolutionMinutes: 360,
+    calendar: '24x7_EVENT',
+    escalateSupervisorPercent: 70,
+    escalateManagerPercent: 85
+  },
+  {
+    id: 'sla-p3',
+    priority: 'P3',
+    name: 'P3 - Média (Titularidade & Dúvidas)',
+    example: 'Troca de titularidade, informações sobre setores',
+    firstResponseMinutes: 240,
+    resolutionMinutes: 1440,
+    calendar: 'BUSINESS_HOURS',
+    escalateSupervisorPercent: 70,
+    escalateManagerPercent: 85
+  },
+  {
+    id: 'sla-p4',
+    priority: 'P4',
+    name: 'P4 - Baixa (Sugestões & Feedbacks)',
+    example: 'Dúvidas sobre eventos futuros (> 30 dias), sugestões',
+    firstResponseMinutes: 720,
+    resolutionMinutes: 2880,
+    calendar: 'BUSINESS_HOURS',
+    escalateSupervisorPercent: 70,
+    escalateManagerPercent: 85
+  }
+]
+
 const initialQueues: QueueItem[] = [
   { id: 1, name: 'Reenvio & Ingressos', code: 'QUEUE_TICKETS', strategy: 'ROUND_ROBIN', agentsCount: 4, openTickets: 14 },
   { id: 2, name: 'Pagamentos & Pix', code: 'QUEUE_PAYMENTS', strategy: 'LEAST_LOAD', agentsCount: 3, openTickets: 6 },
@@ -114,6 +175,8 @@ const mockTickets: TicketItem[] = [
     queueName: 'Reenvio & Ingressos',
     slaResponseMinutes: 60,
     slaResolutionMinutes: 360,
+    slaProgressPercent: 72,
+    slaTimeRemaining: '01h 40min',
     createdAt: 'Há 25 minutos',
     firstResponseAt: 'Há 12 minutos',
     messages: [
@@ -140,6 +203,8 @@ const mockTickets: TicketItem[] = [
     queueName: 'Acesso & Catracas (Portão)',
     slaResponseMinutes: 15,
     slaResolutionMinutes: 120,
+    slaProgressPercent: 35,
+    slaTimeRemaining: '01h 18min',
     createdAt: 'Há 8 minutos',
     messages: [
       { id: 1, author: 'Mariana Costa Ferreira', authorType: 'CUSTOMER', channel: 'FORM', body: 'Estou na fila do portão B e a catraca diz que meu QR Code é inválido, comprei semana passada.', createdAt: '11:05' }
@@ -163,6 +228,8 @@ const mockTickets: TicketItem[] = [
     queueName: 'Reenvio & Ingressos',
     slaResponseMinutes: 240,
     slaResolutionMinutes: 1440,
+    slaProgressPercent: 18,
+    slaTimeRemaining: '19h 45min',
     createdAt: 'Há 3 horas',
     firstResponseAt: 'Há 2 horas',
     messages: [
@@ -188,6 +255,8 @@ const mockTickets: TicketItem[] = [
     queueName: 'Pagamentos & Pix',
     slaResponseMinutes: 60,
     slaResolutionMinutes: 360,
+    slaProgressPercent: 100,
+    slaTimeRemaining: 'Concluído no Prazo',
     createdAt: 'Ontem às 16:30',
     firstResponseAt: 'Ontem às 16:42',
     resolvedAt: 'Ontem às 17:15',
@@ -257,11 +326,15 @@ export default function SupportPage({ events, producerId, producerName, notify, 
   const [tickets, setTickets] = useState<TicketItem[]>(mockTickets)
   const [agents, setAgents] = useState<AgentItem[]>(initialAgents)
   const [queues, setQueues] = useState<QueueItem[]>(initialQueues)
+  const [slaPolicies, setSlaPolicies] = useState<SLAPolicy[]>(initialSLAPolicies)
   const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(mockTickets[0])
   const [ticketSearch, setTicketSearch] = useState('')
   const [priorityFilter, setPriorityFilter] = useState<string>('TODOS')
   const [statusFilter, setStatusFilter] = useState<string>('TODOS')
   const [newReply, setNewReply] = useState('')
+
+  // Simulador SLA Event-Aware
+  const [eventAwareProximity, setEventAwareProximity] = useState<'GT_7D' | 'LE_7D' | 'LE_24H' | 'LE_2H' | 'LIVE'>('LE_24H')
 
   // Form Abrir Chamado
   const [formChannel, setFormChannel] = useState<'WHATSAPP' | 'EMAIL' | 'CHAT' | 'PHONE' | 'FORM'>('WHATSAPP')
@@ -303,6 +376,21 @@ export default function SupportPage({ events, producerId, producerName, notify, 
       return matchSearch && matchPriority && matchStatus
     })
   }, [tickets, ticketSearch, priorityFilter, statusFilter])
+
+  // Recálculo SLA Event-Aware
+  const simulatedPriority = useMemo(() => {
+    switch (eventAwareProximity) {
+      case 'LIVE': return { p: 'P1', label: 'P1 - Operacional Portão (Crítica)', frt: '5 min', res: '30 min', action: 'Atendimento prioritário na portaria do evento' }
+      case 'LE_2H': return { p: 'P1', label: 'P1 - Crítica (< 2 horas para início)', frt: '15 min', res: '1 hora', action: 'Roteamento imediato para plantão de catracas' }
+      case 'LE_24H': return { p: 'P2', label: 'P2 - Alta (< 24 horas)', frt: '30 min', res: '2 horas', action: 'Fila prioritária de emissão e reenvio WhatsApp' }
+      case 'LE_7D': return { p: 'P3', label: 'P3 - Média (<= 7 dias)', frt: '2 horas', res: '8 horas', action: 'Atendimento regular com SLA controlado' }
+      default: return { p: 'P4', label: 'P4 - Normal (> 7 dias)', frt: '4 horas', res: '24 horas', action: 'Fila de esclarecimento de dúvidas e autosserviço' }
+    }
+  }, [eventAwareProximity])
+
+  const handleRecalculateAllSLA = () => {
+    notify('Motor SLA Engine recalculou os timers de todos os 4 chamados ativos com base nos calendários e regras de evento!')
+  }
 
   const handleToggleAgentStatus = (agentId: number) => {
     const nextStatus: Record<string, 'ONLINE' | 'BUSY' | 'AWAY' | 'OFFLINE'> = {
@@ -391,6 +479,8 @@ export default function SupportPage({ events, producerId, producerName, notify, 
       queueName: selectedQ,
       slaResponseMinutes: formPriority === 'P1' ? 15 : formPriority === 'P2' ? 60 : formPriority === 'P3' ? 240 : 720,
       slaResolutionMinutes: formPriority === 'P1' ? 120 : formPriority === 'P2' ? 360 : formPriority === 'P3' ? 1440 : 2880,
+      slaProgressPercent: 10,
+      slaTimeRemaining: formPriority === 'P1' ? '01h 50min' : formPriority === 'P2' ? '05h 30min' : '23h 40min',
       createdAt: 'Agora mesmo',
       messages: [
         {
@@ -416,16 +506,16 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         <div className="header-brand-block">
           <div className="service-badge">
             <Headphones size={18} />
-            <span>DISK SERVICE • ITIL V4 & SLA</span>
+            <span>DISK SERVICE • ITIL V4 & SLA ENGINE</span>
           </div>
-          <h1>Central de Atendimento & Suporte</h1>
-          <p>Gestão de tickets omnichannel, resolução rápida, SLA P1–P4, incidentes e suporte ao comprador.</p>
+          <h1>Central de Atendimento & SLA</h1>
+          <p>Motor de SLA Event-Aware, gestão de tickets omnichannel, escalonamento automático e incidentes ITIL.</p>
         </div>
 
         <div className="header-status-block">
           <div className="agent-status-indicator">
             <span className="dot pulse-green" />
-            <span>{stats.onlineAgents} Agentes Online • Fila Automática Ativa</span>
+            <span>{stats.onlineAgents} Agentes Online • SLA 96.4% em Conformidade</span>
           </div>
           <button className="primary-service-btn" onClick={() => setActiveTab('new')}>
             <Plus size={18} />
@@ -449,6 +539,10 @@ export default function SupportPage({ events, producerId, producerName, notify, 
           <Plus size={17} />
           <span>Novo Atendimento</span>
         </button>
+        <button className={`service-tab-btn ${activeTab === 'sla' ? 'active' : ''}`} onClick={() => setActiveTab('sla')}>
+          <Gauge size={17} />
+          <span>Motor de SLA (Event-Aware)</span>
+        </button>
         <button className={`service-tab-btn ${activeTab === 'incidents' ? 'active' : ''}`} onClick={() => setActiveTab('incidents')}>
           <Flame size={17} />
           <span>Incidentes ITIL (War Room)</span>
@@ -460,7 +554,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </button>
         <button className={`service-tab-btn ${activeTab === 'teams' ? 'active' : ''}`} onClick={() => setActiveTab('teams')}>
           <Users size={17} />
-          <span>Filas, Agentes & SLA</span>
+          <span>Filas, Agentes & Escalação</span>
         </button>
         <button className={`service-tab-btn ${activeTab === 'client360' ? 'active' : ''}`} onClick={() => setActiveTab('client360')}>
           <Search size={17} />
@@ -585,7 +679,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </div>
       )}
 
-      {/* 2. ABA: CHAMADOS & FILA COM VISUALIZAÇÃO COMPLETA */}
+      {/* 2. ABA: CHAMADOS & FILA COM TIMERS DE SLA EM TEMPO REAL */}
       {activeTab === 'tickets' && (
         <div className="service-content-body">
           {/* Filtros e Busca */}
@@ -640,6 +734,23 @@ export default function SupportPage({ events, producerId, producerName, notify, 
                     </div>
 
                     <h4 className="ticket-card-subject">{t.subject}</h4>
+
+                    {/* Timer SLA Bar */}
+                    <div style={{ margin: '8px 0 4px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#64748b' }}>
+                        <span>SLA Consumido: {t.slaProgressPercent}%</span>
+                        <span style={{ fontWeight: 600, color: t.slaProgressPercent > 80 ? '#dc2626' : '#2563eb' }}>{t.slaTimeRemaining}</span>
+                      </div>
+                      <div className="progress-bar-bg" style={{ height: '5px', marginTop: '3px' }}>
+                        <div
+                          className="progress-bar-fill"
+                          style={{
+                            width: `${t.slaProgressPercent}%`,
+                            background: t.slaProgressPercent > 85 ? '#dc2626' : t.slaProgressPercent > 70 ? '#f59e0b' : '#10b981'
+                          }}
+                        />
+                      </div>
+                    </div>
 
                     <div className="ticket-bottom-info">
                       <div className="customer-inline">
@@ -701,8 +812,8 @@ export default function SupportPage({ events, producerId, producerName, notify, 
                     </div>
 
                     <div className="ctx-item">
-                      <span>Atendente & SLA</span>
-                      <strong>{selectedTicket.assignedAgent}</strong>
+                      <span>Timer SLA Restante</span>
+                      <strong style={{ color: '#2563eb' }}>{selectedTicket.slaTimeRemaining}</strong>
                       <small>1ª Resposta: {selectedTicket.slaResponseMinutes}m • Resolução: {selectedTicket.slaResolutionMinutes}m</small>
                     </div>
                   </div>
@@ -776,7 +887,191 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </div>
       )}
 
-      {/* 3. ABA: ABRIR NOVO CHAMADO */}
+      {/* 3. ABA: MOTOR DE SLA & EVENT-AWARE (FASE 22.3) */}
+      {activeTab === 'sla' && (
+        <div className="service-content-body">
+          {/* Top Hero & Recálculo */}
+          <div className="incidents-hero-bar" style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <Gauge size={20} style={{ color: '#38bdf8' }} />
+                <h3 style={{ margin: 0, color: '#fff' }}>Motor de SLA Inteligente & Event-Aware</h3>
+              </div>
+              <p style={{ margin: 0, color: '#94a3b8' }}>
+                Cálculo dinâmico de 1ª resposta, tempo de resolução e elevação de prioridade conforme a proximidade do show.
+              </p>
+            </div>
+            <button className="primary-service-btn" onClick={handleRecalculateAllSLA}>
+              <RefreshCw size={16} />
+              <span>Recalcular SLA dos Tickets</span>
+            </button>
+          </div>
+
+          {/* Simulador SLA Event-Aware */}
+          <div className="service-card-panel" style={{ marginTop: '20px' }}>
+            <div className="panel-header-row">
+              <div>
+                <h3>🎟️ Simulador de Regra Especial: SLA Event-Aware</h3>
+                <p>Veja como o sistema ajusta a prioridade automaticamente conforme o horário do evento se aproxima.</p>
+              </div>
+              <span className="live-pill" style={{ background: '#ecfdf5', color: '#059669', borderColor: '#a7f3d0' }}>
+                MOTOR ATIVO
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', margin: '16px 0' }}>
+              <button
+                type="button"
+                onClick={() => setEventAwareProximity('GT_7D')}
+                className={`sla-matrix-card ${eventAwareProximity === 'GT_7D' ? 'p4' : ''}`}
+                style={{ cursor: 'pointer', textAlign: 'left', border: eventAwareProximity === 'GT_7D' ? '2px solid #3b82f6' : '1px solid #e2e8f0' }}
+              >
+                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>CENÁRIO 1</span>
+                <strong style={{ display: 'block', margin: '4px 0', fontSize: '14px' }}>Evento &gt; 7 dias</strong>
+                <span style={{ fontSize: '12px', color: '#059669', fontWeight: 600 }}>Prioridade Normal (P4)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setEventAwareProximity('LE_7D')}
+                className={`sla-matrix-card ${eventAwareProximity === 'LE_7D' ? 'p3' : ''}`}
+                style={{ cursor: 'pointer', textAlign: 'left', border: eventAwareProximity === 'LE_7D' ? '2px solid #3b82f6' : '1px solid #e2e8f0' }}
+              >
+                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>CENÁRIO 2</span>
+                <strong style={{ display: 'block', margin: '4px 0', fontSize: '14px' }}>Evento &le; 7 dias</strong>
+                <span style={{ fontSize: '12px', color: '#d97706', fontWeight: 600 }}>Prioridade Média (P3)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setEventAwareProximity('LE_24H')}
+                className={`sla-matrix-card ${eventAwareProximity === 'LE_24H' ? 'p2' : ''}`}
+                style={{ cursor: 'pointer', textAlign: 'left', border: eventAwareProximity === 'LE_24H' ? '2px solid #3b82f6' : '1px solid #e2e8f0' }}
+              >
+                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>CENÁRIO 3</span>
+                <strong style={{ display: 'block', margin: '4px 0', fontSize: '14px' }}>Evento &le; 24 horas</strong>
+                <span style={{ fontSize: '12px', color: '#ea580c', fontWeight: 600 }}>Prioridade Alta (P2)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setEventAwareProximity('LE_2H')}
+                className={`sla-matrix-card ${eventAwareProximity === 'LE_2H' ? 'p1' : ''}`}
+                style={{ cursor: 'pointer', textAlign: 'left', border: eventAwareProximity === 'LE_2H' ? '2px solid #3b82f6' : '1px solid #e2e8f0' }}
+              >
+                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>CENÁRIO 4</span>
+                <strong style={{ display: 'block', margin: '4px 0', fontSize: '14px' }}>Evento &le; 2 horas</strong>
+                <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 600 }}>Prioridade Crítica (P1)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setEventAwareProximity('LIVE')}
+                className={`sla-matrix-card ${eventAwareProximity === 'LIVE' ? 'p1' : ''}`}
+                style={{ cursor: 'pointer', textAlign: 'left', border: eventAwareProximity === 'LIVE' ? '2px solid #dc2626' : '1px solid #e2e8f0', background: eventAwareProximity === 'LIVE' ? '#fef2f2' : '#fff' }}
+              >
+                <span style={{ fontSize: '11px', color: '#dc2626', fontWeight: 700 }}>AO VIVO 🔥</span>
+                <strong style={{ display: 'block', margin: '4px 0', fontSize: '14px' }}>Evento Acontecendo</strong>
+                <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 700 }}>P1 Portão / Catracas</span>
+              </button>
+            </div>
+
+            {/* Resultado da Simulação */}
+            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+              <div>
+                <span style={{ fontSize: '12px', color: '#64748b' }}>Resultado Calculado pelo Motor:</span>
+                <h4 style={{ margin: '4px 0', fontSize: '16px', color: '#0f172a' }}>{simulatedPriority.label}</h4>
+                <p style={{ margin: 0, fontSize: '13px', color: '#475569' }}>{simulatedPriority.action}</p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '20px' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>1ª RESPOSTA</span>
+                  <strong style={{ fontSize: '16px', color: '#2563eb' }}>{simulatedPriority.frt}</strong>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>RESOLUÇÃO TOTAL</span>
+                  <strong style={{ fontSize: '16px', color: '#059669' }}>{simulatedPriority.res}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Matriz de Políticas P1-P4 e Escalonamento */}
+          <div className="service-two-col-grid" style={{ marginTop: '20px' }}>
+            {/* Políticas de SLA */}
+            <div className="service-card-panel">
+              <div className="panel-header-row">
+                <div>
+                  <h3>Matriz de Políticas Contratuais (P1 a P4)</h3>
+                  <p>Metas contratuais de tempo de atendimento.</p>
+                </div>
+              </div>
+
+              <div className="sla-matrix-list">
+                {slaPolicies.map(pol => (
+                  <div key={pol.id} className={`sla-matrix-card ${pol.priority.toLowerCase()}`}>
+                    <div className="matrix-top">
+                      <strong>{pol.name}</strong>
+                      <span className={`priority-tag ${pol.priority}`}>{pol.priority}</span>
+                    </div>
+                    <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 10px' }}>{pol.example}</p>
+                    <div className="matrix-times">
+                      <div><span>1ª Resposta:</span> <strong>{pol.firstResponseMinutes < 60 ? `${pol.firstResponseMinutes} min` : `${pol.firstResponseMinutes / 60} h`}</strong></div>
+                      <div><span>Resolução:</span> <strong>{pol.resolutionMinutes < 60 ? `${pol.resolutionMinutes} min` : `${pol.resolutionMinutes / 60} h`}</strong></div>
+                      <div><span>Calendário:</span> <strong>{pol.calendar === '24x7_EVENT' ? '24x7 Ininterrupto' : 'Comercial 08-18h'}</strong></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Escalonamento e Alertas Automáticos */}
+            <div className="service-card-panel">
+              <div className="panel-header-row">
+                <div>
+                  <h3>Gatilhos de Escalonamento Automático</h3>
+                  <p>Regras acionadas conforme o tempo do SLA é consumido.</p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ border: '1px solid #fef3c7', background: '#fffbeb', borderRadius: '8px', padding: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BellRing size={16} style={{ color: '#d97706' }} />
+                    <strong style={{ color: '#b45309', fontSize: '13px' }}>70% do SLA Consumido &bull; Alerta Amarelo</strong>
+                  </div>
+                  <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#78350f' }}>
+                    Disparo de notificação sonora no painel do atendente e aviso na fila do Supervisor N2.
+                  </p>
+                </div>
+
+                <div style={{ border: '1px solid #fed7aa', background: '#fff7ed', borderRadius: '8px', padding: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <AlertTriangle size={16} style={{ color: '#ea580c' }} />
+                    <strong style={{ color: '#c2410c', fontSize: '13px' }}>85% do SLA Consumido &bull; Alerta Laranja (Risco Alto)</strong>
+                  </div>
+                  <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#7c2d12' }}>
+                    Chamado recebe destaque piscante no topo da fila e SMS/Push para o Coordenador Operacional de Plantão.
+                  </p>
+                </div>
+
+                <div style={{ border: '1px solid #fecaca', background: '#fef2f2', borderRadius: '8px', padding: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <AlertCircle size={16} style={{ color: '#dc2626' }} />
+                    <strong style={{ color: '#b91c1c', fontSize: '13px' }}>100% do SLA Consumido &bull; SLA Violado (Crítico)</strong>
+                  </div>
+                  <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#7f1d1d' }}>
+                    Ticket é marcado com flag de Violação no BI, redistribuído para nível N3 com prioridade máxima e registrado em log imutável de auditoria.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. ABA: ABRIR NOVO CHAMADO */}
       {activeTab === 'new' && (
         <div className="service-content-body">
           <form className="create-ticket-form-grid" onSubmit={handleCreateTicket}>
@@ -937,7 +1232,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </div>
       )}
 
-      {/* 4. ABA: INCIDENTES ITIL (WAR ROOM) */}
+      {/* 5. ABA: INCIDENTES ITIL (WAR ROOM) */}
       {activeTab === 'incidents' && (
         <div className="service-content-body">
           <div className="incidents-hero-bar">
@@ -1003,7 +1298,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </div>
       )}
 
-      {/* 5. ABA: BASE DE CONHECIMENTO */}
+      {/* 6. ABA: BASE DE CONHECIMENTO */}
       {activeTab === 'knowledge' && (
         <div className="service-content-body">
           <div className="kb-search-hero">
@@ -1044,7 +1339,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </div>
       )}
 
-      {/* 6. ABA: FILAS, AGENTES & SLA */}
+      {/* 7. ABA: FILAS, AGENTES & ESCALAÇÃO */}
       {activeTab === 'teams' && (
         <div className="service-content-body">
           <div className="service-two-col-grid">
@@ -1120,7 +1415,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </div>
       )}
 
-      {/* 7. ABA: COMPRADOR 360° */}
+      {/* 8. ABA: COMPRADOR 360° */}
       {activeTab === 'client360' && (
         <div className="service-content-body">
           <div className="service-card-panel">
