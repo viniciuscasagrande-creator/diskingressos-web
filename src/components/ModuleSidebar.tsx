@@ -69,7 +69,7 @@ const mainItems: Item[] = [
 // 2. FINANCEIRO (PADRÃO UNIFICADO)
 const financeItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: BarChart3, badge: 'Novo' },
-  { key: 'finance', label: 'Saldos & Carteira', icon: WalletCards },
+  { key: 'finance', label: 'Saldos', icon: WalletCards },
   { key: 'finance-statement', label: 'Extrato Unificado', icon: ReceiptText },
   { key: 'finance-payouts', label: 'Solicitar Repasse', icon: HandCoins },
   { key: 'finance-advance', label: 'Antecipações', icon: Zap },
@@ -273,12 +273,12 @@ function NavItem({ item, active, onNavigate, indent }: { item: Item; active: boo
   const Icon = item.icon
   return (
     <button
-      className={`nav-item ${active ? 'active' : ''} ${indent ? 'indent' : ''}`}
+      className={`module-nav-item ${active ? 'active' : ''} ${indent ? 'indent' : ''}`}
       onClick={() => onNavigate(item.key)}
       title={item.label}
     >
-      <Icon size={17} />
-      <span className="nav-label">{item.label}</span>
+      <Icon size={20} />
+      <span>{item.label}</span>
       {item.badge && <span className="nav-badge">{item.badge}</span>}
     </button>
   )
@@ -286,12 +286,12 @@ function NavItem({ item, active, onNavigate, indent }: { item: Item; active: boo
 
 function CollapsibleSection({ label, open, onToggle, children }: { label: string; open: boolean; onToggle: () => void; children: ReactNode }) {
   return (
-    <div className={`collapsible-section ${open ? 'open' : ''}`}>
-      <button className="collapsible-header" onClick={onToggle}>
+    <div className="collapsible-nav-section">
+      <button className="collapsible-section-head" onClick={onToggle} type="button">
         <span>{label}</span>
-        <ChevronDown size={14} className={`collapsible-icon ${open ? 'rotated' : ''}`} />
+        <ChevronDown size={14} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'rgba(255,255,255,0.6)' }} />
       </button>
-      {open && <div className="collapsible-content">{children}</div>}
+      {open && <div className="collapsible-section-body">{children}</div>}
     </div>
   )
 }

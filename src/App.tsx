@@ -113,7 +113,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   // FINANCEIRO
   'finance-dashboard': 'Dashboard Financeiro',
   'finance-hub': 'Hub Financeiro',
-  'finance': 'Saldos & Carteira',
+  'finance': 'Saldos',
   'finance-statement': 'Extrato Financeiro',
   'finance-cashflow': 'Fluxo de Caixa',
   'finance-receivables': 'Contas a Receber',
