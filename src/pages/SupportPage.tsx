@@ -221,6 +221,13 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   const [selectedKnowledgeCat, setSelectedKnowledgeCat] = useState('TODAS')
   const [autoRouting, setAutoRouting] = useState(true)
 
+  const scrollLauncher = (direction: 'left' | 'right') => {
+    const el = document.getElementById('ds-launcher-scroll-container')
+    if (el) {
+      el.scrollBy({ left: direction === 'left' ? -260 : 260, behavior: 'smooth' })
+    }
+  }
+
   const handleGlobalSearch = (queryOverride?: string) => {
     const q = (queryOverride !== undefined ? queryOverride : globalSearchInput).trim()
     if (!q) {
@@ -341,125 +348,135 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           </div>
         </header>
 
-        {/* Top Launcher Carousel */}
-        <div className="ds-launcher-bar">
-          <button className={`ds-launcher-item ${activeTab === 'hub' ? 'active' : ''}`} onClick={() => setActiveTab('hub')}>
-            <div className="ds-launcher-circle">
-              <LifeBuoy size={22} />
-            </div>
-            <span className="ds-launcher-label">Hub Geral</span>
+        {/* Top Launcher Carousel com Controles de Navegação */}
+        <div className="ds-launcher-wrapper">
+          <button className="ds-launcher-scroll-btn left" onClick={() => scrollLauncher('left')} title="Rolar para a esquerda">
+            <ChevronLeft size={16} />
           </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'search360' ? 'active' : ''}`} onClick={() => setActiveTab('search360')}>
-            <div className="ds-launcher-circle" style={{ borderColor: activeTab === 'search360' ? '#2563eb' : '#cbd5e1' }}>
-              <Search size={22} style={{ color: '#2563eb' }} />
-              <span className="ds-mini-tag blue">ID</span>
-            </div>
-            <span className="ds-launcher-label" style={{ color: '#2563eb', fontWeight: 800 }}>Busca ID</span>
-          </button>
+          <div className="ds-launcher-bar" id="ds-launcher-scroll-container">
+            <button className={`ds-launcher-item ${activeTab === 'hub' ? 'active' : ''}`} onClick={() => setActiveTab('hub')}>
+              <div className="ds-launcher-circle">
+                <LifeBuoy size={22} />
+              </div>
+              <span className="ds-launcher-label">Hub Geral</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'tickets' ? 'active' : ''}`} onClick={() => setActiveTab('tickets')}>
-            <div className="ds-launcher-circle">
-              <Ticket size={22} />
-              <span className="ds-mini-tag blue">5</span>
-            </div>
-            <span className="ds-launcher-label">Tickets</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'search360' ? 'active' : ''}`} onClick={() => setActiveTab('search360')}>
+              <div className="ds-launcher-circle" style={{ borderColor: activeTab === 'search360' ? '#2563eb' : '#cbd5e1' }}>
+                <Search size={22} style={{ color: '#2563eb' }} />
+                <span className="ds-mini-tag blue">ID</span>
+              </div>
+              <span className="ds-launcher-label" style={{ color: '#2563eb', fontWeight: 800 }}>Busca ID</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'inbox' ? 'active' : ''}`} onClick={() => setActiveTab('inbox')}>
-            <div className="ds-launcher-circle">
-              <MessagesSquare size={22} />
-              <span className="ds-mini-tag purple">3 novos</span>
-            </div>
-            <span className="ds-launcher-label">Omnichannel</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'tickets' ? 'active' : ''}`} onClick={() => setActiveTab('tickets')}>
+              <div className="ds-launcher-circle">
+                <Ticket size={22} />
+                <span className="ds-mini-tag blue">5</span>
+              </div>
+              <span className="ds-launcher-label">Tickets</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'bi' ? 'active' : ''}`} onClick={() => setActiveTab('bi')}>
-            <div className="ds-launcher-circle">
-              <BarChart3 size={22} />
-            </div>
-            <span className="ds-launcher-label">Dashboard & BI</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'inbox' ? 'active' : ''}`} onClick={() => setActiveTab('inbox')}>
+              <div className="ds-launcher-circle">
+                <MessagesSquare size={22} />
+                <span className="ds-mini-tag purple">3 novos</span>
+              </div>
+              <span className="ds-launcher-label">Omnichannel</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'copilot' ? 'active' : ''}`} onClick={() => setActiveTab('copilot')}>
-            <div className="ds-launcher-circle">
-              <Bot size={22} />
-              <span className="ds-mini-tag purple">96%</span>
-            </div>
-            <span className="ds-launcher-label">Disk Copilot IA</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'bi' ? 'active' : ''}`} onClick={() => setActiveTab('bi')}>
+              <div className="ds-launcher-circle">
+                <BarChart3 size={22} />
+              </div>
+              <span className="ds-launcher-label">Dashboard & BI</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'major' ? 'active' : ''}`} onClick={() => setActiveTab('major')}>
-            <div className="ds-launcher-circle">
-              <Siren size={22} />
-              <span className="ds-mini-tag red">War Room</span>
-            </div>
-            <span className="ds-launcher-label">Major Incidents</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'copilot' ? 'active' : ''}`} onClick={() => setActiveTab('copilot')}>
+              <div className="ds-launcher-circle">
+                <Bot size={22} />
+                <span className="ds-mini-tag purple">96%</span>
+              </div>
+              <span className="ds-launcher-label">Disk Copilot IA</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'incidents' ? 'active' : ''}`} onClick={() => setActiveTab('incidents')}>
-            <div className="ds-launcher-circle">
-              <AlertTriangle size={22} />
-              <span className="ds-mini-tag red">3</span>
-            </div>
-            <span className="ds-launcher-label">Incidentes</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'major' ? 'active' : ''}`} onClick={() => setActiveTab('major')}>
+              <div className="ds-launcher-circle">
+                <Siren size={22} />
+                <span className="ds-mini-tag red">War Room</span>
+              </div>
+              <span className="ds-launcher-label">Major Incidents</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'problems' ? 'active' : ''}`} onClick={() => setActiveTab('problems')}>
-            <div className="ds-launcher-circle">
-              <Bug size={22} />
-            </div>
-            <span className="ds-launcher-label">Problems (RCA)</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'incidents' ? 'active' : ''}`} onClick={() => setActiveTab('incidents')}>
+              <div className="ds-launcher-circle">
+                <AlertTriangle size={22} />
+                <span className="ds-mini-tag red">3</span>
+              </div>
+              <span className="ds-launcher-label">Incidentes</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'liveops' ? 'active' : ''}`} onClick={() => setActiveTab('liveops')}>
-            <div className="ds-launcher-circle">
-              <Radio size={22} />
-              <span className="ds-mini-tag green">Ao Vivo</span>
-            </div>
-            <span className="ds-launcher-label">Live Ops Portaria</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'problems' ? 'active' : ''}`} onClick={() => setActiveTab('problems')}>
+              <div className="ds-launcher-circle">
+                <Bug size={22} />
+              </div>
+              <span className="ds-launcher-label">Problems (RCA)</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'csat' ? 'active' : ''}`} onClick={() => setActiveTab('csat')}>
-            <div className="ds-launcher-circle">
-              <Smile size={22} />
-            </div>
-            <span className="ds-launcher-label">CSAT + NPS</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'liveops' ? 'active' : ''}`} onClick={() => setActiveTab('liveops')}>
+              <div className="ds-launcher-circle">
+                <Radio size={22} />
+                <span className="ds-mini-tag green">Ao Vivo</span>
+              </div>
+              <span className="ds-launcher-label">Live Ops Portaria</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'sla' ? 'active' : ''}`} onClick={() => setActiveTab('sla')}>
-            <div className="ds-launcher-circle">
-              <Clock3 size={22} />
-            </div>
-            <span className="ds-launcher-label">Gestão de SLA</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'csat' ? 'active' : ''}`} onClick={() => setActiveTab('csat')}>
+              <div className="ds-launcher-circle">
+                <Smile size={22} />
+              </div>
+              <span className="ds-launcher-label">CSAT + NPS</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'teams' ? 'active' : ''}`} onClick={() => setActiveTab('teams')}>
-            <div className="ds-launcher-circle">
-              <Users size={22} />
-            </div>
-            <span className="ds-launcher-label">Filas & Agentes</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'sla' ? 'active' : ''}`} onClick={() => setActiveTab('sla')}>
+              <div className="ds-launcher-circle">
+                <Clock3 size={22} />
+              </div>
+              <span className="ds-launcher-label">Gestão de SLA</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'knowledge' ? 'active' : ''}`} onClick={() => setActiveTab('knowledge')}>
-            <div className="ds-launcher-circle">
-              <BookOpen size={22} />
-            </div>
-            <span className="ds-launcher-label">Base Conhecimento</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'teams' ? 'active' : ''}`} onClick={() => setActiveTab('teams')}>
+              <div className="ds-launcher-circle">
+                <Users size={22} />
+              </div>
+              <span className="ds-launcher-label">Filas & Agentes</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'predictive' ? 'active' : ''}`} onClick={() => setActiveTab('predictive')}>
-            <div className="ds-launcher-circle">
-              <Brain size={22} />
-            </div>
-            <span className="ds-launcher-label">Analytics Preditivo</span>
-          </button>
+            <button className={`ds-launcher-item ${activeTab === 'knowledge' ? 'active' : ''}`} onClick={() => setActiveTab('knowledge')}>
+              <div className="ds-launcher-circle">
+                <BookOpen size={22} />
+              </div>
+              <span className="ds-launcher-label">Base Conhecimento</span>
+            </button>
 
-          <button className={`ds-launcher-item ${activeTab === 'workflows' ? 'active' : ''}`} onClick={() => setActiveTab('workflows')}>
-            <div className="ds-launcher-circle">
-              <Workflow size={22} />
-            </div>
-            <span className="ds-launcher-label">Automações</span>
+            <button className={`ds-launcher-item ${activeTab === 'predictive' ? 'active' : ''}`} onClick={() => setActiveTab('predictive')}>
+              <div className="ds-launcher-circle">
+                <Brain size={22} />
+              </div>
+              <span className="ds-launcher-label">Analytics Preditivo</span>
+            </button>
+
+            <button className={`ds-launcher-item ${activeTab === 'workflows' ? 'active' : ''}`} onClick={() => setActiveTab('workflows')}>
+              <div className="ds-launcher-circle">
+                <Workflow size={22} />
+              </div>
+              <span className="ds-launcher-label">Automações</span>
+            </button>
+          </div>
+
+          <button className="ds-launcher-scroll-btn right" onClick={() => scrollLauncher('right')} title="Rolar para a direita">
+            <ChevronRight size={16} />
           </button>
         </div>
 
@@ -816,7 +833,145 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 3: TICKETS (CENTRAL COMPLETA DE ATENDIMENTO)
+            TELA 3: DASHBOARD & BI (COMPLETO DE INFORMAÇÕES & GRÁFICOS)
+            ======================================================== */}
+        {activeTab === 'bi' && (
+          <div style={{ marginTop: '10px' }}>
+            {/* 6 Scorecards com Sparklines */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '14px', marginBottom: '20px' }}>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon blue"><Ticket size={20} /></div><div className="ds-spark-header-text"><span>Tickets Abertos</span><div className="ds-spark-value-row"><strong className="ds-spark-value">128</strong><small className="ds-stat-delta green">-12% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,25 Q15,5 30,20 T60,10 T90,22 L100,15" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon red"><Shield size={20} /></div><div className="ds-spark-header-text"><span>P1 Ativos</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#dc2626' }}>3</strong><small className="ds-stat-delta red">+1 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,22 Q20,28 40,12 T70,25 T90,5 L100,18" fill="none" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon orange"><Clock3 size={20} /></div><div className="ds-spark-header-text"><span>Atrasados (SLA)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#d97706' }}>18</strong><small className="ds-stat-delta orange">+4% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,20 Q25,25 45,8 T75,22 T95,14 L100,18" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon green"><Smile size={20} /></div><div className="ds-spark-header-text"><span>CSAT (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#059669' }}>4.6/5</strong><small className="ds-stat-delta green">+0.3 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,24 Q20,10 40,22 T70,8 T90,16 L100,10" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon teal"><TrendingUp size={20} /></div><div className="ds-spark-header-text"><span>NPS (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#0d9488' }}>53</strong><small className="ds-stat-delta green">+5 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,22 Q25,26 50,14 T80,18 T95,6 L100,10" fill="none" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon cyan"><Users size={20} /></div><div className="ds-spark-header-text"><span>Check-ins (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#0891b2' }}>8.742</strong><small className="ds-stat-delta green">+18% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,26 Q20,18 45,22 T70,10 T90,8 L100,5" fill="none" stroke="#0891b2" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+            </div>
+
+            {/* Linha 1: Volume de Tickets, Donut de Canais e Alertas */}
+            <div className="ds-bi-row three-col" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title"><BarChart3 size={18} style={{ color: '#2563eb' }} /> Volume de Tickets</h3>
+                  <select className="ds-filter-select"><option>Últimos 7 dias</option></select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '170px', padding: '10px 0', borderBottom: '1px solid #e2e8f0' }}>
+                  {[
+                    { day: '13/05', open: 280, closed: 210 },
+                    { day: '14/05', open: 310, closed: 260 },
+                    { day: '15/05', open: 295, closed: 245 },
+                    { day: '16/05', open: 340, closed: 290 },
+                    { day: '17/05', open: 260, closed: 215 },
+                    { day: '18/05', open: 285, closed: 190 },
+                    { day: '19/05', open: 250, closed: 180 }
+                  ].map((d, i) => (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', flex: 1 }}>
+                      <div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '130px' }}>
+                        <div style={{ width: '12px', background: '#2563eb', height: `${(d.open / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} />
+                        <div style={{ width: '12px', background: '#059669', height: `${(d.closed / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} />
+                      </div>
+                      <span style={{ fontSize: '10px', color: '#64748b' }}>{d.day}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title"><PieChart size={18} style={{ color: '#ea580c' }} /> Tickets por Canal</h3>
+                  <select className="ds-filter-select"><option>Hoje</option></select>
+                </div>
+                <div className="ds-donut-wrapper">
+                  <div className="ds-donut-circle-wrap">
+                    <svg viewBox="0 0 36 36" style={{ width: '130px', height: '130px', transform: 'rotate(-90deg)' }}>
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#f1f5f9" strokeWidth="4.5" />
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#2563eb" strokeWidth="4.5" strokeDasharray="45.7 100" strokeDashoffset="0" />
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#ea580c" strokeWidth="4.5" strokeDasharray="18.5 100" strokeDashoffset="-45.7" />
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#d97706" strokeWidth="4.5" strokeDasharray="10.5 100" strokeDashoffset="-64.2" />
+                    </svg>
+                    <div className="ds-donut-center-text">
+                      <strong>1.245</strong>
+                      <small>Total</small>
+                    </div>
+                  </div>
+                  <div className="ds-donut-legend">
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#2563eb' }} /> WhatsApp</div><strong>52%</strong></div>
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#ea580c' }} /> Email</div><strong>21%</strong></div>
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#d97706' }} /> Chat</div><strong>12%</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title"><AlertTriangle size={18} style={{ color: '#dc2626' }} /> Alertas Críticos</h3>
+                  <span style={{ fontSize: '11px', color: '#2563eb', cursor: 'pointer', fontWeight: 700 }}>Ver todos</span>
+                </div>
+                <div className="ds-alerts-list">
+                  <div className="ds-alert-item"><div className="ds-alert-icon p1"><Siren size={16} /></div><div className="ds-alert-content"><div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Catraca Portão A Offline</span></div><p className="ds-alert-sub">Festival XPTO 2026 • Portão 04</p></div><span className="ds-alert-time">Agora</span></div>
+                  <div className="ds-alert-item"><div className="ds-alert-icon p1"><ShieldAlert size={16} /></div><div className="ds-alert-content"><div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Falha no Webhook Efí Pix</span></div><p className="ds-alert-sub">Reconciliação automática ativa</p></div><span className="ds-alert-time">2 min</span></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Linha 2: SLA Gauge, Ranking de Agentes e Categorias */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 1fr', gap: '16px' }}>
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title"><Gauge size={18} style={{ color: '#059669' }} /> SLA Compliance</h3>
+                  <span className="ds-badge green">Meta: 90%</span>
+                </div>
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                  <div style={{ fontSize: '42px', fontWeight: 800, color: '#059669' }}>92.4%</div>
+                  <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '13px' }}>110 de 128 chamados resolvidos dentro do prazo</p>
+                </div>
+              </div>
+
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title"><Users size={18} style={{ color: '#2563eb' }} /> Top Agentes por Conformidade</h3>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    { name: 'Lucas SAC', count: 48, sla: '98.5%' },
+                    { name: 'Beatriz N2', count: 36, sla: '96.2%' },
+                    { name: 'Fernando Atendente', count: 28, sla: '94.0%' },
+                  ].map((ag, i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div>
+                        <strong>{ag.name}</strong>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>{ag.count} chamados resolvidos</div>
+                      </div>
+                      <span className="ds-badge green">{ag.sla} SLA</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title"><Tag size={18} style={{ color: '#7c3aed' }} /> Chamados por Categoria</h3>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {[
+                    { cat: 'Dúvidas sobre QR Code', pct: '42%' },
+                    { cat: 'Comprovante Meia-Entrada', pct: '28%' },
+                    { cat: 'Cancelamento & Reembolso', pct: '18%' },
+                    { cat: 'Acesso e Portões', pct: '12%' },
+                  ].map((ct, i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                      <span style={{ color: '#334155' }}>{ct.cat}</span>
+                      <strong style={{ color: '#0f172a' }}>{ct.pct}</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ========================================================
+            TELA 4: TICKETS (CENTRAL COMPLETA DE ATENDIMENTO)
             ======================================================== */}
         {activeTab === 'tickets' && (
           <div style={{ marginTop: '10px' }}>
@@ -930,7 +1085,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 4: OMNICHANNEL INBOX (WHATSAPP, EMAIL, CHAT)
+            TELA 5: OMNICHANNEL INBOX (WHATSAPP, EMAIL, CHAT)
             ======================================================== */}
         {activeTab === 'inbox' && (
           <div style={{ marginTop: '10px' }}>
@@ -1088,7 +1243,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 5: GESTÃO DE INCIDENTES (ITIL INCIDENT MANAGEMENT)
+            TELA 6: GESTÃO DE INCIDENTES (ITIL INCIDENT MANAGEMENT)
             ======================================================== */}
         {activeTab === 'incidents' && (
           <div style={{ marginTop: '10px' }}>
@@ -1154,7 +1309,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 6: MAJOR INCIDENTS & WAR ROOM P1 (COMMAND CENTER)
+            TELA 7: MAJOR INCIDENTS & WAR ROOM P1 (COMMAND CENTER)
             ======================================================== */}
         {activeTab === 'major' && (
           <div style={{ marginTop: '10px' }}>
@@ -1230,7 +1385,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 7: GESTÃO DE PROBLEMAS & RCA (PROBLEM MANAGEMENT)
+            TELA 8: GESTÃO DE PROBLEMAS & RCA (PROBLEM MANAGEMENT)
             ======================================================== */}
         {activeTab === 'problems' && (
           <div style={{ marginTop: '10px' }}>
@@ -1289,7 +1444,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 8: LIVE OPS PORTARIA & EVENTOS EM TEMPO REAL
+            TELA 9: LIVE OPS PORTARIA & EVENTOS EM TEMPO REAL
             ======================================================== */}
         {activeTab === 'liveops' && (
           <div style={{ marginTop: '10px' }}>
@@ -1350,7 +1505,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 9: BASE DE CONHECIMENTO (KNOWLEDGE BASE & KEDB)
+            TELA 10: BASE DE CONHECIMENTO (KNOWLEDGE BASE & KEDB)
             ======================================================== */}
         {activeTab === 'knowledge' && (
           <div style={{ marginTop: '10px' }}>
@@ -1415,7 +1570,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 10: CSAT + NPS (VOICE OF CUSTOMER & DETRACTOR RECOVERY)
+            TELA 11: CSAT + NPS (VOICE OF CUSTOMER & DETRACTOR RECOVERY)
             ======================================================== */}
         {activeTab === 'csat' && (
           <div style={{ marginTop: '10px' }}>
@@ -1482,7 +1637,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 11: DISK COPILOT IA (INTELIGÊNCIA ARTIFICIAL)
+            TELA 12: DISK COPILOT IA (INTELIGÊNCIA ARTIFICIAL)
             ======================================================== */}
         {activeTab === 'copilot' && (
           <div style={{ marginTop: '10px' }}>
@@ -1552,7 +1707,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 12: SLA & CONFORMIDADE (ITIL SLA POLICIES)
+            TELA 13: SLA & CONFORMIDADE (ITIL SLA POLICIES)
             ======================================================== */}
         {activeTab === 'sla' && (
           <div style={{ marginTop: '10px' }}>
@@ -1620,7 +1775,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 13: FILAS & AGENTES (ROUTING & CAPACITY)
+            TELA 14: FILAS & AGENTES (ROUTING & CAPACITY)
             ======================================================== */}
         {activeTab === 'teams' && (
           <div style={{ marginTop: '10px' }}>
@@ -1682,7 +1837,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 14: ANALYTICS PREDITIVO (FORECAST & ANOMALIAS)
+            TELA 15: ANALYTICS PREDITIVO (FORECAST & ANOMALIAS)
             ======================================================== */}
         {activeTab === 'predictive' && (
           <div style={{ marginTop: '10px' }}>
@@ -1740,7 +1895,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 15: AUTOMAÇÕES & WORKFLOWS
+            TELA 16: AUTOMAÇÕES & WORKFLOWS
             ======================================================== */}
         {activeTab === 'workflows' && (
           <div style={{ marginTop: '10px' }}>
@@ -1790,7 +1945,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 16: NOVO TICKET / CHAMADO (PROTOCOLO)
+            TELA 17: NOVO TICKET / CHAMADO (PROTOCOLO)
             ======================================================== */}
         {activeTab === 'new' && (
           <div style={{ marginTop: '10px' }}>
