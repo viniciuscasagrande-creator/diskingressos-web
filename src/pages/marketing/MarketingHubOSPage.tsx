@@ -3,7 +3,7 @@ import {
   Activity, AlertTriangle, ArrowRight, BarChart3, CalendarDays, CheckCircle2,
   Download, Gift, Link2, Mail, Megaphone, Plus, Rocket, Sparkles, Target,
   TicketPercent, TrendingUp, Users, MessageCircle, Split, Zap, Clock,
-  Smartphone, MousePointerClick, ShieldCheck, ChevronRight
+  Smartphone, MousePointerClick, ShieldCheck, ChevronRight, FileText
 } from 'lucide-react'
 import type { EventItem } from '../../data/events'
 import {
@@ -42,6 +42,7 @@ export default function MarketingHubOSPage(p: Props) {
   const [communication, setCommunication] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
   const [warning, setWarning] = useState('')
+  const [activeBarIndex, setActiveBarIndex] = useState<number | null>(4)
 
   useEffect(() => {
     let alive = true
@@ -145,18 +146,20 @@ export default function MarketingHubOSPage(p: Props) {
       .slice(0, 6)
   }, [campaigns])
 
-  // Mock timeline sales data based on period
+  // Mock timeline sales data with rich contextual details
   const timelineData = useMemo(() => {
     return [
-      { day: 'Seg', date: '25/08', revenue: 18400, spent: 1600, label: 'Lançamento Lote 1' },
-      { day: 'Ter', date: '26/08', revenue: 24200, spent: 2100, label: 'Disparo WhatsApp VIP' },
-      { day: 'Qua', date: '27/08', revenue: 19800, spent: 1800, label: 'Campanha Meta Ads' },
-      { day: 'Qui', date: '28/08', revenue: 32600, spent: 2900, label: 'Aviso 24h Virada de Lote' },
-      { day: 'Sex', date: '29/08', revenue: 48900, spent: 4200, label: 'Virada de Lote Oficial 🔥' },
-      { day: 'Sáb', date: '30/08', revenue: 29400, spent: 2400, label: 'Pico Final de Semana' },
-      { day: 'Dom', date: '31/08', revenue: 21500, spent: 1800, label: 'Recuperação Carrinho' }
+      { day: 'Seg', date: '25/08', revenue: 18400, tickets: 130, spent: 1600, label: 'Lançamento Lote 1', roas: '11.5x' },
+      { day: 'Ter', date: '26/08', revenue: 24200, tickets: 172, spent: 2100, label: 'Disparo WhatsApp VIP', roas: '11.5x' },
+      { day: 'Qua', date: '27/08', revenue: 19800, tickets: 140, spent: 1800, label: 'Campanha Meta Ads', roas: '11.0x' },
+      { day: 'Qui', date: '28/08', revenue: 32600, tickets: 232, spent: 2900, label: 'Aviso 24h Virada de Lote', roas: '11.2x' },
+      { day: 'Sex', date: '29/08', revenue: 48900, tickets: 348, spent: 4200, label: 'Virada de Lote Oficial 🔥', roas: '11.6x' },
+      { day: 'Sáb', date: '30/08', revenue: 29400, tickets: 210, spent: 2400, label: 'Pico Final de Semana', roas: '12.2x' },
+      { day: 'Dom', date: '31/08', revenue: 21500, tickets: 153, spent: 1800, label: 'Recuperação Carrinho', roas: '11.9x' }
     ]
   }, [])
+
+  const selectedBar = activeBarIndex !== null ? timelineData[activeBarIndex] : timelineData[4]
 
   // Full-funnel metrics
   const funnelSteps = [
@@ -177,28 +180,54 @@ export default function MarketingHubOSPage(p: Props) {
 
   return (
     <section className="growth-page marketing-os-page">
-      {/* 1. Header & Actions */}
+      {/* 1. Header & Uniform Quick Action Buttons */}
       <div className="marketing-os-head">
         <div>
           <p className="eyebrow">MARKETING OS · DASHBOARD UNIFICADO</p>
           <h2>Dashboard Marketing</h2>
           <p>Central de comando unificada para aquisição, campanhas, conversão, atribuição e inteligência de vendas.</p>
         </div>
-        <div className="marketing-os-actions flex flex-wrap items-center gap-2">
-          <button className="btn primary" onClick={() => nav(onNavigate, notify, 'marketing-create', 'Nova Campanha')}>
-            <Plus size={16} /> Nova Campanha
+
+        {/* 5 Proportional & Uniform Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2.5 pt-2 md:pt-0">
+          <button
+            onClick={() => nav(onNavigate, notify, 'marketing-create', 'Nova Campanha')}
+            className="h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-blue-600 cursor-pointer min-w-[145px]"
+          >
+            <Plus className="w-4 h-4 shrink-0" />
+            <span>Nova Campanha</span>
           </button>
-          <button className="btn secondary" onClick={() => nav(onNavigate, notify, 'marketing-whatsapp', 'WhatsApp Marketing')}>
-            <MessageCircle size={15} /> Disparo WhatsApp
+
+          <button
+            onClick={() => nav(onNavigate, notify, 'marketing-whatsapp', 'WhatsApp Marketing')}
+            className="h-10 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-emerald-600 cursor-pointer min-w-[155px]"
+          >
+            <MessageCircle className="w-4 h-4 shrink-0" />
+            <span>Disparo WhatsApp</span>
           </button>
-          <button className="btn secondary" onClick={() => nav(onNavigate, notify, 'marketing-email', 'E-mail Marketing')}>
-            <Mail size={15} /> Disparo E-mail
+
+          <button
+            onClick={() => nav(onNavigate, notify, 'marketing-email', 'E-mail Marketing')}
+            className="h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-indigo-600 cursor-pointer min-w-[145px]"
+          >
+            <Mail className="w-4 h-4 shrink-0" />
+            <span>Disparo E-mail</span>
           </button>
-          <button className="btn secondary" onClick={() => nav(onNavigate, notify, 'marketing-ready-campaigns', 'Campanhas Prontas')}>
-            <Zap size={15} /> Campanha Pronta
+
+          <button
+            onClick={() => nav(onNavigate, notify, 'marketing-ready-campaigns', 'Campanhas Prontas')}
+            className="h-10 px-4 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-amber-600 cursor-pointer min-w-[155px]"
+          >
+            <Zap className="w-4 h-4 shrink-0" />
+            <span>Campanha Pronta</span>
           </button>
-          <button className="btn secondary" onClick={() => nav(onNavigate, notify, 'marketing-reports', 'Relatórios')}>
-            <Download size={15} /> Relatório Executivo
+
+          <button
+            onClick={() => nav(onNavigate, notify, 'marketing-reports', 'Relatórios')}
+            className="h-10 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-slate-900 cursor-pointer min-w-[160px]"
+          >
+            <FileText className="w-4 h-4 shrink-0" />
+            <span>Relatório Executivo</span>
           </button>
         </div>
       </div>
@@ -346,8 +375,12 @@ export default function MarketingHubOSPage(p: Props) {
             {recentPurchases.map((rp, idx) => (
               <div key={idx} className="flex justify-between items-center py-1">
                 <div>
-                  <div className="font-bold text-slate-900 text-xs">{rp.name} · <span className="font-medium text-emerald-600">{rp.ticket}</span></div>
-                  <small className="text-slate-400">{rp.channel} · {rp.event}</small>
+                  <div className="font-bold text-slate-900 text-xs">
+                    {rp.name} · <span className="font-medium text-emerald-600">{rp.ticket}</span>
+                  </div>
+                  <small className="text-slate-400">
+                    {rp.channel} · {rp.event}
+                  </small>
                 </div>
                 <div className="text-right">
                   <span className="font-bold text-slate-900 text-xs block">{rp.amount}</span>
@@ -359,66 +392,152 @@ export default function MarketingHubOSPage(p: Props) {
         </div>
       </div>
 
-      {/* 5. NEW: Curva de Evolução Temporal & Funil de Conversão 360° */}
-      <div className="marketing-os-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '14px' }}>
-        {/* Timeline Bar Evolution */}
-        <div className="marketing-os-panel" style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <div className="panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+      {/* 5. REFINED: Gráfico Moderno de Evolução Diária de Vendas (R$) & Funil 360° */}
+      <div className="marketing-os-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '14px' }}>
+        {/* Timeline Sales Evolution Chart (Refined Modern Look) */}
+        <div className="marketing-os-panel" style={{ background: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#0F172A' }}>Evolução Diária de Vendas (R$)</h3>
-              <small style={{ color: '#64748B' }}>Receita e picos promocionais ao longo do período</small>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>Evolução Diária de Vendas (R$)</h3>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#16A34A', background: '#DCFCE7', padding: '2px 8px', borderRadius: '999px', border: '1px solid #BBF7D0' }}>
+                  Pico na Virada 🔥
+                </span>
+              </div>
+              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#64748B' }}>
+                Curva de faturamento e investimento em mídia ao longo do período
+              </p>
             </div>
-            <span style={{ fontSize: '11px', fontWeight: 800, color: '#16A34A', background: '#DCFCE7', padding: '2px 8px', borderRadius: '999px' }}>
-              Pico na Virada 🔥
-            </span>
+
+            {/* Context Badge of Selected Bar */}
+            {selectedBar && (
+              <div style={{ textAlign: 'right', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#64748B', display: 'block', textTransform: 'uppercase' }}>
+                  {selectedBar.day} ({selectedBar.date})
+                </span>
+                <strong style={{ fontSize: '14px', fontWeight: 900, color: '#16A34A' }}>
+                  R$ {selectedBar.revenue.toLocaleString('pt-BR')},00
+                </strong>
+                <small style={{ display: 'block', fontSize: '10px', color: '#475569' }}>
+                  {selectedBar.tickets} ingressos · {selectedBar.roas} ROAS
+                </small>
+              </div>
+            )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', alignItems: 'end', height: '140px', paddingTop: '10px' }}>
-            {timelineData.map((d, i) => {
-              const maxRev = 50000
-              const heightPct = Math.min(100, Math.round((d.revenue / maxRev) * 100))
-              const isPeak = i === 4
-              return (
-                <div key={d.day} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', gap: '4px' }}>
-                  <span style={{ fontSize: '9px', fontWeight: 800, color: isPeak ? '#16A34A' : '#64748B' }}>
-                    {(d.revenue / 1000).toFixed(0)}k
-                  </span>
+          {/* Graphical Grid Container */}
+          <div style={{ position: 'relative', background: 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)', borderRadius: '8px', padding: '16px 12px 10px', border: '1px solid #F1F5F9' }}>
+            {/* Horizontal Background Guidelines */}
+            <div style={{ position: 'absolute', top: '20px', left: '12px', right: '12px', borderBottom: '1px dashed #E2E8F0', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '70px', left: '12px', right: '12px', borderBottom: '1px dashed #E2E8F0', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '120px', left: '12px', right: '12px', borderBottom: '1px dashed #E2E8F0', pointerEvents: 'none' }} />
+
+            {/* 7 Daily Bars */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '10px', alignItems: 'end', height: '150px', position: 'relative', zIndex: 2 }}>
+              {timelineData.map((d, i) => {
+                const maxRev = 50000
+                const heightPct = Math.min(100, Math.round((d.revenue / maxRev) * 100))
+                const isSelected = activeBarIndex === i
+                const isPeak = i === 4
+
+                return (
                   <div
+                    key={d.day}
+                    onClick={() => setActiveBarIndex(i)}
+                    onMouseEnter={() => setActiveBarIndex(i)}
                     style={{
-                      width: '100%',
-                      maxWidth: '28px',
-                      height: `${heightPct}%`,
-                      background: isPeak ? 'linear-gradient(180deg, #16A34A 0%, #15803D 100%)' : 'linear-gradient(180deg, #3B82F6 0%, #2563EB 100%)',
-                      borderRadius: '4px 4px 2px 2px',
-                      transition: 'height 0.4s ease'
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      height: '100%',
+                      justifyContent: 'flex-end',
+                      gap: '6px',
+                      cursor: 'pointer'
                     }}
-                    title={`${d.day} (${d.date}): R$ ${d.revenue.toLocaleString('pt-BR')} • ${d.label}`}
-                  />
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: '#475569', marginTop: '2px' }}>{d.day}</span>
-                </div>
-              )
-            })}
+                  >
+                    {/* Floating Value Tag */}
+                    <span
+                      style={{
+                        fontSize: '10px',
+                        fontWeight: 800,
+                        color: isSelected ? '#16A34A' : '#64748B',
+                        transition: 'all 0.2s ease',
+                        transform: isSelected ? 'scale(1.1)' : 'scale(1)'
+                      }}
+                    >
+                      R$ {(d.revenue / 1000).toFixed(0)}k
+                    </span>
+
+                    {/* Gradient Bar with Glow on selection */}
+                    <div
+                      style={{
+                        width: '100%',
+                        maxWidth: '32px',
+                        height: `${heightPct}%`,
+                        background: isPeak
+                          ? 'linear-gradient(180deg, #22C55E 0%, #15803D 100%)'
+                          : isSelected
+                          ? 'linear-gradient(180deg, #3B82F6 0%, #1D4ED8 100%)'
+                          : 'linear-gradient(180deg, #93C5FD 0%, #3B82F6 100%)',
+                        borderRadius: '6px 6px 3px 3px',
+                        boxShadow: isSelected ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transform: isSelected ? 'translateY(-2px)' : 'none'
+                      }}
+                    />
+
+                    {/* Day & Date Label */}
+                    <div style={{ textAlign: 'center', marginTop: '2px' }}>
+                      <span style={{ fontSize: '11px', fontWeight: isSelected ? 800 : 700, color: isSelected ? '#0F172A' : '#64748B', display: 'block' }}>
+                        {d.day}
+                      </span>
+                      <small style={{ fontSize: '9px', color: '#94A3B8', display: 'block' }}>{d.date}</small>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Footer of Chart */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #F1F5F9', fontSize: '11px', color: '#64748B' }}>
+            <span>Média diária do período: <strong>R$ 27.820,00</strong></span>
+            <span style={{ color: '#16A34A', fontWeight: 700 }}>● Maior volume: Sexta-feira (Virada de Lote)</span>
           </div>
         </div>
 
         {/* Full-Funnel Breakdown */}
-        <div className="marketing-os-panel" style={{ background: '#FFFFFF', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-          <div className="panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+        <div className="marketing-os-panel" style={{ background: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)' }}>
+          <div className="panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#0F172A' }}>Funil de Conversão 360°</h3>
-              <small style={{ color: '#64748B' }}>Passagem de etapa desde a impressão até o checkout</small>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>Funil de Conversão 360°</h3>
+              <small style={{ color: '#64748B' }}>Taxa de passagem desde o primeiro anúncio até o ingresso</small>
             </div>
+            <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', background: '#EFF6FF', padding: '2px 8px', borderRadius: '999px' }}>
+              Full Funnel
+            </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {funnelSteps.map((step, idx) => (
-              <div key={idx} style={{ padding: '6px 8px', background: '#F8FAFC', borderRadius: '6px', border: '1px solid #F1F5F9' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 700, color: '#0F172A' }}>
+              <div key={idx} style={{ padding: '8px 10px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #F1F5F9' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#0F172A' }}>
                   <span>{step.label}</span>
-                  <strong style={{ color: idx === 4 ? '#16A34A' : '#2563EB' }}>{step.value}</strong>
+                  <strong style={{ color: idx === 4 ? '#16A34A' : '#2563EB', fontSize: '13px' }}>{step.value}</strong>
                 </div>
-                <div style={{ width: '100%', height: '4px', background: '#E2E8F0', borderRadius: '999px', marginTop: '4px', overflow: 'hidden' }}>
-                  <div style={{ width: step.pct, height: '100%', background: idx === 4 ? '#16A34A' : '#3B82F6', borderRadius: '999px' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                  <small style={{ fontSize: '10px', color: '#64748B' }}>{step.sub}</small>
+                  <span style={{ fontSize: '10px', fontWeight: 800, color: '#475569' }}>{step.pct}</span>
+                </div>
+                <div style={{ width: '100%', height: '5px', background: '#E2E8F0', borderRadius: '999px', marginTop: '4px', overflow: 'hidden' }}>
+                  <div
+                    style={{
+                      width: step.pct,
+                      height: '100%',
+                      background: idx === 4 ? 'linear-gradient(90deg, #22C55E 0%, #16A34A 100%)' : 'linear-gradient(90deg, #60A5FA 0%, #2563EB 100%)',
+                      borderRadius: '999px'
+                    }}
+                  />
                 </div>
               </div>
             ))}
