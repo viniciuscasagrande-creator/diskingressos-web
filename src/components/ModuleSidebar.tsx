@@ -65,33 +65,13 @@ const mainItems: Item[] = [
   { key: 'admin-hub', label: 'Administração', icon: Building2 },
 ]
 
-// 2. GESTÃO DE CAIXA & SALDOS
+// 2. FINANCEIRO: REDUZIDO AOS 5 PILARES PRINCIPAIS
 const cashFinanceItems: Item[] = [
-  { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: BarChart3, badge: 'Novo' },
-  { key: 'finance', label: 'Saldos', icon: WalletCards },
-  { key: 'finance-payouts', label: 'Solicitar Repasse', icon: HandCoins },
-  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
-  { key: 'finance-advanced', label: 'Financeiro Advanced', icon: ChartNoAxesCombined },
-  { key: 'finance-reconciliation', label: 'Conciliação Bancária', icon: Scale },
-  { key: 'finance-spread', label: 'Financeiro Spread', icon: ChartNoAxesCombined },
-  { key: 'finance-spread-simulator', label: 'Simulador de Spread', icon: Percent },
-  { key: 'finance-split', label: 'Split Financeiro', icon: Split },
-  { key: 'finance-intelligence', label: 'Inteligência Financeira', icon: Brain },
-  { key: 'finance-statement', label: 'Extrato', icon: ReceiptText },
-  { key: 'finance-expenses', label: 'Despesas', icon: TrendingDown },
-  { key: 'finance-bank-accounts', label: 'Contas Bancárias', icon: Landmark },
-  { key: 'finance-bordero', label: 'Borderô', icon: FileSignature },
-  { key: 'pos', label: 'Pontos de Venda (PDV)', icon: MonitorSmartphone },
-  { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard },
-  { key: 'finance-custom', label: 'Pagamentos Customizados', icon: SlidersHorizontal },
-  { key: 'finance-negotiations', label: 'Negociações Financeiras', icon: HandCoins },
-  { key: 'finance-refunds', label: 'Devoluções / Estornos', icon: ReceiptText },
-  { key: 'finance-operators', label: 'Operadoras de Cartão', icon: ShieldCheck },
-  { key: 'finance-gateways', label: 'Gateways de Pagamento', icon: WalletCards },
-  { key: 'finance-receivables', label: 'Recebíveis', icon: TrendingUp },
-  { key: 'finance-payables', label: 'Contas a Pagar', icon: TrendingDown },
-  { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
-  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
+  { key: 'finance-dashboard', label: 'Saldos, Extrato & Repasses', icon: WalletCards, badge: 'Caixa' },
+  { key: 'finance-advance', label: 'Antecipação & Spread', icon: Zap },
+  { key: 'finance-split', label: 'Split & Coprodução', icon: Split },
+  { key: 'finance-methods', label: 'Meios de Pagamento & Taxas', icon: CreditCard },
+  { key: 'finance-bordero', label: 'Borderô & Relatórios DRE', icon: FileSignature },
 ]
 
 // 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
@@ -100,30 +80,17 @@ const accountingFinanceItems: Item[] = [
   { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck },
   { key: 'finance-cost-centers', label: 'Centros de Custos', icon: Boxes },
   { key: 'finance-accounting-entries', label: 'Lançamentos Contábeis', icon: FileText },
-  { key: 'accounting-journal', label: 'Livro Diário', icon: BookOpenText },
-  { key: 'accounting-ledger', label: 'Livro Razão', icon: BookMarked },
+  { key: 'accounting-journal', label: 'Livro Diário Oficial', icon: BookOpenText },
+  { key: 'accounting-ledger', label: 'Livro Razão Analítico', icon: BookMarked },
   { key: 'finance-dre', label: 'DRE & Orçamento', icon: BarChart3 },
   { key: 'accounting-trial-balance', label: 'Balancete', icon: Scale },
   { key: 'accounting-balance-sheet', label: 'Balanço Patrimonial', icon: Landmark },
-  { key: 'accounting-reconciliation', label: 'Conciliação Contábil', icon: Scale },
-  { key: 'finance-borderos', label: 'Central de Borderôs', icon: ReceiptText },
-  { key: 'finance-signatures', label: 'Documentos & Assinaturas', icon: FileSignature },
-  { key: 'finance-closing', label: 'Fechamento Contábil', icon: LockKeyhole },
   { key: 'accounting-taxes', label: 'Fiscal & Tributos', icon: FileSpreadsheet },
-  { key: 'accounting-audit', label: 'Auditoria Contábil', icon: ScrollText },
-  { key: 'accounting-journal', label: 'Livro Diário Oficial', icon: BookOpenText },
-  { key: 'accounting-ledger', label: 'Livro Razão Analítico', icon: BookMarked },
-  { key: 'accounting-chart', label: 'Plano de Contas em Árvore', icon: ListTree },
-  { key: 'accounting-entries', label: 'Escrituração Contábil', icon: NotebookTabs },
+  { key: 'finance-closing', label: 'Fechamento Contábil', icon: LockKeyhole },
   { key: 'accounting-sped', label: 'SPED / ECD / ECF', icon: FileSpreadsheet },
 ]
 
-// 4. CONTABILIDADE OFICIAL & SPED foi incorporada ao menu CONTABILIDADE.
-
-// 5. ADVANCED, SPLIT & OPERADORAS
-const advancedFinanceItems: Item[] = []
-
-// 6. MARKETING & GROWTH
+// 4. MARKETING & GROWTH
 const marketingItems: Item[] = [
   { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
   { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
@@ -139,7 +106,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]
 
-// 7. REMARKETING & RESGATE
+// 5. REMARKETING & RESGATE
 const remarketingItems: Item[] = [
   { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
   { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -150,7 +117,7 @@ const remarketingItems: Item[] = [
   { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
 ]
 
-// 8. ADMINISTRAÇÃO & GOVERNANÇA
+// 6. ADMINISTRAÇÃO & GOVERNANÇA
 const adminItems: Item[] = [
   { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
   { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
@@ -191,21 +158,31 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           )
         })}
 
-        {/* Section: Financeiro - Caixa & Saldos */}
+        {/* Section: Financeiro (5 Pilares Principais) */}
         <CollapsibleSection
           label="Financeiro"
           open={openFinance}
           onToggle={() => setOpenFinance(!openFinance)}
         >
-          {cashFinanceItems.map((it, index) => (
-            <NavItem
-              key={`cash-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
+          {cashFinanceItems.map((it, index) => {
+            const isActive =
+              (it.key === 'finance-dashboard' && ['finance', 'finance-dashboard', 'finance-hub', 'finance-statement', 'finance-payouts', 'finance-cashflow', 'finance-bank-accounts', 'finance-expenses', 'finance-payables', 'finance-receivables', 'finance-reconciliation'].includes(page)) ||
+              (it.key === 'finance-advance' && ['finance-advance', 'finance-spread', 'finance-spread-simulator'].includes(page)) ||
+              (it.key === 'finance-split' && ['finance-split', 'finance-settlement', 'finance-settlements', 'finance-negotiations'].includes(page)) ||
+              (it.key === 'finance-methods' && ['finance-methods', 'finance-custom', 'finance-operators', 'finance-gateways', 'finance-refunds', 'finance-intelligence', 'finance-rates', 'finance-disputes', 'finance-chargebacks'].includes(page)) ||
+              (it.key === 'finance-bordero' && ['finance-bordero', 'finance-reports', 'finance-advanced', 'finance-consolidated'].includes(page)) ||
+              page === it.key
+
+            return (
+              <NavItem
+                key={`cash-${it.key}-${index}`}
+                item={it}
+                active={isActive}
+                onNavigate={onNavigate}
+                indent
+              />
+            )
+          })}
         </CollapsibleSection>
 
         {/* Section: Financeiro Contábil & Borderôs */}
