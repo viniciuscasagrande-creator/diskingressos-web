@@ -1,4 +1,6 @@
 import React from 'react'
+import { SimuladorSpreadModule } from '../SimuladorSpreadModule'
+import FinanceReconciliationPage from '../../FinanceReconciliationPage'
 import FinanceSpread360Page from '../../FinanceSpread360Page'
 import FinanceBankAccountsPage from '../../FinanceBankAccountsPage'
 import FinancePayments360Page from '../../FinancePayments360Page'
@@ -17,7 +19,13 @@ export default function AdvancedTaxesRouter({ activeModule, onNavigate, ...props
     case 'fin-spread':
     case 'simulador-spread':
     case 'finance-spread':
-      return <FinanceSpread360Page onNavigate={onNavigate} {...props} />
+    case 'spread':
+      return <SimuladorSpreadModule onBack={props.onBack || (() => onNavigate?.('hub'))} notify={props.notify} />
+    case 'fin-conciliacao':
+    case 'conciliacao-bancaria':
+    case 'finance-reconciliation':
+    case 'conciliacao':
+      return <FinanceReconciliationPage onBack={props.onBack || (() => onNavigate?.('hub'))} notify={props.notify} onNavigate={onNavigate} />
     case 'fin-split':
     case 'split-financeiro':
     case 'finance-split':

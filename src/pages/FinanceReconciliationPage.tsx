@@ -1,341 +1,311 @@
-import { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import {
-  Scale, Upload, Download, CheckCircle2, AlertCircle, RefreshCw,
-  Search, Filter, Landmark, FileSpreadsheet, Eye, X, ArrowLeftRight
+  Scale, Landmark, Filter, AlertCircle, ArrowUpRight, CreditCard,
+  ScanLine, Download, Pencil, CheckCircle2, ArrowLeft, Check
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
-import {
-  reconciliationsSeed, financeSummary, bankAccountsSeed,
-  type ReconciliationItem
-} from '../data/finance'
 
-type Props = {
-  events: EventItem[]
-  notify: (message: string) => void
+interface Props {
+  events?: EventItem[]
+  notify?: (message: string) => void
   onNavigate?: (page: any) => void
+  onBack?: () => void
 }
 
-const brl = (v: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
+interface DivergenceItem {
+  id: number
+  date: string
+  type: string
+  amount: number
+  status: 'Ajuste Pendente' | 'Valor Incompatível' | 'Sem Registro' | 'Conciliado'
+  description: string
+  suggestion: string
+  icon: 'arrow' | 'card' | 'barcode'
+  selected?: boolean
+}
 
-export default function FinanceReconciliationPage({ events, notify, onNavigate }: Props) {
-  const [search, setSearch] = useState('')
-  const [bankFilter, setBankFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [showImportModal, setShowImportModal] = useState(false)
-  const [reconciliations, setReconciliations] = useState<ReconciliationItem[]>(reconciliationsSeed)
+const initialDivergences: DivergenceItem[] = [
+  {
+    id: 1,
+    date: '15/07',
+    type: 'PIX Recebido',
+    amount: 350.0,
+    status: 'Ajuste Pendente',
+    description: 'Lançamento bancário correspondente sem id de transação no gateway.',
+    suggestion: 'Sugestão: Conciliar com Venda #TK894562',
+    icon: 'arrow',
+    selected: true,
+  },
+  {
+    id: 2,
+    date: '16/07',
+    type: 'Repasse Cartão Crédito',
+    amount: 1200.0,
+    status: 'Valor Incompatível',
+    description: 'Diferença de R$ 20,00 entre extrato bancário e relatório de taxas.',
+    suggestion: 'Sugestão: Ajustar taxa do adquirente Stone.',
+    icon: 'card',
+    selected: true,
+  },
+  {
+    id: 3,
+    date: '16/07',
+    type: 'Boleto Pago',
+    amount: 450.0,
+    status: 'Sem Registro',
+    description: 'Valor compensado em conta sem correspondência no relatório de pedidos.',
+    suggestion: 'Sugestão: Verificar compras duplicadas na portaria.',
+    icon: 'barcode',
+    selected: true,
+  },
+]
 
-  const filtered = useMemo(() => {
-    return reconciliations.filter(r => {
-      const q = search.toLowerCase()
-      const matchesSearch =
-        r.systemDescription.toLowerCase().includes(q) ||
-        r.bankDescription.toLowerCase().includes(q) ||
-        (r.orderCode || '').toLowerCase().includes(q)
+export default function FinanceReconciliationPage({ events, notify, onNavigate, onBack }: Props) {
+  const [selectedBank, setSelectedBank] = useState<string>('Banco Santander')
+  const [filterPixIn, setFilterPixIn] = useState<boolean>(true)
+  const [filterPixOut, setFilterPixOut] = useState<boolean>(true)
+  const [filterTed, setFilterTed] = useState<boolean>(true)
+  const [filterCards, setFilterCards] = useState<boolean>(true)
+  const [filterBoleto, setFilterBoleto] = useState<boolean>(true)
 
-      const matchesBank = bankFilter === 'all' || r.bankName.includes(bankFilter)
-      const matchesStatus = statusFilter === 'all' || r.status.toLowerCase() === statusFilter.toLowerCase()
+  const [divergences, setDivergences] = useState<DivergenceItem[]>(initialDivergences)
 
-      return matchesSearch && matchesBank && matchesStatus
+  const formatBRL = (val: number) => {
+    return val.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
     })
-  }, [reconciliations, search, bankFilter, statusFilter])
-
-  const reconciledCount = reconciliations.filter(r => r.status === 'Conciliado').length
-  const pendingCount = reconciliations.filter(r => r.status === 'Pendente').length
-  const divergenceCount = reconciliations.filter(r => r.status === 'Divergente').length
-
-  const handleConciliateItem = (id: number) => {
-    setReconciliations(prev =>
-      prev.map(r => r.id === id ? { ...r, status: 'Conciliado' } : r)
-    )
-    notify(`Lançamento #${id} conciliado com sucesso!`)
   }
 
-  const exportReconciliationCSV = () => {
-    const headers = ['ID', 'Data', 'Banco', 'Lancamento Sistema', 'Extrato Bancario', 'Codigo Conciliacao', 'Valor Sistema (R$)', 'Valor Extrato (R$)', 'Diferenca (R$)', 'Status']
-    const rows = [headers.join(';')]
-    filtered.forEach(r => {
-      rows.push([
-        r.id,
-        `"${r.date}"`,
-        `"${r.bankName}"`,
-        `"${r.systemDescription}"`,
-        `"${r.bankDescription}"`,
-        `"${r.orderCode || ''}"`,
-        r.systemValue.toFixed(2).replace('.', ','),
-        r.bankValue.toFixed(2).replace('.', ','),
-        r.difference.toFixed(2).replace('.', ','),
-        `"${r.status}"`
-      ].join(';'))
-    })
-    const blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' })
+  const handleApplySuggestion = (item: DivergenceItem) => {
+    setDivergences(prev =>
+      prev.map(d => (d.id === item.id ? { ...d, status: 'Conciliado' } : d))
+    )
+    notify?.(`Ajuste aplicado com sucesso: ${item.suggestion.replace('Sugestão: ', '')}!`)
+  }
+
+  const handleConciliateAll = () => {
+    setDivergences(prev => prev.map(d => ({ ...d, status: 'Conciliado' })))
+    notify?.('Todos os 3 lançamentos divergentes foram conciliados com sucesso no Santander!')
+  }
+
+  const handleExport = () => {
+    const csvContent = [
+      'Data;Tipo;Valor;Status;Descricao;Sugestao',
+      ...divergences.map(
+        d => `"${d.date}";"${d.type}";"${d.amount.toFixed(2)}";"${d.status}";"${d.description}";"${d.suggestion}"`
+      ),
+    ].join('\n')
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `conciliacao_bancaria_${new Date().toISOString().slice(0, 10)}.csv`
-    document.body.appendChild(a)
+    a.download = `conciliacao-bancaria-${selectedBank.replace(/\s+/g, '_')}-${new Date().toISOString().slice(0, 10)}.csv`
     a.click()
-    document.body.removeChild(a)
     URL.revokeObjectURL(url)
-    notify('Relatório de Conciliação exportado em CSV com sucesso!')
+    notify?.('Relatório de divergências bancárias exportado em CSV com sucesso!')
   }
 
+  const activeCount = divergences.filter(d => d.status !== 'Conciliado').length
+
   return (
-    <div className="finance-dashboard-wrapper">
-      {/* Header Section */}
-      <section className="finance-header-section card-surface">
-        <div className="finance-header-left">
-          <span className="eyebrow">AUDITORIA & CONFORMIDADE</span>
-          <div className="finance-title-row">
-            <h1>Conciliação Bancária (OFX / CNAB)</h1>
-            <span className="pipeline-status-badge">
-              <CheckCircle2 size={13} /> Batimento Automático 99,4%
-            </span>
+    <div className="w-full space-y-4">
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 text-xs font-bold text-[#2563eb] hover:underline mb-2"
+        >
+          <ArrowLeft size={16} />
+          Voltar para o Hub Financeiro
+        </button>
+      )}
+
+      {/* Top Header Card */}
+      <div className="ds-finance-header-card">
+        <div className="ds-finance-header-title">
+          <div style={{ color: '#2563eb', display: 'grid', placeItems: 'center' }}>
+            <Scale size={22} />
           </div>
-          <p className="page-subtitle">
-            Conferência automática entre os lançamentos do sistema DiskIngressos e os extratos das contas bancárias correntes.
-          </p>
+          <h1>Conciliação Bancária</h1>
         </div>
-
-        <div className="finance-header-controls">
-          <div className="finance-action-buttons">
-            <button className="tool-btn" onClick={exportReconciliationCSV} title="Exportar CSV">
-              <Download size={15} /> Exportar CSV
-            </button>
-            <button className="primary-btn" onClick={() => setShowImportModal(true)}>
-              <Upload size={16} /> Importar Extrato OFX
-            </button>
-          </div>
+        <div className="ds-finance-header-subtitle">
+          Ajuste e validação de extratos
         </div>
-      </section>
+      </div>
 
-      {/* KPI Cards Strip */}
-      <section className="finance-kpis-grid">
-        <article className="finance-kpi-card card-surface kpi-blue">
-          <div className="kpi-icon-wrap">
-            <Landmark size={24} />
+      {/* 2-Column Main Layout */}
+      <div className="ds-reconciliation-container">
+        
+        {/* Left Column: Selecionar Banco & Filtros */}
+        <div className="ds-reconciliation-left-card">
+          <div className="ds-reconciliation-section-title">
+            <Landmark size={18} style={{ color: '#2563eb' }} />
+            <span>Selecionar Banco</span>
           </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Saldo em Sistema</span>
-            <strong className="kpi-value">{brl(financeSummary.availableBalance)}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag active">Contábil</span>
-            </div>
-          </div>
-        </article>
 
-        <article className="finance-kpi-card card-surface kpi-green">
-          <div className="kpi-icon-wrap">
-            <CheckCircle2 size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Itens Conciliados</span>
-            <strong className="kpi-value">{reconciledCount} de {reconciliations.length}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag positive">99.4% precisão</span>
-            </div>
-          </div>
-        </article>
-
-        <article className="finance-kpi-card card-surface kpi-orange">
-          <div className="kpi-icon-wrap">
-            <RefreshCw size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Pendentes de Batimento</span>
-            <strong className="kpi-value">{pendingCount} item(ns)</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag neutral">{brl(1840.00)}</span>
-            </div>
-          </div>
-        </article>
-
-        <article className="finance-kpi-card card-surface kpi-purple">
-          <div className="kpi-icon-wrap">
-            <Scale size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Divergências</span>
-            <strong className="kpi-value">{divergenceCount}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag positive">R$ 0,00</span>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      {/* Table Section */}
-      <section className="finance-table-section card-surface">
-        <div className="table-header-tabs">
-          <div className="table-tools-right" style={{ width: '100%', justifyContent: 'space-between' }}>
-            <div className="small-search" style={{ width: '320px' }}>
-              <Search size={14} />
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Buscar por lançamento ou extrato..."
-              />
-              {search && (
-                <button onClick={() => setSearch('')} className="icon-clear">
-                  <X size={12} />
-                </button>
-              )}
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <div className="type-filter-select">
-                <Landmark size={13} />
-                <select value={bankFilter} onChange={e => setBankFilter(e.target.value)}>
-                  <option value="all">Todos os bancos</option>
-                  <option value="Itaú">Banco Itaú</option>
-                  <option value="Bradesco">Banco Bradesco</option>
-                  <option value="Nubank">Nu Pagamentos</option>
-                  <option value="Brasil">Banco do Brasil</option>
-                </select>
-              </div>
-
-              <div className="type-filter-select">
-                <Filter size={13} />
-                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-                  <option value="all">Todos os status</option>
-                  <option value="conciliado">Conciliado</option>
-                  <option value="pendente">Pendente</option>
-                  <option value="divergente">Divergente</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="lots-table-wrap">
-          <table className="lots-table finance-table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Conta Bancária</th>
-                <th>Lançamento do Sistema</th>
-                <th>Extrato Bancário (OFX)</th>
-                <th style={{ textAlign: 'right' }}>Valor Sistema</th>
-                <th style={{ textAlign: 'right' }}>Valor Banco</th>
-                <th style={{ textAlign: 'right' }}>Diferença</th>
-                <th>Status</th>
-                <th style={{ textAlign: 'center' }}>Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(r => (
-                <tr key={r.id}>
-                  <td><span className="tx-date">{r.date}</span></td>
-                  <td><span className="bank-account-tag">{r.bankName}</span></td>
-                  <td>
-                    <div className="transaction-desc">
-                      <strong>{r.systemDescription}</strong>
-                      <small>{r.orderCode || 'Sem Código'}</small>
-                    </div>
-                  </td>
-                  <td>
-                    <code style={{ fontSize: '11px', color: '#64748B' }}>{r.bankDescription}</code>
-                  </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <strong className={r.systemValue >= 0 ? 'money-positive' : 'money-negative'}>
-                      {brl(r.systemValue)}
-                    </strong>
-                  </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <strong className={r.bankValue >= 0 ? 'money-positive' : 'money-negative'}>
-                      {brl(r.bankValue)}
-                    </strong>
-                  </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <span style={{ color: r.difference === 0 ? '#10B981' : '#EF4444', fontWeight: 700 }}>
-                      {brl(r.difference)}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`finance-status ${r.status.toLowerCase()}`}>
-                      {r.status}
-                    </span>
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    {r.status === 'Pendente' ? (
-                      <button
-                        className="primary-btn compact-btn"
-                        onClick={() => handleConciliateItem(r.id)}
-                        title="Aprovar Conciliação"
-                      >
-                        <CheckCircle2 size={13} /> Conciliar
-                      </button>
-                    ) : (
-                      <span className="status-verified" style={{ fontSize: '12px' }}>
-                        <CheckCircle2 size={13} /> OK
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {!filtered.length && (
-                <tr>
-                  <td colSpan={9} style={{ textAlign: 'center', padding: '32px' }}>
-                    Nenhum item localizado para a conciliação.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Modal: Importar Extrato OFX/CNAB */}
-      {showImportModal && (
-        <div className="utm-modal-backdrop" onClick={() => setShowImportModal(false)}>
-          <div className="utm-modal-card" onClick={e => e.stopPropagation()}>
-            <div className="utm-modal-head">
-              <div>
-                <span className="eyebrow">IMPORTAÇÃO DE EXTRATO</span>
-                <h3>Importar Arquivo OFX / CNAB 240</h3>
-                <p>Faça upload do extrato bancário para conciliação automática com as vendas.</p>
-              </div>
-              <button className="icon-action" onClick={() => setShowImportModal(false)}>✕</button>
-            </div>
-
-            <div className="advance-simulation-body">
-              <label>
-                Selecione a Conta Bancária de Destino:
-                <select defaultValue={bankAccountsSeed[0].id} style={{ width: '100%', marginTop: '6px' }}>
-                  {bankAccountsSeed.map(b => (
-                    <option key={b.id} value={b.id}>{b.bankName} (Ag. {b.agency} C/C {b.accountNumber})</option>
-                  ))}
-                </select>
-              </label>
-
-              <div
-                style={{
-                  border: '2px dashed #334155',
-                  borderRadius: '10px',
-                  padding: '30px 20px',
-                  textAlign: 'center',
-                  background: '#08121F',
-                  cursor: 'pointer'
-                }}
+          <div className="ds-reconciliation-radio-list">
+            {['Banco Itaú', 'Banco Santander', 'Banco do Brasil', 'Banco Bradesco'].map(bank => (
+              <label
+                key={bank}
+                className={`ds-reconciliation-radio-item ${selectedBank === bank ? 'active' : ''}`}
                 onClick={() => {
-                  setShowImportModal(false)
-                  notify('Extrato OFX processado! 18 transações conciliadas com sucesso.')
+                  setSelectedBank(bank)
+                  notify?.(`Banco selecionado: ${bank}`)
                 }}
               >
-                <Upload size={32} style={{ color: '#38BDF8', margin: '0 auto 10px' }} />
-                <strong style={{ display: 'block', color: '#FFFFFF', fontSize: '13px' }}>
-                  Clique para selecionar arquivo .OFX ou .RET
-                </strong>
-                <small style={{ color: '#94A3B8' }}>Formatos suportados: OFX 2.0, CNAB 240, CNAB 400, CSV Bancário</small>
-              </div>
-            </div>
+                <input
+                  type="radio"
+                  name="selected_bank"
+                  checked={selectedBank === bank}
+                  onChange={() => setSelectedBank(bank)}
+                />
+                <span>{bank}</span>
+              </label>
+            ))}
+          </div>
 
-            <div className="utm-modal-actions">
-              <button className="btn secondary" onClick={() => setShowImportModal(false)}>Cancelar</button>
-            </div>
+          <div className="ds-reconciliation-divider" />
+
+          <div className="ds-reconciliation-section-title">
+            <Filter size={18} style={{ color: '#2563eb' }} />
+            <span>Filtros de Extrato</span>
+          </div>
+
+          <div className="ds-reconciliation-checkbox-list">
+            <label className="ds-reconciliation-checkbox-item">
+              <input
+                type="checkbox"
+                checked={filterPixIn}
+                onChange={e => setFilterPixIn(e.target.checked)}
+              />
+              <span>PIX Recebido</span>
+            </label>
+
+            <label className="ds-reconciliation-checkbox-item">
+              <input
+                type="checkbox"
+                checked={filterPixOut}
+                onChange={e => setFilterPixOut(e.target.checked)}
+              />
+              <span>PIX Pago</span>
+            </label>
+
+            <label className="ds-reconciliation-checkbox-item">
+              <input
+                type="checkbox"
+                checked={filterTed}
+                onChange={e => setFilterTed(e.target.checked)}
+              />
+              <span>TED</span>
+            </label>
+
+            <label className="ds-reconciliation-checkbox-item">
+              <input
+                type="checkbox"
+                checked={filterCards}
+                onChange={e => setFilterCards(e.target.checked)}
+              />
+              <span>Cartão de Crédito/Débito</span>
+            </label>
+
+            <label className="ds-reconciliation-checkbox-item">
+              <input
+                type="checkbox"
+                checked={filterBoleto}
+                onChange={e => setFilterBoleto(e.target.checked)}
+              />
+              <span>Boleto Bancário</span>
+            </label>
           </div>
         </div>
-      )}
+
+        {/* Right Column: Divergências Identificadas */}
+        <div>
+          <div className="ds-divergence-header">
+            <div className="ds-divergence-title">
+              <AlertCircle size={20} style={{ color: '#ea580c' }} />
+              <span>Divergências Identificadas</span>
+            </div>
+            <span className="ds-divergence-badge">
+              {activeCount} registros encontrados
+            </span>
+          </div>
+
+          {divergences.map(d => (
+            <div key={d.id} className="ds-divergence-card">
+              <div className="ds-divergence-icon-wrap">
+                {d.icon === 'arrow' && <ArrowUpRight size={20} />}
+                {d.icon === 'card' && <CreditCard size={20} />}
+                {d.icon === 'barcode' && <ScanLine size={20} />}
+              </div>
+
+              <div className="ds-divergence-content">
+                <div className="ds-divergence-top-row">
+                  <span className="ds-divergence-card-title">
+                    {d.date} - {d.type} - {formatBRL(d.amount)}
+                  </span>
+                  <span
+                    className="ds-divergence-status-tag"
+                    style={{
+                      color: d.status === 'Conciliado' ? '#059669' : '#dc2626',
+                    }}
+                  >
+                    {d.status}
+                  </span>
+                </div>
+
+                <p className="ds-divergence-desc">
+                  {d.description.includes('R$ 20,00') ? (
+                    <>
+                      Diferença de <strong>R$ 20,00</strong> entre extrato bancário e relatório de taxas.
+                    </>
+                  ) : (
+                    d.description
+                  )}
+                </p>
+
+                {d.status !== 'Conciliado' ? (
+                  <button
+                    className="ds-divergence-suggestion"
+                    onClick={() => handleApplySuggestion(d)}
+                  >
+                    <AlertCircle size={14} />
+                    <span>{d.suggestion}</span>
+                  </button>
+                ) : (
+                  <span style={{ fontSize: '12px', color: '#059669', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <Check size={14} /> Batimento efetuado e registrado
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Bottom Actions Bar */}
+          <div className="ds-divergence-actions-bar">
+            <button className="ds-btn-outline" onClick={handleExport}>
+              <Download size={16} />
+              <span>Exportar</span>
+            </button>
+
+            <button
+              className="ds-btn-orange"
+              onClick={() => notify?.('Janela de ajuste manual de divergência aberta!')}
+            >
+              <Pencil size={16} />
+              <span>Ajustar Manualmente</span>
+            </button>
+
+            <button className="ds-btn-green" onClick={handleConciliateAll}>
+              <CheckCircle2 size={16} />
+              <span>Conciliar Selecionados</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
     </div>
   )
 }

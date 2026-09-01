@@ -8,6 +8,7 @@ import {
   compareFinanceSpread, simulateFinanceSpread,
   type CardAcquirer, type SpreadDashboard, type SpreadSimulationResult
 } from '../services/api'
+import { SimuladorSpreadModule } from './finance/SimuladorSpreadModule'
 
 type Props = { producerId?: number; eventId?: number; notify?: (message: string) => void; onBack?: () => void; initialView?: View }
 type View = 'dashboard' | 'simulator' | 'acquirers' | 'history' | 'rates'
@@ -89,13 +90,7 @@ export default function FinanceSpread360Page({ producerId, eventId, notify, init
         <>
           {view === 'dashboard' && <Dashboard data={dashboard} />}
           {view === 'simulator' && (
-            <Simulator
-              producerId={producerId}
-              eventId={eventId}
-              acquirers={acquirers}
-              reload={load}
-              flash={flash}
-            />
+            <SimuladorSpreadModule notify={flash} />
           )}
           {view === 'acquirers' && (
             <Acquirers

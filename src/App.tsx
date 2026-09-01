@@ -641,8 +641,8 @@ export default function App() {
         )}
 
         {/* FASE 17.5 & 20.2: CONCILIAÇÃO BANCÁRIA & OPERACIONAL E ANTECIPAÇÕES */}
-        {(page === 'finance-reconciliation' || page === 'finance-bank') && (
-          <FinanceOperations360Page producerId={scopedProducerId ?? undefined} initialTab="reconciliation" notify={notify} />
+        {(page === 'finance-reconciliation' || page === 'finance-bank' || (page as string) === 'fin-conciliacao' || (page as string) === 'conciliacao') && (
+          <FinanceReconciliationPage events={visibleEvents} notify={notify} onNavigate={navigate} onBack={() => setPage('finance-dashboard')} />
         )}
         {page === 'finance-advance' && (
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} eventId={selectedEvent?.id} initialTab="advances" notify={notify} onBack={() => setPage('finance-dashboard')} />
@@ -714,8 +714,8 @@ export default function App() {
 
         {/* OUTRAS TELAS FINANCEIRAS */}
         {page === 'finance-sales' && <FinancePage events={visibleEvents} initialTab="sales" notify={notify} />}
-        {page === 'finance-spread-simulator' && (
-          <FinanceSpread360Page producerId={scopedProducerId ?? undefined} initialView="simulator" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        {(page === 'finance-spread-simulator' || (page as string) === 'simulador-spread') && (
+          <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
         {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos', 'fin-reports', 'relatorios-financeiros'].includes(page) && (
           <AdvancedTaxesRouter

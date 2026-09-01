@@ -8,6 +8,8 @@ import { Button } from '../../components/ui/Button';
 import { KpiCard } from '../../components/ui/KpiCard';
 import { Badge } from '../../components/ui/Badge';
 import { DataTable } from '../../components/ui/DataTable';
+import { SimuladorSpreadModule } from './SimuladorSpreadModule';
+import FinanceReconciliationPage from '../FinanceReconciliationPage';
 
 interface GenericFinanceSubViewProps {
   moduleKey: FinanceModuleKey;
@@ -31,6 +33,14 @@ export const GenericFinanceSubView: React.FC<GenericFinanceSubViewProps> = ({
   onBack,
   notify,
 }) => {
+  if (moduleKey === 'simulador-spread') {
+    return <SimuladorSpreadModule onBack={onBack} notify={notify} />;
+  }
+
+  if (moduleKey === 'conciliacao-bancaria') {
+    return <FinanceReconciliationPage onBack={onBack} notify={notify} />;
+  }
+
   const meta = financeModulesList.find((m) => m.key === moduleKey) || financeModulesList[0];
   const [rows, setRows] = useState<OperationRow[]>([
     { id: '1', code: '#LAN-89102', description: 'Registro de Operação Automatizada', reference: 'Festival Curitiba 2026', date: '28/08/2026 15:30', status: 'liquidado', type: 'entrada', amountCents: 1450000 },
@@ -98,41 +108,47 @@ export const GenericFinanceSubView: React.FC<GenericFinanceSubViewProps> = ({
       alert('Informe a descrição da operação.');
       return;
     }
-    const cents = Math.round(Number(newAmount.replace(',', '.')) * 100) || 10000;
-    const newOp: OperationRow = {
-      id: String(Date.now()),
+    const cents = Math.round((parseFloat(newAmount) || 0) * 100);
+    if (cents <= 0) {
+      alert('Informe um valor válido maior que zero.');
+      return;
+    }
+
+    const newRow: OperationRow = {
+      id: Date.now().toString(),
       code: `#LAN-${Math.floor(10000 + Math.random() * 90000)}`,
       description: newDesc.trim(),
-      reference: newRef.trim() || 'Operação Global',
+      reference: newRef.trim() || 'Operação Manual',
       date: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
       status: 'liquidado',
       type: newType,
       amountCents: cents
     };
 
-    setRows([newOp, ...rows]);
+    setRows([newRow, ...rows]);
     setNewDesc('');
     setNewAmount('');
     setShowModal(false);
-    notify?.(`Operação ${newOp.code} registrada com sucesso em ${meta.title}.`);
+    notify?.(`Novo registro ${newRow.code} adicionado com sucesso em ${meta.title}.`);
   };
 
-  const handleToggleStatus = (id: string) => {
-    setRows(rows.map(r => {
-      if (r.id === id) {
-        const nextStatus = r.status === 'liquidado' ? 'pendente' : 'liquidado';
-        notify?.(`Lançamento ${r.code} alterado para ${nextStatus}.`);
-        return { ...r, status: nextStatus };
-      }
-      return r;
-    }));
-  };
-
-  const filteredRows = rows.filter(r => {
-    const matchesQ = (r.code + ' ' + r.description + ' ' + r.reference).toLowerCase().includes(q.toLowerCase());
+  const filteredRows = rows.filter((r) => {
+    const matchesQuery = (r.description + ' ' + r.code + ' ' + r.reference)
+      .toLowerCase()
+      .includes(q.toLowerCase());
     const matchesStatus = statusFilter === 'todos' || r.status === statusFilter;
-    return matchesQ && matchesStatus;
+    return matchesQuery && matchesStatus;
   });
+
+  const totalEntradas = rows
+    .filter((r) => r.type === 'entrada')
+    .reduce((acc, curr) => acc + curr.amountCents, 0);
+
+  const totalSaidas = rows
+    .filter((r) => r.type === 'saida')
+    .reduce((acc, curr) => acc + curr.amountCents, 0);
+
+  const saldoLiquido = totalEntradas - totalSaidas;
 
   return (
     <div className="w-full space-y-6">
@@ -149,209 +165,220 @@ export const GenericFinanceSubView: React.FC<GenericFinanceSubViewProps> = ({
         title={meta.title}
         subtitle={meta.description}
         actions={
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <Button
               variant="secondary"
               onClick={handleExportCsv}
               icon={<Download size={15} />}
             >
-              Exportar Relatório
+              Exportar CSV
             </Button>
             <Button
               variant="primary"
               onClick={() => setShowModal(true)}
               icon={<Plus size={15} />}
             >
-              Nova Operação
+              Novo Lançamento
             </Button>
           </div>
         }
       />
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
-          label="STATUS OPERACIONAL"
-          value="100% Ativo"
-          note="sem divergências"
-          accent={meta.accentColor}
-          icon={<CheckCircle2 size={20} />}
+          label="SALDO CONCILIADO DO MÓDULO"
+          value={formatCurrency(saldoLiquido)}
+          note="movimentação líquida"
+          accent={saldoLiquido >= 0 ? 'green' : 'orange'}
+          icon={<Shield size={20} />}
         />
         <KpiCard
-          label="VOLUME CONSOLIDADO"
-          value={meta.metrics ? meta.metrics.value : 'R$ 148.750,00'}
-          note="acumulado no ciclo"
+          label="TOTAL DE ENTRADAS"
+          value={formatCurrency(totalEntradas)}
+          note="créditos e liquidações"
           accent="blue"
           icon={<TrendingUp size={20} />}
         />
         <KpiCard
-          label="ÚLTIMA ATUALIZAÇÃO"
-          value="Hoje, em tempo real"
-          note="sincronização contínua"
-          accent="green"
-          icon={<Shield size={20} />}
+          label="TOTAL DE SAÍDAS / REPASSES"
+          value={formatCurrency(totalSaidas)}
+          note="débitos e taxas deduzidas"
+          accent="purple"
+          icon={<CheckCircle2 size={20} />}
         />
         <KpiCard
-          label="CONFORMIDADE FISCAL"
-          value="Auditado"
-          note="DiskIngressos Compliance"
-          accent="purple"
-          icon={<FileText size={20} />}
+          label="STATUS DO SISTEMA"
+          value={meta.badge}
+          note="auditoria em tempo real"
+          accent="cyan"
+          icon={<CheckCircle2 size={20} />}
         />
       </div>
 
-      {/* Main Details Panel */}
       <Card padding="md" className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EDF0F4] pb-3">
-          <div>
-            <h2 className="text-[17px] font-bold text-[#0E1726]">{meta.title} — Visão Operacional</h2>
-            <p className="text-[12px] text-[#718096]">{meta.subtitle}</p>
-          </div>
-          {meta.badge && (
-            <Badge status="ativo">{meta.badge}</Badge>
-          )}
-        </div>
-
-        {/* Toolbar with Search and Status Filter */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-          <div className="flex items-center gap-2 max-w-sm w-full bg-slate-50 border border-slate-200 rounded-btn px-3 py-1.5">
-            <Search size={14} className="text-slate-400" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-[#EDF0F4] pb-4">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#718096]" size={16} />
             <input
               type="text"
+              placeholder="Buscar por descrição, código ou referência..."
               value={q}
-              onChange={e => setQ(e.target.value)}
-              placeholder="Pesquisar lançamentos..."
-              className="bg-transparent text-xs outline-none w-full text-slate-800"
+              onChange={(e) => setQ(e.target.value)}
+              className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-btn pl-9 pr-3 py-2 text-xs text-[#0E1726] outline-none focus:border-[#1677FF] focus:bg-white transition-all"
             />
           </div>
 
-          <div className="flex items-center gap-1.5">
-            {['todos', 'liquidado', 'pendente'].map(st => (
-              <button
-                key={st}
-                onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1 text-xs font-semibold rounded-btn transition-colors ${statusFilter === st ? 'bg-[#1677FF] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
-              >
-                {st === 'todos' ? 'Todos' : st === 'liquidado' ? 'Liquidados' : 'Pendentes'}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Status:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none bg-white font-medium text-slate-700"
+            >
+              <option value="todos">Todos os Status</option>
+              <option value="liquidado">Liquidados</option>
+              <option value="pendente">Pendentes</option>
+            </select>
           </div>
         </div>
 
-        {/* Data Table */}
         <DataTable
-          headers={['Identificador', 'Descrição do Lançamento', 'Referência', 'Data', <div key="st" className="text-center">Status</div>, <div key="val" className="text-right pr-2">Valor</div>, <div key="ac" className="text-center">Ações</div>]}
+          headers={[
+            'Identificador',
+            'Descrição da Operação',
+            'Referência / Evento',
+            'Data / Hora',
+            <div key="tipo" className="text-center">Tipo</div>,
+            <div key="st" className="text-center">Status</div>,
+            <div key="val" className="text-right pr-2">Valor</div>
+          ]}
+          empty={filteredRows.length === 0}
+          emptyMessage={`Nenhuma movimentação localizada para ${meta.title}.`}
         >
-          {filteredRows.map(row => (
-            <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-              <td className="py-3 px-4 font-mono font-bold text-xs text-[#1677FF]">{row.code}</td>
-              <td className="py-3 px-4 font-bold text-slate-900 text-xs">{row.description}</td>
-              <td className="py-3 px-4 text-xs text-slate-600">{row.reference}</td>
-              <td className="py-3 px-4 text-xs text-slate-500">{row.date}</td>
-              <td className="py-3 px-4 text-center">
-                <Badge status={row.status === 'liquidado' ? 'pago' : 'pendente'}>
-                  {row.status === 'liquidado' ? 'Liquidado' : 'Pendente'}
+          {filteredRows.map((r) => (
+            <tr key={r.id} className="hover:bg-slate-50/80 transition-colors border-b border-[#EDF0F4] last:border-0 text-xs">
+              <td className="py-3 px-3 font-mono font-bold text-[#1677FF]">
+                {r.code}
+              </td>
+              <td className="py-3 px-3 font-semibold text-[#0E1726]">
+                {r.description}
+              </td>
+              <td className="py-3 px-3 text-[#718096]">
+                {r.reference}
+              </td>
+              <td className="py-3 px-3 text-[#718096] whitespace-nowrap">
+                {r.date}
+              </td>
+              <td className="py-3 px-3 text-center">
+                <Badge variant={r.type === 'entrada' ? 'success' : 'neutral'}>
+                  {r.type === 'entrada' ? 'Crédito (+)' : 'Débito (-)'}
                 </Badge>
               </td>
-              <td className={`py-3 px-4 text-right font-bold text-xs ${row.type === 'entrada' ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
-                {row.type === 'entrada' ? '+ ' : '- '}{formatCurrency(row.amountCents)}
+              <td className="py-3 px-3 text-center">
+                <Badge variant={r.status === 'liquidado' ? 'success' : 'warning'}>
+                  {r.status === 'liquidado' ? 'Liquidado' : 'Pendente'}
+                </Badge>
               </td>
-              <td className="py-3 px-4 text-center">
-                <button
-                  onClick={() => handleToggleStatus(row.id)}
-                  title="Alternar Status"
-                  className="px-2.5 py-1 text-[11px] font-bold border border-slate-200 rounded hover:bg-slate-100 text-slate-700"
-                >
-                  {row.status === 'liquidado' ? 'Pendente' : 'Liquidar'}
-                </button>
+              <td className="py-3 px-3 text-right pr-2 font-mono font-bold whitespace-nowrap">
+                <span className={r.type === 'entrada' ? 'text-[#10B981]' : 'text-[#EF4444]'}>
+                  {r.type === 'entrada' ? '+' : '-'} {formatCurrency(r.amountCents)}
+                </span>
               </td>
             </tr>
           ))}
-          {filteredRows.length === 0 && (
-            <tr>
-              <td colSpan={7} className="py-8 text-center text-xs text-slate-500">
-                Nenhum lançamento encontrado.
-              </td>
-            </tr>
-          )}
         </DataTable>
       </Card>
 
-      {/* Interactive Modal to Create Operation */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-base text-slate-900">Nova Operação — {meta.title}</h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-modal border border-[#EDF0F4] shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-[#EDF0F4] bg-[#F8FAFC]">
+              <div className="flex items-center gap-2">
+                <FileText className="text-[#1677FF]" size={18} />
+                <h3 className="font-bold text-sm text-[#0E1726]">Novo Lançamento - {meta.title}</h3>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-[#718096] hover:text-[#0E1726] p-1 rounded-btn hover:bg-slate-100 transition-colors"
+              >
                 <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateRow} className="space-y-3">
+            <form onSubmit={handleCreateRow} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Descrição</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Descrição da Operação *
+                </label>
                 <input
                   type="text"
                   required
+                  placeholder="Ex: Liquidação de lote adicional"
                   value={newDesc}
-                  onChange={e => setNewDesc(e.target.value)}
-                  placeholder="Ex: Liquidação de Lote ou Ajuste"
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1677FF]"
+                  onChange={(e) => setNewDesc(e.target.value)}
+                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1677FF] bg-white text-slate-800"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Referência / Evento</label>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  Referência / Evento
+                </label>
                 <input
                   type="text"
-                  value={newRef}
-                  onChange={e => setNewRef(e.target.value)}
                   placeholder="Ex: Festival Curitiba 2026"
-                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1677FF]"
+                  value={newRef}
+                  onChange={(e) => setNewRef(e.target.value)}
+                  className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1677FF] bg-white text-slate-800"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Tipo</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Tipo de Movimento
+                  </label>
                   <select
                     value={newType}
-                    onChange={e => setNewType(e.target.value as any)}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1677FF] bg-white"
+                    onChange={(e) => setNewType(e.target.value as 'entrada' | 'saida')}
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none bg-white font-medium text-slate-800"
                   >
-                    <option value="entrada">Entrada (+)</option>
-                    <option value="saida">Saída (-)</option>
+                    <option value="entrada">Crédito / Entrada (+)</option>
+                    <option value="saida">Débito / Saída (-)</option>
                   </select>
                 </div>
+
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Valor (R$)</label>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                    Valor (R$) *
+                  </label>
                   <input
                     type="number"
                     step="0.01"
+                    min="0.01"
                     required
+                    placeholder="0,00"
                     value={newAmount}
-                    onChange={e => setNewAmount(e.target.value)}
-                    placeholder="1500.00"
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#1677FF]"
+                    onChange={(e) => setNewAmount(e.target.value)}
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono outline-none focus:border-[#1677FF] bg-white text-slate-800"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                <button
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#EDF0F4]">
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg"
                 >
                   Cancelar
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-[#1677FF] text-white rounded-lg hover:bg-blue-600"
+                  variant="primary"
                 >
-                  Confirmar e Salvar
-                </button>
+                  Confirmar Lançamento
+                </Button>
               </div>
             </form>
           </div>
@@ -360,4 +387,3 @@ export const GenericFinanceSubView: React.FC<GenericFinanceSubViewProps> = ({
     </div>
   );
 };
-

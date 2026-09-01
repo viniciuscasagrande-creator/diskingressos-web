@@ -5,6 +5,8 @@ import {
   simulateFinanceSpread, getFinanceSpreadHistory, getFinanceOperations360Summary,
   type CardAcquirer, type FinancialObligation, type ReconciliationItem, type FinanceOperations360Summary, type SpreadSimulationResult
 } from '../services/api'
+import { SimuladorSpreadModule } from './finance/SimuladorSpreadModule'
+import FinanceReconciliationPage from './FinanceReconciliationPage'
 
 type Tab = 'spread' | 'receivables' | 'reconciliation' | 'intelligence'
 type Props = { producerId?: number; eventId?: number; initialTab?: Tab; notify?: (message: string) => void }
@@ -90,9 +92,9 @@ export default function FinanceOperations360Page({ producerId, eventId, initialT
         <div className="finance360-loading">Carregando operação financeira...</div>
       ) : (
         <>
-          {tab === 'spread' && <Spread acquirers={acquirers} producerId={producerId} eventId={eventId} history={history} reload={load} flash={flash} />}
+          {tab === 'spread' && <SimuladorSpreadModule notify={flash} />}
           {tab === 'receivables' && <Receivables rows={receivables} />}
-          {tab === 'reconciliation' && <Reconciliation rows={recs} producerId={producerId} eventId={eventId} reload={load} flash={flash} />}
+          {tab === 'reconciliation' && <FinanceReconciliationPage notify={flash} />}
           {tab === 'intelligence' && <Intelligence summary={summary} />}
         </>
       )}
