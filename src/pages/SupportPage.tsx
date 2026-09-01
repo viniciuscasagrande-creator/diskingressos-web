@@ -207,7 +207,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
       setCustomer360(mockCustomer360)
       setSearchLoading(false)
       setActiveTab('search360')
-      notify(`Consulta 360º localizada para "${q}" (Tipo detectado: ${type}) em 140ms!`)
+      notify(`Busca ID localizada para "${q}" (Tipo detectado: ${type}) em 140ms!`)
     }, 200)
   }
 
@@ -308,9 +308,9 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           <button className={`ds-launcher-item ${activeTab === 'search360' ? 'active' : ''}`} onClick={() => setActiveTab('search360')}>
             <div className="ds-launcher-circle" style={{ borderColor: activeTab === 'search360' ? '#2563eb' : '#cbd5e1' }}>
               <Search size={22} style={{ color: '#2563eb' }} />
-              <span className="ds-mini-tag blue">360º</span>
+              <span className="ds-mini-tag blue">ID</span>
             </div>
-            <span className="ds-launcher-label" style={{ color: '#2563eb', fontWeight: 800 }}>Consulta 360º SAC</span>
+            <span className="ds-launcher-label" style={{ color: '#2563eb', fontWeight: 800 }}>Busca ID</span>
           </button>
 
           <button className={`ds-launcher-item ${activeTab === 'bi' ? 'active' : ''}`} onClick={() => setActiveTab('bi')}>
@@ -382,7 +382,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
 
         {/* ========================================================
-            TELA: FASE 23.1 — CENTRAL DE CONSULTA 360º DO SAC (LIGHT)
+            TELA: FASE 23.1 — BUSCA ID (LIGHT)
             ======================================================== */}
         {activeTab === 'search360' && (
           <div className="ds-search360-container">
@@ -401,7 +401,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               />
               <button className="ds-search360-btn" onClick={() => handleGlobalSearch()}>
                 {searchLoading ? <RefreshCw className="spin" size={16} /> : <Search size={16} />}
-                Consultar 360º
+                Buscar ID
               </button>
             </div>
 
@@ -628,7 +628,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <div className="ds-modules-grid">
               <div className="ds-module-card" onClick={() => setActiveTab('search360')} style={{ border: '2px solid #2563eb', background: '#eff6ff' }}>
                 <div className="ds-card-icon-wrap blue"><Search size={22} /></div>
-                <div className="ds-card-text"><h4>Consulta 360º SAC</h4><p>Busca por CPF, pedido, nome, fone ou ingresso</p></div>
+                <div className="ds-card-text"><h4>Busca ID</h4><p>Localização rápida por CPF, pedido, nome, fone ou ingresso</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" style={{ color: '#2563eb' }} />
               </div>
 
