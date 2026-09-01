@@ -3,7 +3,8 @@ import {
   LayoutDashboard, Ticket, AlertTriangle, BookOpen, Users, Clock3, Plus, Search,
   RefreshCw, CheckCircle2, MessageCircle, Mail, Phone, Globe, ShieldAlert,
   Send, UserCheck, Sparkles, Filter, ChevronRight, ArrowRight, ExternalLink,
-  Flame, HelpCircle, FileText, CheckCheck, PlayCircle, XCircle, AlertCircle, Headphones, Link2, Sparkle
+  Flame, HelpCircle, FileText, CheckCheck, PlayCircle, XCircle, AlertCircle, Headphones, Link2, Sparkle,
+  Layers3, ArrowRightLeft, UserPlus, CheckSquare
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
@@ -24,6 +25,7 @@ interface TicketItem {
   orderCode: string
   amount: string
   assignedAgent: string
+  queueName: string
   slaResponseMinutes: number
   slaResolutionMinutes: number
   createdAt: string
@@ -77,6 +79,22 @@ interface AgentItem {
   capacity: number
 }
 
+interface QueueItem {
+  id: number
+  name: string
+  code: string
+  strategy: 'ROUND_ROBIN' | 'LEAST_LOAD' | 'SKILL_BASED'
+  agentsCount: number
+  openTickets: number
+}
+
+const initialQueues: QueueItem[] = [
+  { id: 1, name: 'Reenvio & Ingressos', code: 'QUEUE_TICKETS', strategy: 'ROUND_ROBIN', agentsCount: 4, openTickets: 14 },
+  { id: 2, name: 'Pagamentos & Pix', code: 'QUEUE_PAYMENTS', strategy: 'LEAST_LOAD', agentsCount: 3, openTickets: 6 },
+  { id: 3, name: 'Reembolsos & Estornos', code: 'QUEUE_REFUNDS', strategy: 'LEAST_LOAD', agentsCount: 2, openTickets: 5 },
+  { id: 4, name: 'Acesso & Catracas (Portão)', code: 'QUEUE_ACCESS', strategy: 'SKILL_BASED', agentsCount: 2, openTickets: 2 }
+]
+
 const mockTickets: TicketItem[] = [
   {
     id: 1,
@@ -93,6 +111,7 @@ const mockTickets: TicketItem[] = [
     orderCode: 'DI-984221',
     amount: 'R$ 480,00',
     assignedAgent: 'Lucas Atendente (N1)',
+    queueName: 'Reenvio & Ingressos',
     slaResponseMinutes: 60,
     slaResolutionMinutes: 360,
     createdAt: 'Há 25 minutos',
@@ -118,6 +137,7 @@ const mockTickets: TicketItem[] = [
     orderCode: 'DI-983990',
     amount: 'R$ 320,00',
     assignedAgent: 'Aguardando atribuição',
+    queueName: 'Acesso & Catracas (Portão)',
     slaResponseMinutes: 15,
     slaResolutionMinutes: 120,
     createdAt: 'Há 8 minutos',
@@ -140,6 +160,7 @@ const mockTickets: TicketItem[] = [
     orderCode: 'DI-981240',
     amount: 'R$ 160,00',
     assignedAgent: 'Beatriz Castro (N2)',
+    queueName: 'Reenvio & Ingressos',
     slaResponseMinutes: 240,
     slaResolutionMinutes: 1440,
     createdAt: 'Há 3 horas',
@@ -164,6 +185,7 @@ const mockTickets: TicketItem[] = [
     orderCode: 'DI-979912',
     amount: 'R$ 700,00',
     assignedAgent: 'Rodrigo Financeiro (N2)',
+    queueName: 'Pagamentos & Pix',
     slaResponseMinutes: 60,
     slaResolutionMinutes: 360,
     createdAt: 'Ontem às 16:30',
@@ -213,7 +235,7 @@ const mockArticles: KnowledgeArticle[] = [
   { id: 4, title: 'Resolução de divergência em catraca offline no dia do evento', category: 'Operação de Portaria', snippet: 'Instruções para os fiscais de portão sincronizarem a lista local de ingressos via rede mesh.', views: 310, helpfulPercent: 100, isPublic: false, updatedAt: '1 semana atrás' }
 ]
 
-const mockAgents: AgentItem[] = [
+const initialAgents: AgentItem[] = [
   { id: 1, name: 'Lucas Atendente', email: 'lucas.sac@diskingressos.com.br', level: 'N1', team: 'Fila Geral & WhatsApp', status: 'ONLINE', activeTickets: 4, capacity: 8 },
   { id: 2, name: 'Beatriz Castro', email: 'beatriz.castro@diskingressos.com.br', level: 'N2', team: 'Titularidade & Ingressos', status: 'ONLINE', activeTickets: 3, capacity: 6 },
   { id: 3, name: 'Rodrigo Financeiro', email: 'rodrigo.fin@diskingressos.com.br', level: 'N2', team: 'Estornos & Pagamentos', status: 'BUSY', activeTickets: 6, capacity: 6 },
@@ -233,6 +255,8 @@ type Props = {
 export default function SupportPage({ events, producerId, producerName, notify, onNavigate }: Props) {
   const [activeTab, setActiveTab] = useState<ServiceTab>('dashboard')
   const [tickets, setTickets] = useState<TicketItem[]>(mockTickets)
+  const [agents, setAgents] = useState<AgentItem[]>(initialAgents)
+  const [queues, setQueues] = useState<QueueItem[]>(initialQueues)
   const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(mockTickets[0])
   const [ticketSearch, setTicketSearch] = useState('')
   const [priorityFilter, setPriorityFilter] = useState<string>('TODOS')
@@ -249,6 +273,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
   const [formCustomerPhone, setFormCustomerPhone] = useState('(41) 99881-2233')
   const [formEventId, setFormEventId] = useState<string>(events[0]?.id ? String(events[0].id) : '1')
   const [formOrderCode, setFormOrderCode] = useState('DI-985100')
+  const [formQueueId, setFormQueueId] = useState<number>(1)
 
   // Knowledge search
   const [kbSearch, setKbSearch] = useState('')
@@ -260,8 +285,9 @@ export default function SupportPage({ events, producerId, producerName, notify, 
     const p1 = tickets.filter(t => t.priority === 'P1' && t.status !== 'RESOLVIDO').length
     const resolved = tickets.filter(t => t.status === 'RESOLVIDO').length
     const compliance = 96.4
-    return { total, open, p1, resolved, compliance }
-  }, [tickets])
+    const onlineAgents = agents.filter(a => a.status === 'ONLINE' || a.status === 'BUSY').length
+    return { total, open, p1, resolved, compliance, onlineAgents }
+  }, [tickets, agents])
 
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {
@@ -277,6 +303,39 @@ export default function SupportPage({ events, producerId, producerName, notify, 
       return matchSearch && matchPriority && matchStatus
     })
   }, [tickets, ticketSearch, priorityFilter, statusFilter])
+
+  const handleToggleAgentStatus = (agentId: number) => {
+    const nextStatus: Record<string, 'ONLINE' | 'BUSY' | 'AWAY' | 'OFFLINE'> = {
+      'ONLINE': 'BUSY',
+      'BUSY': 'AWAY',
+      'AWAY': 'OFFLINE',
+      'OFFLINE': 'ONLINE'
+    }
+    setAgents(agents.map(a => a.id === agentId ? { ...a, status: nextStatus[a.status] || 'ONLINE' } : a))
+    const ag = agents.find(a => a.id === agentId)
+    if (ag) {
+      notify(`Status do agente ${ag.name} alterado para ${nextStatus[ag.status]}.`)
+    }
+  }
+
+  const handleAutoAssign = (ticketId: number) => {
+    const available = agents.filter(a => a.status === 'ONLINE' && a.activeTickets < a.capacity)
+    const assignedTo = available.length > 0 ? available.sort((a, b) => a.activeTickets - b.activeTickets)[0].name : 'Lucas Atendente (N1)'
+    
+    setTickets(tickets.map(t => t.id === ticketId ? { ...t, assignedAgent: assignedTo, status: 'EM_ATENDIMENTO' } : t))
+    if (selectedTicket?.id === ticketId) {
+      setSelectedTicket({ ...selectedTicket, assignedAgent: assignedTo, status: 'EM_ATENDIMENTO' })
+    }
+    notify(`Ticket atribuído automaticamente a ${assignedTo} via algoritmo Least-Load!`)
+  }
+
+  const handleTransferQueue = (ticketId: number, targetQueue: string) => {
+    setTickets(tickets.map(t => t.id === ticketId ? { ...t, queueName: targetQueue } : t))
+    if (selectedTicket?.id === ticketId) {
+      setSelectedTicket({ ...selectedTicket, queueName: targetQueue })
+    }
+    notify(`Chamado transferido para a fila: ${targetQueue}!`)
+  }
 
   const handleSendMessage = () => {
     if (!newReply.trim() || !selectedTicket) return
@@ -312,6 +371,8 @@ export default function SupportPage({ events, producerId, producerName, notify, 
     e.preventDefault()
     const newId = tickets.length + 1
     const newProtocol = `DS-2026-${Math.floor(100000 + Math.random() * 900000)}`
+    const selectedQ = queues.find(q => q.id === formQueueId)?.name || 'Reenvio & Ingressos'
+    
     const created: TicketItem = {
       id: newId,
       protocol: newProtocol,
@@ -326,7 +387,8 @@ export default function SupportPage({ events, producerId, producerName, notify, 
       eventName: events.find(e => String(e.id) === formEventId)?.title || 'Evento Geral',
       orderCode: formOrderCode,
       amount: 'R$ 240,00',
-      assignedAgent: 'Fila N1 (Automático)',
+      assignedAgent: 'Lucas Atendente (N1)',
+      queueName: selectedQ,
       slaResponseMinutes: formPriority === 'P1' ? 15 : formPriority === 'P2' ? 60 : formPriority === 'P3' ? 240 : 720,
       slaResolutionMinutes: formPriority === 'P1' ? 120 : formPriority === 'P2' ? 360 : formPriority === 'P3' ? 1440 : 2880,
       createdAt: 'Agora mesmo',
@@ -342,7 +404,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
       ]
     }
     setTickets([created, ...tickets])
-    notify(`Chamado protocolado com sucesso: ${newProtocol}! SLA ativado.`)
+    notify(`Chamado protocolado com sucesso: ${newProtocol}! SLA ativado na fila ${selectedQ}.`)
     setActiveTab('tickets')
     setSelectedTicket(created)
   }
@@ -363,7 +425,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         <div className="header-status-block">
           <div className="agent-status-indicator">
             <span className="dot pulse-green" />
-            <span>Atendimento Online • 5 Agentes</span>
+            <span>{stats.onlineAgents} Agentes Online • Fila Automática Ativa</span>
           </div>
           <button className="primary-service-btn" onClick={() => setActiveTab('new')}>
             <Plus size={18} />
@@ -398,7 +460,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </button>
         <button className={`service-tab-btn ${activeTab === 'teams' ? 'active' : ''}`} onClick={() => setActiveTab('teams')}>
           <Users size={17} />
-          <span>Equipes & Matriz de SLA</span>
+          <span>Filas, Agentes & SLA</span>
         </button>
         <button className={`service-tab-btn ${activeTab === 'client360' ? 'active' : ''}`} onClick={() => setActiveTab('client360')}>
           <Search size={17} />
@@ -452,60 +514,32 @@ export default function SupportPage({ events, producerId, producerName, notify, 
 
           {/* Grid de 2 Colunas: Fila em Tempo Real vs Saúde SLA */}
           <div className="service-two-col-grid">
-            {/* Coluna 1: Fila em tempo real */}
+            {/* Coluna 1: Filas e Estratégia de Roteamento */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
-                  <h3>Fila de Atendimento em Tempo Real</h3>
-                  <p>Distribuição automática por categoria e canal de contato.</p>
+                  <h3>Filas de Atendimento & Estratégia</h3>
+                  <p>Distribuição automática (Round-Robin & Least-Load).</p>
                 </div>
                 <span className="live-pill">AO VIVO</span>
               </div>
 
               <div className="queue-list">
-                <div className="queue-item">
-                  <div className="queue-title-block">
-                    <span className="queue-dot blue" />
-                    <strong>Reenvio de Ingressos & QR Code</strong>
+                {queues.map(q => (
+                  <div key={q.id} className="queue-item">
+                    <div className="queue-title-block">
+                      <span className="queue-dot blue" />
+                      <div>
+                        <strong>{q.name}</strong>
+                        <small style={{ display: 'block', color: '#64748b' }}>Estratégia: {q.strategy}</small>
+                      </div>
+                    </div>
+                    <div className="queue-metric-block">
+                      <span className="badge-count">{q.openTickets} tickets</span>
+                      <small>{q.agentsCount} agentes</small>
+                    </div>
                   </div>
-                  <div className="queue-metric-block">
-                    <span className="badge-count">14 tickets</span>
-                    <small>TMA: 4 min</small>
-                  </div>
-                </div>
-
-                <div className="queue-item">
-                  <div className="queue-title-block">
-                    <span className="queue-dot orange" />
-                    <strong>Dúvidas de Pagamento & Pix</strong>
-                  </div>
-                  <div className="queue-metric-block">
-                    <span className="badge-count">6 tickets</span>
-                    <small>TMA: 7 min</small>
-                  </div>
-                </div>
-
-                <div className="queue-item">
-                  <div className="queue-title-block">
-                    <span className="queue-dot purple" />
-                    <strong>Troca de Titularidade & Biometria</strong>
-                  </div>
-                  <div className="queue-metric-block">
-                    <span className="badge-count">5 tickets</span>
-                    <small>TMA: 12 min</small>
-                  </div>
-                </div>
-
-                <div className="queue-item">
-                  <div className="queue-title-block">
-                    <span className="queue-dot red" />
-                    <strong>Suporte de Catraca & Portaria</strong>
-                  </div>
-                  <div className="queue-metric-block">
-                    <span className="badge-count danger">2 tickets P1</span>
-                    <small>TMA: 2 min</small>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -610,7 +644,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
                     <div className="ticket-bottom-info">
                       <div className="customer-inline">
                         <strong>{t.customerName}</strong>
-                        <span>• Pedido {t.orderCode}</span>
+                        <span>• {t.queueName}</span>
                       </div>
                       <div className="sla-inline">
                         <Clock3 size={13} />
@@ -633,12 +667,16 @@ export default function SupportPage({ events, producerId, producerName, notify, 
                         <span className="protocol-num">#{selectedTicket.protocol}</span>
                         <span className={`priority-tag ${selectedTicket.priority}`}>{selectedTicket.priority}</span>
                         <span className="channel-badge">{selectedTicket.channel}</span>
+                        <span className="channel-badge" style={{ background: '#e0f2fe', color: '#0369a1' }}>{selectedTicket.queueName}</span>
                         <span className={`status-tag ${selectedTicket.status}`}>{selectedTicket.status.replace('_', ' ')}</span>
                       </div>
                       <h2>{selectedTicket.subject}</h2>
                     </div>
 
                     <div className="workspace-actions">
+                      <button className="fast-action-chip" onClick={() => handleAutoAssign(selectedTicket.id)}>
+                        <UserPlus size={14} /> Atribuir Auto (Round-Robin)
+                      </button>
                       {selectedTicket.status !== 'RESOLVIDO' && (
                         <button className="resolve-btn" onClick={() => handleResolveTicket(selectedTicket.id)}>
                           <CheckCircle2 size={16} />
@@ -663,19 +701,22 @@ export default function SupportPage({ events, producerId, producerName, notify, 
                     </div>
 
                     <div className="ctx-item">
-                      <span>Responsável & SLA</span>
+                      <span>Atendente & SLA</span>
                       <strong>{selectedTicket.assignedAgent}</strong>
                       <small>1ª Resposta: {selectedTicket.slaResponseMinutes}m • Resolução: {selectedTicket.slaResolutionMinutes}m</small>
                     </div>
                   </div>
 
-                  {/* Ações Rápidas de Operação */}
+                  {/* Ações Rápidas de Operação & Transferência */}
                   <div className="fast-actions-bar">
                     <button className="fast-action-chip" onClick={() => notify('Ingresso com QR Code reenviado com sucesso por E-mail e WhatsApp!')}>
                       <Mail size={14} /> Reenviar Ingresso & QR Code
                     </button>
                     <button className="fast-action-chip" onClick={() => notify('QR Code reemitido e invalidado o anterior!')}>
                       <RefreshCw size={14} /> Reemitir QR Code
+                    </button>
+                    <button className="fast-action-chip" onClick={() => handleTransferQueue(selectedTicket.id, 'Reembolsos & Estornos')}>
+                      <ArrowRightLeft size={14} /> Transferir Fila: Reembolsos
                     </button>
                     <button className="fast-action-chip" onClick={() => notify('Iniciado fluxo de conferência de estorno Pix!')}>
                       <AlertCircle size={14} /> Solicitar Estorno Pix
@@ -749,6 +790,15 @@ export default function SupportPage({ events, producerId, producerName, notify, 
               </div>
 
               <div className="form-group">
+                <label>Fila de Destino</label>
+                <select value={formQueueId} onChange={e => setFormQueueId(Number(e.target.value))}>
+                  {queues.map(q => (
+                    <option key={q.id} value={q.id}>{q.name} ({q.strategy})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
                 <label>Canal de Origem</label>
                 <select value={formChannel} onChange={e => setFormChannel(e.target.value as any)}>
                   <option value="WHATSAPP">WhatsApp Oficial DiskIngressos</option>
@@ -773,7 +823,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
               <div className="form-group">
                 <label>Descrição do Problema / Relato do Cliente</label>
                 <textarea
-                  rows={5}
+                  rows={4}
                   required
                   value={formDescription}
                   onChange={e => setFormDescription(e.target.value)}
@@ -994,27 +1044,33 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </div>
       )}
 
-      {/* 6. ABA: EQUIPES & MATRIZ DE SLA */}
+      {/* 6. ABA: FILAS, AGENTES & SLA */}
       {activeTab === 'teams' && (
         <div className="service-content-body">
           <div className="service-two-col-grid">
-            {/* Tabela de Agentes & Filas */}
+            {/* Tabela de Agentes & Presença Interativa */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
-                  <h3>Agentes de Atendimento & Capacidade</h3>
-                  <p>Escalação N1, N2, N3 e status de ocupação.</p>
+                  <h3>Agentes de Atendimento & Presença</h3>
+                  <p>Clique no status para alterar presença (ONLINE, BUSY, AWAY, OFFLINE).</p>
                 </div>
               </div>
 
               <div className="agents-list">
-                {mockAgents.map(ag => (
+                {agents.map(ag => (
                   <div key={ag.id} className="agent-row-card">
                     <div className="agent-avatar-col">
-                      <div className={`status-dot ${ag.status.toLowerCase()}`} />
+                      <button
+                        type="button"
+                        className={`status-dot ${ag.status.toLowerCase()}`}
+                        onClick={() => handleToggleAgentStatus(ag.id)}
+                        title="Clique para alternar presença"
+                        style={{ cursor: 'pointer', border: 0 }}
+                      />
                       <div>
                         <strong>{ag.name}</strong>
-                        <small>{ag.email}</small>
+                        <small>{ag.email} • <b>{ag.status}</b></small>
                       </div>
                     </div>
 
@@ -1035,63 +1091,29 @@ export default function SupportPage({ events, producerId, producerName, notify, 
               </div>
             </div>
 
-            {/* Matriz de SLA ITIL */}
+            {/* Filas & Estratégias */}
             <div className="service-card-panel">
               <div className="panel-header-row">
                 <div>
-                  <h3>Matriz de SLA Oficial (P1–P4)</h3>
-                  <p>Regras contratuais de tempo de atendimento.</p>
+                  <h3>Filas de Roteamento de Tickets</h3>
+                  <p>Estratégias de distribuição de carga de trabalho.</p>
                 </div>
               </div>
 
               <div className="sla-matrix-list">
-                <div className="sla-matrix-card p1">
-                  <div className="matrix-top">
-                    <strong className="red-text">P1 - CRÍTICO (Bloqueio Total / Portão)</strong>
-                    <span>100% dos eventos</span>
+                {queues.map(q => (
+                  <div key={q.id} className="sla-matrix-card p2">
+                    <div className="matrix-top">
+                      <strong>{q.name} ({q.code})</strong>
+                      <span className="badge-count">{q.openTickets} tickets</span>
+                    </div>
+                    <div className="matrix-times">
+                      <div><span>Estratégia:</span> <strong>{q.strategy}</strong></div>
+                      <div><span>Agentes Ativos:</span> <strong>{q.agentsCount}</strong></div>
+                      <div><span>Tempo Médio:</span> <strong>4 min</strong></div>
+                    </div>
                   </div>
-                  <div className="matrix-times">
-                    <div><span>1ª Resposta:</span> <strong>15 minutos</strong></div>
-                    <div><span>Resolução Máxima:</span> <strong>2 horas</strong></div>
-                    <div><span>Escalação:</span> <strong>N3 & Gestão Imediata</strong></div>
-                  </div>
-                </div>
-
-                <div className="sla-matrix-card p2">
-                  <div className="matrix-top">
-                    <strong className="orange-text">P2 - ALTO (Ingresso Não Recebido / Pagamento)</strong>
-                    <span>Eventos ativos</span>
-                  </div>
-                  <div className="matrix-times">
-                    <div><span>1ª Resposta:</span> <strong>60 minutos</strong></div>
-                    <div><span>Resolução Máxima:</span> <strong>6 horas</strong></div>
-                    <div><span>Escalação:</span> <strong>N2 Financeiro</strong></div>
-                  </div>
-                </div>
-
-                <div className="sla-matrix-card p3">
-                  <div className="matrix-top">
-                    <strong className="yellow-text">P3 - MÉDIO (Titularidade / Dúvidas Gerais)</strong>
-                    <span>Horário comercial</span>
-                  </div>
-                  <div className="matrix-times">
-                    <div><span>1ª Resposta:</span> <strong>4 horas</strong></div>
-                    <div><span>Resolução Máxima:</span> <strong>24 horas</strong></div>
-                    <div><span>Escalação:</span> <strong>N1 Geral</strong></div>
-                  </div>
-                </div>
-
-                <div className="sla-matrix-card p4">
-                  <div className="matrix-top">
-                    <strong className="green-text">P4 - BAIXO (Sugestões / Feedbacks)</strong>
-                    <span>Horário comercial</span>
-                  </div>
-                  <div className="matrix-times">
-                    <div><span>1ª Resposta:</span> <strong>12 horas</strong></div>
-                    <div><span>Resolução Máxima:</span> <strong>48 horas</strong></div>
-                    <div><span>Escalação:</span> <strong>N1 Backoffice</strong></div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
