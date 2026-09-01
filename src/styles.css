@@ -7353,3 +7353,499 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
   color: #fff;
   transform: translateY(-1px);
 }
+
+/* =========================================================
+   DISKSERVICE BI DASHBOARD & ANALYTICS (1:1 DESIGN)
+   ========================================================= */
+
+.ds-spark-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.ds-spark-card:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.ds-spark-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.ds-spark-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.ds-spark-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.ds-spark-icon.red { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+.ds-spark-icon.orange { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.ds-spark-icon.green { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.ds-spark-icon.teal { background: rgba(20, 184, 166, 0.15); color: #14b8a6; }
+.ds-spark-icon.cyan { background: rgba(6, 182, 212, 0.15); color: #06b6d4; }
+
+.ds-spark-header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-spark-header-text span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.ds-spark-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.ds-spark-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.ds-sparkline-svg {
+  width: 100%;
+  height: 38px;
+  margin-top: 6px;
+}
+
+/* 3-Column and 2-Column Analytics Layout */
+.ds-bi-row {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ds-bi-row.three-col {
+  grid-template-columns: 1.5fr 1.3fr 1.2fr;
+}
+
+.ds-bi-row.four-col {
+  grid-template-columns: 1fr 1fr 1fr 1.2fr;
+}
+
+.ds-bi-row.two-col {
+  grid-template-columns: 1.4fr 1.6fr;
+}
+
+@media (max-width: 1300px) {
+  .ds-bi-row.three-col,
+  .ds-bi-row.four-col,
+  .ds-bi-row.two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ds-bi-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.ds-bi-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.ds-bi-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ds-filter-select {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Donut Chart with Center Text */
+.ds-donut-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.ds-donut-circle-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  flex: 0 0 auto;
+}
+
+.ds-donut-center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-donut-center-text strong {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.ds-donut-center-text small {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.ds-donut-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.ds-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.ds-legend-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Critical Alerts List */
+.ds-alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ds-alert-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #131c31;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+}
+
+.ds-alert-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.ds-alert-icon.p1 { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+.ds-alert-icon.p2 { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.ds-alert-icon.p3 { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+.ds-alert-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ds-alert-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.ds-alert-tag {
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.ds-alert-tag.p1 { color: #ef4444; }
+.ds-alert-tag.p2 { color: #f59e0b; }
+.ds-alert-tag.p3 { color: #10b981; }
+
+.ds-alert-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-alert-sub {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-alert-time {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  flex: 0 0 auto;
+}
+
+/* Semi-circular Gauge for SLA Compliance */
+.ds-gauge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.ds-gauge-score {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: -15px;
+}
+
+.ds-gauge-label {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.ds-gauge-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #1e293b;
+  padding-top: 10px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* Events Agenda List */
+.ds-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ds-event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #131c31;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+}
+
+.ds-event-date-box {
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.ds-event-date-day {
+  font-size: 15px;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.ds-event-date-month {
+  font-size: 9px;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.ds-event-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ds-event-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 2px;
+}
+
+.ds-event-meta {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.ds-event-status-pill {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.ds-event-status-pill.green { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.ds-event-status-pill.orange { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+.ds-event-status-pill.blue { background: rgba(59, 130, 246, 0.15); color: #38bdf8; }
+
+/* Category Bars */
+.ds-category-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.ds-category-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.ds-category-name {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.ds-category-val {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.ds-category-track {
+  height: 8px;
+  background: #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ds-category-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+/* Agent Ranking Table */
+.ds-agent-rank-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ds-agent-rank-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #1e293b;
+  gap: 10px;
+}
+
+.ds-agent-rank-row:last-child {
+  border-bottom: 0;
+}
+
+.ds-agent-num {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  width: 16px;
+}
+
+.ds-agent-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.ds-agent-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-agent-bar-wrap {
+  width: 120px;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.ds-agent-bar-fill {
+  height: 100%;
+  background: #10b981;
+  border-radius: 3px;
+}
+
+.ds-agent-pct {
+  font-size: 12px;
+  font-weight: 800;
+  color: #10b981;
+  width: 36px;
+  text-align: right;
+}
+
+.ds-agent-tickets-count {
+  font-size: 11px;
+  color: #64748b;
+  width: 70px;
+  text-align: right;
+}

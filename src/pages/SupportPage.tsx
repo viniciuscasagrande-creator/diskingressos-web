@@ -15,6 +15,7 @@ import type { EventItem } from '../data/events'
 
 export type ServiceTab =
   | 'hub'
+  | 'bi'
   | 'tickets'
   | 'inbox'
   | 'sla'
@@ -27,7 +28,6 @@ export type ServiceTab =
   | 'knowledge'
   | 'csat'
   | 'copilot'
-  | 'bi'
   | 'predictive'
   | 'workflows'
   | 'new'
@@ -410,82 +410,6 @@ const initialKnowledgeArticles: KnowledgeArticleItem[] = [
   }
 ]
 
-const initialExperienceAlerts: ExperienceAlert[] = [
-  {
-    id: 1,
-    customerName: 'Eduardo Silveira',
-    surveyType: 'NPS',
-    score: 3,
-    comment: 'Demorou mais de 20 minutos para reenviar meu ingresso e quase perdi o início do show.',
-    channel: 'WHATSAPP',
-    eventName: 'Rock Arena Festival 2026',
-    status: 'OPEN_RECOVERY',
-    createdAt: 'Há 45 minutos'
-  }
-]
-
-const initialConversations: ConversationItem[] = [
-  {
-    id: 1,
-    channel: 'WHATSAPP',
-    contactName: 'João Silva Oliveira',
-    contactValue: '+55 41 99882-1144',
-    lastMessage: 'Olá, paguei via Pix e não recebi meu QR Code no e-mail.',
-    unreadCount: 1,
-    ticketNumber: 'DS-2026-984221',
-    priority: 'P2',
-    status: 'OPEN',
-    updatedAt: '10:45',
-    messages: [
-      { id: 101, senderName: 'João Silva Oliveira', direction: 'INBOUND', body: 'Olá, paguei via Pix e não recebi meu QR Code no e-mail.', deliveryStatus: 'READ', createdAt: '10:45' },
-      { id: 102, senderName: 'Disk Copilot (IA)', direction: 'OUTBOUND', body: 'Olá João! Localizei seu pedido DI-984221 com pagamento aprovado. Estou transferindo para um atendente.', deliveryStatus: 'DELIVERED', createdAt: '10:46' },
-      { id: 103, senderName: 'Lucas Atendente (N1)', direction: 'OUTBOUND', body: 'Olá João! Estou forçando o reenvio do seu ingresso para seu e-mail e WhatsApp agora mesmo.', deliveryStatus: 'READ', createdAt: '10:50' }
-    ]
-  }
-]
-
-const initialWorkflows: WorkflowRule[] = [
-  {
-    id: 1,
-    name: 'QR Code Crítico Próximo do Evento',
-    code: 'WF_QR_CRITICAL_NEAR_EVENT',
-    description: 'Quando um ticket de problema de QR Code é criado para um show nas próximas 2 horas, eleva a prioridade para P1 e move para fila de Catracas.',
-    triggerEvent: 'EVENT_NEAR',
-    priority: 1,
-    isActive: true,
-    runsCount: 42,
-    successCount: 42,
-    failedCount: 0,
-    actions: ['SET_PRIORITY(P1)', 'MOVE_QUEUE(QUEUE_ACCESS)', 'CREATE_ESCALATION(SUPERVISOR)']
-  }
-]
-
-const initialWorkflowRuns: WorkflowRun[] = [
-  { id: 101, workflowName: 'Pesquisa Automática CSAT/NPS pós-resolução', ticketNumber: 'DS-2026-983110', triggerEvent: 'PAYMENT_APPROVED', status: 'SUCCESS', executionTimeMs: 95, createdAt: 'Há 8 min' }
-]
-
-const initialIncidents: IncidentItem[] = [
-  {
-    id: 1,
-    code: 'INC-2026-004',
-    title: 'Instabilidade na sincronização offline da Catraca 04 Portão B',
-    description: 'Catraca 04 perdeu comunicação com o servidor de borda local, gerando falso-negativo na validação de ingressos emitidos nas últimas 2 horas.',
-    severity: 'P1',
-    impact: 'ALTO',
-    urgency: 'ALTA',
-    status: 'INVESTIGANDO',
-    eventName: 'Rock Arena Festival 2026',
-    affectedServices: ['Catracas Portão B', 'Servidor Local Edge', 'Validador Offline'],
-    linkedTickets: ['DS-2026-984180', 'DS-2026-984182'],
-    startedAt: 'Há 18 minutos',
-    leadAgent: 'Engenharia de Acesso (N3)',
-    workaround: 'Redirecionar fluxo para Catracas 01 a 03 enquanto a base local é sincronizada via hotspot 5G.',
-    timelineUpdates: [
-      { id: 1, stage: 'Detecção', message: 'Alerta automático disparado por taxa de 40% de rejeição na Catraca 04.', author: 'Sistema de Monitoramento', timestamp: '11:00' }
-    ]
-  }
-]
-
 const mockTickets: TicketItem[] = [
   {
     id: 1,
@@ -561,68 +485,29 @@ type Props = {
 export default function SupportPage({ events, producerId, producerName, mode = 'hub', notify, onNavigate }: Props) {
   const [activeTab, setActiveTab] = useState<ServiceTab>('hub')
   const [viewMode, setViewMode] = useState<'grade' | 'lista'>('grade')
-  const [conversations, setConversations] = useState<ConversationItem[]>(initialConversations)
-  const [selectedConversation, setSelectedConversation] = useState<ConversationItem | null>(initialConversations[0])
-
-  // Fase 22.15 Predictive Analytics & Continuous Improvement State
+  const [conversations, setConversations] = useState<ConversationItem[]>([])
   const [improvements, setImprovements] = useState<ImprovementItem[]>(initialImprovements)
-
-  // Fase 22.14 Live Event Command Center State
   const [liveEvent, setLiveEvent] = useState<LiveEventState>(initialLiveEvent)
-
-  // Fase 22.13 Disk Copilot IA State
-  const [copilotSelectedTicketId, setCopilotSelectedTicketId] = useState<number>(1)
-  const [copilotLoading, setCopilotLoading] = useState<boolean>(false)
-  const [copilotAnalysis, setCopilotAnalysis] = useState<CopilotAnalysis | null>({
-    confidence: 0.94,
-    summary: 'Comprador realizou pagamento Pix de R$ 480,00 aprovado no gateway Efí. Falha temporária no webhook impediu a entrega do QR Code no e-mail.',
-    category: 'Pagamentos & Reenvio de Ingressos',
-    priority: 'P2 - Alta',
-    sentiment: 'FRUSTRADO',
-    escalate: false,
-    nextBestAction: 'Forçar reenvio transacional do voucher por WhatsApp e E-mail e validar se o pedido DI-984221 está com biometria associada.',
-    suggestedReply: 'Olá João! Localizamos seu pedido DI-984221 com pagamento Pix confirmado. Acabamos de disparar o seu voucher atualizado com QR Code para o seu WhatsApp e e-mail joao.silva@email.com. Qualquer dúvida estamos à disposição!',
-    articles: [
-      { id: 1, title: 'Como reenviar o ingresso com QR Code por E-mail e WhatsApp', summary: 'Procedimento operacional para disparo imediato do voucher atualizado.' }
-    ],
-    incidents: [
-      { id: 1, code: 'INC-2026-003', title: 'Atraso pontual no envio de e-mails transacionais SendGrid', priority: 'P2' }
-    ],
-    problems: []
-  })
-
-  const [majorIncidents, setMajorIncidents] = useState<MajorIncidentItem[]>(initialMajorIncidents)
-  const [selectedMajorIncident, setSelectedMajorIncident] = useState<MajorIncidentItem | null>(initialMajorIncidents[0])
-
-  const [problems, setProblems] = useState<ProblemItem[]>(initialProblems)
-  const [selectedProblem, setSelectedProblem] = useState<ProblemItem | null>(initialProblems[0])
-
-  const [incidents, setIncidents] = useState<IncidentItem[]>(initialIncidents)
-  const [selectedIncident, setSelectedIncident] = useState<IncidentItem | null>(initialIncidents[0])
-
-  const [knowledgeArticles, setKnowledgeArticles] = useState<KnowledgeArticleItem[]>(initialKnowledgeArticles)
-  const [selectedArticle, setSelectedArticle] = useState<KnowledgeArticleItem | null>(initialKnowledgeArticles[0])
-  const [kbSearch, setKbSearch] = useState('')
-
-  const [experienceAlerts, setExperienceAlerts] = useState<ExperienceAlert[]>(initialExperienceAlerts)
-
-  const [workflows, setWorkflows] = useState<WorkflowRule[]>(initialWorkflows)
-  const [workflowRuns, setWorkflowRuns] = useState<WorkflowRun[]>(initialWorkflowRuns)
-
   const [tickets, setTickets] = useState<TicketItem[]>(mockTickets)
-  const [agents, setAgents] = useState<AgentItem[]>(initialAgents)
-  const [queues, setQueues] = useState<QueueItem[]>(initialQueues)
   const [selectedTicket, setSelectedTicket] = useState<TicketItem | null>(mockTickets[0])
   const [newReply, setNewReply] = useState('')
+
+  // Form Abrir Chamado
+  const [formChannel, setFormChannel] = useState<'WHATSAPP' | 'EMAIL' | 'CHAT' | 'PHONE' | 'FORM'>('WHATSAPP')
+  const [formSubject, setFormSubject] = useState('Ingresso não recebido após aprovação Pix')
+  const [formDescription, setFormDescription] = useState('Cliente realizou pagamento via Pix, valor debitado e necessita de reenvio do QR Code.')
+  const [formPriority, setFormPriority] = useState<'P1' | 'P2' | 'P3' | 'P4'>('P2')
+  const [formCustomerName, setFormCustomerName] = useState('Roberto Almeida')
+  const [formCustomerEmail, setFormCustomerEmail] = useState('roberto.almeida@email.com')
+  const [formCustomerPhone, setFormCustomerPhone] = useState('(41) 99881-2233')
 
   useEffect(() => {
     if (!mode) return
     if (mode === 'hub') setActiveTab('hub')
+    else if (mode === 'bi' || mode === 'reports' || mode === 'dashboard') setActiveTab('bi')
     else if (mode === 'predictive') setActiveTab('predictive')
     else if (mode === 'liveops') setActiveTab('liveops')
     else if (mode === 'copilot') setActiveTab('copilot')
-    else if (mode === 'bi' || mode === 'reports') setActiveTab('bi')
-    else if (mode === 'dashboard') setActiveTab('bi')
     else if (mode === 'csat') setActiveTab('csat')
     else if (mode === 'inbox' || mode === 'integrations') setActiveTab('inbox')
     else if (mode === 'tickets') setActiveTab('tickets')
@@ -636,70 +521,10 @@ export default function SupportPage({ events, producerId, producerName, mode = '
     else if (mode === 'teams') setActiveTab('teams')
   }, [mode])
 
-  // Form Abrir Chamado
-  const [formChannel, setFormChannel] = useState<'WHATSAPP' | 'EMAIL' | 'CHAT' | 'PHONE' | 'FORM'>('WHATSAPP')
-  const [formSubject, setFormSubject] = useState('Ingresso não recebido após aprovação Pix')
-  const [formDescription, setFormDescription] = useState('Cliente realizou pagamento via Pix, valor debitado e necessita de reenvio do QR Code.')
-  const [formPriority, setFormPriority] = useState<'P1' | 'P2' | 'P3' | 'P4'>('P2')
-  const [formCustomerName, setFormCustomerName] = useState('Roberto Almeida')
-  const [formCustomerEmail, setFormCustomerEmail] = useState('roberto.almeida@email.com')
-  const [formCustomerPhone, setFormCustomerPhone] = useState('(41) 99881-2233')
-  const [formEventId, setFormEventId] = useState<string>(events[0]?.id ? String(events[0].id) : '1')
-  const [formOrderCode, setFormOrderCode] = useState('DI-985100')
-  const [formQueueId, setFormQueueId] = useState<number>(1)
-
-  const stats = useMemo(() => {
-    const total = tickets.length
-    const open = 128
-    const delayedSla = 18
-    const csatToday = '4.6/5'
-    const npsToday = '53+'
-    const checkinsToday = '8.742'
-    const p1Active = 3
-    const onlineAgents = agents.filter(a => a.status === 'ONLINE' || a.status === 'BUSY').length
-    const unreadOmnichannel = conversations.reduce((acc, c) => acc + c.unreadCount, 0)
-    const activeMajorIncidents = majorIncidents.filter(m => m.status !== 'RESOLVED' && m.status !== 'CLOSED').length
-    return { total, open, delayedSla, csatToday, npsToday, checkinsToday, p1Active, onlineAgents, unreadOmnichannel, activeMajorIncidents }
-  }, [tickets, agents, conversations, majorIncidents])
-
-  const handleRunCopilotAnalysis = (tId: number) => {
-    setCopilotLoading(true)
-    setTimeout(() => {
-      const ticket = tickets.find(t => t.id === tId) || tickets[0]
-      setCopilotAnalysis({
-        confidence: 0.96,
-        summary: `Análise IA: Chamado #${ticket.protocol} de ${ticket.customerName}. Solicitação referente ao evento ${ticket.eventName}. Diagnóstico: pedido ${ticket.orderCode} com dados consistentes na base ERP.`,
-        category: ticket.queueName,
-        priority: ticket.priority,
-        sentiment: ticket.priority === 'P1' ? 'CRITICO' : 'FRUSTRADO',
-        escalate: ticket.priority === 'P1',
-        escalationReason: ticket.priority === 'P1' ? 'Possível impacto direto no portão de acesso do evento em andamento.' : undefined,
-        nextBestAction: ticket.priority === 'P1' ? 'Acionar supervisor de plantão e rotear para contingência Catracas 01-03.' : 'Confirmar recebimento do voucher e fechar chamado.',
-        suggestedReply: `Olá ${ticket.customerName}! Verificamos seu chamado #${ticket.protocol} referente ao evento ${ticket.eventName}. Sua solicitação foi analisada e o procedimento operacional foi executado com sucesso.`,
-        articles: [
-          { id: 1, title: 'Procedimento padrão de suporte para ' + ticket.queueName, summary: 'Instruções de atendimento rápido e SLA.' }
-        ],
-        incidents: ticket.priority === 'P1' ? [{ id: 1, code: 'INC-2026-004', title: 'Instabilidade Catraca Portão B', priority: 'P1' }] : [],
-        problems: []
-      })
-      setCopilotLoading(false)
-      notify(`Disk Copilot concluiu a análise do chamado #${ticket.protocol} com 96% de confiança!`)
-    }, 450)
-  }
-
-  const handleApplyCopilotReply = () => {
-    if (!copilotAnalysis) return
-    setNewReply(copilotAnalysis.suggestedReply)
-    setActiveTab('tickets')
-    notify('Resposta do Disk Copilot aplicada no compositor de resposta do chamado!')
-  }
-
   const handleCreateTicket = (e: FormEvent) => {
     e.preventDefault()
     const newId = tickets.length + 1
     const newProtocol = `DS-2026-${Math.floor(100000 + Math.random() * 900000)}`
-    const selectedQ = queues.find(q => q.id === formQueueId)?.name || 'Reenvio & Ingressos'
-    
     const created: TicketItem = {
       id: newId,
       protocol: newProtocol,
@@ -711,29 +536,20 @@ export default function SupportPage({ events, producerId, producerName, mode = '
       customerName: formCustomerName,
       customerEmail: formCustomerEmail,
       customerPhone: formCustomerPhone,
-      eventName: events.find(e => String(e.id) === formEventId)?.title || 'Evento Geral',
-      orderCode: formOrderCode,
+      eventName: events[0]?.title || 'Festival XPTO 2026',
+      orderCode: 'DI-985100',
       amount: 'R$ 240,00',
       assignedAgent: 'Lucas Atendente (N1)',
-      queueName: selectedQ,
-      slaResponseMinutes: formPriority === 'P1' ? 15 : formPriority === 'P2' ? 60 : formPriority === 'P3' ? 240 : 720,
-      slaResolutionMinutes: formPriority === 'P1' ? 120 : formPriority === 'P2' ? 360 : formPriority === 'P3' ? 1440 : 2880,
+      queueName: 'Reenvio & Ingressos',
+      slaResponseMinutes: 60,
+      slaResolutionMinutes: 360,
       slaProgressPercent: 10,
-      slaTimeRemaining: formPriority === 'P1' ? '01h 50min' : formPriority === 'P2' ? '05h 30min' : '23h 40min',
+      slaTimeRemaining: '05h 30min',
       createdAt: 'Agora mesmo',
-      messages: [
-        {
-          id: 1,
-          author: formCustomerName,
-          authorType: 'CUSTOMER',
-          channel: formChannel,
-          body: formDescription,
-          createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-      ]
+      messages: [{ id: 1, author: formCustomerName, authorType: 'CUSTOMER', channel: formChannel, body: formDescription, createdAt: 'Agora' }]
     }
     setTickets([created, ...tickets])
-    notify(`Chamado protocolado com sucesso: ${newProtocol}! SLA ativado na fila ${selectedQ}.`)
+    notify(`Chamado protocolado com sucesso: ${newProtocol}!`)
     setActiveTab('tickets')
     setSelectedTicket(created)
   }
@@ -773,13 +589,20 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           </div>
         </header>
 
-        {/* Top Launcher Carousel (Horizontal App Circles with Badges) */}
+        {/* Top Launcher Carousel */}
         <div className="ds-launcher-bar">
           <button className={`ds-launcher-item ${activeTab === 'hub' ? 'active' : ''}`} onClick={() => setActiveTab('hub')}>
             <div className="ds-launcher-circle">
               <LifeBuoy size={22} />
             </div>
-            <span className="ds-launcher-label">Hub Geral</span>
+            <span className="ds-launcher-label">Hub Geral (Operacional)</span>
+          </button>
+
+          <button className={`ds-launcher-item ${activeTab === 'bi' ? 'active' : ''}`} onClick={() => setActiveTab('bi')}>
+            <div className="ds-launcher-circle">
+              <BarChart3 size={22} />
+            </div>
+            <span className="ds-launcher-label">Dashboard & BI (Analytics)</span>
           </button>
 
           <button className={`ds-launcher-item ${activeTab === 'copilot' ? 'active' : ''}`} onClick={() => setActiveTab('copilot')}>
@@ -788,13 +611,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               <span className="ds-mini-tag purple">94%</span>
             </div>
             <span className="ds-launcher-label">Disk Copilot IA</span>
-          </button>
-
-          <button className={`ds-launcher-item ${activeTab === 'bi' ? 'active' : ''}`} onClick={() => setActiveTab('bi')}>
-            <div className="ds-launcher-circle">
-              <BarChart3 size={22} />
-            </div>
-            <span className="ds-launcher-label">Dashboard & BI</span>
           </button>
 
           <button className={`ds-launcher-item ${activeTab === 'csat' ? 'active' : ''}`} onClick={() => setActiveTab('csat')}>
@@ -842,15 +658,18 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <span className="ds-launcher-label">Omnichannel</span>
           </button>
 
-          <button className="ds-launcher-item" onClick={() => setActiveTab('predictive')}>
+          <button className={`ds-launcher-item ${activeTab === 'predictive' ? 'active' : ''}`} onClick={() => setActiveTab('predictive')}>
             <div className="ds-launcher-circle">
-              <ChevronRight size={20} />
+              <Brain size={22} />
             </div>
-            <span className="ds-launcher-label">Mais Módulos</span>
+            <span className="ds-launcher-label">Analytics Preditivo</span>
           </button>
         </div>
 
-        {/* MÓDULOS PRINCIPAIS - GRID 5x3 */}
+        {/* ========================================================
+            TELA 1: HUB GERAL (TOTALMENTE OPERACIONAL)
+            Conforme ChatGPT Image 1 de set. de 2026, 13_50_13.png
+            ======================================================== */}
         {activeTab === 'hub' && (
           <>
             <div className="ds-section-header">
@@ -869,158 +688,98 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             </div>
 
             <div className="ds-modules-grid">
-              {/* Card 1: Tickets */}
               <div className="ds-module-card" onClick={() => setActiveTab('tickets')}>
                 <div className="ds-card-icon-wrap green"><TicketCheck size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Tickets</h4>
-                  <p>Chamados, atendimentos e resoluções</p>
-                </div>
+                <div className="ds-card-text"><h4>Tickets</h4><p>Chamados, atendimentos e resoluções</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 2: Omnichannel */}
               <div className="ds-module-card" onClick={() => setActiveTab('inbox')}>
                 <div className="ds-card-icon-wrap cyan"><MessagesSquare size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Omnichannel</h4>
-                  <p>WhatsApp, Email, Chat, Instagram e mais</p>
-                </div>
+                <div className="ds-card-text"><h4>Omnichannel</h4><p>WhatsApp, Email, Chat, Instagram e mais</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 3: SLA */}
               <div className="ds-module-card" onClick={() => setActiveTab('sla')}>
                 <div className="ds-card-icon-wrap purple"><Clock3 size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>SLA</h4>
-                  <p>Acordos, metas e conformidade de SLA</p>
-                </div>
+                <div className="ds-card-text"><h4>SLA</h4><p>Acordos, metas e conformidade de SLA</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 4: Filas & Agentes */}
               <div className="ds-module-card" onClick={() => setActiveTab('teams')}>
                 <div className="ds-card-icon-wrap yellow"><Users size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Filas & Agentes</h4>
-                  <p>Distribuição, agentes e carga de trabalho</p>
-                </div>
+                <div className="ds-card-text"><h4>Filas & Agentes</h4><p>Distribuição, agentes e carga de trabalho</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 5: Clientes 360° */}
               <div className="ds-module-card" onClick={() => setActiveTab('client360')}>
                 <div className="ds-card-icon-wrap pink"><UserRound size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Clientes 360°</h4>
-                  <p>Histórico completo do cliente em um só lugar</p>
-                </div>
+                <div className="ds-card-text"><h4>Clientes 360°</h4><p>Histórico completo do cliente em um só lugar</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 6: Eventos */}
               <div className="ds-module-card" onClick={() => setActiveTab('liveops')}>
                 <div className="ds-card-icon-wrap emerald"><CalendarDays size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Eventos</h4>
-                  <p>Eventos, check-in, acesso e operação ao vivo</p>
-                </div>
+                <div className="ds-card-text"><h4>Eventos</h4><p>Eventos, check-in, acesso e operação ao vivo</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 7: Incidentes */}
               <div className="ds-module-card" onClick={() => setActiveTab('incidents')}>
                 <div className="ds-card-icon-wrap red"><AlertTriangle size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Incidentes</h4>
-                  <p>Registro, impacto, prioridade e resolução</p>
-                </div>
+                <div className="ds-card-text"><h4>Incidentes</h4><p>Registro, impacto, prioridade e resolução</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 8: Problems (RCA) */}
               <div className="ds-module-card" onClick={() => setActiveTab('problems')}>
                 <div className="ds-card-icon-wrap purple"><Bug size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Problems (RCA)</h4>
-                  <p>Gestão de problemas, causas e planos</p>
-                </div>
+                <div className="ds-card-text"><h4>Problems (RCA)</h4><p>Gestão de problemas, causas e planos</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 9: Major Incidents (P1) */}
               <div className="ds-module-card" onClick={() => setActiveTab('major')}>
                 <div className="ds-card-icon-wrap red"><Siren size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Major Incidents (P1)</h4>
-                  <p>Incidentes críticos e War Room</p>
-                </div>
+                <div className="ds-card-text"><h4>Major Incidents (P1)</h4><p>Incidentes críticos e War Room</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 10: Base de Conhecimento */}
               <div className="ds-module-card" onClick={() => setActiveTab('knowledge')}>
                 <div className="ds-card-icon-wrap blue"><BookOpen size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Base de Conhecimento</h4>
-                  <p>Artigos, manuais e soluções inteligentes</p>
-                </div>
+                <div className="ds-card-text"><h4>Base de Conhecimento</h4><p>Artigos, manuais e soluções inteligentes</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 11: CSAT + NPS */}
               <div className="ds-module-card" onClick={() => setActiveTab('csat')}>
                 <div className="ds-card-icon-wrap green"><Smile size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>CSAT + NPS</h4>
-                  <p>Satisfação do cliente e experiência</p>
-                </div>
+                <div className="ds-card-text"><h4>CSAT + NPS</h4><p>Satisfação do cliente e experiência</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 12: Disk Copilot IA */}
               <div className="ds-module-card" onClick={() => setActiveTab('copilot')}>
                 <div className="ds-card-icon-wrap purple"><Bot size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Disk Copilot IA</h4>
-                  <p>IA aplicada ao atendimento com sugestões inteligentes</p>
-                </div>
+                <div className="ds-card-text"><h4>Disk Copilot IA</h4><p>IA aplicada ao atendimento com sugestões inteligentes</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 13: Dashboard & BI */}
               <div className="ds-module-card" onClick={() => setActiveTab('bi')}>
                 <div className="ds-card-icon-wrap cyan"><BarChart3 size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Dashboard & BI</h4>
-                  <p>Indicadores, métricas e análises em tempo real</p>
-                </div>
+                <div className="ds-card-text"><h4>Dashboard & BI</h4><p>Indicadores, métricas e análises em tempo real</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 14: Operação em Tempo Real */}
               <div className="ds-module-card" onClick={() => setActiveTab('liveops')}>
                 <div className="ds-card-icon-wrap orange"><Radio size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Operação em Tempo Real</h4>
-                  <p>Monitoramento ao vivo dos eventos</p>
-                </div>
+                <div className="ds-card-text"><h4>Operação em Tempo Real</h4><p>Monitoramento ao vivo dos eventos</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
 
-              {/* Card 15: Analytics Preditivo */}
               <div className="ds-module-card" onClick={() => setActiveTab('predictive')}>
                 <div className="ds-card-icon-wrap teal"><Brain size={22} /></div>
-                <div className="ds-card-text">
-                  <h4>Analytics Preditivo</h4>
-                  <p>Previsões, riscos e recomendações</p>
-                </div>
+                <div className="ds-card-text"><h4>Analytics Preditivo</h4><p>Previsões, riscos e recomendações</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
             </div>
 
-            {/* VISÃO GERAL DA OPERAÇÃO (6 Stats Bar) */}
+            {/* VISÃO GERAL DA OPERAÇÃO */}
             <div className="ds-section-header">
               <h2 className="ds-section-title">VISÃO GERAL DA OPERAÇÃO</h2>
             </div>
@@ -1031,7 +790,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div className="ds-stat-content">
                   <span className="ds-stat-label">Tickets Abertos</span>
                   <div className="ds-stat-val-row">
-                    <span className="ds-stat-val">{stats.open}</span>
+                    <span className="ds-stat-val">128</span>
                     <span className="ds-stat-delta green">-12% vs ontem</span>
                   </div>
                 </div>
@@ -1042,7 +801,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div className="ds-stat-content">
                   <span className="ds-stat-label">Atrasados (SLA)</span>
                   <div className="ds-stat-val-row">
-                    <span className="ds-stat-val" style={{ color: '#f59e0b' }}>{stats.delayedSla}</span>
+                    <span className="ds-stat-val" style={{ color: '#f59e0b' }}>18</span>
                     <span className="ds-stat-delta orange">+4% vs ontem</span>
                   </div>
                 </div>
@@ -1053,7 +812,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div className="ds-stat-content">
                   <span className="ds-stat-label">CSAT (Hoje)</span>
                   <div className="ds-stat-val-row">
-                    <span className="ds-stat-val" style={{ color: '#10b981' }}>{stats.csatToday}</span>
+                    <span className="ds-stat-val" style={{ color: '#10b981' }}>4.6/5</span>
                     <span className="ds-stat-delta green">+0.3 vs ontem</span>
                   </div>
                 </div>
@@ -1064,7 +823,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div className="ds-stat-content">
                   <span className="ds-stat-label">NPS (Hoje)</span>
                   <div className="ds-stat-val-row">
-                    <span className="ds-stat-val" style={{ color: '#10b981' }}>{stats.npsToday}</span>
+                    <span className="ds-stat-val" style={{ color: '#10b981' }}>53+</span>
                     <span className="ds-stat-delta green">+5 vs ontem</span>
                   </div>
                 </div>
@@ -1075,7 +834,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div className="ds-stat-content">
                   <span className="ds-stat-label">Check-ins (Hoje)</span>
                   <div className="ds-stat-val-row">
-                    <span className="ds-stat-val" style={{ color: '#38bdf8' }}>{stats.checkinsToday}</span>
+                    <span className="ds-stat-val" style={{ color: '#38bdf8' }}>8.742</span>
                     <span className="ds-stat-delta green">+18% vs ontem</span>
                   </div>
                 </div>
@@ -1086,7 +845,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div className="ds-stat-content">
                   <span className="ds-stat-label">P1 Ativos</span>
                   <div className="ds-stat-val-row">
-                    <span className="ds-stat-val" style={{ color: '#ef4444' }}>{stats.p1Active}</span>
+                    <span className="ds-stat-val" style={{ color: '#ef4444' }}>3</span>
                     <span className="ds-stat-delta red">+1 vs ontem</span>
                   </div>
                 </div>
@@ -1099,49 +858,483 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             </div>
 
             <div className="ds-quick-actions-bar">
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}>
-                <Plus size={14} style={{ color: '#10b981' }} /> Novo Ticket
-              </button>
-
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('incidents')}>
-                <AlertTriangle size={14} style={{ color: '#ef4444' }} /> Novo Incidente
-              </button>
-
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('major')}>
-                <Siren size={14} style={{ color: '#ef4444' }} /> War Room
-              </button>
-
-              <button className="ds-quick-action-pill" onClick={() => notify('Disparo de broadcast em massa para participantes configurado')}>
-                <Radio size={14} style={{ color: '#f59e0b' }} /> Broadcast
-              </button>
-
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('bi')}>
-                <BarChart3 size={14} style={{ color: '#38bdf8' }} /> Relatório Executivo
-              </button>
-
-              <button className="ds-quick-action-pill" onClick={() => notify('Exportação de dados CSV/PDF iniciada')}>
-                <Download size={14} style={{ color: '#8b5cf6' }} /> Exportar Dados
-              </button>
-
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('sla')}>
-                <SlidersHorizontal size={14} /> Configurações
-              </button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#10b981' }} /> Novo Ticket</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('incidents')}><AlertTriangle size={14} style={{ color: '#ef4444' }} /> Novo Incidente</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('major')}><Siren size={14} style={{ color: '#ef4444' }} /> War Room</button>
+              <button className="ds-quick-action-pill" onClick={() => notify('Disparo de broadcast em massa configurado')}><Radio size={14} style={{ color: '#f59e0b' }} /> Broadcast</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('bi')}><BarChart3 size={14} style={{ color: '#38bdf8' }} /> Relatório Executivo</button>
+              <button className="ds-quick-action-pill" onClick={() => notify('Exportação de dados CSV/PDF iniciada')}><Download size={14} style={{ color: '#8b5cf6' }} /> Exportar Dados</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('sla')}><SlidersHorizontal size={14} /> Configurações</button>
             </div>
           </>
         )}
 
-        {/* SUBMÓDULOS DETALHADOS (QUANDO QUALQUER CARD É CLICADO) */}
+        {/* ========================================================
+            TELA 2: DASHBOARD & BI (TOTALMENTE INFORMATIVO & ANALÍTICO)
+            Conforme ChatGPT Image 1 de set. de 2026, 13_50_05.png
+            ======================================================== */}
+        {activeTab === 'bi' && (
+          <div style={{ marginTop: '10px' }}>
+            
+            {/* 6 Scorecards com Sparkline Graphs */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '14px', marginBottom: '20px' }}>
+              
+              {/* Scorecard 1: Tickets Abertos */}
+              <div className="ds-spark-card">
+                <div className="ds-spark-top">
+                  <div className="ds-spark-icon blue"><Ticket size={20} /></div>
+                  <div className="ds-spark-header-text">
+                    <span>Tickets Abertos</span>
+                    <div className="ds-spark-value-row">
+                      <strong className="ds-spark-value">128</strong>
+                      <small className="ds-stat-delta green">-12% vs ontem</small>
+                    </div>
+                  </div>
+                </div>
+                <svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <path d="M0,25 Q15,5 30,20 T60,10 T90,22 L100,15" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
 
-        {/* 1. MÓDULO: TICKETS */}
+              {/* Scorecard 2: P1 Ativos */}
+              <div className="ds-spark-card">
+                <div className="ds-spark-top">
+                  <div className="ds-spark-icon red"><Shield size={20} /></div>
+                  <div className="ds-spark-header-text">
+                    <span>P1 Ativos</span>
+                    <div className="ds-spark-value-row">
+                      <strong className="ds-spark-value" style={{ color: '#ef4444' }}>3</strong>
+                      <small className="ds-stat-delta red">+1 vs ontem</small>
+                    </div>
+                  </div>
+                </div>
+                <svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <path d="M0,22 Q20,28 40,12 T70,25 T90,5 L100,18" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+
+              {/* Scorecard 3: Atrasados (SLA) */}
+              <div className="ds-spark-card">
+                <div className="ds-spark-top">
+                  <div className="ds-spark-icon orange"><Clock3 size={20} /></div>
+                  <div className="ds-spark-header-text">
+                    <span>Atrasados (SLA)</span>
+                    <div className="ds-spark-value-row">
+                      <strong className="ds-spark-value" style={{ color: '#f59e0b' }}>18</strong>
+                      <small className="ds-stat-delta orange">+4% vs ontem</small>
+                    </div>
+                  </div>
+                </div>
+                <svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <path d="M0,20 Q25,25 45,8 T75,22 T95,14 L100,18" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+
+              {/* Scorecard 4: CSAT (Hoje) */}
+              <div className="ds-spark-card">
+                <div className="ds-spark-top">
+                  <div className="ds-spark-icon green"><Smile size={20} /></div>
+                  <div className="ds-spark-header-text">
+                    <span>CSAT (Hoje)</span>
+                    <div className="ds-spark-value-row">
+                      <strong className="ds-spark-value" style={{ color: '#10b981' }}>4.6/5</strong>
+                      <small className="ds-stat-delta green">+0.3 vs ontem</small>
+                    </div>
+                  </div>
+                </div>
+                <svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <path d="M0,24 Q20,10 40,22 T70,8 T90,16 L100,10" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+
+              {/* Scorecard 5: NPS (Hoje) */}
+              <div className="ds-spark-card">
+                <div className="ds-spark-top">
+                  <div className="ds-spark-icon teal"><TrendingUp size={20} /></div>
+                  <div className="ds-spark-header-text">
+                    <span>NPS (Hoje)</span>
+                    <div className="ds-spark-value-row">
+                      <strong className="ds-spark-value" style={{ color: '#14b8a6' }}>53</strong>
+                      <small className="ds-stat-delta green">+5 vs ontem</small>
+                    </div>
+                  </div>
+                </div>
+                <svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <path d="M0,22 Q25,26 50,14 T80,18 T95,6 L100,10" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+
+              {/* Scorecard 6: Check-ins (Hoje) */}
+              <div className="ds-spark-card">
+                <div className="ds-spark-top">
+                  <div className="ds-spark-icon cyan"><Users size={20} /></div>
+                  <div className="ds-spark-header-text">
+                    <span>Check-ins (Hoje)</span>
+                    <div className="ds-spark-value-row">
+                      <strong className="ds-spark-value" style={{ color: '#06b6d4' }}>8.742</strong>
+                      <small className="ds-stat-delta green">+18% vs ontem</small>
+                    </div>
+                  </div>
+                </div>
+                <svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+                  <path d="M0,26 Q20,18 45,22 T70,10 T90,8 L100,5" fill="none" stroke="#06b6d4" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+              </div>
+
+            </div>
+
+            {/* Acessos Rápidos Bar */}
+            <div className="ds-section-header" style={{ marginTop: '10px' }}>
+              <h2 className="ds-section-title">Acesso rápido</h2>
+            </div>
+            <div className="ds-quick-actions-bar" style={{ marginBottom: '24px' }}>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#10b981' }} /> Novo Ticket</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('incidents')}><AlertTriangle size={14} style={{ color: '#ef4444' }} /> Novo Incidente</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('major')}><Siren size={14} style={{ color: '#ef4444' }} /> War Room</button>
+              <button className="ds-quick-action-pill" onClick={() => notify('Disparo de broadcast em massa configurado')}><Radio size={14} style={{ color: '#f59e0b' }} /> Broadcast</button>
+              <button className="ds-quick-action-pill active" style={{ background: '#1e3a8a', color: '#60a5fa' }} onClick={() => notify('Relatório Executivo atualizado')}><BarChart3 size={14} /> Relatório Executivo</button>
+              <button className="ds-quick-action-pill" onClick={() => notify('Exportação iniciada')}><Download size={14} style={{ color: '#8b5cf6' }} /> Exportar Dados</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('sla')}><SlidersHorizontal size={14} /> Configurações</button>
+            </div>
+
+            {/* LINHA 1 DE GRÁFICOS: Volume de Tickets | Tickets por Canal | Alertas Críticos */}
+            <div className="ds-bi-row three-col">
+              
+              {/* Gráfico 1: Volume de Tickets */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">Volume de Tickets</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ display: 'flex', gap: '10px', fontSize: '11px', color: '#94a3b8' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><i style={{ width: '8px', height: '8px', background: '#2563eb', borderRadius: '2px', display: 'inline-block' }} /> Abertos</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><i style={{ width: '8px', height: '8px', background: '#10b981', borderRadius: '2px', display: 'inline-block' }} /> Resolvidos</span>
+                    </div>
+                    <select className="ds-filter-select">
+                      <option>Últimos 7 dias</option>
+                      <option>Últimos 14 dias</option>
+                      <option>Mês atual</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '170px', padding: '10px 0', borderBottom: '1px solid #1e293b' }}>
+                  {[
+                    { day: '13/05', open: 280, closed: 210 },
+                    { day: '14/05', open: 310, closed: 260 },
+                    { day: '15/05', open: 295, closed: 245 },
+                    { day: '16/05', open: 340, closed: 290 },
+                    { day: '17/05', open: 260, closed: 215 },
+                    { day: '18/05', open: 285, closed: 190 },
+                    { day: '19/05', open: 250, closed: 180 }
+                  ].map((d, i) => (
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', flex: 1 }}>
+                      <div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '130px' }}>
+                        <div style={{ width: '12px', background: '#2563eb', height: `${(d.open / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} />
+                        <div style={{ width: '12px', background: '#10b981', height: `${(d.closed / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} />
+                      </div>
+                      <span style={{ fontSize: '10px', color: '#64748b' }}>{d.day}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Gráfico 2: Tickets por Canal (Donut) */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">Tickets por Canal</h3>
+                  <select className="ds-filter-select">
+                    <option>Hoje</option>
+                    <option>7 dias</option>
+                    <option>Mês atual</option>
+                  </select>
+                </div>
+
+                <div className="ds-donut-wrapper">
+                  <div className="ds-donut-circle-wrap">
+                    <svg viewBox="0 0 36 36" style={{ width: '140px', height: '140px', transform: 'rotate(-90deg)' }}>
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#1e293b" strokeWidth="4.5" />
+                      {/* WhatsApp 52% */}
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#2563eb" strokeWidth="4.5" strokeDasharray="45.7 100" strokeDashoffset="0" />
+                      {/* Email 21% */}
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#f97316" strokeWidth="4.5" strokeDasharray="18.5 100" strokeDashoffset="-45.7" />
+                      {/* Chat 12% */}
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#eab308" strokeWidth="4.5" strokeDasharray="10.5 100" strokeDashoffset="-64.2" />
+                      {/* Instagram 7% */}
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#ec4899" strokeWidth="4.5" strokeDasharray="6.1 100" strokeDashoffset="-74.7" />
+                      {/* Telefone 6% */}
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#14b8a6" strokeWidth="4.5" strokeDasharray="5.2 100" strokeDashoffset="-80.8" />
+                      {/* Outros 2% */}
+                      <circle cx="18" cy="18" r="14" fill="none" stroke="#64748b" strokeWidth="4.5" strokeDasharray="1.8 100" strokeDashoffset="-86" />
+                    </svg>
+                    <div className="ds-donut-center-text">
+                      <strong>1.245</strong>
+                      <small>Total</small>
+                    </div>
+                  </div>
+
+                  <div className="ds-donut-legend">
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#2563eb' }} /> WhatsApp</div><strong>52%</strong></div>
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#f97316' }} /> Email</div><strong>21%</strong></div>
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#eab308' }} /> Chat</div><strong>12%</strong></div>
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#ec4899' }} /> Instagram</div><strong>7%</strong></div>
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#14b8a6' }} /> Telefone</div><strong>6%</strong></div>
+                    <div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#64748b' }} /> Outros</div><strong>2%</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lista: Alertas Críticos */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 className="ds-bi-card-title">Alertas críticos</h3>
+                    <span className="ds-badge-count-pill" style={{ position: 'static' }}>5</span>
+                  </div>
+                  <span style={{ fontSize: '11px', color: '#38bdf8', cursor: 'pointer', fontWeight: 700 }} onClick={() => setActiveTab('incidents')}>Ver todos</span>
+                </div>
+
+                <div className="ds-alerts-list">
+                  <div className="ds-alert-item">
+                    <div className="ds-alert-icon p1"><Siren size={16} /></div>
+                    <div className="ds-alert-content">
+                      <div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Catraca Principal Offline</span></div>
+                      <p className="ds-alert-sub">Festival XPTO 2026 • Portão 02</p>
+                    </div>
+                    <span className="ds-alert-time">Agora</span>
+                  </div>
+
+                  <div className="ds-alert-item">
+                    <div className="ds-alert-icon p1"><ShieldAlert size={16} /></div>
+                    <div className="ds-alert-content">
+                      <div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Falha na API de Validação</span></div>
+                      <p className="ds-alert-sub">Validação de ingressos instável</p>
+                    </div>
+                    <span className="ds-alert-time">2 min</span>
+                  </div>
+
+                  <div className="ds-alert-item">
+                    <div className="ds-alert-icon p2"><AlertTriangle size={16} /></div>
+                    <div className="ds-alert-content">
+                      <div className="ds-alert-title-row"><span className="ds-alert-tag p2">P2</span><span className="ds-alert-title">Alto volume de tickets</span></div>
+                      <p className="ds-alert-sub">Fila: Suporte - WhatsApp</p>
+                    </div>
+                    <span className="ds-alert-time">5 min</span>
+                  </div>
+
+                  <div className="ds-alert-item">
+                    <div className="ds-alert-icon p2"><Clock3 size={16} /></div>
+                    <div className="ds-alert-content">
+                      <div className="ds-alert-title-row"><span className="ds-alert-tag p2">P2</span><span className="ds-alert-title">SLA acima do limite</span></div>
+                      <p className="ds-alert-sub">Fila: Financeiro</p>
+                    </div>
+                    <span className="ds-alert-time">8 min</span>
+                  </div>
+
+                  <div className="ds-alert-item">
+                    <div className="ds-alert-icon p3"><WifiOff size={16} /></div>
+                    <div className="ds-alert-content">
+                      <div className="ds-alert-title-row"><span className="ds-alert-tag p3">P3</span><span className="ds-alert-title">Scanner com baixa bateria</span></div>
+                      <p className="ds-alert-sub">Portão 04 - Scanner 12</p>
+                    </div>
+                    <span className="ds-alert-time">12 min</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* LINHA 2 DE GRÁFICOS: SLA Compliance | FRT | MTTR | Próximos Eventos */}
+            <div className="ds-bi-row four-col">
+              
+              {/* Gráfico SLA Compliance (Gauge) */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">SLA Compliance</h3>
+                  <select className="ds-filter-select"><option>Mês atual</option></select>
+                </div>
+                <div className="ds-gauge-container">
+                  <svg viewBox="0 0 100 55" style={{ width: '130px', height: '70px' }}>
+                    <path d="M10,50 A40,40 0 0,1 90,50" fill="none" stroke="#1e293b" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M10,50 A40,40 0 0,1 84,26" fill="none" stroke="#14b8a6" strokeWidth="8" strokeLinecap="round" />
+                  </svg>
+                  <strong className="ds-gauge-score">92%</strong>
+                  <span className="ds-gauge-label">Conformidade</span>
+                </div>
+                <div className="ds-gauge-footer">
+                  <span>Meta: 90%</span>
+                  <span style={{ color: '#10b981', fontWeight: 700 }}>+2pp vs mês anterior</span>
+                </div>
+              </div>
+
+              {/* Gráfico FRT Primeira Resposta */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">FRT (Primeira Resposta)</h3>
+                  <select className="ds-filter-select"><option>Mês atual</option></select>
+                </div>
+                <div>
+                  <strong style={{ fontSize: '24px', color: '#fff', display: 'block' }}>2h 38m</strong>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>Tempo médio</span>
+                </div>
+                <svg viewBox="0 0 100 35" style={{ width: '100%', height: '55px', margin: '8px 0' }} preserveAspectRatio="none">
+                  <path d="M0,28 Q15,10 30,22 T60,8 T90,18 L100,12" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+                <div className="ds-gauge-footer">
+                  <span>Meta: 4h</span>
+                  <span style={{ color: '#10b981', fontWeight: 700 }}>-1h 22m vs mês anterior</span>
+                </div>
+              </div>
+
+              {/* Gráfico MTTR Resolução */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">MTTR (Resolução)</h3>
+                  <select className="ds-filter-select"><option>Mês atual</option></select>
+                </div>
+                <div>
+                  <strong style={{ fontSize: '24px', color: '#fff', display: 'block' }}>8h 41m</strong>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>Tempo médio</span>
+                </div>
+                <svg viewBox="0 0 100 35" style={{ width: '100%', height: '55px', margin: '8px 0' }} preserveAspectRatio="none">
+                  <path d="M0,22 Q20,30 40,12 T70,20 T95,6 L100,14" fill="none" stroke="#60a5fa" strokeWidth="2.5" strokeLinecap="round" />
+                </svg>
+                <div className="ds-gauge-footer">
+                  <span>Meta: 12h</span>
+                  <span style={{ color: '#10b981', fontWeight: 700 }}>-3h 19m vs mês anterior</span>
+                </div>
+              </div>
+
+              {/* Próximos Eventos */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">Próximos eventos</h3>
+                  <span style={{ fontSize: '11px', color: '#38bdf8', cursor: 'pointer', fontWeight: 700 }}>Ver agenda</span>
+                </div>
+                <div className="ds-events-list">
+                  <div className="ds-event-item">
+                    <div className="ds-event-date-box"><span className="ds-event-date-day">20</span><span className="ds-event-date-month">MAI</span></div>
+                    <div className="ds-event-info"><h4 className="ds-event-title">Festival XPTO 2026</h4><p className="ds-event-meta">Hoje • 16:00 • 15.000 esperado</p></div>
+                    <span className="ds-event-status-pill green">Em andamento</span>
+                  </div>
+
+                  <div className="ds-event-item">
+                    <div className="ds-event-date-box"><span className="ds-event-date-day">24</span><span className="ds-event-date-month">MAI</span></div>
+                    <div className="ds-event-info"><h4 className="ds-event-title">Show do Seu Jorge</h4><p className="ds-event-meta">Sáb • 20:00 • 8.000 esperado</p></div>
+                    <span className="ds-event-status-pill orange">Aguardando</span>
+                  </div>
+
+                  <div className="ds-event-item">
+                    <div className="ds-event-date-box"><span className="ds-event-date-day">31</span><span className="ds-event-date-month">MAI</span></div>
+                    <div className="ds-event-info"><h4 className="ds-event-title">Rap in Festival</h4><p className="ds-event-meta">Sáb • 18:00 • 12.000 esperado</p></div>
+                    <span className="ds-event-status-pill blue">Programado</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* LINHA 3 DE GRÁFICOS: Tickets por Categoria | Top Agentes por Conformidade de SLA */}
+            <div className="ds-bi-row two-col">
+              
+              {/* Tickets por Categoria */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">Tickets por Categoria</h3>
+                  <select className="ds-filter-select"><option>Mês atual</option></select>
+                </div>
+
+                <div className="ds-category-row">
+                  <div className="ds-category-header"><span className="ds-category-name">Acesso e Validação</span><span className="ds-category-val">425 (34%)</span></div>
+                  <div className="ds-category-track"><div className="ds-category-fill" style={{ width: '34%', background: '#3b82f6' }} /></div>
+                </div>
+
+                <div className="ds-category-row">
+                  <div className="ds-category-header"><span className="ds-category-name">Pagamento e Reembolso</span><span className="ds-category-val">312 (25%)</span></div>
+                  <div className="ds-category-track"><div className="ds-category-fill" style={{ width: '25%', background: '#10b981' }} /></div>
+                </div>
+
+                <div className="ds-category-row">
+                  <div className="ds-category-header"><span className="ds-category-name">Informações de Evento</span><span className="ds-category-val">198 (16%)</span></div>
+                  <div className="ds-category-track"><div className="ds-category-fill" style={{ width: '16%', background: '#f59e0b' }} /></div>
+                </div>
+
+                <div className="ds-category-row">
+                  <div className="ds-category-header"><span className="ds-category-name">Transferência e Titularidade</span><span className="ds-category-val">142 (11%)</span></div>
+                  <div className="ds-category-track"><div className="ds-category-fill" style={{ width: '11%', background: '#8b5cf6' }} /></div>
+                </div>
+
+                <div className="ds-category-row">
+                  <div className="ds-category-header"><span className="ds-category-name">Outros</span><span className="ds-category-val">168 (14%)</span></div>
+                  <div className="ds-category-track"><div className="ds-category-fill" style={{ width: '14%', background: '#64748b' }} /></div>
+                </div>
+              </div>
+
+              {/* Top Agentes por Conformidade de SLA */}
+              <div className="ds-bi-card">
+                <div className="ds-bi-card-header">
+                  <h3 className="ds-bi-card-title">Top Agentes por Conformidade de SLA</h3>
+                  <select className="ds-filter-select"><option>Mês atual</option></select>
+                </div>
+
+                <div className="ds-agent-rank-table">
+                  <div className="ds-agent-rank-row">
+                    <span className="ds-agent-num">1</span>
+                    <div className="ds-agent-avatar" style={{ background: '#ec4899' }}>GM</div>
+                    <span className="ds-agent-name">Gabriela Martins</span>
+                    <div className="ds-agent-bar-wrap"><div className="ds-agent-bar-fill" style={{ width: '98%' }} /></div>
+                    <span className="ds-agent-pct">98%</span>
+                    <span className="ds-agent-tickets-count">320 tickets</span>
+                  </div>
+
+                  <div className="ds-agent-rank-row">
+                    <span className="ds-agent-num">2</span>
+                    <div className="ds-agent-avatar" style={{ background: '#3b82f6' }}>LF</div>
+                    <span className="ds-agent-name">Lucas Ferreira</span>
+                    <div className="ds-agent-bar-wrap"><div className="ds-agent-bar-fill" style={{ width: '95%' }} /></div>
+                    <span className="ds-agent-pct">95%</span>
+                    <span className="ds-agent-tickets-count">280 tickets</span>
+                  </div>
+
+                  <div className="ds-agent-rank-row">
+                    <span className="ds-agent-num">3</span>
+                    <div className="ds-agent-avatar" style={{ background: '#10b981' }}>JC</div>
+                    <span className="ds-agent-name">Juliana Costa</span>
+                    <div className="ds-agent-bar-wrap"><div className="ds-agent-bar-fill" style={{ width: '93%' }} /></div>
+                    <span className="ds-agent-pct">93%</span>
+                    <span className="ds-agent-tickets-count">265 tickets</span>
+                  </div>
+
+                  <div className="ds-agent-rank-row">
+                    <span className="ds-agent-num">4</span>
+                    <div className="ds-agent-avatar" style={{ background: '#f59e0b' }}>RA</div>
+                    <span className="ds-agent-name">Rafael Almeida</span>
+                    <div className="ds-agent-bar-wrap"><div className="ds-agent-bar-fill" style={{ width: '91%' }} /></div>
+                    <span className="ds-agent-pct">91%</span>
+                    <span className="ds-agent-tickets-count">240 tickets</span>
+                  </div>
+
+                  <div className="ds-agent-rank-row">
+                    <span className="ds-agent-num">5</span>
+                    <div className="ds-agent-avatar" style={{ background: '#8b5cf6' }}>BS</div>
+                    <span className="ds-agent-name">Beatriz Santos</span>
+                    <div className="ds-agent-bar-wrap"><div className="ds-agent-bar-fill" style={{ width: '89%' }} /></div>
+                    <span className="ds-agent-pct">89%</span>
+                    <span className="ds-agent-tickets-count">210 tickets</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+        {/* SUBMÓDULOS ESPECÍFICOS */}
         {activeTab === 'tickets' && (
           <div style={{ marginTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}>
-                <ChevronLeft size={16} /> Voltar ao Hub Geral
-              </button>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')} style={{ background: '#2563eb', color: '#fff' }}>
-                <Plus size={16} /> Abrir Chamado
-              </button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}><ChevronLeft size={16} /> Voltar ao Hub Operacional</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')} style={{ background: '#2563eb', color: '#fff' }}><Plus size={16} /> Abrir Chamado</button>
             </div>
 
             <div className="ticket-split-layout">
@@ -1149,17 +1342,9 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div className="tickets-scroll-container">
                   {tickets.map(t => (
                     <div key={t.id} className={`ticket-summary-card ${selectedTicket?.id === t.id ? 'active' : ''}`} onClick={() => setSelectedTicket(t)}>
-                      <div className="ticket-top-row">
-                        <span className="channel-badge">{t.channel}</span>
-                        <span className="priority-tag P1">{t.priority}</span>
-                        <span className="status-pill green">{t.status}</span>
-                      </div>
+                      <div className="ticket-top-row"><span className="channel-badge">{t.channel}</span><span className="priority-tag P1">{t.priority}</span><span className="status-pill green">{t.status}</span></div>
                       <h4 className="ticket-card-subject">#{t.protocol} - {t.subject}</h4>
                       <p style={{ margin: '4px 0', fontSize: '12px', color: '#94a3b8' }}>{t.customerName} • {t.eventName}</p>
-                      <div className="ticket-bottom-info">
-                        <span>Fila: {t.queueName}</span>
-                        <small>{t.createdAt}</small>
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -1170,45 +1355,23 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   <div className="ticket-workspace">
                     <div className="workspace-header">
                       <div>
-                        <div className="protocol-meta">
-                          <span className="channel-badge">{selectedTicket.channel}</span>
-                          <span className="priority-tag P1">{selectedTicket.priority}</span>
-                          <span className="status-pill green">{selectedTicket.status}</span>
-                        </div>
                         <h2>{selectedTicket.subject}</h2>
-                        <p style={{ margin: '4px 0 0', color: '#94a3b8', fontSize: '13px' }}>
-                          Protocolo: <b>{selectedTicket.protocol}</b> · Cliente: <b>{selectedTicket.customerName}</b> ({selectedTicket.customerPhone})
-                        </p>
+                        <p style={{ margin: '4px 0 0', color: '#94a3b8', fontSize: '13px' }}>Protocolo: <b>{selectedTicket.protocol}</b> · Cliente: <b>{selectedTicket.customerName}</b></p>
                       </div>
                     </div>
 
                     <div className="timeline-chat-box" style={{ flex: 1, overflowY: 'auto', background: '#0f172a', borderRadius: '10px', padding: '16px', margin: '14px 0' }}>
                       {selectedTicket.messages.map(m => (
                         <div key={m.id} style={{ marginBottom: '12px', padding: '10px 14px', borderRadius: '8px', background: m.authorType === 'CUSTOMER' ? '#1e293b' : '#1e3a8a', maxWidth: '85%', marginLeft: m.authorType === 'CUSTOMER' ? '0' : 'auto' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}>
-                            <strong>{m.author}</strong>
-                            <span>{m.createdAt}</span>
-                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#94a3b8', marginBottom: '4px' }}><strong>{m.author}</strong><span>{m.createdAt}</span></div>
                           <p style={{ margin: 0, fontSize: '13px', color: '#f8fafc' }}>{m.body}</p>
                         </div>
                       ))}
                     </div>
 
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <input
-                        type="text"
-                        placeholder="Escreva uma resposta ao cliente..."
-                        value={newReply}
-                        onChange={e => setNewReply(e.target.value)}
-                        style={{ flex: 1, background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#fff' }}
-                      />
-                      <button className="ds-quick-action-pill" style={{ background: '#2563eb', color: '#fff', border: 0 }} onClick={() => {
-                        if (!newReply) return
-                        notify(`Resposta enviada ao cliente via ${selectedTicket.channel}!`)
-                        setNewReply('')
-                      }}>
-                        <Send size={15} /> Enviar
-                      </button>
+                      <input type="text" placeholder="Escreva uma resposta ao cliente..." value={newReply} onChange={e => setNewReply(e.target.value)} style={{ flex: 1, background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#fff' }} />
+                      <button className="ds-quick-action-pill" style={{ background: '#2563eb', color: '#fff', border: 0 }} onClick={() => { if (!newReply) return; notify('Resposta enviada!'); setNewReply('') }}><Send size={15} /> Enviar</button>
                     </div>
                   </div>
                 )}
@@ -1217,165 +1380,23 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           </div>
         )}
 
-        {/* 2. MÓDULO: DISK COPILOT IA */}
-        {activeTab === 'copilot' && (
-          <div style={{ marginTop: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}>
-                <ChevronLeft size={16} /> Voltar ao Hub Geral
-              </button>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <select
-                  value={copilotSelectedTicketId}
-                  onChange={e => setCopilotSelectedTicketId(Number(e.target.value))}
-                  style={{ background: '#1e293b', color: '#fff', border: '1px solid #334155', padding: '8px 12px', borderRadius: '8px', fontWeight: 700, fontSize: '13px' }}
-                >
-                  {tickets.map(t => (
-                    <option key={t.id} value={t.id}>#{t.protocol} - {t.customerName}</option>
-                  ))}
-                </select>
-                <button className="ds-quick-action-pill" onClick={() => handleRunCopilotAnalysis(copilotSelectedTicketId)} disabled={copilotLoading} style={{ background: '#7c3aed', color: '#fff', border: 0 }}>
-                  <Sparkles size={16} /> {copilotLoading ? 'Analisando...' : 'Executar Análise IA'}
-                </button>
-              </div>
-            </div>
-
-            {copilotAnalysis && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="ds-module-card" style={{ cursor: 'default', display: 'block' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Bot size={20} style={{ color: '#c084fc' }} />
-                      <strong style={{ fontSize: '16px', color: '#fff' }}>Resumo Inteligente & Diagnóstico</strong>
-                    </div>
-                    <span className="ds-mini-tag purple" style={{ position: 'static' }}>
-                      {Math.round(copilotAnalysis.confidence * 100)}% Confiança
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '14px', color: '#cbd5e1', lineHeight: 1.6, margin: 0 }}>
-                    {copilotAnalysis.summary}
-                  </p>
-                </div>
-
-                <div className="ds-modules-grid" style={{ gridTemplateColumns: '1fr 1fr', marginBottom: 0 }}>
-                  <div className="ds-module-card" style={{ cursor: 'default', display: 'block' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <Brain size={18} style={{ color: '#10b981' }} />
-                      <strong style={{ color: '#fff' }}>Next Best Action</strong>
-                    </div>
-                    <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0 }}>{copilotAnalysis.nextBestAction}</p>
-                  </div>
-
-                  <div className="ds-module-card" style={{ cursor: 'default', display: 'block' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <MessageSquareText size={18} style={{ color: '#38bdf8' }} />
-                        <strong style={{ color: '#fff' }}>Resposta Sugerida (AI Draft)</strong>
-                      </div>
-                      <button className="ds-quick-action-pill" onClick={handleApplyCopilotReply} style={{ padding: '4px 8px', fontSize: '11px' }}>
-                        <Copy size={12} /> Aplicar
-                      </button>
-                    </div>
-                    <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0, fontStyle: 'italic' }}>"{copilotAnalysis.suggestedReply}"</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* 3. MÓDULO: DASHBOARD & BI (FASE 22.12) */}
-        {activeTab === 'bi' && (
-          <div style={{ marginTop: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}>
-                <ChevronLeft size={16} /> Voltar ao Hub Geral
-              </button>
-              <button className="ds-quick-action-pill" onClick={() => notify('Métricas recalculadas em tempo real!')}>
-                <RefreshCw size={15} /> Recalcular Indicadores
-              </button>
-            </div>
-
-            <div className="ds-stats-strip">
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Backlog</span><span className="ds-stat-val">128</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">SLA Compliance</span><span className="ds-stat-val" style={{ color: '#10b981' }}>96.4%</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">FRT Médio</span><span className="ds-stat-val">8 min</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">MTTR Médio</span><span className="ds-stat-val">42 min</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">CSAT</span><span className="ds-stat-val" style={{ color: '#10b981' }}>92.4%</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">NPS Score</span><span className="ds-stat-val" style={{ color: '#10b981' }}>+78</span></div></div>
-            </div>
-          </div>
-        )}
-
-        {/* 4. MÓDULO: LIVE EVENT OPS (FASE 22.14) */}
-        {activeTab === 'liveops' && (
-          <div style={{ marginTop: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}>
-                <ChevronLeft size={16} /> Voltar ao Hub Geral
-              </button>
-              <span className="ds-quick-action-pill" style={{ background: '#7f1d1d', color: '#fca5a5' }}>
-                <Radio size={14} /> LIVE MONITORING (10s)
-              </span>
-            </div>
-
-            <div className="ds-stats-strip">
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Check-ins Válidos</span><span className="ds-stat-val">{liveEvent.validScans}</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Entradas / Min</span><span className="ds-stat-val" style={{ color: '#ef4444' }}>{liveEvent.entriesPerMinute}</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Dentro do Evento</span><span className="ds-stat-val">{liveEvent.currentInside}</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Portões Abertos</span><span className="ds-stat-val">{liveEvent.openGates}</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Fila Total</span><span className="ds-stat-val">{liveEvent.queueTotal}</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Devices Offline</span><span className="ds-stat-val" style={{ color: '#ef4444' }}>{liveEvent.offlineDevices}</span></div></div>
-            </div>
-          </div>
-        )}
-
-        {/* 5. MÓDULO: ANALYTICS PREDITIVO (FASE 22.15) */}
-        {activeTab === 'predictive' && (
-          <div style={{ marginTop: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}>
-                <ChevronLeft size={16} /> Voltar ao Hub Geral
-              </button>
-              <button className="ds-quick-action-pill" onClick={() => notify('Modelos preditivos sincronizados!')}>
-                <RefreshCw size={15} /> Recalcular Previsões
-              </button>
-            </div>
-
-            <div className="ds-stats-strip">
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Forecast 7 Dias</span><span className="ds-stat-val">584 tickets</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">SLA em Risco</span><span className="ds-stat-val" style={{ color: '#f59e0b' }}>2 chamados</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Filas em Alerta</span><span className="ds-stat-val">1 fila</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Eventos em Risco</span><span className="ds-stat-val" style={{ color: '#ef4444' }}>1 evento</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Anomalias Z-Score</span><span className="ds-stat-val">1 ativa</span></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-content"><span className="ds-stat-label">Melhorias CSI</span><span className="ds-stat-val">{improvements.length}</span></div></div>
-            </div>
-          </div>
-        )}
-
-        {/* 6. MÓDULO: NOVO CHAMADO */}
+        {/* MÓDULO: NOVO CHAMADO */}
         {activeTab === 'new' && (
           <div style={{ marginTop: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}>
-                <ChevronLeft size={16} /> Voltar ao Hub Geral
-              </button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}><ChevronLeft size={16} /> Voltar ao Hub Geral</button>
             </div>
-
             <form onSubmit={handleCreateTicket} style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '14px', padding: '24px', maxWidth: '800px' }}>
               <h3 style={{ margin: '0 0 16px', color: '#fff' }}>Protocolar Novo Chamado no Disk Service</h3>
-              
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', color: '#94a3b8', marginBottom: '4px' }}>Assunto</label>
                   <input type="text" required value={formSubject} onChange={e => setFormSubject(e.target.value)} style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '10px 12px', color: '#fff' }} />
                 </div>
-
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', color: '#94a3b8', marginBottom: '4px' }}>Descrição do Problema</label>
                   <textarea rows={4} required value={formDescription} onChange={e => setFormDescription(e.target.value)} style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '10px 12px', color: '#fff' }} />
                 </div>
-
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', color: '#94a3b8', marginBottom: '4px' }}>Nome do Cliente</label>
@@ -1386,11 +1407,8 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     <input type="text" required value={formCustomerPhone} onChange={e => setFormCustomerPhone(e.target.value)} style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '10px 12px', color: '#fff' }} />
                   </div>
                 </div>
-
                 <div style={{ marginTop: '12px' }}>
-                  <button type="submit" className="ds-quick-action-pill" style={{ background: '#2563eb', color: '#fff', border: 0, padding: '10px 20px', fontSize: '14px' }}>
-                    <Plus size={16} /> Protocolar Chamado com SLA
-                  </button>
+                  <button type="submit" className="ds-quick-action-pill" style={{ background: '#2563eb', color: '#fff', border: 0, padding: '10px 20px', fontSize: '14px' }}><Plus size={16} /> Protocolar Chamado com SLA</button>
                 </div>
               </div>
             </form>
