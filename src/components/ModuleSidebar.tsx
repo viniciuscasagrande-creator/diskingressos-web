@@ -66,48 +66,33 @@ const mainItems: Item[] = [
   { key: 'admin-hub', label: 'Administração', icon: Building2 },
 ]
 
-// 2. PILAR 1: TESOURARIA, SALDOS & CAIXA
-const treasuryFinanceItems: Item[] = [
+// 2. FINANCEIRO (PADRÃO UNIFICADO)
+const financeItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: BarChart3, badge: 'Novo' },
   { key: 'finance', label: 'Saldos & Carteira', icon: WalletCards },
   { key: 'finance-statement', label: 'Extrato Unificado', icon: ReceiptText },
-  { key: 'finance-payouts', label: 'Solicitar Repasse Pix', icon: HandCoins },
+  { key: 'finance-payouts', label: 'Solicitar Repasse', icon: HandCoins },
+  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
+  { key: 'finance-spread-simulator', label: 'Simulador de Spread', icon: Percent },
+  { key: 'finance-split', label: 'Split Financeiro', icon: Split },
+  { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard },
+  { key: 'finance-custom', label: 'Pagamentos Customizados', icon: SlidersHorizontal },
+  { key: 'finance-negotiations', label: 'Negociações Financeiras', icon: Handshake },
+  { key: 'finance-operators', label: 'Operadoras & Adquirentes', icon: ShieldCheck },
+  { key: 'finance-gateways', label: 'Gateways de Pagamento', icon: WalletCards },
+  { key: 'finance-refunds', label: 'Devoluções / Estornos', icon: ReceiptText },
+  { key: 'finance-bank-accounts', label: 'Contas Bancárias', icon: Landmark },
   { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
-  { key: 'finance-bank-accounts', label: 'Contas Bancárias & Pix', icon: Landmark },
   { key: 'finance-expenses', label: 'Despesas Operacionais', icon: TrendingDown },
   { key: 'finance-payables', label: 'Contas a Pagar', icon: TrendingDown },
   { key: 'finance-receivables', label: 'Contas a Receber', icon: TrendingUp },
   { key: 'finance-reconciliation', label: 'Conciliação Bancária', icon: Scale },
-]
-
-// 3. PILAR 2: ANTECIPAÇÕES, SPREAD & SPLIT
-const advanceFinanceItems: Item[] = [
-  { key: 'finance-advance', label: 'Antecipações de Recebíveis', icon: Zap },
-  { key: 'finance-spread', label: 'Financeiro Spread', icon: ChartNoAxesCombined },
-  { key: 'finance-spread-simulator', label: 'Simulador de Spread (1x-12x)', icon: Percent },
-  { key: 'finance-split', label: 'Split Financeiro & Sócios', icon: Split },
-  { key: 'finance-settlement', label: 'Liquidação & Fechamento', icon: CheckCircle2 },
-  { key: 'finance-negotiations', label: 'Negociações & Acordos', icon: Handshake },
-]
-
-// 4. PILAR 3: MEIOS DE PAGAMENTO, TAXAS & GATEWAYS
-const paymentFinanceItems: Item[] = [
-  { key: 'finance-methods', label: 'Métodos (Pix/Cartão/Boleto)', icon: CreditCard },
-  { key: 'finance-custom', label: 'Pagamentos Customizados / PDV', icon: SlidersHorizontal },
-  { key: 'finance-operators', label: 'Operadoras de Cartão', icon: ShieldCheck },
-  { key: 'finance-gateways', label: 'Gateways de Pagamento', icon: WalletCards },
-  { key: 'finance-refunds', label: 'Devoluções & Estornos', icon: ReceiptText },
-  { key: 'finance-intelligence', label: 'Inteligência Financeira', icon: Brain },
-]
-
-// 5. PILAR 4: BORDERÔS, RELATÓRIOS & DRE
-const reportsFinanceItems: Item[] = [
-  { key: 'finance-bordero', label: 'Borderô Oficial do Show', icon: FileSignature },
+  { key: 'finance-bordero', label: 'Borderô Oficial', icon: FileSignature },
   { key: 'finance-reports', label: 'Relatórios Financeiros & DRE', icon: FileSpreadsheet },
-  { key: 'finance-advanced', label: 'Central Financeira Advanced', icon: ChartNoAxesCombined },
+  { key: 'finance-advanced', label: 'Financeiro Advanced', icon: ChartNoAxesCombined },
 ]
 
-// 6. PILAR 5: CONTABILIDADE & ERP FISCAL
+// 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
 const accountingFinanceItems: Item[] = [
   { key: 'accounting-dashboard', label: 'Dashboard Contábil', icon: BarChart3, badge: 'Contábil' },
   { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck },
@@ -123,7 +108,7 @@ const accountingFinanceItems: Item[] = [
   { key: 'accounting-sped', label: 'SPED / ECD / ECF', icon: FileSpreadsheet },
 ]
 
-// 7. MARKETING & GROWTH
+// 4. MARKETING & GROWTH
 const marketingItems: Item[] = [
   { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
   { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
@@ -139,7 +124,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]
 
-// 8. REMARKETING & RESGATE
+// 5. REMARKETING & RESGATE
 const remarketingItems: Item[] = [
   { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
   { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -150,7 +135,7 @@ const remarketingItems: Item[] = [
   { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
 ]
 
-// 9. ADMINISTRAÇÃO & GOVERNANÇA
+// 6. ADMINISTRAÇÃO & GOVERNANÇA
 const adminItems: Item[] = [
   { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
   { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
@@ -161,18 +146,7 @@ const adminItems: Item[] = [
 ]
 
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
-  const [openTreasury, setOpenTreasury] = useState(
-    ['finance-dashboard', 'finance', 'finance-statement', 'finance-payouts', 'finance-cashflow', 'finance-bank-accounts', 'finance-expenses', 'finance-payables', 'finance-receivables', 'finance-reconciliation'].includes(page)
-  )
-  const [openAdvance, setOpenAdvance] = useState(
-    ['finance-advance', 'finance-spread', 'finance-spread-simulator', 'finance-split', 'finance-settlement', 'finance-settlements', 'finance-negotiations'].includes(page)
-  )
-  const [openPayments, setOpenPayments] = useState(
-    ['finance-methods', 'finance-custom', 'finance-operators', 'finance-gateways', 'finance-refunds', 'finance-intelligence'].includes(page)
-  )
-  const [openReports, setOpenReports] = useState(
-    ['finance-bordero', 'finance-reports', 'finance-advanced', 'finance-consolidated'].includes(page)
-  )
+  const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
   const [openAccounting, setOpenAccounting] = useState(
     page.startsWith('accounting-') || page.startsWith('finance-accounting') || ['finance-chart-accounts', 'finance-cost-centers', 'finance-accounting-entries', 'finance-dre', 'finance-closing'].includes(page)
   )
@@ -204,15 +178,15 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           )
         })}
 
-        {/* 1. Tesouraria & Saldos */}
+        {/* Section: Financeiro */}
         <CollapsibleSection
-          label="1. Tesouraria & Saldos"
-          open={openTreasury}
-          onToggle={() => setOpenTreasury(!openTreasury)}
+          label="Financeiro"
+          open={openFinance}
+          onToggle={() => setOpenFinance(!openFinance)}
         >
-          {treasuryFinanceItems.map((it, index) => (
+          {financeItems.map((it, index) => (
             <NavItem
-              key={`tr-${it.key}-${index}`}
+              key={`fin-${it.key}-${index}`}
               item={it}
               active={page === it.key}
               onNavigate={onNavigate}
@@ -221,60 +195,9 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           ))}
         </CollapsibleSection>
 
-        {/* 2. Antecipação, Spread & Split */}
+        {/* Section: Contabilidade */}
         <CollapsibleSection
-          label="2. Antecipação & Split"
-          open={openAdvance}
-          onToggle={() => setOpenAdvance(!openAdvance)}
-        >
-          {advanceFinanceItems.map((it, index) => (
-            <NavItem
-              key={`adv-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* 3. Meios de Pagamento & Taxas */}
-        <CollapsibleSection
-          label="3. Meios de Pagamento"
-          open={openPayments}
-          onToggle={() => setOpenPayments(!openPayments)}
-        >
-          {paymentFinanceItems.map((it, index) => (
-            <NavItem
-              key={`pay-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* 4. Borderôs & Relatórios */}
-        <CollapsibleSection
-          label="4. Borderôs & Relatórios"
-          open={openReports}
-          onToggle={() => setOpenReports(!openReports)}
-        >
-          {reportsFinanceItems.map((it, index) => (
-            <NavItem
-              key={`rep-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* 5. Contabilidade & ERP */}
-        <CollapsibleSection
-          label="5. Contabilidade & ERP"
+          label="Contabilidade"
           open={openAccounting}
           onToggle={() => setOpenAccounting(!openAccounting)}
         >
@@ -291,7 +214,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 
         {/* Section: Marketing */}
         <CollapsibleSection
-          label="Marketing & Growth"
+          label="Marketing"
           open={openMarketing}
           onToggle={() => setOpenMarketing(!openMarketing)}
         >
@@ -308,7 +231,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 
         {/* Section: Remarketing */}
         <CollapsibleSection
-          label="Remarketing & Resgate"
+          label="Remarketing"
           open={openRemarketing}
           onToggle={() => setOpenRemarketing(!openRemarketing)}
         >
