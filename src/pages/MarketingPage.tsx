@@ -19,6 +19,7 @@ import { CommunicationPage } from './marketing/CommunicationPage'
 import MarketingHubOSPage from './marketing/MarketingHubOSPage'
 import WhatsAppMarketingPage from './marketing/WhatsAppMarketingPage'
 import EmailMarketingPage from './marketing/EmailMarketingPage'
+import MarketingReportsPage from './marketing/MarketingReportsPage'
 import {
   createMarketingCampaign, getMarketingCampaigns, getResolvedTracking,
   getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign,
@@ -291,7 +292,7 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
      5. INTELIGÊNCIA & PERFORMANCE
      ------------------------------------------------------------------------- */
   if (mode === 'reports') {
-    return <MarketingReportsPage events={events} event={selectedEvent} notify={notify} />
+    return <MarketingReportsPage events={events} event={selectedEvent} producerId={producerId} producerName={producerName} notify={notify} />
   }
 
   if (mode === 'channel-performance' || mode === 'campaign-ranking' || mode === 'funnel-insights') {
@@ -1939,50 +1940,6 @@ function ChannelPerformancePage({ events, event, subMode, notify }: { events: Ev
   )
 }
 
-// 16. Relatórios de Marketing
-function MarketingReportsPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
-  return (
-    <section className="growth-page">
-      <div className="growth-intro growth-actions">
-        <div>
-          <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>RELATÓRIOS EXECUTIVOS & CONSOLIDAÇÃO</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Relatórios de Marketing — {event.title}</h2>
-          <p style={{ color: '#64748B' }}>Gere relatórios completos de ROI, atribuição e conversão em PDF, Excel ou CSV.</p>
-        </div>
-        <div className="page-actions">
-          <button className="btn secondary" onClick={() => notify('Baixando relatório CSV completo...')}>
-            <FileSpreadsheet size={15} /> CSV
-          </button>
-          <button className="btn secondary" onClick={() => notify('Baixando relatório Excel (.xlsx)...')}>
-            <FileSpreadsheet size={15} /> Excel
-          </button>
-          <button className="btn primary" onClick={() => notify('Gerando relatório executivo em PDF...')}>
-            <FileText size={15} /> PDF Executivo
-          </button>
-        </div>
-      </div>
-
-      <div className="growth-kpis">
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-          <div className="kpi-top"><span>Investimento Total</span><WalletCards size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>R$ 10.750,00</strong>
-        </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-          <div className="kpi-top"><span>Receita Total Atribuída</span><TrendingUp size={18} /></div>
-          <strong style={{ color: '#16A34A' }}>R$ 98.420,00</strong>
-        </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-          <div className="kpi-top"><span>ROAS Geral</span><BarChart3 size={18} /></div>
-          <strong style={{ color: '#2563EB' }}>9,15x</strong>
-        </article>
-        <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1' }}>
-          <div className="kpi-top"><span>Ingressos Emitidos</span><MousePointerClick size={18} /></div>
-          <strong style={{ color: '#0F172A' }}>600</strong>
-        </article>
-      </div>
-    </section>
-  )
-}
 
 /* =========================================================================
    HELPER UTILITIES
