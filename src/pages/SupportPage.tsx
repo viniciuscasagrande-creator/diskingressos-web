@@ -250,7 +250,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   }, [mode])
 
   return (
-    <div className="disk-service-shell" style={{ width: '100%', minHeight: '100vh', background: '#080c16', color: '#f8fafc' }}>
+    <div className="disk-service-shell">
       <div className="disk-service-inner">
         
         {/* Topbar / Greeting */}
@@ -306,11 +306,11 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           </button>
 
           <button className={`ds-launcher-item ${activeTab === 'search360' ? 'active' : ''}`} onClick={() => setActiveTab('search360')}>
-            <div className="ds-launcher-circle" style={{ borderColor: activeTab === 'search360' ? '#60a5fa' : '#3b82f6' }}>
-              <Search size={22} style={{ color: '#38bdf8' }} />
+            <div className="ds-launcher-circle" style={{ borderColor: activeTab === 'search360' ? '#2563eb' : '#cbd5e1' }}>
+              <Search size={22} style={{ color: '#2563eb' }} />
               <span className="ds-mini-tag blue">360º</span>
             </div>
-            <span className="ds-launcher-label" style={{ color: '#38bdf8', fontWeight: 800 }}>Consulta 360º SAC</span>
+            <span className="ds-launcher-label" style={{ color: '#2563eb', fontWeight: 800 }}>Consulta 360º SAC</span>
           </button>
 
           <button className={`ds-launcher-item ${activeTab === 'bi' ? 'active' : ''}`} onClick={() => setActiveTab('bi')}>
@@ -382,15 +382,14 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         </div>
 
         {/* ========================================================
-            NOVA TELA: FASE 23.1 — CENTRAL DE CONSULTA 360º DO SAC
-            O Cockpit de Resolução Imediata do Atendente
+            TELA: FASE 23.1 — CENTRAL DE CONSULTA 360º DO SAC (LIGHT)
             ======================================================== */}
         {activeTab === 'search360' && (
           <div className="ds-search360-container">
             
             {/* Super Search Bar Central */}
             <div className="ds-search360-bar">
-              <Search size={22} style={{ color: '#38bdf8' }} />
+              <Search size={22} style={{ color: '#2563eb' }} />
               <input
                 className="ds-search360-input"
                 type="text"
@@ -427,7 +426,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     <div className="ds-cockpit-name-block">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                         <span style={{ background: '#2563eb', color: '#fff', fontSize: '10px', fontWeight: 800, padding: '2px 8px', borderRadius: '6px' }}>CLIENTE IDENTIFICADO</span>
-                        <span style={{ background: '#1e293b', color: '#38bdf8', fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px' }}>Busca via {detectedType}</span>
+                        <span style={{ background: '#eff6ff', color: '#2563eb', fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px', border: '1px solid #bfdbfe' }}>Busca via {detectedType}</span>
                       </div>
                       <h2>{customer360.customer.name}</h2>
                       <p>
@@ -447,11 +446,11 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     </div>
                     <div className="ds-cockpit-metric-item">
                       <span>Total Comprado</span>
-                      <strong style={{ color: '#10b981' }}>R$ {customer360.metrics.totalSpent.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                      <strong style={{ color: '#059669' }}>R$ {customer360.metrics.totalSpent.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
                     </div>
                     <div className="ds-cockpit-metric-item">
                       <span>Tickets SAC</span>
-                      <strong style={{ color: '#f59e0b' }}>{customer360.metrics.sacTickets}</strong>
+                      <strong style={{ color: '#d97706' }}>{customer360.metrics.sacTickets}</strong>
                     </div>
                   </div>
                 </div>
@@ -462,29 +461,29 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     <MessageSquareText size={15} /> Abrir Ticket
                   </button>
                   <button className="ds-operator-btn" onClick={() => handleOperatorAction('SEND_WHATSAPP')}>
-                    <Phone size={15} style={{ color: '#25d366' }} /> Enviar WhatsApp
+                    <Phone size={15} style={{ color: '#16a34a' }} /> Enviar WhatsApp
                   </button>
                   <button className="ds-operator-btn" onClick={() => handleOperatorAction('RESEND_EMAIL')}>
-                    <Mail size={15} style={{ color: '#38bdf8' }} /> Reenviar Ingresso & QR Code
+                    <Mail size={15} style={{ color: '#2563eb' }} /> Reenviar Ingresso & QR Code
                   </button>
                   <button className="ds-operator-btn" onClick={() => handleOperatorAction('VIEW_CHECKIN')}>
-                    <ShieldCheck size={15} style={{ color: '#10b981' }} /> Consultar Check-in
+                    <ShieldCheck size={15} style={{ color: '#059669' }} /> Consultar Check-in
                   </button>
                   <button className="ds-operator-btn" onClick={() => handleOperatorAction('REQUEST_REFUND')}>
-                    <RotateCcw size={15} style={{ color: '#ef4444' }} /> Solicitar Reembolso
+                    <RotateCcw size={15} style={{ color: '#dc2626' }} /> Solicitar Reembolso
                   </button>
                 </div>
 
                 {/* 3. Diagnóstico Automático Disk Copilot IA */}
-                <div style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)', border: '1px solid #6366f1', borderRadius: '14px', padding: '16px 20px' }}>
+                <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '14px', padding: '16px 20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Bot size={18} style={{ color: '#c084fc' }} />
-                      <strong style={{ color: '#fff', fontSize: '14px' }}>Diagnóstico Disk Copilot IA (SAC 360º)</strong>
+                      <Bot size={18} style={{ color: '#7c3aed' }} />
+                      <strong style={{ color: '#5b21b6', fontSize: '14px' }}>Diagnóstico Disk Copilot IA (SAC 360º)</strong>
                     </div>
                     <span className="ds-mini-tag purple" style={{ position: 'static' }}>96% Confiança</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#e0e7ff', lineHeight: 1.5 }}>
+                  <p style={{ margin: 0, fontSize: '13px', color: '#4c1d95', lineHeight: 1.5 }}>
                     <b>Diagnóstico:</b> O pedido #DI-984221 está com pagamento PIX aprovado e 2 ingressos ativos (não utilizados). Houve falha na entrega do e-mail de notificação. <b>Next Best Action:</b> Clique em "Enviar WhatsApp" para disparar os vouchers atualizados com QR Code direto no celular do comprador.
                   </p>
                 </div>
@@ -495,7 +494,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   {/* Pedidos & Compras */}
                   <div className="ds-bi-card">
                     <div className="ds-bi-card-header">
-                      <h3 className="ds-bi-card-title"><ShoppingCart size={18} style={{ color: '#38bdf8' }} /> Pedidos & Ingressos</h3>
+                      <h3 className="ds-bi-card-title"><ShoppingCart size={18} style={{ color: '#2563eb' }} /> Pedidos & Ingressos</h3>
                     </div>
 
                     {customer360.orders.map(o => (
@@ -526,12 +525,12 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   {/* Ingressos & Status de Check-in */}
                   <div className="ds-bi-card">
                     <div className="ds-bi-card-header">
-                      <h3 className="ds-bi-card-title"><Ticket size={18} style={{ color: '#10b981' }} /> Ingressos & Check-in</h3>
+                      <h3 className="ds-bi-card-title"><Ticket size={18} style={{ color: '#059669' }} /> Ingressos & Check-in</h3>
                     </div>
 
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
                       <thead>
-                        <tr style={{ borderBottom: '1px solid #1e293b', color: '#64748b', textAlign: 'left' }}>
+                        <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
                           <th style={{ padding: '8px' }}>Ingresso</th>
                           <th style={{ padding: '8px' }}>Evento</th>
                           <th style={{ padding: '8px' }}>Status</th>
@@ -540,11 +539,11 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                       </thead>
                       <tbody>
                         {customer360.ingressos.map(ing => (
-                          <tr key={ing.id} style={{ borderBottom: '1px solid #131c31' }}>
+                          <tr key={ing.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                             <td style={{ padding: '8px' }}><b>{ing.ticket_code}</b></td>
                             <td style={{ padding: '8px' }}>{ing.event_name}</td>
                             <td style={{ padding: '8px' }}><span className="status-pill green">{ing.status}</span></td>
-                            <td style={{ padding: '8px' }}><span style={{ color: ing.checkin_status.includes('VALIDADO') ? '#10b981' : '#f59e0b', fontWeight: 700 }}>{ing.checkin_status}</span></td>
+                            <td style={{ padding: '8px' }}><span style={{ color: ing.checkin_status.includes('VALIDADO') ? '#059669' : '#d97706', fontWeight: 700 }}>{ing.checkin_status}</span></td>
                           </tr>
                         ))}
                       </tbody>
@@ -559,12 +558,12 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   {/* Histórico SAC */}
                   <div className="ds-bi-card">
                     <div className="ds-bi-card-header">
-                      <h3 className="ds-bi-card-title"><MessageSquareText size={18} style={{ color: '#f59e0b' }} /> Atendimentos Anteriores</h3>
+                      <h3 className="ds-bi-card-title"><MessageSquareText size={18} style={{ color: '#d97706' }} /> Atendimentos Anteriores</h3>
                     </div>
 
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
                       <thead>
-                        <tr style={{ borderBottom: '1px solid #1e293b', color: '#64748b', textAlign: 'left' }}>
+                        <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
                           <th style={{ padding: '8px' }}>Protocolo</th>
                           <th style={{ padding: '8px' }}>Assunto</th>
                           <th style={{ padding: '8px' }}>Pri.</th>
@@ -573,7 +572,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                       </thead>
                       <tbody>
                         {customer360.sacTickets.map(st => (
-                          <tr key={st.id} style={{ borderBottom: '1px solid #131c31' }}>
+                          <tr key={st.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                             <td style={{ padding: '8px' }}><b>{st.ticket_number}</b></td>
                             <td style={{ padding: '8px' }}>{st.subject}</td>
                             <td style={{ padding: '8px' }}><span className="priority-tag P1">{st.priority}</span></td>
@@ -587,7 +586,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   {/* Timeline 360º */}
                   <div className="ds-bi-card">
                     <div className="ds-bi-card-header">
-                      <h3 className="ds-bi-card-title"><Clock3 size={18} style={{ color: '#8b5cf6' }} /> Linha do Tempo 360º</h3>
+                      <h3 className="ds-bi-card-title"><Clock3 size={18} style={{ color: '#7c3aed' }} /> Linha do Tempo 360º</h3>
                     </div>
 
                     <div className="ds-cockpit-timeline">
@@ -608,7 +607,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           </div>
         )}
 
-        {/* MÓDULOS PRINCIPAIS - GRID 5x3 (HUB OPERACIONAL) */}
+        {/* MÓDULOS PRINCIPAIS - GRID 5x3 (HUB OPERACIONAL LIGHT) */}
         {activeTab === 'hub' && (
           <>
             <div className="ds-section-header">
@@ -620,17 +619,17 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <button className={`ds-view-btn ${viewMode === 'lista' ? 'active' : ''}`} onClick={() => setViewMode('lista')}>
                   <ListFilter size={14} /> Lista
                 </button>
-                <button className="ds-view-btn" onClick={() => notify('Personalização de cards salva')}>
+                <button className="ds-view-btn" onClick={() => notify('Personalização salva')}>
                   Personalizar <ChevronDown size={14} />
                 </button>
               </div>
             </div>
 
             <div className="ds-modules-grid">
-              <div className="ds-module-card" onClick={() => setActiveTab('search360')} style={{ border: '2px solid #3b82f6', background: 'linear-gradient(145deg, #0f172a 0%, #1e293b 100%)' }}>
+              <div className="ds-module-card" onClick={() => setActiveTab('search360')} style={{ border: '2px solid #2563eb', background: '#eff6ff' }}>
                 <div className="ds-card-icon-wrap blue"><Search size={22} /></div>
                 <div className="ds-card-text"><h4>Consulta 360º SAC</h4><p>Busca por CPF, pedido, nome, fone ou ingresso</p></div>
-                <ChevronRight size={18} className="ds-card-chevron" style={{ color: '#38bdf8' }} />
+                <ChevronRight size={18} className="ds-card-chevron" style={{ color: '#2563eb' }} />
               </div>
 
               <div className="ds-module-card" onClick={() => setActiveTab('tickets')}>
@@ -725,11 +724,11 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
             <div className="ds-stats-strip">
               <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Ticket size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Tickets Abertos</span><div className="ds-stat-val-row"><span className="ds-stat-val">128</span><span className="ds-stat-delta green">-12% vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Clock3 size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Atrasados (SLA)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#f59e0b' }}>18</span><span className="ds-stat-delta orange">+4% vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Smile size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">CSAT (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#10b981' }}>4.6/5</span><span className="ds-stat-delta green">+0.3 vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><TrendingUp size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">NPS (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#10b981' }}>53+</span><span className="ds-stat-delta green">+5 vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Users size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Check-ins (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#38bdf8' }}>8.742</span><span className="ds-stat-delta green">+18% vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Shield size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">P1 Ativos</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#ef4444' }}>3</span><span className="ds-stat-delta red">+1 vs ontem</span></div></div></div>
+              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Clock3 size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Atrasados (SLA)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#d97706' }}>18</span><span className="ds-stat-delta orange">+4% vs ontem</span></div></div></div>
+              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Smile size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">CSAT (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#059669' }}>4.6/5</span><span className="ds-stat-delta green">+0.3 vs ontem</span></div></div></div>
+              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><TrendingUp size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">NPS (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#059669' }}>53+</span><span className="ds-stat-delta green">+5 vs ontem</span></div></div></div>
+              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Users size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Check-ins (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#0284c7' }}>8.742</span><span className="ds-stat-delta green">+18% vs ontem</span></div></div></div>
+              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Shield size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">P1 Ativos</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#dc2626' }}>3</span><span className="ds-stat-delta red">+1 vs ontem</span></div></div></div>
             </div>
 
             {/* ACESSOS RÁPIDOS */}
@@ -738,33 +737,33 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             </div>
 
             <div className="ds-quick-actions-bar">
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#10b981' }} /> Novo Ticket</button>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('incidents')}><AlertTriangle size={14} style={{ color: '#ef4444' }} /> Novo Incidente</button>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('major')}><Siren size={14} style={{ color: '#ef4444' }} /> War Room</button>
-              <button className="ds-quick-action-pill" onClick={() => notify('Disparo de broadcast')}><Radio size={14} style={{ color: '#f59e0b' }} /> Broadcast</button>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('bi')}><BarChart3 size={14} style={{ color: '#38bdf8' }} /> Relatório Executivo</button>
-              <button className="ds-quick-action-pill" onClick={() => notify('Exportação iniciada')}><Download size={14} style={{ color: '#8b5cf6' }} /> Exportar Dados</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#059669' }} /> Novo Ticket</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('incidents')}><AlertTriangle size={14} style={{ color: '#dc2626' }} /> Novo Incidente</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('major')}><Siren size={14} style={{ color: '#dc2626' }} /> War Room</button>
+              <button className="ds-quick-action-pill" onClick={() => notify('Disparo de broadcast')}><Radio size={14} style={{ color: '#d97706' }} /> Broadcast</button>
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('bi')}><BarChart3 size={14} style={{ color: '#0284c7' }} /> Relatório Executivo</button>
+              <button className="ds-quick-action-pill" onClick={() => notify('Exportação iniciada')}><Download size={14} style={{ color: '#7c3aed' }} /> Exportar Dados</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('sla')}><SlidersHorizontal size={14} /> Configurações</button>
             </div>
           </>
         )}
 
-        {/* TELA 2: DASHBOARD & BI */}
+        {/* TELA 2: DASHBOARD & BI (LIGHT) */}
         {activeTab === 'bi' && (
           <div style={{ marginTop: '10px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '14px', marginBottom: '20px' }}>
-              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon blue"><Ticket size={20} /></div><div className="ds-spark-header-text"><span>Tickets Abertos</span><div className="ds-spark-value-row"><strong className="ds-spark-value">128</strong><small className="ds-stat-delta green">-12% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,25 Q15,5 30,20 T60,10 T90,22 L100,15" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
-              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon red"><Shield size={20} /></div><div className="ds-spark-header-text"><span>P1 Ativos</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#ef4444' }}>3</strong><small className="ds-stat-delta red">+1 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,22 Q20,28 40,12 T70,25 T90,5 L100,18" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
-              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon orange"><Clock3 size={20} /></div><div className="ds-spark-header-text"><span>Atrasados (SLA)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#f59e0b' }}>18</strong><small className="ds-stat-delta orange">+4% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,20 Q25,25 45,8 T75,22 T95,14 L100,18" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
-              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon green"><Smile size={20} /></div><div className="ds-spark-header-text"><span>CSAT (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#10b981' }}>4.6/5</strong><small className="ds-stat-delta green">+0.3 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,24 Q20,10 40,22 T70,8 T90,16 L100,10" fill="none" stroke="#10b981" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
-              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon teal"><TrendingUp size={20} /></div><div className="ds-spark-header-text"><span>NPS (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#14b8a6' }}>53</strong><small className="ds-stat-delta green">+5 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,22 Q25,26 50,14 T80,18 T95,6 L100,10" fill="none" stroke="#14b8a6" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
-              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon cyan"><Users size={20} /></div><div className="ds-spark-header-text"><span>Check-ins (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#06b6d4' }}>8.742</strong><small className="ds-stat-delta green">+18% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,26 Q20,18 45,22 T70,10 T90,8 L100,5" fill="none" stroke="#06b6d4" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon blue"><Ticket size={20} /></div><div className="ds-spark-header-text"><span>Tickets Abertos</span><div className="ds-spark-value-row"><strong className="ds-spark-value">128</strong><small className="ds-stat-delta green">-12% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,25 Q15,5 30,20 T60,10 T90,22 L100,15" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon red"><Shield size={20} /></div><div className="ds-spark-header-text"><span>P1 Ativos</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#dc2626' }}>3</strong><small className="ds-stat-delta red">+1 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,22 Q20,28 40,12 T70,25 T90,5 L100,18" fill="none" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon orange"><Clock3 size={20} /></div><div className="ds-spark-header-text"><span>Atrasados (SLA)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#d97706' }}>18</strong><small className="ds-stat-delta orange">+4% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,20 Q25,25 45,8 T75,22 T95,14 L100,18" fill="none" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon green"><Smile size={20} /></div><div className="ds-spark-header-text"><span>CSAT (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#059669' }}>4.6/5</strong><small className="ds-stat-delta green">+0.3 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,24 Q20,10 40,22 T70,8 T90,16 L100,10" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon teal"><TrendingUp size={20} /></div><div className="ds-spark-header-text"><span>NPS (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#0d9488' }}>53</strong><small className="ds-stat-delta green">+5 vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,22 Q25,26 50,14 T80,18 T95,6 L100,10" fill="none" stroke="#0d9488" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
+              <div className="ds-spark-card"><div className="ds-spark-top"><div className="ds-spark-icon cyan"><Users size={20} /></div><div className="ds-spark-header-text"><span>Check-ins (Hoje)</span><div className="ds-spark-value-row"><strong className="ds-spark-value" style={{ color: '#0891b2' }}>8.742</strong><small className="ds-stat-delta green">+18% vs ontem</small></div></div></div><svg className="ds-sparkline-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M0,26 Q20,18 45,22 T70,10 T90,8 L100,5" fill="none" stroke="#0891b2" strokeWidth="2.5" strokeLinecap="round" /></svg></div>
             </div>
 
             <div className="ds-bi-row three-col">
-              <div className="ds-bi-card"><div className="ds-bi-card-header"><h3 className="ds-bi-card-title">Volume de Tickets</h3><select className="ds-filter-select"><option>Últimos 7 dias</option></select></div><div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '170px', padding: '10px 0', borderBottom: '1px solid #1e293b' }}>{[{ day: '13/05', open: 280, closed: 210 }, { day: '14/05', open: 310, closed: 260 }, { day: '15/05', open: 295, closed: 245 }, { day: '16/05', open: 340, closed: 290 }, { day: '17/05', open: 260, closed: 215 }, { day: '18/05', open: 285, closed: 190 }, { day: '19/05', open: 250, closed: 180 }].map((d, i) => (<div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', flex: 1 }}><div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '130px' }}><div style={{ width: '12px', background: '#2563eb', height: `${(d.open / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} /><div style={{ width: '12px', background: '#10b981', height: `${(d.closed / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} /></div><span style={{ fontSize: '10px', color: '#64748b' }}>{d.day}</span></div>))}</div></div>
-              <div className="ds-bi-card"><div className="ds-bi-card-header"><h3 className="ds-bi-card-title">Tickets por Canal</h3><select className="ds-filter-select"><option>Hoje</option></select></div><div className="ds-donut-wrapper"><div className="ds-donut-circle-wrap"><svg viewBox="0 0 36 36" style={{ width: '140px', height: '140px', transform: 'rotate(-90deg)' }}><circle cx="18" cy="18" r="14" fill="none" stroke="#1e293b" strokeWidth="4.5" /><circle cx="18" cy="18" r="14" fill="none" stroke="#2563eb" strokeWidth="4.5" strokeDasharray="45.7 100" strokeDashoffset="0" /><circle cx="18" cy="18" r="14" fill="none" stroke="#f97316" strokeWidth="4.5" strokeDasharray="18.5 100" strokeDashoffset="-45.7" /><circle cx="18" cy="18" r="14" fill="none" stroke="#eab308" strokeWidth="4.5" strokeDasharray="10.5 100" strokeDashoffset="-64.2" /><circle cx="18" cy="18" r="14" fill="none" stroke="#ec4899" strokeWidth="4.5" strokeDasharray="6.1 100" strokeDashoffset="-74.7" /><circle cx="18" cy="18" r="14" fill="none" stroke="#14b8a6" strokeWidth="4.5" strokeDasharray="5.2 100" strokeDashoffset="-80.8" /><circle cx="18" cy="18" r="14" fill="none" stroke="#64748b" strokeWidth="4.5" strokeDasharray="1.8 100" strokeDashoffset="-86" /></svg><div className="ds-donut-center-text"><strong>1.245</strong><small>Total</small></div></div><div className="ds-donut-legend"><div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#2563eb' }} /> WhatsApp</div><strong>52%</strong></div><div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#f97316' }} /> Email</div><strong>21%</strong></div><div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#eab308' }} /> Chat</div><strong>12%</strong></div></div></div></div>
-              <div className="ds-bi-card"><div className="ds-bi-card-header"><h3 className="ds-bi-card-title">Alertas críticos</h3><span style={{ fontSize: '11px', color: '#38bdf8', cursor: 'pointer', fontWeight: 700 }}>Ver todos</span></div><div className="ds-alerts-list"><div className="ds-alert-item"><div className="ds-alert-icon p1"><Siren size={16} /></div><div className="ds-alert-content"><div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Catraca Principal Offline</span></div><p className="ds-alert-sub">Festival XPTO 2026 • Portão 02</p></div><span className="ds-alert-time">Agora</span></div><div className="ds-alert-item"><div className="ds-alert-icon p1"><ShieldAlert size={16} /></div><div className="ds-alert-content"><div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Falha na API de Validação</span></div><p className="ds-alert-sub">Validação instável</p></div><span className="ds-alert-time">2 min</span></div></div></div>
+              <div className="ds-bi-card"><div className="ds-bi-card-header"><h3 className="ds-bi-card-title">Volume de Tickets</h3><select className="ds-filter-select"><option>Últimos 7 dias</option></select></div><div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '170px', padding: '10px 0', borderBottom: '1px solid #e2e8f0' }}>{[{ day: '13/05', open: 280, closed: 210 }, { day: '14/05', open: 310, closed: 260 }, { day: '15/05', open: 295, closed: 245 }, { day: '16/05', open: 340, closed: 290 }, { day: '17/05', open: 260, closed: 215 }, { day: '18/05', open: 285, closed: 190 }, { day: '19/05', open: 250, closed: 180 }].map((d, i) => (<div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', flex: 1 }}><div style={{ display: 'flex', gap: '4px', alignItems: 'flex-end', height: '130px' }}><div style={{ width: '12px', background: '#2563eb', height: `${(d.open / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} /><div style={{ width: '12px', background: '#059669', height: `${(d.closed / 350) * 125}px`, borderRadius: '3px 3px 0 0' }} /></div><span style={{ fontSize: '10px', color: '#64748b' }}>{d.day}</span></div>))}</div></div>
+              <div className="ds-bi-card"><div className="ds-bi-card-header"><h3 className="ds-bi-card-title">Tickets por Canal</h3><select className="ds-filter-select"><option>Hoje</option></select></div><div className="ds-donut-wrapper"><div className="ds-donut-circle-wrap"><svg viewBox="0 0 36 36" style={{ width: '140px', height: '140px', transform: 'rotate(-90deg)' }}><circle cx="18" cy="18" r="14" fill="none" stroke="#f1f5f9" strokeWidth="4.5" /><circle cx="18" cy="18" r="14" fill="none" stroke="#2563eb" strokeWidth="4.5" strokeDasharray="45.7 100" strokeDashoffset="0" /><circle cx="18" cy="18" r="14" fill="none" stroke="#ea580c" strokeWidth="4.5" strokeDasharray="18.5 100" strokeDashoffset="-45.7" /><circle cx="18" cy="18" r="14" fill="none" stroke="#d97706" strokeWidth="4.5" strokeDasharray="10.5 100" strokeDashoffset="-64.2" /></svg><div className="ds-donut-center-text"><strong>1.245</strong><small>Total</small></div></div><div className="ds-donut-legend"><div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#2563eb' }} /> WhatsApp</div><strong>52%</strong></div><div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#ea580c' }} /> Email</div><strong>21%</strong></div><div className="ds-legend-item"><div className="ds-legend-left"><span className="ds-legend-dot" style={{ background: '#d97706' }} /> Chat</div><strong>12%</strong></div></div></div></div>
+              <div className="ds-bi-card"><div className="ds-bi-card-header"><h3 className="ds-bi-card-title">Alertas críticos</h3><span style={{ fontSize: '11px', color: '#2563eb', cursor: 'pointer', fontWeight: 700 }}>Ver todos</span></div><div className="ds-alerts-list"><div className="ds-alert-item"><div className="ds-alert-icon p1"><Siren size={16} /></div><div className="ds-alert-content"><div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Catraca Principal Offline</span></div><p className="ds-alert-sub">Festival XPTO 2026 • Portão 02</p></div><span className="ds-alert-time">Agora</span></div><div className="ds-alert-item"><div className="ds-alert-icon p1"><ShieldAlert size={16} /></div><div className="ds-alert-content"><div className="ds-alert-title-row"><span className="ds-alert-tag p1">P1</span><span className="ds-alert-title">Falha na API de Validação</span></div><p className="ds-alert-sub">Validação instável</p></div><span className="ds-alert-time">2 min</span></div></div></div>
             </div>
           </div>
         )}
@@ -776,7 +775,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <div style={{ marginTop: '16px' }}>
               <div className="ds-cockpit-order">
                 <strong>Fila de Chamados Ativa</strong>
-                <p style={{ margin: '4px 0 0', color: '#94a3b8' }}>Acesse os tickets protocolados e use a timeline para responder.</p>
+                <p style={{ margin: '4px 0 0', color: '#64748b' }}>Acesse os tickets protocolados e use a timeline para responder.</p>
               </div>
             </div>
           </div>
@@ -785,10 +784,10 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         {activeTab === 'new' && (
           <div style={{ marginTop: '20px' }}>
             <button className="ds-quick-action-pill" onClick={() => setActiveTab('hub')}><ChevronLeft size={16} /> Voltar ao Hub</button>
-            <form onSubmit={e => { e.preventDefault(); notify('Chamado protocolado!'); setActiveTab('tickets'); }} style={{ background: '#0f172a', border: '1px solid #1e293b', borderRadius: '14px', padding: '24px', maxWidth: '800px', marginTop: '16px' }}>
-              <h3 style={{ margin: '0 0 16px', color: '#fff' }}>Protocolar Novo Chamado no Disk Service</h3>
-              <input type="text" placeholder="Assunto do chamado" required style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '10px 12px', color: '#fff', marginBottom: '12px' }} />
-              <textarea placeholder="Descrição do problema" rows={4} required style={{ width: '100%', background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', padding: '10px 12px', color: '#fff', marginBottom: '12px' }} />
+            <form onSubmit={e => { e.preventDefault(); notify('Chamado protocolado!'); setActiveTab('tickets'); }} style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '24px', maxWidth: '800px', marginTop: '16px', boxShadow: '0 1px 3px rgba(15,23,42,0.04)' }}>
+              <h3 style={{ margin: '0 0 16px', color: '#0f172a' }}>Protocolar Novo Chamado no Disk Service</h3>
+              <input type="text" placeholder="Assunto do chamado" required style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a', marginBottom: '12px' }} />
+              <textarea placeholder="Descrição do problema" rows={4} required style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a', marginBottom: '12px' }} />
               <button type="submit" className="ds-quick-action-pill" style={{ background: '#2563eb', color: '#fff', border: 0 }}><Plus size={16} /> Protocolar</button>
             </form>
           </div>

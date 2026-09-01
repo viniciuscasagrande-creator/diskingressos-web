@@ -8164,3 +8164,749 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
   font-size: 10px;
   color: #64748b;
 }
+
+/* =========================================================
+   DISK SERVICE — CLEAN LIGHT THEME (PADRÃO OFICIAL DISKINGRESSOS)
+   ========================================================= */
+
+.disk-service-shell {
+  min-height: 100vh;
+  background: #f1f4f8;
+  color: #0f172a;
+  font-family: 'Plus Jakarta Sans', Inter, -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.disk-service-inner {
+  padding: 24px 32px 48px;
+  max-width: 1680px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header Top - Light */
+.ds-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ds-topbar-left h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.ds-topbar-left p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.ds-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ds-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 24px;
+  padding: 0 16px;
+  height: 42px;
+  width: 280px;
+  color: #64748b;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+}
+
+.ds-search-box:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.ds-search-box input {
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: #0f172a;
+  font-size: 13px;
+  width: 100%;
+}
+
+.ds-search-box input::placeholder {
+  color: #94a3b8;
+}
+
+.ds-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.15s ease;
+}
+
+.ds-icon-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.ds-badge-count-pill {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 10px;
+  border: 2px solid #ffffff;
+}
+
+.ds-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.ds-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  position: relative;
+  border: 2px solid #bfdbfe;
+}
+
+.ds-user-avatar .online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+}
+
+/* Horizontal Launcher Bar / Carousel - Light */
+.ds-launcher-bar {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 30px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.ds-launcher-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.ds-launcher-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  position: relative;
+  background: transparent;
+  border: 0;
+  padding: 4px;
+}
+
+.ds-launcher-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+  display: grid;
+  place-items: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ds-launcher-item:hover .ds-launcher-circle {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.ds-launcher-item.active .ds-launcher-circle {
+  background: radial-gradient(circle at center, #2563eb 0%, #1d4ed8 100%);
+  border-color: #60a5fa;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+}
+
+.ds-launcher-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.ds-launcher-item.active .ds-launcher-label {
+  color: #2563eb;
+  font-weight: 800;
+}
+
+.ds-mini-tag {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 12px;
+  border: 1px solid #ffffff;
+  white-space: nowrap;
+}
+
+.ds-mini-tag.purple { background: #8b5cf6; color: #fff; }
+.ds-mini-tag.blue { background: #2563eb; color: #fff; }
+.ds-mini-tag.red { background: #ef4444; color: #fff; }
+
+/* Header Section: MÓDULOS PRINCIPAIS - Light */
+.ds-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ds-section-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.ds-view-toggles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-view-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+  transition: all 0.15s ease;
+}
+
+.ds-view-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+/* Grid 5x3 Módulos Principais - Light */
+.ds-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1400px) {
+  .ds-modules-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .ds-modules-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .ds-modules-grid { grid-template-columns: 1fr; }
+}
+
+.ds-module-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.ds-module-card:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+}
+
+.ds-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.ds-card-icon-wrap.green { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.ds-card-icon-wrap.cyan { background: #ecfeff; color: #0891b2; border: 1px solid #a5f3fc; }
+.ds-card-icon-wrap.purple { background: #f5f3ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+.ds-card-icon-wrap.yellow { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+.ds-card-icon-wrap.pink { background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; }
+.ds-card-icon-wrap.emerald { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.ds-card-icon-wrap.red { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.ds-card-icon-wrap.blue { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.ds-card-icon-wrap.orange { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+.ds-card-icon-wrap.teal { background: #f0fdf4; color: #0d9488; border: 1px solid #99f6e4; }
+
+.ds-card-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ds-card-text h4 {
+  margin: 0 0 3px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ds-card-text p {
+  margin: 0;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ds-card-chevron {
+  color: #94a3b8;
+  flex: 0 0 auto;
+  transition: transform 0.15s ease;
+}
+
+.ds-module-card:hover .ds-card-chevron {
+  color: #2563eb;
+  transform: translateX(3px);
+}
+
+/* VISÃO GERAL DA OPERAÇÃO (6 Stats Bar) - Light */
+.ds-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 1200px) {
+  .ds-stats-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .ds-stats-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.ds-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.ds-stat-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  display: grid;
+  place-items: center;
+  color: #475569;
+  flex: 0 0 auto;
+}
+
+.ds-stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.ds-stat-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ds-stat-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.ds-stat-delta {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ds-stat-delta.green { color: #059669; }
+.ds-stat-delta.orange { color: #d97706; }
+.ds-stat-delta.red { color: #dc2626; }
+
+/* ACESSOS RÁPIDOS - Light */
+.ds-quick-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ds-quick-action-pill {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 9px 18px;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.15s ease;
+}
+
+.ds-quick-action-pill:hover {
+  background: #f8fafc;
+  border-color: #2563eb;
+  color: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   DASHBOARD & BI - LIGHT THEME
+   ========================================================= */
+
+.ds-spark-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+}
+
+.ds-spark-card:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.06);
+}
+
+.ds-spark-icon.blue { background: #eff6ff; color: #2563eb; }
+.ds-spark-icon.red { background: #fef2f2; color: #dc2626; }
+.ds-spark-icon.orange { background: #fffbeb; color: #d97706; }
+.ds-spark-icon.green { background: #ecfdf5; color: #059669; }
+.ds-spark-icon.teal { background: #f0fdf4; color: #0d9488; }
+.ds-spark-icon.cyan { background: #ecfeff; color: #0891b2; }
+
+.ds-spark-header-text span {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.ds-spark-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.ds-bi-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.ds-bi-card-title {
+  color: #0f172a;
+}
+
+.ds-filter-select {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  color: #475569;
+}
+
+.ds-donut-center-text strong {
+  color: #0f172a;
+}
+
+.ds-donut-center-text small {
+  color: #64748b;
+}
+
+.ds-legend-item {
+  color: #334155;
+}
+
+.ds-alert-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.ds-alert-title {
+  color: #0f172a;
+}
+
+.ds-alert-sub {
+  color: #64748b;
+}
+
+.ds-alert-time {
+  color: #94a3b8;
+}
+
+.ds-gauge-score {
+  color: #0f172a;
+}
+
+.ds-gauge-label {
+  color: #64748b;
+}
+
+.ds-gauge-footer {
+  border-top: 1px solid #f1f5f9;
+  color: #64748b;
+}
+
+.ds-event-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.ds-event-date-box {
+  background: #eff6ff;
+}
+
+.ds-event-date-day {
+  color: #2563eb;
+}
+
+.ds-event-date-month {
+  color: #64748b;
+}
+
+.ds-event-title {
+  color: #0f172a;
+}
+
+.ds-event-meta {
+  color: #64748b;
+}
+
+.ds-category-name {
+  color: #1e293b;
+}
+
+.ds-category-val {
+  color: #64748b;
+}
+
+.ds-category-track {
+  background: #f1f5f9;
+}
+
+.ds-agent-rank-row {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ds-agent-name {
+  color: #0f172a;
+}
+
+.ds-agent-bar-wrap {
+  background: #f1f5f9;
+}
+
+/* =========================================================
+   CONSULTA 360º SAC - LIGHT THEME
+   ========================================================= */
+
+.ds-search360-bar {
+  background: #ffffff;
+  border: 2px solid #2563eb;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.08);
+}
+
+.ds-search360-input {
+  color: #0f172a;
+}
+
+.ds-search360-input::placeholder {
+  color: #94a3b8;
+}
+
+.ds-search360-hints {
+  color: #64748b;
+}
+
+.ds-search360-hints code {
+  background: #e2e8f0;
+  color: #1e40af;
+}
+
+.ds-cockpit-header {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+}
+
+.ds-cockpit-name-block h2 {
+  color: #0f172a;
+}
+
+.ds-cockpit-name-block p {
+  color: #64748b;
+}
+
+.ds-cockpit-metric-item strong {
+  color: #0f172a;
+}
+
+.ds-operator-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.ds-operator-btn:hover {
+  background: #f8fafc;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.ds-cockpit-order {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.ds-cockpit-order-header strong {
+  color: #0f172a;
+}
+
+.ds-cockpit-order-stats {
+  color: #475569;
+}
+
+.ds-cockpit-order-actions {
+  border-top: 1px solid #e2e8f0;
+}
+
+.ds-cockpit-order-actions button {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.ds-cockpit-order-actions button:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.ds-cockpit-timeline::before {
+  background: #e2e8f0;
+}
+
+.ds-timeline-entry::before {
+  background: #2563eb;
+  border: 2px solid #ffffff;
+}
+
+.ds-timeline-entry strong {
+  color: #0f172a;
+}
+
+.ds-timeline-entry p {
+  color: #475569;
+}
+
+.ds-timeline-entry small {
+  color: #94a3b8;
+}
