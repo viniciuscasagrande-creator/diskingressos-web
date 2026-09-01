@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import {
   BarChart3, CalendarDays, CheckCircle2, CircleDollarSign, Clock3, Download, Eye, FileBarChart2,
   Link2, MapPin, Megaphone, MousePointerClick, Plus, ScanLine, Search, Settings2, ShieldCheck, Ticket,
-  TrendingUp, UserCog, Users, Waves, Copy, ExternalLink, Tags, Activity, Globe2
+  TrendingUp, UserCog, Users, Waves, Copy, ExternalLink, Tags, Activity, Globe2, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import type { Participant } from '../data/participants'
@@ -29,8 +29,19 @@ export default function EventContextPage({event,participants,page,onNavigate,not
  return <Generic event={event} page={page} onNavigate={onNavigate} notify={notify}/>
 }
 
-function HeaderBlock({eyebrow,title,description,event,action}:{eyebrow:string;title:string;description:string;event:EventItem;action?:ReactNode}){
- return <><section className="context-page-heading"><div><p className="eyebrow">{eyebrow}</p><h2>{title}</h2><p>{description}</p></div>{action||<div className="event-context-badge"><span>Evento ativo</span><strong>{event.code}</strong></div>}</section><EventStrip event={event}/></>
+function HeaderBlock({eyebrow,title,description,event,action,onBack}:{eyebrow:string;title:string;description:string;event:EventItem;action?:ReactNode;onBack?:()=>void}){
+ return <>
+  <div className="flex items-center gap-2 mb-3">
+    <button
+      onClick={()=>onBack ? onBack() : window.history.back()}
+      className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+    >
+      <ArrowLeft size={14} className="text-[#06B6D4]"/>
+      <span>Voltar aos Eventos</span>
+    </button>
+  </div>
+  <section className="context-page-heading"><div><p className="eyebrow">{eyebrow}</p><h2>{title}</h2><p>{description}</p></div>{action||<div className="event-context-badge"><span>Evento ativo</span><strong>{event.code}</strong></div>}</section><EventStrip event={event}/>
+ </>
 }
 function EventStrip({event}:{event:EventItem}){return <section className="context-event-strip"><div><MapPin size={16}/><span>{event.venue}</span></div><div><CalendarDays size={16}/><span>{event.date}</span></div><div><Ticket size={16}/><span>{event.sales} vendas</span></div><div><Eye size={16}/><span>{event.status}</span></div></section>}
 

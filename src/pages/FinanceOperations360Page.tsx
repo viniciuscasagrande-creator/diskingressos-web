@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Activity, BrainCircuit, Calculator, CheckCircle2, RefreshCw, TrendingUp, WalletCards, AlertTriangle } from 'lucide-react'
+import { Activity, BrainCircuit, Calculator, CheckCircle2, RefreshCw, TrendingUp, WalletCards, AlertTriangle, ArrowLeft } from 'lucide-react'
 import {
   getCardAcquirers, getFinancialObligations, getReconciliations, reconcileItem, autoReconcile,
   simulateFinanceSpread, getFinanceSpreadHistory, getFinanceOperations360Summary,
@@ -9,11 +9,11 @@ import { SimuladorSpreadModule } from './finance/SimuladorSpreadModule'
 import FinanceReconciliationPage from './FinanceReconciliationPage'
 
 type Tab = 'spread' | 'receivables' | 'reconciliation' | 'intelligence'
-type Props = { producerId?: number; eventId?: number; initialTab?: Tab; notify?: (message: string) => void }
+type Props = { producerId?: number; eventId?: number; initialTab?: Tab; notify?: (message: string) => void; onBack?: () => void; onNavigate?: (page: any) => void }
 const money = (c = 0) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c / 100)
 const pct = (bps = 0) => `${(bps / 100).toFixed(2)}%`
 
-export default function FinanceOperations360Page({ producerId, eventId, initialTab = 'spread', notify }: Props) {
+export default function FinanceOperations360Page({ producerId, eventId, initialTab = 'spread', notify, onBack, onNavigate }: Props) {
   const [tab, setTab] = useState<Tab>(initialTab)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -58,6 +58,16 @@ export default function FinanceOperations360Page({ producerId, eventId, initialT
 
   return (
     <div className="finops360-page">
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
+        </button>
+      </div>
+
       <header className="finops360-hero">
         <div>
           <span>FINANCEIRO 360° · FASE 20.2</span>

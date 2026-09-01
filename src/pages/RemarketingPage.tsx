@@ -3,7 +3,7 @@ import {
   ArrowUpRight, Clock3, Mail, MessageCircle, Repeat2, ShoppingCart,
   Target, TrendingUp, Users, Sparkles, Zap, BarChart3, UserCheck,
   CheckCircle2, AlertCircle, DollarSign, Filter, RefreshCw, Send,
-  ChevronRight, ArrowRight, ShieldCheck, PieChart, WalletCards
+  ChevronRight, ArrowRight, ShieldCheck, PieChart, WalletCards, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import RecoveryCenterPage from './RecoveryCenterPage'
@@ -50,6 +50,15 @@ export default function RemarketingPage({ events, producerName, producerId, mode
   if (mode === 'hub') {
     return (
       <section className="growth-page">
+        <div className="flex items-center gap-2 mb-3">
+          <button
+            onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          >
+            <ArrowLeft size={14} className="text-[#06B6D4]" />
+            <span>Voltar ao Dashboard</span>
+          </button>
+        </div>
         <div className="growth-intro" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '16px' }}>
           <div>
             <p className="eyebrow remarketing" style={{ color: '#D97706', fontWeight: 800 }}>MOTOR DE RESGATE & CONVERSÃO</p>
@@ -110,12 +119,35 @@ export default function RemarketingPage({ events, producerName, producerId, mode
 
   if (['carts', 'flows', 'whatsapp', 'email', 'payments', 'inactive', 'postevent', 'automation', 'audiences', 'segments', 'reports'].includes(mode)) {
     const targetMode = mode === 'audiences' || mode === 'segments' ? 'flows' : mode === 'reports' ? 'carts' : mode
-    return <RecoveryCenterPage producerId={producerId} events={events} mode={targetMode as any} notify={notify} />
+    return (
+      <div className="remarketing-submodule-wrap">
+        <div className="flex items-center gap-2 mb-3">
+          <button
+            onClick={() => (onNavigate ? onNavigate('remarketing-dashboard') : window.history.back())}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          >
+            <ArrowLeft size={14} className="text-[#06B6D4]" />
+            <span>Voltar ao Menu Remarketing</span>
+          </button>
+        </div>
+        <RecoveryCenterPage producerId={producerId} events={events} mode={targetMode as any} notify={notify} />
+      </div>
+    )
   }
 
   // Dashboard Remarketing View
   return (
     <section className="growth-page">
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard</span>
+        </button>
+      </div>
+
       {/* 1. Header & Context */}
       <div className="growth-intro" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div>

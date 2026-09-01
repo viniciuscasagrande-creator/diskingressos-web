@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { ArrowLeftRight, CalendarDays, LayoutPanelTop, List, Rows3 } from 'lucide-react'
+import { ArrowLeftRight, CalendarDays, LayoutPanelTop, List, Rows3, ArrowLeft } from 'lucide-react'
 import EventCard from '../components/EventCard'
 import type { EventItem } from '../data/events'
 
@@ -14,9 +14,10 @@ type Props = {
   onLots:(event:EventItem)=>void
   onDashboard:(event:EventItem)=>void
   onOpen:(event:EventItem)=>void
+  onNavigate?:(page:any)=>void
 }
 
-export default function EventsPage({events, query, status, setStatus, view, setView, onEdit, onLots, onDashboard, onOpen}: Props){
+export default function EventsPage({events, query, status, setStatus, view, setView, onEdit, onLots, onDashboard, onOpen, onNavigate}: Props){
   const filtered = useMemo(() => events.filter(event => {
     const matchesQuery = `${event.title} ${event.venue} ${event.city}`.toLowerCase().includes(query.toLowerCase())
     const matchesStatus = status === 'todos' || (status === 'ativos' && event.status === 'ativo') || (status === 'inativos' && event.status !== 'ativo')
@@ -26,6 +27,15 @@ export default function EventsPage({events, query, status, setStatus, view, setV
   const revenue = filtered.reduce((sum, event)=> sum + Number(event.total.replace(/\./g,'').replace(',','.')), 0)
 
   return <>
+    <div className="flex items-center gap-2 mb-3">
+      <button
+        onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}
+        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+      >
+        <ArrowLeft size={14} className="text-[#06B6D4]"/>
+        <span>Voltar ao Dashboard</span>
+      </button>
+    </div>
     <section className="page-head events-page-head">
       <div><p className="eyebrow">GESTÃO DE EVENTOS</p><h1>Eventos</h1><p className="head-subtitle">Acompanhe vendas, ocupação, disponibilidade e configurações.</p></div>
       <div className="toolbar events-toolbar">

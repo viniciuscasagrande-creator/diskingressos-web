@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle, ArrowDownLeft, ArrowUpRight, Banknote, Building2, CalendarDays,
   CheckCircle2, CircleDollarSign, Download, Landmark, Plus, RefreshCw, Search,
-  Star, WalletCards, X
+  Star, WalletCards, X, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
@@ -65,6 +65,15 @@ export default function FinanceCashOperationsPage({ mode, events, producerId, no
         : 'Contas verificadas usadas para repasses e liquidações financeiras.'
 
   return <div className="cashops-page">
+    <div className="flex items-center gap-2 mb-3">
+      <button
+        onClick={() => onNavigate ? onNavigate('finance-dashboard') : window.history.back()}
+        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+      >
+        <ArrowLeft size={14} className="text-[#06B6D4]" />
+        <span>Voltar ao Dashboard Financeiro</span>
+      </button>
+    </div>
     <header className="finance-header-section card-surface cashops-head">
       <div className="finance-header-left">
         <span className="eyebrow">FINANCEIRO · OPERAÇÕES DE CAIXA</span>

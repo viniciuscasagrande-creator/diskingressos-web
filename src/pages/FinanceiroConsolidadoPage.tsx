@@ -1,6 +1,6 @@
 import {
   CheckCircle2, ArrowRight, Sparkles, Landmark, Layers, FileSpreadsheet,
-  Zap, Scale, Building, ReceiptText, FileSignature, Wallet, DollarSign
+  Zap, Scale, Building, ReceiptText, FileSignature, Wallet, DollarSign, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import { financeChecklistSeed } from '../data/finance'
@@ -29,6 +29,16 @@ const iconsMap: Record<string, any> = {
 export default function FinanceiroConsolidadoPage({ events, notify, onNavigate }: Props) {
   return (
     <div className="finance-dashboard-wrapper">
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => (onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard Financeiro</span>
+        </button>
+      </div>
+
       {/* Header Section */}
       <section className="finance-header-section card-surface">
         <div className="finance-header-left">

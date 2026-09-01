@@ -1,10 +1,10 @@
-import { Download, Search, ScanFace, TicketCheck, UserCheck, Users } from 'lucide-react'
+import { Download, Search, ScanFace, TicketCheck, UserCheck, Users, ArrowLeft } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { EventItem } from '../data/events'
 import type { Participant } from '../data/participants'
 
-type Props={events:EventItem[]; participants:Participant[]; onToggleCheckin:(id:number)=>void}
-export default function ParticipantsPage({events,participants,onToggleCheckin}:Props){
+type Props={events:EventItem[]; participants:Participant[]; onToggleCheckin:(id:number)=>void; onNavigate?:(page:any)=>void}
+export default function ParticipantsPage({events,participants,onToggleCheckin,onNavigate}:Props){
   const [query,setQuery]=useState(''); const [eventId,setEventId]=useState('todos'); const [checkin,setCheckin]=useState('todos')
   const filtered=useMemo(()=>participants.filter(p=>{
     const q=`${p.name} ${p.email} ${p.order} ${p.document}`.toLowerCase().includes(query.toLowerCase())
@@ -12,6 +12,15 @@ export default function ParticipantsPage({events,participants,onToggleCheckin}:P
   }),[participants,query,eventId,checkin])
   const present=filtered.filter(p=>p.checkin==='presente').length
   return <>
+    <div className="flex items-center gap-2 mb-3">
+      <button
+        onClick={()=>onNavigate?onNavigate('events'):window.history.back()}
+        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+      >
+        <ArrowLeft size={14} className="text-[#06B6D4]"/>
+        <span>Voltar aos Eventos</span>
+      </button>
+    </div>
     <section className="page-head"><div><p className="eyebrow">EVENTOS / OPERAÇÃO</p><h1>Participantes</h1><p className="head-subtitle">Consulte compradores, ingressos, validação facial e presença em tempo real.</p></div><button className="secondary-btn"><Download size={17}/>Exportar CSV</button></section>
     <section className="summary-strip"><div><span>Participantes</span><strong>{filtered.length}</strong></div><div><span>Check-ins</span><strong>{present}</strong></div><div><span>Pendentes</span><strong>{filtered.length-present}</strong></div><div><span>Taxa de entrada</span><strong>{filtered.length?Math.round(present/filtered.length*100):0}%</strong></div></section>
     <section className="table-card">

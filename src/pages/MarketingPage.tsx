@@ -6,7 +6,7 @@ import {
   Share2, Compass, Eye, CheckCircle2, Sliders, Filter, Sparkles, RefreshCw,
   Send, Trash2, Edit, Copy, Check, MessageCircle, ArrowRight, Layers,
   Target, ShieldCheck, Flame, Scale, FileSpreadsheet, FileText, ChevronDown,
-  CheckCircle, Play, Pause, ExternalLink, Award, Search, X, UserCheck
+  CheckCircle, Play, Pause, ExternalLink, Award, Search, X, UserCheck, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import AutomationCenterPage from './AutomationCenterPage'
@@ -179,133 +179,140 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
     return <MarketingHubOSPage events={events} producerName={producerName} producerId={producerId} eventId={eventId} setEventId={setEventId} period={period} setPeriod={setPeriod} notify={notify} onNavigate={onNavigate} />
   }
 
-  /* -------------------------------------------------------------------------
-     1. AQUISIÇÃO & CAMPANHAS
-     ------------------------------------------------------------------------- */
-  if (mode === 'ready-campaigns') {
-    return <ReadyCampaignsPage producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
-  }
+  const renderSubmodule = () => {
+    /* 1. AQUISIÇÃO & CAMPANHAS */
+    if (mode === 'ready-campaigns') {
+      return <ReadyCampaignsPage producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
+    }
 
-  if (mode === 'campaigns' || mode === 'create') {
-    return <MarketingCampaignsPage events={events} initialEventId={selectedEventId} notify={notify} />
-  }
+    if (mode === 'campaigns' || mode === 'create') {
+      return <MarketingCampaignsPage events={events} initialEventId={selectedEventId} notify={notify} />
+    }
 
-  if (mode === 'meta-ads') {
-    return <MetaAdsManager events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'meta-ads') {
+      return <MetaAdsManager events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'google-ads') {
-    return <GoogleAdsManager events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'google-ads') {
+      return <GoogleAdsManager events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'tiktok-ads') {
-    return <TikTokAdsManager events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'tiktok-ads') {
+      return <TikTokAdsManager events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'influencers') {
-    return <InfluencerManager events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'influencers') {
+      return <InfluencerManager events={events} event={selectedEvent} notify={notify} />
+    }
 
-  /* -------------------------------------------------------------------------
-     2. COMUNICAÇÃO & RELACIONAMENTO
-     ------------------------------------------------------------------------- */
-  if (mode === 'whatsapp') {
-    return <WhatsAppMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
-  }
+    /* 2. COMUNICAÇÃO & RELACIONAMENTO */
+    if (mode === 'whatsapp') {
+      return <WhatsAppMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
+    }
 
-  if (mode === 'email') {
-    return <EmailMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
-  }
+    if (mode === 'email') {
+      return <EmailMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
+    }
 
-  if (mode === 'automations') {
-    return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify} />
-  }
+    if (mode === 'automations') {
+      return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify} />
+    }
 
-  if (mode === 'crm') {
-    return <MarketingCrmPage events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'crm') {
+      return <MarketingCrmPage events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'audiences') {
-    return <AudiencesPage events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'audiences') {
+      return <AudiencesPage events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'communications') {
-    return <CommunicationPage producerId={producerId} producerName={producerName} notify={notify} />
-  }
+    if (mode === 'communications') {
+      return <CommunicationPage producerId={producerId} producerName={producerName} notify={notify} />
+    }
 
-  /* -------------------------------------------------------------------------
-     3. PROMOÇÃO & FIDELIZAÇÃO
-     ------------------------------------------------------------------------- */
-  if (mode === 'coupons') {
-    return <CouponsPromoPage events={events as any} producerId={producerId} notify={notify} />
-  }
+    /* 3. PROMOÇÃO & FIDELIZAÇÃO */
+    if (mode === 'coupons') {
+      return <CouponsPromoPage events={events as any} producerId={producerId} notify={notify} />
+    }
 
-  if (mode === 'cashback') {
-    return <CashbackPage events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'cashback') {
+      return <CashbackPage events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'coins') {
-    return <DiskCoinsPage events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'coins') {
+      return <DiskCoinsPage events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'gamification') {
-    return <GamificationPage events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'gamification') {
+      return <GamificationPage events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'referral') {
-    return <ReferralProgramPage events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'referral') {
+      return <ReferralProgramPage events={events} event={selectedEvent} notify={notify} />
+    }
 
-  if (mode === 'affiliates') {
-    return <AffiliatesManager events={events} event={selectedEvent} notify={notify} />
-  }
+    if (mode === 'affiliates') {
+      return <AffiliatesManager events={events} event={selectedEvent} notify={notify} />
+    }
 
-  /* -------------------------------------------------------------------------
-     4. TRACKING & CONVERSÃO
-     ------------------------------------------------------------------------- */
-  if (mode === 'utm-central' || mode === 'links') {
+    /* 4. TRACKING & CONVERSÃO */
+    if (mode === 'utm-central' || mode === 'links') {
+      return (
+        <section className="growth-page utm-marketing-entry" style={{ padding: '0 4px', background: 'transparent' }}>
+          <UtmConversionsCenter 
+            event={selectedEvent}
+            events={events}
+            onSelectEvent={(ev) => setEventId(String(ev.id))}
+            notify={notify}
+          />
+        </section>
+      )
+    }
+
+    if (mode === 'tracking') {
+      return <Tracking producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
+    }
+
+    if (mode === 'conversions') {
+      return <ConversionJourneyPage events={events} event={selectedEvent} notify={notify} />
+    }
+
+    if (mode === 'remarketing' || mode === 'recovery') {
+      return <RecoverySalesPage events={events} event={selectedEvent} notify={notify} />
+    }
+
+    /* 5. INTELIGÊNCIA & PERFORMANCE */
+    if (mode === 'reports') {
+      return <MarketingReportsPage events={events} event={selectedEvent} producerId={producerId} producerName={producerName} notify={notify} />
+    }
+
+    if (mode === 'channel-performance' || mode === 'campaign-ranking' || mode === 'funnel-insights') {
+      return <ChannelPerformancePage events={events} event={selectedEvent} subMode={mode} notify={notify} />
+    }
+
     return (
-      <section className="growth-page utm-marketing-entry" style={{ padding: '0 4px', background: 'transparent' }}>
-        <UtmConversionsCenter 
-          event={selectedEvent}
-          events={events}
-          onSelectEvent={(ev) => setEventId(String(ev.id))}
-          notify={notify}
-        />
-      </section>
+      <FeaturePage 
+        title="Módulo de Marketing" 
+        eventName={eventName} 
+        producerName={producerName} 
+        notify={notify} 
+      />
     )
   }
 
-  if (mode === 'tracking') {
-    return <Tracking producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
-  }
-
-  if (mode === 'conversions') {
-    return <ConversionJourneyPage events={events} event={selectedEvent} notify={notify} />
-  }
-
-  if (mode === 'remarketing' || mode === 'recovery') {
-    return <RecoverySalesPage events={events} event={selectedEvent} notify={notify} />
-  }
-
-  /* -------------------------------------------------------------------------
-     5. INTELIGÊNCIA & PERFORMANCE
-     ------------------------------------------------------------------------- */
-  if (mode === 'reports') {
-    return <MarketingReportsPage events={events} event={selectedEvent} producerId={producerId} producerName={producerName} notify={notify} />
-  }
-
-  if (mode === 'channel-performance' || mode === 'campaign-ranking' || mode === 'funnel-insights') {
-    return <ChannelPerformancePage events={events} event={selectedEvent} subMode={mode} notify={notify} />
-  }
-
   return (
-    <FeaturePage 
-      title="Módulo de Marketing" 
-      eventName={eventName} 
-      producerName={producerName} 
-      notify={notify} 
-    />
+    <div className="marketing-subpage-wrapper">
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => (onNavigate ? onNavigate('marketing-dashboard') : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Menu Marketing</span>
+        </button>
+      </div>
+      {renderSubmodule()}
+    </div>
   )
 }
 

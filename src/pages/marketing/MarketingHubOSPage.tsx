@@ -3,7 +3,7 @@ import {
   Activity, AlertTriangle, ArrowRight, BarChart3, CalendarDays, CheckCircle2,
   Download, Gift, Link2, Mail, Megaphone, Plus, Rocket, Sparkles, Target,
   TicketPercent, TrendingUp, Users, MessageCircle, Split, Zap, Clock,
-  Smartphone, MousePointerClick, ShieldCheck, ChevronRight, FileText
+  Smartphone, MousePointerClick, ShieldCheck, ChevronRight, FileText, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../../data/events'
 import {
@@ -180,6 +180,16 @@ export default function MarketingHubOSPage(p: Props) {
 
   return (
     <section className="growth-page marketing-os-page">
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Dashboard</span>
+        </button>
+      </div>
+
       {/* 1. Header & Uniform Quick Action Buttons */}
       <div className="marketing-os-head">
         <div>

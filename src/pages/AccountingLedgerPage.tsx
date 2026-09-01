@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import {
   BookMarked, Download, Search, Filter, CheckCircle2,
   Layers, Scale, Sparkles, ArrowLeftRight, ArrowDownLeft,
-  ArrowUpRight, Landmark, Building2
+  ArrowUpRight, Landmark, Building2, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
@@ -69,6 +69,16 @@ export default function AccountingLedgerPage({ events, notify, onNavigate }: Pro
 
   return (
     <div className="finance-dashboard-wrapper">
+      <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => (onNavigate ? onNavigate('accounting-dashboard') : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Menu Contabilidade</span>
+        </button>
+      </div>
+
       {/* Header Section */}
       <section className="finance-header-section card-surface">
         <div className="finance-header-left">

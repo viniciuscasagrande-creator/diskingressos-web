@@ -1,14 +1,14 @@
 import { useMemo, useState } from 'react'
-import { ArrowDownLeft, ArrowUpRight, Banknote, CalendarDays, ChevronRight, CircleDollarSign, CreditCard, Download, Filter, Landmark, ReceiptText, Search, TrendingUp, WalletCards, X, CheckCircle2 } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, Banknote, CalendarDays, ChevronRight, CircleDollarSign, CreditCard, Download, Filter, Landmark, ReceiptText, Search, TrendingUp, WalletCards, X, CheckCircle2, ArrowLeft } from 'lucide-react'
 import { cashFlow, payouts as seedPayouts, transactions as seedTransactions, type FinancialTransaction } from '../data/finance'
 import type { EventItem } from '../data/events'
 
 type FinanceTab = 'overview' | 'sales' | 'payouts' | 'cashflow' | 'statement'
-type Props = { events: EventItem[]; initialTab?: FinanceTab; notify: (message: string) => void }
+type Props = { events: EventItem[]; initialTab?: FinanceTab; notify: (message: string) => void; onNavigate?: (page: any) => void }
 
 const money = (v: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
-export default function FinancePage({ events, initialTab = 'overview', notify }: Props) {
+export default function FinancePage({ events, initialTab = 'overview', notify, onNavigate }: Props) {
   const [tab, setTab] = useState<FinanceTab>(initialTab)
   const [query, setQuery] = useState('')
   const [event, setEvent] = useState('Todos os eventos')
@@ -70,6 +70,15 @@ export default function FinancePage({ events, initialTab = 'overview', notify }:
   }
 
   return <div className="finance-page">
+    <div className="flex items-center gap-2 mb-3">
+      <button
+        onClick={() => onNavigate ? onNavigate('finance-dashboard') : window.history.back()}
+        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+      >
+        <ArrowLeft size={14} className="text-[#06B6D4]" />
+        <span>Voltar ao Dashboard Financeiro</span>
+      </button>
+    </div>
     <div className="page-head finance-head">
       <div>
         <p className="eyebrow">GESTÃO FINANCEIRA</p>

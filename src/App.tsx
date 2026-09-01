@@ -618,11 +618,11 @@ export default function App() {
 
         {/* ADMIN */}
         {page === 'admin-hub' && <AdminHubPage onNavigate={navigate} />}
-        {page === 'admin-users' && <UsersPage users={users} setUsers={setUsers} currentUser={user} producers={producers} notify={notify} />}
-        {page === 'admin-producers' && <ProducersPage producers={producers} setProducers={setProducers} notify={notify} />}
-        {page === 'admin-permissions' && <PermissionsPage notify={notify} />}
-        {page === 'admin-audit' && <AuditPage notify={notify} />}
-        {page === 'admin-security' && <SecurityPage notify={notify} />}
+        {page === 'admin-users' && <UsersPage users={users} setUsers={setUsers} currentUser={user} producers={producers} notify={notify} onNavigate={navigate} />}
+        {page === 'admin-producers' && <ProducersPage producers={producers} setProducers={setProducers} notify={notify} onNavigate={navigate} />}
+        {page === 'admin-permissions' && <PermissionsPage notify={notify} onNavigate={navigate} />}
+        {page === 'admin-audit' && <AuditPage notify={notify} onNavigate={navigate} />}
+        {page === 'admin-security' && <SecurityPage notify={notify} onNavigate={navigate} />}
 
         {/* OPERATIONS & EVENTS */}
         {page === 'operations' && (
@@ -645,12 +645,13 @@ export default function App() {
             onLots={openLots}
             onDashboard={openDashboard}
             onOpen={openEventContext}
+            onNavigate={navigate}
           />
         )}
         {page === 'new-event' && <EventFormPage mode="new" onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'edit-event' && <EventFormPage mode="edit" event={selectedEvent} onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'lots' && <LotsPage events={visibleEvents} selectedEvent={selectedEvent} onSelect={setSelectedEvent} onBack={() => setPage('events')} />}
-        {page === 'participants' && <ParticipantsPage events={visibleEvents} participants={visibleParticipants} onToggleCheckin={toggleCheckin} />}
+        {page === 'participants' && <ParticipantsPage events={visibleEvents} participants={visibleParticipants} onToggleCheckin={toggleCheckin} onNavigate={navigate} />}
         {page === 'facial' && <FacialPage participants={visibleParticipants} onNavigate={navigate} />}
         {page === 'pos' && <POSPage events={visibleEvents} notify={notify} onNavigate={navigate} />}
 
@@ -796,6 +797,7 @@ export default function App() {
             producerId={scopedProducerId}
             producerName={scopedProducerId === null ? 'Todas as produtoras' : (producers.find(p => p.id === scopedProducerId)?.name || 'Produtora')}
             notify={notify}
+            onNavigate={navigate}
           />
         )}
         {page.startsWith('marketing-') && page !== 'marketing-communications' && (
