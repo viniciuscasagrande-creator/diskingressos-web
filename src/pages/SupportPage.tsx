@@ -4,11 +4,12 @@ import {
   RefreshCw, CheckCircle2, MessageCircle, Mail, Phone, Globe, ShieldAlert,
   Send, UserCheck, Sparkles, Filter, ChevronRight, ArrowRight, ExternalLink,
   Flame, HelpCircle, FileText, CheckCheck, PlayCircle, XCircle, AlertCircle, Headphones, Link2, Sparkle,
-  Layers3, ArrowRightLeft, UserPlus, CheckSquare, Gauge, Calendar, BellRing, SlidersHorizontal, Zap
+  Layers3, ArrowRightLeft, UserPlus, CheckSquare, Gauge, Calendar, BellRing, SlidersHorizontal, Zap,
+  BarChart3, Activity, ShieldCheck, LifeBuoy
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 
-export type ServiceTab = 'dashboard' | 'tickets' | 'new' | 'sla' | 'incidents' | 'knowledge' | 'teams' | 'client360'
+export type ServiceTab = 'hub' | 'dashboard' | 'tickets' | 'new' | 'sla' | 'incidents' | 'knowledge' | 'teams' | 'client360'
 
 interface TicketItem {
   id: number
@@ -321,8 +322,8 @@ type Props = {
   onNavigate: (key: any) => void
 }
 
-export default function SupportPage({ events, producerId, producerName, notify, onNavigate }: Props) {
-  const [activeTab, setActiveTab] = useState<ServiceTab>('dashboard')
+export default function SupportPage({ events, producerId, producerName, mode = 'hub', notify, onNavigate }: Props) {
+  const [activeTab, setActiveTab] = useState<ServiceTab>('hub')
   const [tickets, setTickets] = useState<TicketItem[]>(mockTickets)
   const [agents, setAgents] = useState<AgentItem[]>(initialAgents)
   const [queues, setQueues] = useState<QueueItem[]>(initialQueues)
@@ -332,6 +333,20 @@ export default function SupportPage({ events, producerId, producerName, notify, 
   const [priorityFilter, setPriorityFilter] = useState<string>('TODOS')
   const [statusFilter, setStatusFilter] = useState<string>('TODOS')
   const [newReply, setNewReply] = useState('')
+
+  // Sincronização inteligente com a prop mode do Sidebar
+  useEffect(() => {
+    if (!mode) return
+    if (mode === 'hub') setActiveTab('hub')
+    else if (mode === 'dashboard') setActiveTab('dashboard')
+    else if (mode === 'tickets') setActiveTab('tickets')
+    else if (mode === 'new') setActiveTab('new')
+    else if (mode === 'sla') setActiveTab('sla')
+    else if (mode === 'incidents') setActiveTab('incidents')
+    else if (mode === 'knowledge') setActiveTab('knowledge')
+    else if (mode === 'integrations' || mode === 'teams') setActiveTab('teams')
+    else if (mode === 'reports' || mode === 'client360') setActiveTab('client360')
+  }, [mode])
 
   // Simulador SLA Event-Aware
   const [eventAwareProximity, setEventAwareProximity] = useState<'GT_7D' | 'LE_7D' | 'LE_24H' | 'LE_2H' | 'LIVE'>('LE_24H')
@@ -389,7 +404,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
   }, [eventAwareProximity])
 
   const handleRecalculateAllSLA = () => {
-    notify('Motor SLA Engine recalculou os timers de todos os 4 chamados ativos com base nos calendários e regras de evento!')
+    notify('Motor SLA Engine recalculou os timers de todos os chamados com base nas regras Event-Aware!')
   }
 
   const handleToggleAgentStatus = (agentId: number) => {
@@ -500,22 +515,22 @@ export default function SupportPage({ events, producerId, producerName, notify, 
   }
 
   return (
-    <div className="support-module-container">
+    <div className="support-module-container" style={{ width: '100%', boxSizing: 'border-box' }}>
       {/* Header Principal */}
       <header className="support-main-header">
         <div className="header-brand-block">
           <div className="service-badge">
             <Headphones size={18} />
-            <span>DISK SERVICE • ITIL V4 & SLA ENGINE</span>
+            <span>DISK SERVICE • SAC + SLA + ITIL ENTERPRISE HUB</span>
           </div>
-          <h1>Central de Atendimento & SLA</h1>
+          <h1>Central de Atendimento & Suporte</h1>
           <p>Motor de SLA Event-Aware, gestão de tickets omnichannel, escalonamento automático e incidentes ITIL.</p>
         </div>
 
         <div className="header-status-block">
           <div className="agent-status-indicator">
             <span className="dot pulse-green" />
-            <span>{stats.onlineAgents} Agentes Online • SLA 96.4% em Conformidade</span>
+            <span>{stats.onlineAgents} Agentes Online • SLA {stats.compliance}%</span>
           </div>
           <button className="primary-service-btn" onClick={() => setActiveTab('new')}>
             <Plus size={18} />
@@ -526,6 +541,10 @@ export default function SupportPage({ events, producerId, producerName, notify, 
 
       {/* Sub-Navegação em Abas Modernas */}
       <nav className="service-nav-tabs">
+        <button className={`service-tab-btn ${activeTab === 'hub' ? 'active' : ''}`} onClick={() => setActiveTab('hub')}>
+          <LifeBuoy size={17} />
+          <span>Hub de Atendimento</span>
+        </button>
         <button className={`service-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
           <LayoutDashboard size={17} />
           <span>Dashboard Operacional</span>
@@ -554,7 +573,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
         </button>
         <button className={`service-tab-btn ${activeTab === 'teams' ? 'active' : ''}`} onClick={() => setActiveTab('teams')}>
           <Users size={17} />
-          <span>Filas, Agentes & Escalação</span>
+          <span>Filas & Agentes</span>
         </button>
         <button className={`service-tab-btn ${activeTab === 'client360' ? 'active' : ''}`} onClick={() => setActiveTab('client360')}>
           <Search size={17} />
@@ -563,6 +582,193 @@ export default function SupportPage({ events, producerId, producerName, notify, 
       </nav>
 
       {/* CONTEÚDO DAS ABAS */}
+
+      {/* 0. ABA: HUB DE ATENDIMENTO (VISÃO GERAL DO DISK SERVICE) */}
+      {activeTab === 'hub' && (
+        <div className="service-content-body">
+          {/* Hero Banner do Hub */}
+          <div style={{
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+            borderRadius: '16px',
+            padding: '24px 28px',
+            color: '#fff',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+            marginBottom: '20px'
+          }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <span style={{ background: '#38bdf8', color: '#0f172a', padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
+                  CENTRAL UNIFICADA
+                </span>
+                <span style={{ color: '#94a3b8', fontSize: '13px' }}>Produtora: {producerName}</span>
+              </div>
+              <h2 style={{ margin: '0 0 6px 0', fontSize: '22px', fontWeight: 800 }}>
+                Disk Service Omnichannel Desk
+              </h2>
+              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '14px', maxWidth: '650px' }}>
+                Atendimento integrado ao ERP com motor SLA inteligente, distribuição automática por menor carga e suporte 360° aos participantes.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                className="primary-service-btn"
+                onClick={() => setActiveTab('tickets')}
+                style={{ background: '#3b82f6' }}
+              >
+                <Ticket size={16} />
+                <span>Ver Todos os Chamados ({stats.open})</span>
+              </button>
+              <button
+                className="primary-service-btn"
+                onClick={() => setActiveTab('new')}
+                style={{ background: '#10b981' }}
+              >
+                <Plus size={16} />
+                <span>Novo Atendimento</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Cards Rápidos dos 6 Pilares do Atendimento */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '16px',
+            marginBottom: '20px'
+          }}>
+            {/* Pilar 1: Chamados */}
+            <div
+              className="service-card-panel"
+              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #3b82f6' }}
+              onClick={() => setActiveTab('tickets')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#eff6ff', color: '#2563eb', display: 'grid', placeItems: 'center' }}>
+                  <Ticket size={20} />
+                </div>
+                <span className="badge-count">{stats.open} abertos</span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Fila de Chamados</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
+                Workspace split com timeline, canais WhatsApp/E-mail e ações rápidas com 1 clique.
+              </p>
+              <span style={{ fontSize: '12px', color: '#2563eb', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Acessar Workspace <ArrowRight size={14} />
+              </span>
+            </div>
+
+            {/* Pilar 2: Motor de SLA */}
+            <div
+              className="service-card-panel"
+              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #10b981' }}
+              onClick={() => setActiveTab('sla')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ecfdf5', color: '#059669', display: 'grid', placeItems: 'center' }}>
+                  <Gauge size={20} />
+                </div>
+                <span className="badge-count" style={{ background: '#ecfdf5', color: '#047857' }}>96.4% Compliance</span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Motor de SLA & Event-Aware</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
+                Cálculo automático de prioridades P1-P4 ajustado pela proximidade do show.
+              </p>
+              <span style={{ fontSize: '12px', color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Configurar SLA <ArrowRight size={14} />
+              </span>
+            </div>
+
+            {/* Pilar 3: War Room Incidentes */}
+            <div
+              className="service-card-panel"
+              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #ef4444' }}
+              onClick={() => setActiveTab('incidents')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fef2f2', color: '#dc2626', display: 'grid', placeItems: 'center' }}>
+                  <Flame size={20} />
+                </div>
+                <span className="badge-count danger">1 Ativo</span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Incidentes ITIL (War Room)</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
+                Declaração de falhas massivas em catracas, agrupamento de tickets e broadcast.
+              </p>
+              <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Abrir War Room <ArrowRight size={14} />
+              </span>
+            </div>
+
+            {/* Pilar 4: Base de Conhecimento */}
+            <div
+              className="service-card-panel"
+              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #8b5cf6' }}
+              onClick={() => setActiveTab('knowledge')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f5f3ff', color: '#7c3aed', display: 'grid', placeItems: 'center' }}>
+                  <BookOpen size={20} />
+                </div>
+                <span className="badge-count">{mockArticles.length} Artigos</span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Base de Conhecimento</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
+                Procedimentos de reenvio, estornos, biometria e FAQ com índice de utilidade.
+              </p>
+              <span style={{ fontSize: '12px', color: '#7c3aed', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Consultar Artigos <ArrowRight size={14} />
+              </span>
+            </div>
+
+            {/* Pilar 5: Agentes & Equipes */}
+            <div
+              className="service-card-panel"
+              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #f59e0b' }}
+              onClick={() => setActiveTab('teams')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#fffbeb', color: '#d97706', display: 'grid', placeItems: 'center' }}>
+                  <Users size={20} />
+                </div>
+                <span className="badge-count">{agents.length} Agentes</span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Filas, Agentes & Presença</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
+                Presença operacional em tempo real (ONLINE/BUSY/AWAY) e distribuição Least-Load.
+              </p>
+              <span style={{ fontSize: '12px', color: '#d97706', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Gerenciar Equipe <ArrowRight size={14} />
+              </span>
+            </div>
+
+            {/* Pilar 6: Comprador 360 */}
+            <div
+              className="service-card-panel"
+              style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #06b6d4' }}
+              onClick={() => setActiveTab('client360')}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#ecfeff', color: '#0891b2', display: 'grid', placeItems: 'center' }}>
+                  <Search size={20} />
+                </div>
+                <span className="badge-count">Visão 360°</span>
+              </div>
+              <h3 style={{ margin: '0 0 4px', fontSize: '16px' }}>Comprador 360°</h3>
+              <p style={{ margin: '0 0 12px', fontSize: '12px', color: '#64748b' }}>
+                Histórico completo de pedidos, ingressos emitidos, biometria facial e CSAT.
+              </p>
+              <span style={{ fontSize: '12px', color: '#0891b2', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                Buscar Comprador <ArrowRight size={14} />
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 1. ABA: DASHBOARD OPERACIONAL */}
       {activeTab === 'dashboard' && (
@@ -786,7 +992,7 @@ export default function SupportPage({ events, producerId, producerName, notify, 
 
                     <div className="workspace-actions">
                       <button className="fast-action-chip" onClick={() => handleAutoAssign(selectedTicket.id)}>
-                        <UserPlus size={14} /> Atribuir Auto (Round-Robin)
+                        <UserPlus size={14} /> Atribuir Auto (Least-Load)
                       </button>
                       {selectedTicket.status !== 'RESOLVIDO' && (
                         <button className="resolve-btn" onClick={() => handleResolveTicket(selectedTicket.id)}>

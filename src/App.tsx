@@ -818,9 +818,9 @@ export default function App() {
             producerId={scopedProducerId}
             producerName={scopedProducerId === null ? 'Todas as produtoras' : (producers.find(p => p.id === scopedProducerId)?.name || 'Produtora')}
             mode={({
-              'sac-hub': 'hub', 'sac-dashboard': 'dashboard', 'sac-tickets': 'tickets', 'sac-new': 'new',
+              'atendimento': 'hub', 'sac-hub': 'hub', 'sac-dashboard': 'dashboard', 'sac-tickets': 'tickets', 'sac-new': 'new',
               'sac-sla': 'sla', 'sac-integrations': 'integrations', 'sac-knowledge': 'knowledge', 'sac-reports': 'reports'
-            } as Record<string, any>)[page]}
+            } as Record<string, any>)[page] || 'hub'}
             notify={notify}
             onNavigate={navigate}
           />
