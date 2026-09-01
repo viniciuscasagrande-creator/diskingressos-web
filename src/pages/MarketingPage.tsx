@@ -17,6 +17,8 @@ import ReadyCampaignsPage from './marketing/ReadyCampaignsPage'
 import { CouponsPromoPage } from './marketing/CouponsPromoPage'
 import { CommunicationPage } from './marketing/CommunicationPage'
 import MarketingHubOSPage from './marketing/MarketingHubOSPage'
+import WhatsAppMarketingPage from './marketing/WhatsAppMarketingPage'
+import EmailMarketingPage from './marketing/EmailMarketingPage'
 import {
   createMarketingCampaign, getMarketingCampaigns, getResolvedTracking,
   getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign,
@@ -206,7 +208,15 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
   /* -------------------------------------------------------------------------
      2. COMUNICAÇÃO & RELACIONAMENTO
      ------------------------------------------------------------------------- */
-  if (mode === 'whatsapp' || mode === 'email' || mode === 'automations') {
+  if (mode === 'whatsapp') {
+    return <WhatsAppMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
+  }
+
+  if (mode === 'email') {
+    return <EmailMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
+  }
+
+  if (mode === 'automations') {
     return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify} />
   }
 
