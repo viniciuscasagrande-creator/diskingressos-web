@@ -4,6 +4,7 @@ import type { EventItem } from '../data/events'
 import type { PageKey } from '../components/ModuleSidebar'
 import { getFinanceDashboardSummary, type FinanceDashboardSummary } from '../services/api'
 import { navigateWithFinanceDrilldown } from '../utils/financeDrilldown'
+import { ERP_ARCHITECTURE_RELEASE, ERP_FEATURE_FLAGS } from '../domain/erp/masterArchitecture'
 
 type Props={events:EventItem[];producerId?:number|null;notify:(m:string)=>void;onNavigate:(p:PageKey)=>void}
 type Tone='blue'|'green'|'orange'|'purple'|'cyan'|'red'
@@ -48,7 +49,8 @@ export default function FinanceCommandCenterPage({events,producerId,notify,onNav
  const groups=useMemo(()=>base.map(g=>({...g,items:g.items.filter(x=>(x.title+' '+x.desc).toLowerCase().includes(q.toLowerCase()))})),[q])
  const selectedEventName=events.find(e=>e.id===eventId)?.title
  const openHubPage=(page:PageKey,label:string,status?:string)=>navigateWithFinanceDrilldown(onNavigate,page,{status,eventName:selectedEventName,source:'finance-dashboard-hub',label})
- return <div className="finance-command" data-finance-release="24.6-receivables-agenda-2026-09-02">
+ return <div className="finance-command" data-finance-release={ERP_ARCHITECTURE_RELEASE}>
+ <span className="sr-only">{ERP_FEATURE_FLAGS.join(' ')}</span>
  <header className="finance-command-hero"><div><span className="finance-command-eyebrow">FINANCEIRO</span><h1>Dashboard Financeiro</h1><p>Controle de saldos, recebíveis, taxas, pagamentos, repasses e liquidações.</p></div><div className="finance-command-actions"><select value={eventId??''} onChange={e=>setEventId(e.target.value?Number(e.target.value):undefined)}><option value="">Todos os eventos</option>{events.map(e=><option key={e.id} value={e.id}>{e.title}</option>)}</select><button onClick={()=>load(true)}><RefreshCw size={16}/>{loading?'Atualizando...':'Atualizar'}</button><button className="primary" onClick={()=>onNavigate('finance-payouts')}><HandCoins size={16}/>Solicitar Repasse</button></div></header>
  <nav className="finance-hub-nav" aria-label="Navegação interna do Dashboard Financeiro">
    <button className="active" type="button" aria-current="page"><LayoutDashboard size={15}/><span>Visão Geral</span></button>

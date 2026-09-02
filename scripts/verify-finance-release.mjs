@@ -34,7 +34,11 @@ const required = [
   'OPERAÇÕES CRÍTICAS',
   'Fila de Aprovações',
   'Montante Devolvido',
-  'Zona de Segurança'
+  'Zona de Segurança',
+  '25.0-master-erp-crm-finance-producer-2026-09-02',
+  'Ledger append-only',
+  'financial_agreement_versions',
+  'financial_audit_logs'
 ]
 
 function collect(dir) {
@@ -61,4 +65,4 @@ function assertContains(scope, files, terms) {
 
 assertContains('src', collect('src'), required)
 assertContains('dist', collect('dist'), required)
-console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 confirmadas no build.')
+console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + fundação 25.0 confirmadas no build.')
