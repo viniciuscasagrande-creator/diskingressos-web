@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Handshake, Calendar, DollarSign, Plus, Trash2, CheckCircle2,
   TrendingDown, TrendingUp, Sparkles, AlertCircle, Save, Info, ShieldCheck,
-  ChevronDown, Layers, FileText, ArrowLeft
+  ChevronDown, Layers, FileText, ArrowLeft, History, LockKeyhole, Calculator, Ticket, ReceiptText
 } from 'lucide-react'
+import type { EventItem } from '../../data/events'
 
 interface EventOption {
   id: number
@@ -17,9 +18,9 @@ interface EventOption {
 interface ReceitaItem {
   metodo: string
   taxa_pagamento: number
-  pgto_taxa_servico: number // 2 = Sim, 3 = Não
+  pgto_taxa_servico: 'inclusa' | 'produtor'
   tx_ant_am: number
-  pgto_ant: number // 2 = Sim, 3 = Não
+  pgto_ant: 'inclusa' | 'produtor'
   taxa_parcelado: number
   total_taxas: number
   qtd_ingressos: number
@@ -61,17 +62,27 @@ const defaultEvents: EventOption[] = [
 const formatMoney = (val: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val || 0)
 
-export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: { notify?: (msg: string) => void; onBack?: () => void; onNavigate?: (page: any) => void }) {
-  const [events] = useState<EventOption[]>(defaultEvents)
-  const [selectedEventId, setSelectedEventId] = useState<number>(defaultEvents[0].id)
+export default function FinanceNegotiationsPage({ events: sourceEvents = [], eventId, producerId, notify, onBack, onNavigate }: { events?: EventItem[]; eventId?: number; producerId?: number; notify?: (msg: string) => void; onBack?: () => void; onNavigate?: (page: any) => void }) {
+  const events: EventOption[] = sourceEvents.length ? sourceEvents.map(ev => ({
+    id: ev.id, name: ev.title, date: ev.date, status: ev.status === 'ativo' ? 'ativos' : 'inativos', salesCount: ev.sales,
+    revenue: Number(String(ev.total).replace(/\./g, '').replace(',', '.')) || 0
+  })) : defaultEvents
+  const [selectedEventId, setSelectedEventId] = useState<number>(eventId && events.some(e => e.id === eventId) ? eventId : events[0].id)
   const [activeTab, setActiveTab] = useState<'receita' | 'despesas' | 'patrocinio' | 'advanced' | 'informacoes'>('receita')
 
   // Data state for selected event
   const [receitas, setReceitas] = useState<ReceitaItem[]>([
-    { metodo: 'Cartão de Crédito 1x', taxa_pagamento: 2.35, pgto_taxa_servico: 2, tx_ant_am: 1.80, pgto_ant: 2, taxa_parcelado: 0.00, total_taxas: 1850.20, qtd_ingressos: 280, receita_bruta: 42000.00, taxa_servico: 5460.00, receita_liquida: 36540.00 },
-    { metodo: 'Cartão de Crédito Parcelado (2-6x)', taxa_pagamento: 3.10, pgto_taxa_servico: 2, tx_ant_am: 1.80, pgto_ant: 2, taxa_parcelado: 2.50, total_taxas: 1420.00, qtd_ingressos: 95, receita_bruta: 19000.00, taxa_servico: 2470.00, receita_liquida: 16530.00 },
-    { metodo: 'PIX Instantâneo', taxa_pagamento: 0.95, pgto_taxa_servico: 2, tx_ant_am: 0.00, pgto_ant: 3, taxa_parcelado: 0.00, total_taxas: 98.50, qtd_ingressos: 60, receita_bruta: 9500.00, taxa_servico: 1235.00, receita_liquida: 8265.00 },
-    { metodo: 'Boleto Bancário', taxa_pagamento: 1.50, pgto_taxa_servico: 3, tx_ant_am: 0.00, pgto_ant: 3, taxa_parcelado: 0.00, total_taxas: 22.50, qtd_ingressos: 11, receita_bruta: 1476.20, taxa_servico: 223.20, receita_liquida: 1253.00 }
+    { metodo: 'DINHEIRO', taxa_pagamento: 0, pgto_taxa_servico: 'produtor', tx_ant_am: 0, pgto_ant: 'produtor', taxa_parcelado: 0, total_taxas: 0, qtd_ingressos: 0, receita_bruta: 0, taxa_servico: 0, receita_liquida: 0 },
+    { metodo: 'PIX', taxa_pagamento: 0, pgto_taxa_servico: 'produtor', tx_ant_am: 0, pgto_ant: 'produtor', taxa_parcelado: 0, total_taxas: 0, qtd_ingressos: 207, receita_bruta: 33291.35, taxa_servico: 4342.35, receita_liquida: 28949.00 },
+    { metodo: 'DÉBITO', taxa_pagamento: 0, pgto_taxa_servico: 'produtor', tx_ant_am: 0, pgto_ant: 'produtor', taxa_parcelado: 0, total_taxas: 0, qtd_ingressos: 0, receita_bruta: 0, taxa_servico: 0, receita_liquida: 0 },
+    { metodo: 'CRÉDITO AV.', taxa_pagamento: 0, pgto_taxa_servico: 'produtor', tx_ant_am: 0, pgto_ant: 'produtor', taxa_parcelado: 0, total_taxas: 0, qtd_ingressos: 131, receita_bruta: 20834.55, taxa_servico: 2717.55, receita_liquida: 18117.00 },
+    { metodo: 'PARCELADO 2x à 6x', taxa_pagamento: 0, pgto_taxa_servico: 'produtor', tx_ant_am: 0, pgto_ant: 'produtor', taxa_parcelado: 0, total_taxas: 0, qtd_ingressos: 108, receita_bruta: 17850.30, taxa_servico: 2328.30, receita_liquida: 15522.00 },
+    { metodo: 'PARCELADO 7x à 12x', taxa_pagamento: 0, pgto_taxa_servico: 'produtor', tx_ant_am: 0, pgto_ant: 'produtor', taxa_parcelado: 0, total_taxas: 0, qtd_ingressos: 0, receita_bruta: 0, taxa_servico: 0, receita_liquida: 0 },
+    { metodo: 'CORTESIA', taxa_pagamento: 0, pgto_taxa_servico: 'inclusa', tx_ant_am: 0, pgto_ant: 'inclusa', taxa_parcelado: 0, total_taxas: 0, qtd_ingressos: 1, receita_bruta: 0, taxa_servico: 0, receita_liquida: 0 }
+  ])
+  const [justificativa, setJustificativa] = useState('')
+  const [auditLog, setAuditLog] = useState<{ id: number; when: string; user: string; reason: string; summary: string }[]>([
+    { id: 1, when: '02/09/2026 10:48', user: 'Administrador', reason: 'Migração da negociação vigente do sistema atual', summary: 'Condições comerciais importadas e preservadas.' }
   ])
 
   const [despesas, setDespesas] = useState<DespesaItem[]>([
@@ -104,13 +115,14 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
   const [newSponsVal, setNewSponsVal] = useState('')
 
   const curEvent = events.find(e => e.id === selectedEventId) || events[0]
+  useEffect(() => { if (eventId && events.some(e => e.id === eventId)) setSelectedEventId(eventId) }, [eventId])
 
   // Totais
   const totalReceitaBruta = receitas.reduce((acc, r) => acc + r.receita_bruta, 0)
   const totalTaxasServico = receitas.reduce((acc, r) => acc + r.taxa_servico, 0)
   const totalReceitaLiquida = receitas.reduce((acc, r) => acc + r.receita_liquida, 0)
   const totalTaxasOperadoras = receitas.reduce((acc, r) => acc + r.total_taxas, 0)
-  const totalQtdIngressos = receitas.reduce((acc, r) => acc + r.qtd_ingressos, 0)
+  const totalQtdIngressos = receitas.filter(r => r.metodo !== 'CORTESIA').reduce((acc, r) => acc + r.qtd_ingressos, 0)
 
   const totalDespesas = despesas.reduce((acc, d) => acc + d.valor, 0)
   const totalPatrocinio = patrocinios.reduce((acc, p) => acc + p.valor, 0)
@@ -119,6 +131,29 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
   const resultadoEconomicoCustos = totalDespesas + totalTaxasOperadoras + totalTaxasServico
   const resultadoLiquidoFinal = resultadoEconomicoReceitas - resultadoEconomicoCustos
   const ratioCustos = resultadoEconomicoReceitas > 0 ? (resultadoEconomicoCustos / resultadoEconomicoReceitas) * 100 : 0
+
+  const recalcReceita = (r: ReceitaItem): ReceitaItem => {
+    const taxaPagamento = r.receita_bruta * (r.taxa_pagamento / 100)
+    const taxaParcelado = r.receita_bruta * (r.taxa_parcelado / 100)
+    const taxaAntecipacao = r.pgto_ant === 'produtor' ? r.receita_bruta * (r.tx_ant_am / 100) : 0
+    const taxaServicoProdutor = r.pgto_taxa_servico === 'produtor' ? r.taxa_servico : 0
+    const totalTaxas = taxaPagamento + taxaParcelado + taxaAntecipacao
+    return { ...r, total_taxas: totalTaxas, receita_liquida: Math.max(0, r.receita_bruta - taxaServicoProdutor - totalTaxas) }
+  }
+
+  const updateReceita = (index: number, patch: Partial<ReceitaItem>) => {
+    setReceitas(prev => prev.map((row, i) => i === index ? recalcReceita({ ...row, ...patch }) : row))
+  }
+
+  const saveReceita = () => {
+    const reason = justificativa.trim() || 'Atualização das condições comerciais do evento'
+    setAuditLog(prev => [{
+      id: Date.now(), when: new Date().toLocaleString('pt-BR'), user: 'Administrador', reason,
+      summary: `Receita ${formatMoney(totalReceitaBruta)} · taxas ${formatMoney(totalTaxasOperadoras + totalTaxasServico)} · líquido ${formatMoney(totalReceitaLiquida)}`
+    }, ...prev].slice(0, 8))
+    setJustificativa('')
+    notify?.('Negociação financeira salva e registrada no histórico de auditoria!')
+  }
 
   const handleSaveExpense = (e: React.FormEvent) => {
     e.preventDefault()
@@ -157,7 +192,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 shadow-xs transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -216,7 +251,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             Negociações Financeiras
           </h2>
           <p className="text-xs text-slate-500">
-            Regras de receita, adiantamentos, tributação por setor e resultado econômico
+            Central de negociação econômica por evento: taxas, responsáveis, antecipação, despesas, patrocínio e resultado
           </p>
         </div>
 
@@ -248,8 +283,19 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       {/* TAB 1: RECEITA */}
       {activeTab === 'receita' && (
         <div className="space-y-4">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <SummaryCard icon={Ticket} label="Ingressos pagos" value={String(totalQtdIngressos)} tone="sky" />
+            <SummaryCard icon={DollarSign} label="Receita bruta" value={formatMoney(totalReceitaBruta)} tone="white" />
+            <SummaryCard icon={ReceiptText} label="Taxa de serviço" value={formatMoney(totalTaxasServico)} tone="amber" />
+            <SummaryCard icon={Calculator} label="Taxas financeiras" value={formatMoney(totalTaxasOperadoras)} tone="rose" />
+            <SummaryCard icon={TrendingUp} label="Receita líquida" value={formatMoney(totalReceitaLiquida)} tone="emerald" />
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white border border-slate-200 rounded-xl p-3">
+            <div className="flex items-center gap-2 text-xs text-slate-700"><LockKeyhole size={15} className="text-emerald-400"/><span><b className="text-slate-900">Edição protegida</b> · alterações comerciais ficam registradas em auditoria.</span></div>
+            <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Produtor #{producerId || 'global'} · 24.8-event-financial-negotiation-2026-09-02</span>
+          </div>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
+            <div className="p-3.5 border-b border-slate-200 bg-slate-100/40 flex justify-between items-center">
               <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Informações sobre a Receita de Vendas
               </h3>
@@ -266,6 +312,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                     <th className="py-2.5 px-2 text-center">Tx Ant. a.m %</th>
                     <th className="py-2.5 px-2 text-center">Pgto Ant.</th>
                     <th className="py-2.5 px-2 text-center">Taxa Parc. %</th>
+                    <th className="py-2.5 px-3 text-right">Total Taxas</th>
                     <th className="py-2.5 px-2 text-center">Qtd. Ingressos</th>
                     <th className="py-2.5 px-3 text-right">Receita Bruta</th>
                     <th className="py-2.5 px-3 text-right">Taxa Serviço</th>
@@ -274,23 +321,24 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {receitas.map((r, i) => (
-                    <tr key={i} className="hover:bg-slate-100">
+                    <tr key={i} className="hover:bg-slate-100/50">
                       <td className="py-2.5 px-3 font-semibold text-slate-900">{r.metodo}</td>
-                      <td className="py-2.5 px-2 text-center font-mono text-sky-400 font-bold">{r.taxa_pagamento.toFixed(2)}%</td>
+                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa pagamento ${r.metodo}`} type="number" min="0" step="0.01" value={r.taxa_pagamento} onChange={e=>updateReceita(i,{taxa_pagamento:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-sky-300 focus:border-sky-500 outline-none" /></td>
                       <td className="py-2.5 px-2 text-center">
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${r.pgto_taxa_servico === 2 ? 'bg-emerald-950 text-emerald-400' : 'bg-slate-100 text-slate-500'}`}>
-                          {r.pgto_taxa_servico === 2 ? 'Sim' : 'Não'}
-                        </span>
+                        <div className="inline-flex rounded-md border border-slate-200 overflow-hidden">
+                          {(['inclusa','produtor'] as const).map(opt=><button key={opt} type="button" onClick={()=>updateReceita(i,{pgto_taxa_servico:opt})} className={`px-2 py-1 text-[10px] font-bold ${r.pgto_taxa_servico===opt?'bg-sky-600 text-slate-900':'bg-white text-slate-500'}`}>{opt==='inclusa'?'Inclusa':'Produtor'}</button>)}
+                        </div>
                       </td>
-                      <td className="py-2.5 px-2 text-center font-mono text-amber-400">{r.tx_ant_am.toFixed(2)}%</td>
+                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa antecipação ${r.metodo}`} type="number" min="0" step="0.01" value={r.tx_ant_am} onChange={e=>updateReceita(i,{tx_ant_am:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-amber-300 focus:border-amber-500 outline-none" /></td>
                       <td className="py-2.5 px-2 text-center">
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${r.pgto_ant === 2 ? 'bg-emerald-950 text-emerald-400' : 'bg-slate-100 text-slate-500'}`}>
-                          {r.pgto_ant === 2 ? 'Sim' : 'Não'}
-                        </span>
+                        <div className="inline-flex rounded-md border border-slate-200 overflow-hidden">
+                          {(['inclusa','produtor'] as const).map(opt=><button key={opt} type="button" onClick={()=>updateReceita(i,{pgto_ant:opt})} className={`px-2 py-1 text-[10px] font-bold ${r.pgto_ant===opt?'bg-amber-600 text-slate-900':'bg-white text-slate-500'}`}>{opt==='inclusa'?'Inclusa':'Produtor'}</button>)}
+                        </div>
                       </td>
-                      <td className="py-2.5 px-2 text-center font-mono text-indigo-400">{r.taxa_parcelado.toFixed(2)}%</td>
+                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa parcelado ${r.metodo}`} type="number" min="0" step="0.01" value={r.taxa_parcelado} onChange={e=>updateReceita(i,{taxa_parcelado:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-indigo-300 focus:border-indigo-500 outline-none" /></td>
+                      <td className="py-2.5 px-3 text-right font-mono text-rose-300">{formatMoney(r.total_taxas)}</td>
                       <td className="py-2.5 px-2 text-center font-mono">{r.qtd_ingressos}</td>
-                      <td className="py-2.5 px-3 text-right font-mono text-slate-200">{formatMoney(r.receita_bruta)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-800">{formatMoney(r.receita_bruta)}</td>
                       <td className="py-2.5 px-3 text-right font-mono text-amber-300">{formatMoney(r.taxa_servico)}</td>
                       <td className="py-2.5 px-3 text-right font-bold font-mono text-emerald-400">{formatMoney(r.receita_liquida)}</td>
                     </tr>
@@ -299,6 +347,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                 <tfoot>
                   <tr className="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-200">
                     <td colSpan={6} className="py-3 px-3 text-right uppercase text-xs">Totais Acumulados:</td>
+                    <td className="py-3 px-3 text-right font-mono text-rose-300">{formatMoney(totalTaxasOperadoras)}</td>
                     <td className="py-3 px-2 text-center font-mono text-sky-400">{totalQtdIngressos}</td>
                     <td className="py-3 px-3 text-right font-mono text-slate-900">{formatMoney(totalReceitaBruta)}</td>
                     <td className="py-3 px-3 text-right font-mono text-amber-400">{formatMoney(totalTaxasServico)}</td>
@@ -309,14 +358,16 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <button
-              onClick={() => notify?.('Configurações de negociação gravadas com sucesso no banco de dados!')}
-              className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold text-xs px-5 py-2.5 rounded-lg flex items-center gap-2 transition shadow-sm"
-            >
-              <Save size={15} />
-              SALVAR RECEITA
-            </button>
+          <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-2"><ShieldCheck size={17} className="text-emerald-400"/><div><h4 className="text-sm font-bold text-slate-900">Salvar negociação com rastreabilidade</h4><p className="text-[11px] text-slate-500">Informe o motivo. O registro entra no histórico de alterações do evento.</p></div></div>
+            <div className="flex flex-col md:flex-row gap-2">
+              <input value={justificativa} onChange={e=>setJustificativa(e.target.value)} placeholder="Justificativa da alteração (ex.: novo acordo comercial com o produtor)" className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500" />
+              <button onClick={saveReceita} className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold text-xs px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 transition shadow-sm"><Save size={15}/>SALVAR NEGOCIAÇÃO</button>
+            </div>
+          </div>
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="p-3 border-b border-slate-200 flex items-center gap-2"><History size={16} className="text-sky-400"/><div><h4 className="text-xs font-bold text-slate-900">Histórico de alterações</h4><p className="text-[10px] text-slate-500">Evento → condição anterior/nova → usuário → data/hora → justificativa.</p></div></div>
+            <div className="divide-y divide-slate-800/70">{auditLog.map(row=><div key={row.id} className="p-3 grid md:grid-cols-[150px_120px_1fr_1.3fr] gap-2 text-[11px]"><span className="font-mono text-slate-500">{row.when}</span><span className="text-sky-300 font-bold">{row.user}</span><span className="text-slate-700">{row.reason}</span><span className="text-slate-500">{row.summary}</span></div>)}</div>
           </div>
         </div>
       )}
@@ -340,7 +391,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             </div>
 
             {showAddExpense && (
-              <form onSubmit={handleSaveExpense} className="p-4 bg-slate-100 border border-slate-200 rounded-xl space-y-3 text-xs">
+              <form onSubmit={handleSaveExpense} className="p-4 bg-slate-100 border border-slate-200/60 rounded-xl space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   <div>
                     <label className="block text-slate-700 font-semibold mb-1">Fornecedor / Credor</label>
@@ -423,7 +474,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {despesas.map((d, i) => (
-                    <tr key={i} className="hover:bg-slate-100">
+                    <tr key={i} className="hover:bg-slate-100/50">
                       <td className="py-2.5 px-3 font-semibold text-slate-900">{d.fornecedor}</td>
                       <td className="py-2.5 px-3 text-slate-500">{d.categoria}</td>
                       <td className="py-2.5 px-3 font-mono text-slate-700">{d.data}</td>
@@ -477,7 +528,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             </div>
 
             {showAddSponsor && (
-              <form onSubmit={handleSaveSponsor} className="p-4 bg-slate-100 border border-slate-200 rounded-xl space-y-3 text-xs">
+              <form onSubmit={handleSaveSponsor} className="p-4 bg-slate-100 border border-slate-200/60 rounded-xl space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-slate-700 font-semibold mb-1">Marca / Patrocinador</label>
@@ -547,7 +598,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {patrocinios.map((p, i) => (
-                    <tr key={i} className="hover:bg-slate-100">
+                    <tr key={i} className="hover:bg-slate-100/50">
                       <td className="py-2.5 px-3 font-semibold text-slate-900">{p.marca}</td>
                       <td className="py-2.5 px-3 text-amber-300 font-medium">{p.categoria}</td>
                       <td className="py-2.5 px-3">
@@ -604,7 +655,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {advancedInstallments.map((inst, i) => (
-                    <tr key={i} className="hover:bg-slate-100">
+                    <tr key={i} className="hover:bg-slate-100/50">
                       <td className="py-2.5 px-3 text-center font-mono font-bold text-sky-400">#{inst.numero}</td>
                       <td className="py-2.5 px-3 text-center font-mono">{formatMoney(inst.valor)}</td>
                       <td className="py-2.5 px-3 text-center font-mono text-slate-500">{formatMoney(inst.valor_pago)}</td>
@@ -657,13 +708,13 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-slate-700">
-                  <tr className="hover:bg-slate-100">
+                  <tr className="hover:bg-slate-100/50">
                     <td className="py-2 px-3 font-semibold text-slate-900">Pista Premium</td>
                     <td className="py-2 px-3 text-slate-500">Site / App DiskIngressos</td>
                     <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">15.0 %</td>
                     <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">10.0 %</td>
                   </tr>
-                  <tr className="hover:bg-slate-100">
+                  <tr className="hover:bg-slate-100/50">
                     <td className="py-2 px-3 font-semibold text-slate-900">Camarote VIP</td>
                     <td className="py-2 px-3 text-slate-500">PDV Físico / Quiosque</td>
                     <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">10.0 %</td>
@@ -741,3 +792,5 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
     </div>
   )
 }
+
+function SummaryCard({icon:Icon,label,value,tone}:{icon:any;label:string;value:string;tone:'sky'|'white'|'amber'|'rose'|'emerald'}){const tones={sky:'text-sky-400',white:'text-slate-900',amber:'text-amber-400',rose:'text-rose-400',emerald:'text-emerald-400'};return <article className="bg-white border border-slate-200 rounded-xl p-3"><div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-500"><span>{label}</span><Icon size={14}/></div><strong className={`block mt-1 text-base font-black font-mono ${tones[tone]}`}>{value}</strong></article>}

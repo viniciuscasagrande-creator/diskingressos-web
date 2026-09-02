@@ -69,7 +69,7 @@ export default function AdvancedTaxesRouter({ activeModule, onNavigate, onBack, 
     case 'fin-negotiations':
     case 'negociacoes-financeiras':
     case 'finance-negotiations':
-      return <FinanceNegotiationsPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+      return <FinanceNegotiationsPage events={props.events || []} eventId={props.eventId} producerId={props.producerId} notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
 
     case 'fin-operators':
     case 'operadoras-cartao':

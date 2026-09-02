@@ -23,7 +23,12 @@ const required = [
   'Resumo de caixa projetado',
   'AGENDA DE PAGAMENTOS AO PRODUTOR',
   'Esteira de Repasse',
-  'Impacto previsto no caixa'
+  'Impacto previsto no caixa',
+  '24.8-event-financial-negotiation-2026-09-02',
+  'Central de negociação econômica por evento',
+  'Histórico de alterações',
+  'SALVAR NEGOCIAÇÃO',
+  'Edição protegida'
 ]
 
 function collect(dir) {
@@ -50,4 +55,4 @@ function assertContains(scope, files, terms) {
 
 assertContains('src', collect('src'), required)
 assertContains('dist', collect('dist'), required)
-console.log('[FINANCE RELEASE] Fases 24.1 a 24.7 confirmadas no build.')
+console.log('[FINANCE RELEASE] Fases 24.1 a 24.8 confirmadas no build.')
