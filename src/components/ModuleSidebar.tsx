@@ -1,12 +1,15 @@
-import { useState, useEffect, type ComponentType, type ReactNode } from 'react'
+import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
+// FASE 25.3.2.1 RELEASE: 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02
 import { canAccess, type AppUser } from '../auth/model'
 import {
-  ArrowLeftRight, WalletCards, HandCoins, ReceiptText, TrendingDown,
-  Landmark, Scale, ChartNoAxesCombined, Split, Brain, CreditCard, ShieldCheck,
-  Ticket, PlusSquare, SlidersHorizontal, Users, ScanFace, BarChart3, MonitorSmartphone,
-  LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight,
-  Headphones, FileSpreadsheet, Sparkles, BookOpenText, BookMarked,
-  Boxes, BookOpenCheck, FileText, Zap, Link2, Undo2, Target, ListTree, UsersRound, Mail, Tags, Clock3, ShoppingCart
+  ArrowLeft, WalletCards, HandCoins, TrendingUp, ReceiptText, TrendingDown, Landmark, Scale,
+  ChartNoAxesCombined, Split, Brain, CreditCard, ShieldCheck, Ticket,
+  PlusSquare, SlidersHorizontal, Users, ScanFace, BarChart3, MonitorSmartphone, ShoppingCart,
+  LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
+  Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
+  FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
+  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2,
+  PanelLeftClose, PanelLeftOpen
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -40,6 +43,7 @@ type Props = {
   onHome: () => void
   canAdmin?: boolean
   user?: AppUser
+  onCollapsedChange?: (collapsed: boolean) => void
 }
 
 type Item = {
@@ -47,22 +51,26 @@ type Item = {
   label: string
   icon: ComponentType<{ size?: number; strokeWidth?: number }>
   badge?: string
+  tier?: 'standard' | 'advanced' | 'expert'
 }
 
 // 1. MENU PRINCIPAL
 const mainItems: Item[] = [
   { key: 'profile-dashboard', label: 'Dashboard', icon: BarChart3 },
-  { key: 'admin-producers', label: 'Dados da Produtora', icon: Building2 },
-  { key: 'facial', label: 'Status Faciais', icon: ScanFace },
   { key: 'events', label: 'Todos os Eventos', icon: Ticket },
+  { key: 'operations', label: 'Núcleo Operacional', icon: ChartNoAxesCombined },
   { key: 'new-event', label: 'Novo Evento', icon: PlusSquare },
   { key: 'lots', label: 'Configurar Lotes', icon: SlidersHorizontal },
   { key: 'participants', label: 'Participantes', icon: Users },
+  { key: 'facial', label: 'Status Faciais', icon: ScanFace },
   { key: 'pos', label: 'Terminais POS', icon: MonitorSmartphone },
-  { key: 'sac-hub', label: 'SAC / Atendimento', icon: Headphones },
+  { key: 'sac-hub', label: 'Atendimento / SAC', icon: Headphones },
+  { key: 'admin-hub', label: 'Administração', icon: Building2 },
 ]
 
-// 2. FINANCEIRO (5 Pilares Principais)
+// 2. FINANCEIRO: MÓDULOS DE GESTÃO E CAIXA
+const independentRefundItem: Item = { key: 'finance-refunds', label: 'Estornos', icon: Undo2, badge: 'ERP' }
+
 const cashFinanceItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards },
   { key: 'finance-advance', label: 'Antecipações', icon: Zap },
@@ -71,15 +79,7 @@ const cashFinanceItems: Item[] = [
   { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
 ]
 
-// 3. ESTORNO INDEPENDENTE (Fase 24.9)
-const independentRefundItem: Item = {
-  key: 'finance-refunds',
-  label: 'Estornos',
-  icon: Undo2,
-  badge: 'ERP'
-}
-
-// 4. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
+// 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
 const accountingFinanceItems: Item[] = [
   { key: 'accounting-dashboard', label: 'Dashboard Contábil', icon: BarChart3, badge: 'Contábil' },
   { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck },
@@ -95,7 +95,7 @@ const accountingFinanceItems: Item[] = [
   { key: 'accounting-sped', label: 'SPED / ECD / ECF', icon: FileSpreadsheet },
 ]
 
-// 5. MARKETING & GROWTH
+// 4. MARKETING & GROWTH
 const marketingItems: Item[] = [
   { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
   { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
@@ -111,7 +111,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]
 
-// 6. REMARKETING & RESGATE
+// 5. REMARKETING & RESGATE
 const remarketingItems: Item[] = [
   { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
   { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -122,96 +122,80 @@ const remarketingItems: Item[] = [
   { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
 ]
 
-// 7. ADMINISTRAÇÃO & GOVERNANÇA
+// 6. ADMINISTRAÇÃO & GOVERNANÇA
 const adminItems: Item[] = [
   { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
-  { key: 'admin-users', label: 'Usuários e Acessos', icon: ShieldCheck },
+  { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
   { key: 'admin-producers', label: 'Produtoras', icon: Building2 },
-  { key: 'admin-permissions', label: 'Perfis e Permissões', icon: LockKeyhole },
-  { key: 'admin-audit', label: 'Logs de Auditoria', icon: FileSpreadsheet },
-  { key: 'admin-security', label: 'Segurança & LGPD', icon: ShieldCheck }
+  { key: 'admin-permissions', label: 'Perfis e Permissões', icon: ShieldCheck },
+  { key: 'admin-audit', label: 'Logs de Auditoria', icon: ScrollText },
+  { key: 'admin-security', label: 'Segurança & LGPD', icon: LockKeyhole }
 ]
 
-export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
+export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user, onCollapsedChange }: Props) {
   const refundIndependentPages: PageKey[] = ['finance-refunds', 'finance-disputes', 'finance-chargebacks']
   const [openFinance, setOpenFinance] = useState((page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page))
   const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
   const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
   const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
   const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
-
-  // Estado de recolhimento persistente no LocalStorage
-  const [collapsed, setCollapsed] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
-    } catch {
-      return false
-    }
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
   })
 
-  const toggleCollapsed = () => {
-    setCollapsed(prev => {
-      const next = !prev
-      try {
-        localStorage.setItem('safesaff.sidebar.collapsed', String(next))
-      } catch {}
-      return next
-    })
-  }
-
-  // Reflete classe no shell para layout sincronizado
   useEffect(() => {
-    const shell = document.querySelector('.phase6-shell')
-    if (shell) {
-      if (collapsed) shell.classList.add('sidebar-collapsed-mode')
-      else shell.classList.remove('sidebar-collapsed-mode')
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('safesaff.sidebar.collapsed', String(collapsed))
     }
-  }, [collapsed])
+    onCollapsedChange?.(collapsed)
+  }, [collapsed, onCollapsedChange])
+
+  const toggleCollapsed = () => setCollapsed(value => !value)
 
   return (
     <aside
-      className={`module-sidebar safesaff-sidebar ${collapsed ? 'collapsed safesaff-sidebar--collapsed' : ''}`}
+      className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''}`}
+      aria-label="Navegação principal"
       data-finance-release="25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
-      aria-label="Menu Lateral de Navegação"
     >
-      {/* 1. Header da Sidebar com título e botão de colapso circular ⇄ */}
       <div className="sidebar-top-bar safesaff-sidebar-header">
-        <div className="sidebar-title-row">
-          {!collapsed && <span className="sidebar-title-text">Navegação</span>}
-          <button
-            type="button"
-            className="sidebar-toggle-btn safesaff-sidebar-toggle"
-            onClick={toggleCollapsed}
-            title={collapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
-            aria-label={collapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
-          >
-            <ArrowLeftRight size={15} />
-          </button>
-        </div>
+        <button className="back-module safesaff-sidebar-home" onClick={onHome} title="Ir para o início" aria-label="Ir para o início">
+          <ArrowLeft size={18} />
+          <span>Navegação</span>
+        </button>
+        <button
+          type="button"
+          className="safesaff-sidebar-toggle"
+          onClick={toggleCollapsed}
+          aria-label={collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}
+          aria-expanded={!collapsed}
+          title={collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}
+        >
+          {collapsed ? <PanelLeftOpen size={18} strokeWidth={1.8} /> : <PanelLeftClose size={18} strokeWidth={1.8} />}
+        </button>
       </div>
 
-      <nav className="module-nav safesaff-sidebar-nav">
-        {!collapsed && <div className="module-caption sidebar-section-title">MENU PRINCIPAL</div>}
-
+      <nav className="module-nav">
+        <div className="module-caption">MENU PRINCIPAL</div>
         {mainItems.map((it, index) => {
           if (it.key === 'new-event' && user && user.role !== 'producer-admin' && user.role !== 'admin-master' && user.role !== 'admin') return null
+          if (it.key === 'admin-hub' && !canAdmin) return null
           return (
             <NavItem
               key={`${it.key}-${index}`}
               item={it}
               active={page === it.key || (it.key === 'events' && ['edit-event', 'event-dashboard'].includes(page))}
-              collapsed={collapsed}
-              onNavigate={() => onNavigate(it.key)}
+              onNavigate={onNavigate}
             />
           )
         })}
 
-        {/* 2. Seção Financeiro (Expansível com Auto-Collapse no Desktop) */}
+        {/* Section: Financeiro (5 Pilares Principais) */}
         <CollapsibleSection
           label="Financeiro"
           icon={WalletCards}
           open={openFinance}
-          collapsed={collapsed}
           onToggle={() => setOpenFinance(!openFinance)}
           onClose={() => setOpenFinance(false)}
         >
@@ -229,29 +213,26 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
                 key={`cash-${it.key}-${index}`}
                 item={it}
                 active={isActive}
-                collapsed={collapsed}
-                onNavigate={() => onNavigate(it.key)}
+                onNavigate={onNavigate}
                 indent
               />
             )
           })}
         </CollapsibleSection>
 
-        {/* 3. Módulo Estornos Independente (Fase 24.9) */}
-        {!collapsed && <div className="module-caption sidebar-section-title">ESTORNO</div>}
+        {/* Fase 24.9 — Estornos é módulo independente, fora do Financeiro */}
+        <div className="module-caption">OPERAÇÕES CRÍTICAS</div>
         <NavItem
           item={independentRefundItem}
           active={refundIndependentPages.includes(page)}
-          collapsed={collapsed}
-          onNavigate={() => onNavigate('finance-refunds')}
+          onNavigate={onNavigate}
         />
 
-        {/* 4. Seção Contabilidade (Expansível) */}
+        {/* Section: Financeiro Contábil & Borderôs */}
         <CollapsibleSection
           label="Contabilidade"
-          icon={Scale}
+          icon={BookOpenCheck}
           open={openAccounting}
-          collapsed={collapsed}
           onToggle={() => setOpenAccounting(!openAccounting)}
           onClose={() => setOpenAccounting(false)}
         >
@@ -260,19 +241,17 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
               key={`acc-${it.key}-${index}`}
               item={it}
               active={page === it.key}
-              collapsed={collapsed}
-              onNavigate={() => onNavigate(it.key)}
+              onNavigate={onNavigate}
               indent
             />
           ))}
         </CollapsibleSection>
 
-        {/* 5. Seção Marketing (Expansível) */}
+        {/* Section: Marketing */}
         <CollapsibleSection
           label="Marketing"
           icon={Megaphone}
           open={openMarketing}
-          collapsed={collapsed}
           onToggle={() => setOpenMarketing(!openMarketing)}
           onClose={() => setOpenMarketing(false)}
         >
@@ -281,19 +260,17 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
               key={`mkt-${it.key}-${index}`}
               item={it}
               active={page === it.key}
-              collapsed={collapsed}
-              onNavigate={() => onNavigate(it.key)}
+              onNavigate={onNavigate}
               indent
             />
           ))}
         </CollapsibleSection>
 
-        {/* 6. Seção Remarketing (Expansível) */}
+        {/* Section: Remarketing */}
         <CollapsibleSection
           label="Remarketing"
           icon={Repeat2}
           open={openRemarketing}
-          collapsed={collapsed}
           onToggle={() => setOpenRemarketing(!openRemarketing)}
           onClose={() => setOpenRemarketing(false)}
         >
@@ -302,20 +279,18 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
               key={`rmk-${it.key}-${index}`}
               item={it}
               active={page === it.key}
-              collapsed={collapsed}
-              onNavigate={() => onNavigate(it.key)}
+              onNavigate={onNavigate}
               indent
             />
           ))}
         </CollapsibleSection>
 
-        {/* 7. Seção Administração (Expansível) */}
+        {/* Section: Administração */}
         {canAdmin && (
           <CollapsibleSection
             label="Administração"
             icon={Building2}
             open={openAdmin}
-            collapsed={collapsed}
             onToggle={() => setOpenAdmin(!openAdmin)}
             onClose={() => setOpenAdmin(false)}
           >
@@ -324,8 +299,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
                 key={`adm-${it.key}-${index}`}
                 item={it}
                 active={page === it.key}
-                collapsed={collapsed}
-                onNavigate={() => onNavigate(it.key)}
+                onNavigate={onNavigate}
                 indent
               />
             ))}
@@ -337,18 +311,16 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 }
 
 function CollapsibleSection({
-  icon: Icon,
   label,
+  icon: SectionIcon,
   open,
-  collapsed,
   onToggle,
   onClose,
   children
 }: {
-  icon: ComponentType<{ size?: number; strokeWidth?: number }>
   label: string
+  icon?: ComponentType<{ size?: number; strokeWidth?: number }>
   open: boolean
-  collapsed: boolean
   onToggle: () => void
   onClose: () => void
   children: ReactNode
@@ -357,10 +329,9 @@ function CollapsibleSection({
     <div
       className="collapsible-nav-section"
       onMouseLeave={() => {
-        // Fase 25.3.2.1: auto-collapse no desktop hover
-        if (open && window.innerWidth >= 768) {
-          onClose()
-        }
+        // Desktop com mouse: mantém a expansão temporária aprovada na Fase 25.3.2.1.
+        // Touch/tablet não fecha por mouseleave sintético.
+        if (open && typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) onClose()
       }}
     >
       <button
@@ -370,17 +341,13 @@ function CollapsibleSection({
         aria-expanded={open}
         title={label}
       >
-        <span className="module-nav-icon safesaff-sidebar-icon" aria-hidden="true">
-          <Icon size={18} strokeWidth={1.8} />
+        {SectionIcon && <span className="module-nav-icon collapsible-section-icon" aria-hidden="true"><SectionIcon size={18} strokeWidth={1.8} /></span>}
+        <span className="collapsible-section-label">{label}</span>
+        <span className="collapsible-section-chevron" aria-hidden="true">
+          <ChevronRight size={14} />
         </span>
-        {!collapsed && <span className="module-nav-label safesaff-sidebar-label">{label}</span>}
-        {!collapsed && (
-          <span className="collapsible-section-chevron" aria-hidden="true">
-            <ChevronRight size={14} />
-          </span>
-        )}
       </button>
-      <div className={`collapsible-section-body ${open && !collapsed ? 'open' : ''}`} aria-hidden={!open || collapsed}>
+      <div className={`collapsible-section-body ${open ? 'open' : ''}`} aria-hidden={!open}>
         <div className="collapsible-section-inner">{children}</div>
       </div>
     </div>
@@ -390,29 +357,26 @@ function CollapsibleSection({
 function NavItem({
   item,
   active,
-  collapsed,
-  indent = false,
-  onNavigate
+  onNavigate,
+  indent = false
 }: {
   item: Item
   active: boolean
-  collapsed: boolean
+  onNavigate: (p: PageKey) => void
   indent?: boolean
-  onNavigate: () => void
 }) {
   const Icon = item.icon
   return (
     <button
-      className={`module-nav-item safesaff-sidebar-item ${active ? 'active safesaff-sidebar-item--active' : ''} ${indent ? 'indent' : ''}`}
-      onClick={onNavigate}
+      className={`module-nav-item ${active ? 'active' : ''} ${indent ? 'indent' : ''}`}
+      onClick={() => onNavigate(item.key)}
       title={item.label}
       aria-current={active ? 'page' : undefined}
     >
-      <span className="module-nav-icon safesaff-sidebar-icon" aria-hidden="true">
-        <Icon size={18} strokeWidth={1.8} />
-      </span>
-      {!collapsed && <span className="module-nav-label safesaff-sidebar-label">{item.label}</span>}
-      {!collapsed && item.badge && <span className="nav-item-badge safesaff-sidebar-badge">{item.badge}</span>}
+      <span className="module-nav-icon" aria-hidden="true"><Icon size={18} strokeWidth={1.8} /></span>
+      <span className="module-nav-label">{item.label}</span>
+      {item.badge && <span className="nav-item-badge">{item.badge}</span>}
+      {item.tier === 'expert' && <span className="expert-dot" title="Recurso Expert" />}
     </button>
   )
 }

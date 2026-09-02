@@ -8,7 +8,7 @@ const uiRequired = [
   'Central de Saldo, Extrato e Movimentações','AGENDA FINANCEIRA','Recebimentos previstos','Resumo de caixa projetado',
   'AGENDA DE PAGAMENTOS AO PRODUTOR','Esteira de Repasse','Impacto previsto no caixa',
   '24.8-event-financial-negotiation-2026-09-02','Central de negociação econômica por evento','Histórico de alterações','SALVAR NEGOCIAÇÃO','Edição protegida',
-  '24.9-independent-refunds-2026-09-02','Central de Estornos, Reembolsos & Chargebacks','ESTORNO','Fila de Aprovações','Montante Devolvido','Zona de Segurança',
+  '24.9-independent-refunds-2026-09-02','Central de Estornos, Reembolsos & Chargebacks','OPERAÇÕES CRÍTICAS','Fila de Aprovações','Montante Devolvido','Zona de Segurança',
   '25.3.2.1-premium-sidebar-auto-collapse-2026-09-02','25.3.3-navigation-rail-financial-typography-2026-09-02','module-nav-icon','module-nav-label','collapsible-section-chevron'
 ]
 
@@ -53,28 +53,31 @@ if (!fs.existsSync(limitlessTheme) || !fs.readFileSync(limitlessTheme, 'utf8').i
   console.error('Falha: integração Limitless 25.3.4 não encontrada.');
   process.exit(1);
 }
-console.log('[FINANCE RELEASE] Fase 25.3.4 Limitless Enterprise UI confirmada.');
+console.log('Fase 25.3.4 Limitless Enterprise UI confirmada.');
+
 
 // Fase 25.4 — Recebíveis, Liquidação e Agenda Financeira
 const phase254 = '25.4-receivables-settlement-agenda-2026-09-02';
 const phase254Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
 assertContains('Fase 25.4', phase254Body, [phase254, 'Central de Recebíveis & Liquidação', 'Curva de liquidação', 'Mix de recebíveis', 'Saúde da liquidação', 'receivable_schedule_entries', 'receivable_agenda_summary']);
-console.log('[FINANCE RELEASE] Fases 25.0 a 25.4 confirmadas no build.');
+console.log('[FINANCE RELEASE] Fases 25.0 a 25.4 confirmadas.');
+
 
 // Fase 25.5 — Repasses, Reservas e Disponibilidade Financeira
 const phase255 = '25.5-payouts-reserves-availability-2026-09-02';
 const phase255Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
 assertContains('Fase 25.5', phase255Body, [phase255, 'Repasses, Reservas & Disponibilidade Financeira', 'Mapa de disponibilidade', 'WATERFALL DO REPASSE', 'POLÍTICA DE RESERVA', 'producer_balance_reserves', 'payout_commitments', 'producer_payout_availability']);
-console.log('[FINANCE RELEASE] Fases 25.0 a 25.5 confirmadas no build.');
-
 // Fase 25.6 — Responsividade Enterprise 360°
 const phase256 = '25.6-responsive-enterprise-360-2026-09-02';
-const phase256Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
-assertContains('Fase 25.6', phase256Body, [phase256, 'responsive-enterprise-360.css']);
-console.log('[FINANCE RELEASE] Fases 25.0 a 25.6 confirmadas no build.');
+const phase256Css = fs.readFileSync('src/styles/responsive-enterprise-360.css', 'utf8');
+const phase256Main = fs.readFileSync('src/main.tsx', 'utf8');
+assertContains('Fase 25.6', phase256Css, [phase256, '@media (max-width:767px)', '@media (min-width:768px) and (max-width:1199px)', 'scroll-snap-type', 'safe-area-inset-bottom']);
+assertContains('Bootstrap responsivo', phase256Main, [phase256, 'responsive-enterprise-360.css']);
+console.log('[FINANCE RELEASE] Fases 25.0 a 25.6 confirmadas.');
 
-// Fase 25.6.1 — Sidebar Premium Baseada no Vídeo
+
+// Fase 25.6.1 — Sidebar Premium baseada na referência do vídeo
 const phase2561 = '25.6.1-sidebar-reference-navigation-2026-09-02';
-const phase2561Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
-assertContains('Fase 25.6.1', phase2561Body, [phase2561, 'sidebar-enterprise.css']);
-console.log('[FINANCE RELEASE] Fases 25.0 a 25.6.1 confirmadas no build.');
+const phase2561Body = body([...collect('src'), ...collect('.')]);
+assertContains('Fase 25.6.1', phase2561Body, [phase2561, 'safesaff.sidebar.collapsed', 'safesaff-sidebar--collapsed', 'safesaff-sidebar-toggle', 'PanelLeftClose', 'PanelLeftOpen']);
+console.log('[FINANCE RELEASE] Fase 25.6.1 Sidebar Premium confirmada.');

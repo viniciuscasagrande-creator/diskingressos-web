@@ -1,38 +1,34 @@
-# Fase 25.6.1 — Sidebar Premium Responsiva Baseada na Referência do Vídeo
+# Fase 25.6.1 — Sidebar Premium baseada na referência do vídeo
 
 Release: `25.6.1-sidebar-reference-navigation-2026-09-02`
 
-## 1. Objetivo e Escopo
-Ajustar o menu lateral oficial do SafeSaff (`src/components/ModuleSidebar.tsx` e `src/styles/sidebar-enterprise.css`) para reproduzir fielmente a navegação visual e estrutural do vídeo de referência, com destaque em faixa horizontal contínua, ícones centralizados em coluna de 22px, alternância expandida/recolhida (280px / 76px) com botão circular `⇄`, persistência em `localStorage`, auto-collapse no desktop e drawer mobile `< 768px`.
+## Objetivo
+Reproduzir no SafeSaff o comportamento visual e estrutural da navegação lateral observada no vídeo aprovado, preservando rotas, permissões, tenant, módulos ERP, Estornos independente e a Responsividade Enterprise 360° da Fase 25.6.
 
-## 2. Especificações Implementadas
+## Implementado
+- Sidebar desktop de 288px e modo recolhido de 76px.
+- Preferência persistida em `localStorage` com a chave `safesaff.sidebar.collapsed`.
+- Botão dedicado para recolher/expandir com Lucide.
+- Itens com 43px, ícones de 18px e tipografia Inter 13px.
+- Hover e item ativo em faixa horizontal de largura total, sem cards/pills.
+- Financeiro, Contabilidade, Marketing, Remarketing e Administração com ícone e expansão vertical.
+- Mouseleave fecha submenu apenas em dispositivos com mouse real (`hover:hover` e `pointer:fine`).
+- Touch/tablet mantém submenu aberto até nova interação.
+- Drawer mobile até 767px; o estado recolhido desktop não reduz o drawer.
+- ESC fecha o drawer mobile e o scroll do body é bloqueado enquanto ele estiver aberto.
+- Correção do antigo breakpoint de 900px para preservar sidebar de tablet entre 768 e 900px.
+- O grid principal e o header acompanham automaticamente 288px/76px sem margens fixas espalhadas pelas páginas.
 
-### Estrutura e Geometria
-- **Largura Expandida**: `280px` (`--sidebar-expanded`)
-- **Largura Recolhida**: `76px` (`--sidebar-collapsed`)
-- **Background**: `#1e2530` / `#191f28` com borda sutil `rgba(255, 255, 255, 0.08)`
-- **Transições**: `220ms cubic-bezier(0.4, 0, 0.2, 1)` para largura e transformações.
-- **Sincronização com Shell**: O contêiner de layout (`.phase6-shell`) e a topbar adaptam suas colunas de grid automaticamente quando a sidebar é recolhida.
+## Arquivos alterados
+- `src/components/ModuleSidebar.tsx`
+- `src/App.tsx`
+- `src/main.tsx`
+- `src/styles/sidebar-enterprise.css` (novo)
+- `FASE25_6_1_SIDEBAR_REFERENCIA_VIDEO.md` (novo)
 
-### Cabeçalho da Sidebar
-- Título **Navegação** em Inter 13.5px bold
-- Botão circular de alternância `⇄` (`.sidebar-toggle-btn`) de 34px com hover suave
-- Persistência imediata no `localStorage` sob a chave `safesaff.sidebar.collapsed`
-
-### Itens de Navegação & Destaque Ativo
-- **Altura Padronizada**: 42px
-- **Ícone**: Coluna fixa de 22px, tamanho 18px, `strokeWidth: 1.8`, perfeitamente alinhado verticalmente
-- **Tipografia**: Inter, 13px, weight 500, cor `#cad3df`, `white-space: nowrap`
-- **Hover**: Faixa horizontal contínua de ponta a ponta com `background: rgba(255, 255, 255, 0.07)`
-- **Ativo**: Faixa horizontal contínua com `background: rgba(255, 255, 255, 0.12)` e texto `#ffffff` (sem cantos arredondados flutuantes de pílula)
-
-### Submenus & Auto-Collapse
-- Seções expansíveis: **Financeiro**, **Contabilidade**, **Marketing**, **Remarketing**, **Administração**
-- **Desktop**: Ao mover o cursor para fora da seção expandida (`onMouseLeave`), o menu recolhe automaticamente (comportamento da Fase 25.3.2.1)
-- **Mobile/Touch**: Permanece aberto até a seleção de uma opção ou novo toque
-- **Estornos**: Módulo independente fora do grupo financeiro com badge `ERP` (Fase 24.9)
-
-### Responsividade 360° & Mobile Drawer
-- **Desktop (≥ 1024px)**: Sidebar fixa com expansão/recolhimento
-- **Tablet (768px – 1023px)**: Layout compacto fluido
-- **Mobile (< 768px)**: Sidebar em formato drawer `min(86vw, 320px)` com backdrop blur, fechamento por tecla `ESC`, fechamento ao clicar no overlay ou navegar, e bloqueio de scroll do body (`.safesaff-drawer-open`).
+## Regras preservadas
+- Dashboard Financeiro aprovado não foi redesenhado.
+- Estornos continua módulo independente com badge ERP.
+- Rotas e permissionamento existentes foram mantidos.
+- Limitless e `responsive-enterprise-360.css` continuam ativos.
+- Fase 25.3.2.1 de recolhimento automático por mouseleave foi preservada apenas para dispositivos com mouse.

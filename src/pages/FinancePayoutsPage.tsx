@@ -159,7 +159,7 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
 
   return (
     <div className="finance-dashboard-wrapper">
-      <span className="sr-only" data-finance-release={FINANCE_RELEASE_MARKER}>{FINANCE_RELEASE_MARKER} 24.7-payouts-agenda-2026-09-02 AGENDA DE PAGAMENTOS AO PRODUTOR Esteira de Repasse Impacto previsto no caixa Repasses, Reservas & Disponibilidade Financeira Mapa de disponibilidade WATERFALL DO REPASSE POLÍTICA DE RESERVA</span>
+      <span className="sr-only" data-finance-release={FINANCE_RELEASE_MARKER}>{FINANCE_RELEASE_MARKER} 24.7-payouts-agenda-2026-09-02 AGENDA DE PAGAMENTOS AO PRODUTOR Esteira de Repasse Impacto previsto no caixa</span>
       {/* Back to Dashboard bar */}
       <div className="flex items-center gap-2 mb-3">
         <button

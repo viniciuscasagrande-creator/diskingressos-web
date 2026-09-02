@@ -17,6 +17,8 @@ import { financeAccountingRouter } from './routes/financeAccounting.js'
 import { financePaymentsRouter } from './routes/financePayments.js'
 import { financeSettlementRouter } from './routes/financeSettlement.js'
 import { financeDisputesRouter } from './routes/financeDisputes.js'
+import { ledgerRouter } from './routes/ledger.js'
+import { financeSplitRouter } from './routes/financeSplit.js'
 import { operationsRouter } from './routes/operations.js'
 import { ticketsRouter } from './routes/tickets.js'
 import { marketingRouter } from './routes/marketing.js'
@@ -110,6 +112,8 @@ app.use('/api/finance/accounting', financeAccountingRouter)
 app.use('/api/finance/payments', financePaymentsRouter)
 app.use('/api/finance/settlement', financeSettlementRouter)
 app.use('/api/finance/disputes', financeDisputesRouter)
+app.use('/api/finance/ledger', ledgerRouter)
+app.use('/api/finance/split', financeSplitRouter)
 app.use('/api/operations', operationsRouter)
 app.use('/api/marketing', marketingRouter)
 app.use('/api/automation', automationRouter)

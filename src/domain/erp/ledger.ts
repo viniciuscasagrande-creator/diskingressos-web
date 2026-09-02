@@ -1,6 +1,5 @@
 /** FASE 25.1 — Ledger Contábil e Plano de Contas */
 export const LEDGER_RELEASE = '25.1-ledger-chart-of-accounts-2026-09-02' as const
-export const LEDGER_FEATURE_FLAGS = ['Ledger Contábil e Plano de Contas', 'ledger_account_balances', 'ledger_producer_balances', 'assert_ledger_batch_balanced'] as const
 
 export type LedgerAccountNature = 'asset' | 'liability' | 'revenue' | 'expense' | 'equity'
 export type LedgerSide = 'debit' | 'credit'

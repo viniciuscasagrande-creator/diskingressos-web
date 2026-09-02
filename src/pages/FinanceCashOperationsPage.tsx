@@ -14,6 +14,7 @@ import {
   type FinanceTransaction
 } from '../services/api'
 import { consumeFinanceDrilldown, navigateWithFinanceDrilldown } from '../utils/financeDrilldown'
+import FinanceOptionCarousel from '../components/finance/FinanceOptionCarousel'
 
 type Mode = 'balance' | 'statement' | 'expenses' | 'bank-accounts'
 type Props = {
@@ -109,14 +110,14 @@ export default function FinanceCashOperationsPage({ mode, events, producerId, no
       </div>
     </header>
 
-    <nav className="finance-cash-center-nav" aria-label="Central de Saldo, Extrato e Movimentações">
+    <FinanceOptionCarousel className="finance-cash-carousel" ariaLabel="Central de Saldo, Extrato e Movimentações">
       <button type="button" className={mode === 'balance' ? 'active' : ''} onClick={()=>openCashPage('finance','Saldo')}><WalletCards size={15}/><span>Saldo</span></button>
       <button type="button" className={mode === 'statement' ? 'active' : ''} onClick={()=>openCashPage('finance-statement','Extrato & Movimentações')}><ReceiptText size={15}/><span>Extrato & Movimentações</span></button>
       <button type="button" onClick={()=>openCashPage('finance-receivables','Recebíveis','open')}><CircleDollarSign size={15}/><span>Recebíveis</span></button>
       <button type="button" onClick={()=>openCashPage('finance-payouts','Repasses')}><HandCoins size={15}/><span>Repasses</span></button>
       <button type="button" className={mode === 'expenses' ? 'active' : ''} onClick={()=>openCashPage('finance-expenses','Despesas')}><CreditCard size={15}/><span>Despesas</span></button>
       <button type="button" className={mode === 'bank-accounts' ? 'active' : ''} onClick={()=>openCashPage('finance-bank-accounts','Contas Bancárias')}><Landmark size={15}/><span>Contas Bancárias</span></button>
-    </nav>
+    </FinanceOptionCarousel>
 
     {drilldown?.label && <div className="finance-cash-context"><SlidersHorizontal size={14}/><span>Contexto: <strong>{drilldown.label}</strong>{drilldown.eventName ? ` · ${drilldown.eventName}` : ''}</span></div>}
 

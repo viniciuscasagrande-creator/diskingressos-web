@@ -4,12 +4,6 @@ import type { EventItem } from '../data/events'
 import type { PageKey } from '../components/ModuleSidebar'
 import { getFinanceDashboardSummary, type FinanceDashboardSummary } from '../services/api'
 import { navigateWithFinanceDrilldown } from '../utils/financeDrilldown'
-import { ERP_ARCHITECTURE_RELEASE, ERP_FEATURE_FLAGS } from '../domain/erp/masterArchitecture'
-import { LEDGER_RELEASE, LEDGER_FEATURE_FLAGS } from '../domain/erp/ledger'
-import { SPLIT_ENGINE_RELEASE } from '../domain/erp/splitEngine'
-import { LIMITLESS_RELEASE } from '../theme/limitlessManifest'
-import { PAYOUT_AVAILABILITY_RELEASE } from '../domain/erp/payoutAvailability'
-
 import FinanceOptionCarousel from '../components/finance/FinanceOptionCarousel'
 
 type Props={events:EventItem[];producerId?:number|null;notify:(m:string)=>void;onNavigate:(p:PageKey)=>void}
@@ -56,19 +50,18 @@ export default function FinanceCommandCenterPage({events,producerId,notify,onNav
  const groups=useMemo(()=>base.map(g=>({...g,items:g.items.filter(x=>(x.title+' '+x.desc).toLowerCase().includes(q.toLowerCase()))})),[q])
  const selectedEventName=events.find(e=>e.id===eventId)?.title
  const openHubPage=(page:PageKey,label:string,status?:string)=>navigateWithFinanceDrilldown(onNavigate,page,{status,eventName:selectedEventName,source:'finance-dashboard-hub',label})
- return <div className="finance-command" data-finance-release="25.6-responsive-enterprise-360-2026-09-02">
- <span className="sr-only">{ERP_ARCHITECTURE_RELEASE} {LEDGER_RELEASE} {SPLIT_ENGINE_RELEASE} {LIMITLESS_RELEASE} {PAYOUT_AVAILABILITY_RELEASE} 25.6-responsive-enterprise-360-2026-09-02 25.3.3-navigation-rail-financial-typography-2026-09-02 {ERP_FEATURE_FLAGS.join(' ')} {LEDGER_FEATURE_FLAGS.join(' ')} defaultTicketingChartOfAccounts</span>
+ return <div className="finance-command" data-finance-release="25.3.3-navigation-rail-financial-typography-2026-09-02">
  <header className="finance-command-hero"><div><span className="finance-command-eyebrow">FINANCEIRO</span><h1>Dashboard Financeiro</h1><p>Controle de saldos, recebíveis, taxas, pagamentos, repasses e liquidações.</p></div><div className="finance-command-actions"><select value={eventId??''} onChange={e=>setEventId(e.target.value?Number(e.target.value):undefined)}><option value="">Todos os eventos</option>{events.map(e=><option key={e.id} value={e.id}>{e.title}</option>)}</select><button onClick={()=>load(true)}><RefreshCw size={16}/>{loading?'Atualizando...':'Atualizar'}</button><button className="primary" onClick={()=>onNavigate('finance-payouts')}><HandCoins size={16}/>Solicitar Repasse</button></div></header>
  <FinanceOptionCarousel className="finance-hub-carousel" ariaLabel="Navegação interna do Dashboard Financeiro">
-   <button className="active" type="button" aria-current="page"><span className="rail-icon"><LayoutDashboard size={18}/></span><span className="rail-label">Visão Geral</span></button>
-   <button type="button" onClick={()=>openHubPage('finance','Saldo')}><span className="rail-icon"><WalletCards size={18}/></span><span className="rail-label">Saldo</span></button>
-   <button type="button" onClick={()=>openHubPage('finance-producer-account','Conta do Produtor')}><span className="rail-icon"><CircleDollarSign size={18}/></span><span className="rail-label">Conta do Produtor</span></button>
-   <button type="button" onClick={()=>openHubPage('finance-statement','Extrato')}><span className="rail-icon"><List size={18}/></span><span className="rail-label">Extrato</span></button>
-   <button type="button" onClick={()=>openHubPage('finance-receivables','Recebíveis','open')}><span className="rail-icon"><BanknoteArrowDown size={18}/></span><span className="rail-label">Recebíveis</span></button>
-   <button type="button" onClick={()=>openHubPage('finance-payouts','Repasses')}><span className="rail-icon"><HandCoins size={18}/></span><span className="rail-label">Repasses</span></button>
-   <button type="button" onClick={()=>openHubPage('finance-cashflow','Fluxo de Caixa')}><span className="rail-icon"><LineChart size={18}/></span><span className="rail-label">Fluxo de Caixa</span></button>
-   <button type="button" onClick={()=>openHubPage('finance-reconciliation','Conciliação')}><span className="rail-icon"><GitCompareArrows size={18}/></span><span className="rail-label">Conciliação</span></button>
-   <button type="button" onClick={()=>openHubPage('finance-reports','Relatórios')}><span className="rail-icon"><FileSpreadsheet size={18}/></span><span className="rail-label">Relatórios</span></button>
+   <button className="active" type="button" aria-current="page"><LayoutDashboard size={15}/><span>Visão Geral</span></button>
+   <button type="button" onClick={()=>openHubPage('finance','Saldo')}><WalletCards size={15}/><span>Saldo</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-producer-account','Conta do Produtor')}><CircleDollarSign size={15}/><span>Conta do Produtor</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-statement','Extrato')}><List size={15}/><span>Extrato</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-receivables','Recebíveis','open')}><BanknoteArrowDown size={15}/><span>Recebíveis</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-payouts','Repasses')}><HandCoins size={15}/><span>Repasses</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-cashflow','Fluxo de Caixa')}><LineChart size={15}/><span>Fluxo de Caixa</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-reconciliation','Conciliação')}><GitCompareArrows size={15}/><span>Conciliação</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-reports','Relatórios')}><FileSpreadsheet size={15}/><span>Relatórios</span></button>
  </FinanceOptionCarousel>
  {error&&<div className="finance-command-warning"><AlertTriangle size={16}/>{error}</div>}
  <section className="finance-command-kpis"><Kpi icon={WalletCards} label="Saldo disponível" value={brl(summary?.availableBalanceCents)} sub="Disponível para operação e repasse" tone="blue" page="finance" onNavigate={onNavigate} eventName={selectedEventName}/><Kpi icon={Clock3} label="Saldo futuro" value={brl(summary?.futureBalanceCents)} sub="Recebíveis e liquidações previstas" tone="green" page="finance-receivables" onNavigate={onNavigate} status="open" eventName={selectedEventName}/><Kpi icon={BanknoteArrowUp} label="A pagar" value={brl(summary?.payablesCents)} sub="Obrigações financeiras em aberto" tone="orange" page="finance-payables" onNavigate={onNavigate} status="open" eventName={selectedEventName}/><Kpi icon={HandCoins} label="Repasses pendentes" value={brl(summary?.pendingPayoutsCents)} sub={`${summary?.pendingPayoutsCount||0} solicitação(ões)`} tone="purple" page="finance-payouts" onNavigate={onNavigate} status="pending" eventName={selectedEventName}/><Kpi icon={Percent} label="Margem média Spread" value={`${((summary?.avgMarginBps||0)/100).toFixed(2)}%`} sub={`${summary?.spreadSimulations||0} simulações persistidas`} tone="cyan" page="finance-spread" onNavigate={onNavigate} eventName={selectedEventName}/><Kpi icon={AlertTriangle} label="Divergências" value={String(summary?.divergences??0)} sub="Itens que exigem conciliação" tone="red" page="finance-reconciliation" onNavigate={onNavigate} status="divergent" eventName={selectedEventName}/></section>

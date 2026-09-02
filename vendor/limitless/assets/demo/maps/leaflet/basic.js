@@ -209,7 +209,7 @@ const LeafletMaps = function() {
 
         // Map details
         const mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-        const mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}';
+        const mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=MAPBOX_ACCESS_TOKEN_PLACEHOLDER';
      
         // Streets layer
         const streets = L.tileLayer(mbUrl, {

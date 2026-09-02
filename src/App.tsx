@@ -303,6 +303,10 @@ export default function App() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null)
   const [toast, setToast] = useState('')
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
+  })
 
   // Fase 21.1.5: cada tela vira uma entrada real no histórico do navegador.
   // Isso faz Voltar/Avançar restaurarem a tela anterior sem perder o contexto do Marketing.
@@ -321,21 +325,18 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState)
   }, [])
 
+  // Fase 25.6.1: drawer mobile com ESC e bloqueio de rolagem do body.
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && mobileNavOpen) {
-        setMobileNavOpen(false)
-      }
+    if (!mobileNavOpen) return
+    const previousOverflow = document.body.style.overflow
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileNavOpen(false)
     }
-    if (mobileNavOpen) {
-      document.body.classList.add('safesaff-drawer-open')
-    } else {
-      document.body.classList.remove('safesaff-drawer-open')
-    }
-    window.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKeyDown)
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-      document.body.classList.remove('safesaff-drawer-open')
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
     }
   }, [mobileNavOpen])
 
@@ -533,7 +534,7 @@ export default function App() {
   }
 
   return (
-    <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open' : ''}`}>
+    <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open' : ''} ${sidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''}`}>
       <Header
         query={query}
         onQuery={setQuery}
@@ -573,6 +574,7 @@ export default function App() {
           onHome={() => { setMobileNavOpen(false); navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard') }}
           canAdmin={canAccess(user, 'admin')}
           user={user}
+          onCollapsedChange={setSidebarCollapsed}
         />
       )}
 

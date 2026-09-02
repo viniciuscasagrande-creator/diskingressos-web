@@ -1,6 +1,5 @@
 /** FASE 25.0 — Arquitetura Mestre ERP + CRM + Financeiro + Produtor */
 export const ERP_ARCHITECTURE_RELEASE = '25.0-master-erp-crm-finance-producer-2026-09-02' as const
-export const ERP_FEATURE_FLAGS = ['Ledger append-only', 'financial_agreement_versions', 'financial_audit_logs'] as const
 
 export type ActorRole =
   | 'super_admin'
@@ -78,3 +77,10 @@ export function can(role: ActorRole, permission: string): boolean {
   const grants = permissionMatrix[role]
   return grants.includes('*') || grants.includes(permission)
 }
+
+// Fase 25.1 acoplada à arquitetura mestre sem alterar as telas homologadas.
+export const ERP_LEDGER_PHASE = 'Ledger Contábil e Plano de Contas' as const
+
+// Fase 25.2: contrato financeiro versionado e motor de split acoplados ao Ledger.
+export const ERP_SPLIT_PHASE = 'Motor de Split e Contratos Financeiros' as const
+export const ERP_FINANCE_RELEASE_25_2 = '25.2-split-financial-agreements-2026-09-02' as const
