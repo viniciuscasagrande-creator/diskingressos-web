@@ -26,6 +26,7 @@ import { automationRouter } from './routes/automation.js'
 import { supportRouter } from './routes/support.js'
 import { communicationRouter } from './routes/communication.js'
 import { trackingPublicRouter } from './routes/trackingPublic.js'
+import { conversionsRouter } from './routes/conversions.js'
 import { scopeRouter } from './routes/scope.js'
 
 const app = express()
@@ -115,6 +116,7 @@ app.use('/api/finance/disputes', financeDisputesRouter)
 app.use('/api/finance/ledger', ledgerRouter)
 app.use('/api/finance/split', financeSplitRouter)
 app.use('/api/operations', operationsRouter)
+app.use('/api/marketing/conversions', conversionsRouter)
 app.use('/api/marketing', marketingRouter)
 app.use('/api/automation', automationRouter)
 app.use('/api/support', supportRouter)

@@ -46,6 +46,7 @@ model Producer {
   contactConsents       ContactConsent[]
   trackingIntegrations  TrackingIntegration[]
   trackingDeliveryLogs  TrackingDeliveryLog[]
+  marketingConversionEvents MarketingConversionEvent[]
   costCenters           CostCenter[]
   chartAccounts         ChartAccount[]
   accountingEntries     AccountingEntry[]
@@ -118,6 +119,7 @@ model Event {
   serviceTickets        ServiceTicket[]
   trackingIntegrationEvents TrackingIntegrationEvent[]
   trackingDeliveryLogs  TrackingDeliveryLog[]
+  marketingConversionEvents MarketingConversionEvent[]
   costCenters           CostCenter[]
   accountingEntries     AccountingEntry[]
   reconciliationItems   ReconciliationItem[]
@@ -719,6 +721,7 @@ model TrackingIntegration {
   producer         Producer  @relation(fields: [producerId], references: [id])
   events           TrackingIntegrationEvent[]
   deliveryLogs     TrackingDeliveryLog[]
+  conversionDispatches MarketingConversionDispatch[]
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -756,6 +759,58 @@ model TrackingDeliveryLog {
   @@index([integrationId])
   @@index([producerId])
   @@index([eventId])
+}
+
+model MarketingConversionEvent {
+  id               Int       @id @default(autoincrement())
+  eventId          String    @unique
+  eventName        String
+  occurredAt       DateTime  @default(now())
+  producerId       Int
+  eventEntityId    Int?
+  orderId          Int?
+  valueCents       Int       @default(0)
+  currency         String    @default("BRL")
+  emailHash        String?
+  phoneHash        String?
+  externalIdHash   String?
+  attributionJson  String    @default("{}")
+  metadataJson     String    @default("{}")
+  producer         Producer  @relation(fields: [producerId], references: [id])
+  event            Event?    @relation(fields: [eventEntityId], references: [id])
+  dispatches       MarketingConversionDispatch[]
+  createdAt        DateTime  @default(now())
+
+  @@index([producerId, eventName])
+  @@index([eventEntityId])
+  @@index([orderId])
+  @@index([occurredAt])
+}
+
+model MarketingConversionDispatch {
+  id                Int       @id @default(autoincrement())
+  conversionEventId Int
+  integrationId     Int
+  provider          String
+  providerEventName String
+  idempotencyKey    String    @unique
+  status            String    @default("queued")
+  attempts          Int       @default(0)
+  payloadJson       String    @default("{}")
+  responseCode      Int?
+  responseMessage   String?
+  lastAttemptAt     DateTime?
+  nextAttemptAt     DateTime?
+  sentAt            DateTime?
+  conversionEvent   MarketingConversionEvent @relation(fields: [conversionEventId], references: [id], onDelete: Cascade)
+  integration       TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([conversionEventId])
+  @@index([integrationId, status])
+  @@index([provider, status])
+  @@index([nextAttemptAt])
 }
 
 model TrackingLink {

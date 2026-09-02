@@ -164,3 +164,94 @@
 @media (prefers-reduced-motion:reduce){
   .phase6-shell,.phase6-shell .global-topbar,.safesaff-sidebar,.safesaff-sidebar-toggle{transition:none!important}
 }
+
+/* =========================================================
+   HOTFIX 25.7.1.1 — Tipografia definitiva da Sidebar
+   Fonte local do pacote Limitless. Não depende do Google Fonts.
+   ========================================================= */
+@font-face{
+  font-family:'SafeSaff Inter';
+  src:url('/vendor/limitless/fonts/inter/Inter-roman.var.woff2') format('woff2-variations');
+  font-style:normal;
+  font-weight:100 900;
+  font-display:swap;
+}
+@font-face{
+  font-family:'SafeSaff Inter';
+  src:url('/vendor/limitless/fonts/inter/Inter-italic.var.woff2') format('woff2-variations');
+  font-style:italic;
+  font-weight:100 900;
+  font-display:swap;
+}
+
+.safesaff-sidebar,
+.safesaff-sidebar button,
+.safesaff-sidebar a,
+.safesaff-sidebar span,
+.safesaff-sidebar div{
+  font-family:'SafeSaff Inter','Inter','Segoe UI',Roboto,Arial,sans-serif!important;
+  font-synthesis:none!important;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:geometricPrecision;
+}
+
+.safesaff-sidebar .module-caption{
+  font-size:10px!important;
+  line-height:14px!important;
+  font-weight:600!important;
+  letter-spacing:.075em!important;
+  text-transform:uppercase!important;
+}
+
+.safesaff-sidebar .module-nav-item,
+.safesaff-sidebar .collapsible-section-head{
+  font-size:13px!important;
+  line-height:18px!important;
+  font-weight:500!important;
+  letter-spacing:0!important;
+  font-variation-settings:'wght' 500!important;
+}
+
+.safesaff-sidebar .module-nav-item.active,
+.safesaff-sidebar .collapsible-section-head.open{
+  font-weight:600!important;
+  font-variation-settings:'wght' 600!important;
+}
+
+.safesaff-sidebar .module-nav-label,
+.safesaff-sidebar .collapsible-section-label{
+  display:block!important;
+  min-width:0!important;
+  line-height:18px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.safesaff-sidebar .module-nav-item.indent{
+  font-size:12.75px!important;
+  font-weight:450!important;
+  font-variation-settings:'wght' 450!important;
+  color:#c8d1dc!important;
+}
+.safesaff-sidebar .module-nav-item.indent.active{
+  font-weight:550!important;
+  font-variation-settings:'wght' 550!important;
+  color:#fff!important;
+}
+
+.safesaff-sidebar .nav-item-badge{
+  font-family:'SafeSaff Inter','Inter','Segoe UI',Roboto,Arial,sans-serif!important;
+  font-size:9px!important;
+  line-height:16px!important;
+  font-weight:600!important;
+  letter-spacing:.02em!important;
+}
+
+.safesaff-sidebar .safesaff-sidebar-home span{
+  font-size:13px!important;
+  line-height:18px!important;
+  font-weight:600!important;
+  letter-spacing:0!important;
+}

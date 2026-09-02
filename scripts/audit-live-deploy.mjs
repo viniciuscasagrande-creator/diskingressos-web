@@ -3,6 +3,12 @@ import https from 'node:https'
 function get(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        const nextUrl = res.headers.location.startsWith('http')
+          ? res.headers.location
+          : new URL(res.headers.location, url).toString()
+        return resolve(get(nextUrl))
+      }
       let data = ''
       res.on('data', (chunk) => data += chunk)
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers, body: data }))
@@ -12,7 +18,7 @@ function get(url) {
 
 async function audit() {
   console.log('--- AUDITORIA AO VIVO EM PRODUÇÃO (https://safesaff.vercel.app) ---')
-  const index = await get('https://safesaff.vercel.app/')
+  const index = await get(`https://safesaff.vercel.app/index.html?_t=${Date.now()}`)
   console.log('Status /:', index.status)
   
   const jsMatch = index.body.match(/src="(\/assets\/index-[^"]+\.js)"/)
@@ -64,7 +70,14 @@ async function audit() {
     { name: 'Fase 25.5 - Politica de Reserva', query: 'POLÍTICA DE RESERVA' },
     
     // Fase 25.6
-    { name: 'Fase 25.6 - Responsividade Enterprise 360', query: '25.6-responsive-enterprise-360-2026-09-02' }
+    { name: 'Fase 25.6 - Responsividade Enterprise 360', query: '25.6-responsive-enterprise-360-2026-09-02' },
+
+    // Fase 25.6.1
+    { name: 'Fase 25.6.1 - Sidebar Premium Referência Vídeo', query: '25.6.1-sidebar-reference-navigation-2026-09-02' },
+
+    // Fase 25.7
+    { name: 'Fase 25.7 - Integrações de Marketing 360', query: '25.7-marketing-integrations-360-2026-09-02' },
+    { name: 'Fase 25.7 - Catálogo Marketing Integrations', query: 'marketingIntegrationCatalog' }
   ]
   
   console.log('\n--- VERIFICAÇÃO DE MARCADORES DE RELEASE NO BUNDLE VERCEL ---')

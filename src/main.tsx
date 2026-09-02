@@ -10,7 +10,7 @@ import './styles/sidebar-enterprise.css'
 document.documentElement.dataset.uiFramework = 'limitless'
 document.documentElement.dataset.marketingIntegrationsRelease = '25.7-marketing-integrations-360-2026-09-02'
 document.documentElement.dataset.responsiveRelease = '25.6-responsive-enterprise-360-2026-09-02'
-document.documentElement.dataset.sidebarRelease = '25.6.1-sidebar-reference-navigation-2026-09-02'
+document.documentElement.dataset.sidebarRelease = '25.7.1.1-sidebar-typography-hotfix-2026-09-02'
 
 const root = document.getElementById('root')
 

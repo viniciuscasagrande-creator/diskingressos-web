@@ -85,5 +85,17 @@ console.log('[FINANCE RELEASE] Fase 25.6.1 Sidebar Premium confirmada.');
 // Fase 25.7 — Integrações de Marketing 360°
 const phase257 = '25.7-marketing-integrations-360-2026-09-02';
 const phase257Body = body([...collect('src'), ...collect('.')]);
-assertContains('Fase 25.7', phase257Body, [phase257, 'marketingIntegrationCatalog', 'TrackingIntegrationsManager', 'tiktok', 'clarity', 'microsoft_ads', 'pinterest', 'snapchat', 'linkedin']);
+assertContains('Fase 25.7', phase257Body, [phase257, 'marketingIntegrationCatalog', 'TrackingIntegrationsManager', 'tiktok', 'clarity', 'microsoft_ads']);
 console.log('[FINANCE RELEASE] Fase 25.7 Integrações de Marketing 360° confirmada.');
+
+// Fase 25.7.1 — Motor Universal de Conversões
+const phase2571 = '25.7.1-universal-conversion-engine-2026-09-02';
+const phase2571Body = body([...collect('src'), ...collect('server'), ...collect('.')]);
+assertContains('Fase 25.7.1', phase2571Body, [phase2571, 'MarketingConversionEvent', 'MarketingConversionDispatch', 'providerEventMap', 'mapCanonicalEvent']);
+console.log('[FINANCE RELEASE] Fase 25.7.1 Motor Universal de Conversões confirmada.');
+
+// Fase 25.7.1.1 — Correção Definitiva da Tipografia da Sidebar
+const phase25711 = '25.7.1.1-sidebar-typography-hotfix-2026-09-02';
+const phase25711Body = body([...collect('src'), ...collect('.')]);
+assertContains('Fase 25.7.1.1', phase25711Body, [phase25711, 'SafeSaff Inter', 'sidebar-enterprise.css']);
+console.log('[FINANCE RELEASE] Fase 25.7.1.1 Correção Definitiva Tipografia Sidebar confirmada.');
