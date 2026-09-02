@@ -43,8 +43,9 @@
     "railway:start": "npm run db:generate:prod && npm run start:api",
     "cloud:scope:check": "node scripts/repair-cloud-scope.mjs",
     "cloud:bootstrap:demo": "tsx prisma/bootstrap-cloud-demo.ts",
-    "build:vercel": "npm run db:generate:prod && npm run build",
-    "db:deploy:vercel": "npm run db:generate:prod && prisma db push --schema prisma/schema.postgresql.prisma"
+    "build:vercel": "npm run db:generate:prod && npm run build && npm run verify:finance-release",
+    "db:deploy:vercel": "npm run db:generate:prod && prisma db push --schema prisma/schema.postgresql.prisma",
+    "verify:finance-release": "node scripts/verify-finance-release.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

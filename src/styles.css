@@ -9929,3 +9929,15 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
 .finance-hub-nav button.active{background:#0f172a;border-color:#0f172a;color:#fff;box-shadow:0 4px 10px rgba(15,23,42,.12)}
 .finance-hub-nav button:focus-visible{outline:2px solid #3b82f6;outline-offset:2px}
 @media(max-width:800px){.finance-hub-nav{padding:6px;justify-content:flex-start}.finance-hub-nav button{min-height:36px;padding:0 10px;font-size:11px}}
+
+/* FASE 24.5 — Central de Saldo, Extrato e Movimentações */
+.finance-cash-center-nav{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:8px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 4px 16px rgba(15,23,42,.04);scrollbar-width:thin}
+.finance-cash-center-nav button{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;border:1px solid transparent;background:transparent;color:#64748b;font-size:12px;font-weight:750;padding:9px 12px;border-radius:10px;cursor:pointer;transition:.18s ease}
+.finance-cash-center-nav button:hover{background:#f8fafc;color:#0f172a;border-color:#e2e8f0}
+.finance-cash-center-nav button.active{background:#0f172a;color:#fff;border-color:#0f172a;box-shadow:0 5px 13px rgba(15,23,42,.14)}
+.finance-cash-context{display:flex;align-items:center;gap:7px;margin-top:-7px;padding:8px 11px;border:1px solid #dbeafe;background:#eff6ff;border-radius:10px;color:#334155;font-size:12px}
+.cashops-filterbar{display:grid;grid-template-columns:minmax(240px,1fr) repeat(2,minmax(145px,auto)) minmax(160px,auto) auto;gap:9px;align-items:center;padding:14px 16px;border-bottom:1px solid #eef2f7}
+.cashops-filterbar select{height:38px;padding:0 10px;border:1px solid #dbe3ef;border-radius:9px;background:#fff;color:#334155;font-size:12px;font-weight:650;min-width:0}
+.cashops-filterbar .small-search{min-width:0}
+@media(max-width:980px){.cashops-filterbar{grid-template-columns:1fr 1fr}.cashops-filterbar .small-search{grid-column:1/-1}.cashops-filterbar .tool-btn{justify-self:start}}
+@media(max-width:620px){.cashops-filterbar{grid-template-columns:1fr}.cashops-filterbar .small-search{grid-column:auto}.finance-cash-center-nav{margin-inline:-2px}.finance-cash-center-nav button{padding:8px 10px}}

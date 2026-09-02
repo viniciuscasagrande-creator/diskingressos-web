@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle, ArrowDownLeft, ArrowUpRight, Banknote, Building2, CalendarDays,
   CheckCircle2, CircleDollarSign, Download, Landmark, Plus, RefreshCw, Search,
-  Star, WalletCards, X, ArrowLeft
+  Star, WalletCards, X, ArrowLeft, ReceiptText, HandCoins, CreditCard, SlidersHorizontal
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
@@ -13,6 +13,7 @@ import {
   type FinanceBankAccount, type FinanceCashSummary, type FinanceExpense,
   type FinanceTransaction
 } from '../services/api'
+import { consumeFinanceDrilldown, navigateWithFinanceDrilldown } from '../utils/financeDrilldown'
 
 type Mode = 'balance' | 'statement' | 'expenses' | 'bank-accounts'
 type Props = {
@@ -35,8 +36,29 @@ export default function FinanceCashOperationsPage({ mode, events, producerId, no
   const [expenses, setExpenses] = useState<FinanceExpense[]>([])
   const [accounts, setAccounts] = useState<FinanceBankAccount[]>([])
   const [search, setSearch] = useState('')
+  const [drilldown] = useState(() => consumeFinanceDrilldown(
+    mode === 'balance' ? 'finance' :
+    mode === 'statement' ? 'finance-statement' :
+    mode === 'expenses' ? 'finance-expenses' : 'finance-bank-accounts'
+  ))
 
   const flash = (m: string) => notify?.(m)
+  const selectedEventName = events.find(ev => ev.id === eventId)?.title
+  const openCashPage = (page: any, label: string, status?: string) => {
+    if (!onNavigate) return
+    navigateWithFinanceDrilldown(onNavigate, page, {
+      label,
+      status,
+      eventName: selectedEventName,
+      source: 'finance-cash-center'
+    })
+  }
+
+  useEffect(() => {
+    if (!drilldown?.eventName || eventId) return
+    const match = events.find(ev => ev.title === drilldown.eventName)
+    if (match) setEventId(match.id)
+  }, [drilldown, events, eventId])
 
   async function load() {
     setLoading(true); setError('')
@@ -87,6 +109,17 @@ export default function FinanceCashOperationsPage({ mode, events, producerId, no
       </div>
     </header>
 
+    <nav className="finance-cash-center-nav" aria-label="Central de Saldo, Extrato e Movimentações">
+      <button type="button" className={mode === 'balance' ? 'active' : ''} onClick={()=>openCashPage('finance','Saldo')}><WalletCards size={15}/><span>Saldo</span></button>
+      <button type="button" className={mode === 'statement' ? 'active' : ''} onClick={()=>openCashPage('finance-statement','Extrato & Movimentações')}><ReceiptText size={15}/><span>Extrato & Movimentações</span></button>
+      <button type="button" onClick={()=>openCashPage('finance-receivables','Recebíveis','open')}><CircleDollarSign size={15}/><span>Recebíveis</span></button>
+      <button type="button" onClick={()=>openCashPage('finance-payouts','Repasses')}><HandCoins size={15}/><span>Repasses</span></button>
+      <button type="button" className={mode === 'expenses' ? 'active' : ''} onClick={()=>openCashPage('finance-expenses','Despesas')}><CreditCard size={15}/><span>Despesas</span></button>
+      <button type="button" className={mode === 'bank-accounts' ? 'active' : ''} onClick={()=>openCashPage('finance-bank-accounts','Contas Bancárias')}><Landmark size={15}/><span>Contas Bancárias</span></button>
+    </nav>
+
+    {drilldown?.label && <div className="finance-cash-context"><SlidersHorizontal size={14}/><span>Contexto: <strong>{drilldown.label}</strong>{drilldown.eventName ? ` · ${drilldown.eventName}` : ''}</span></div>}
+
     {error && <div className="finance360-alert error"><AlertTriangle size={18}/>{error}</div>}
     {loading && <div className="finance360-loading">Carregando dados financeiros...</div>}
 
@@ -118,12 +151,32 @@ function BalanceView({ summary, onNavigate }: { summary: FinanceCashSummary | nu
 function Kpi({icon,label,value,note}:{icon:React.ReactNode;label:string;value:string;note:string}){return <article className="finance-kpi-card card-surface"><div className="kpi-icon-wrap">{icon}</div><div className="kpi-body"><span className="kpi-label">{label}</span><strong className="kpi-value">{value}</strong><div className="kpi-footer"><small>{note}</small></div></div></article>}
 
 function StatementView({ rows, search, setSearch, flash }:{rows:FinanceTransaction[];search:string;setSearch:(v:string)=>void;flash:(m:string)=>void}){
-  const filtered=useMemo(()=>rows.filter(r=>`${r.code} ${r.description} ${r.category} ${r.event?.title||''}`.toLowerCase().includes(search.toLowerCase())),[rows,search])
+  const [typeFilter,setTypeFilter]=useState<'all'|'entrada'|'saida'>('all')
+  const [statusFilter,setStatusFilter]=useState('all')
+  const [categoryFilter,setCategoryFilter]=useState('all')
+  const categories=useMemo(()=>Array.from(new Set(rows.map(r=>r.category).filter(Boolean))).sort(),[rows])
+  const filtered=useMemo(()=>rows.filter(r=>{
+    const text=`${r.code} ${r.description} ${r.category} ${r.event?.title||''}`.toLowerCase()
+    if(!text.includes(search.toLowerCase())) return false
+    if(typeFilter!=='all' && r.type!==typeFilter) return false
+    if(statusFilter!=='all' && r.status!==statusFilter) return false
+    if(categoryFilter!=='all' && r.category!==categoryFilter) return false
+    return true
+  }),[rows,search,typeFilter,statusFilter,categoryFilter])
   const entries=filtered.filter(r=>r.type==='entrada'&&r.status==='liquidado').reduce((a,r)=>a+r.amountCents,0), exits=filtered.filter(r=>r.type==='saida'&&r.status==='liquidado').reduce((a,r)=>a+r.amountCents,0)
   function exportCsv(){const head='Código;Data;Tipo;Categoria;Descrição;Evento;Status;Valor\n';const body=filtered.map(r=>[r.code,date(r.occurredAt),r.type,r.category,`"${r.description.replaceAll('"','""')}"`,`"${r.event?.title||''}"`,r.status,(r.amountCents/100).toFixed(2).replace('.',',')].join(';')).join('\n');const url=URL.createObjectURL(new Blob(['\uFEFF'+head+body],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=`extrato_financeiro_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(url);flash('Extrato exportado em CSV.')}
   return <>
-    <section className="finance-kpis-grid"><Kpi icon={<ArrowDownLeft size={22}/>} label="Entradas Liquidadas" value={money(entries)} note={`${filtered.filter(r=>r.type==='entrada').length} movimentos`}/><Kpi icon={<ArrowUpRight size={22}/>} label="Saídas Liquidadas" value={money(exits)} note={`${filtered.filter(r=>r.type==='saida').length} movimentos`}/><Kpi icon={<CircleDollarSign size={22}/>} label="Saldo do Período" value={money(entries-exits)} note="Entradas - saídas"/></section>
-    <section className="finance-table-section card-surface"><div className="table-header-tabs"><div className="small-search"><Search size={14}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar código, evento, categoria..."/></div><button className="tool-btn" onClick={exportCsv}><Download size={15}/> Exportar CSV</button></div><div className="finance360-table-wrap"><table><thead><tr><th>Transação</th><th>Data</th><th>Evento</th><th>Categoria</th><th>Descrição</th><th>Status</th><th>Valor</th></tr></thead><tbody>{filtered.map(r=><tr key={r.id}><td><strong>{r.code}</strong></td><td>{date(r.occurredAt)}</td><td>{r.event?.title||'Geral'}</td><td>{r.category}</td><td>{r.description}</td><td><span className={`fa-status ${r.status}`}>{r.status}</span></td><td><strong className={r.type==='entrada'?'cashops-positive':'cashops-negative'}>{r.type==='entrada'?'+ ':'- '}{money(r.amountCents)}</strong></td></tr>)}</tbody></table></div>{!filtered.length&&<div className="finops360-empty">Nenhuma movimentação encontrada.</div>}</section>
+    <section className="finance-kpis-grid"><Kpi icon={<ArrowDownLeft size={22}/>} label="Entradas Liquidadas" value={money(entries)} note={`${filtered.filter(r=>r.type==='entrada').length} movimentos`}/><Kpi icon={<ArrowUpRight size={22}/>} label="Saídas Liquidadas" value={money(exits)} note={`${filtered.filter(r=>r.type==='saida').length} movimentos`}/><Kpi icon={<CircleDollarSign size={22}/>} label="Saldo do Período" value={money(entries-exits)} note="Entradas - saídas"/><Kpi icon={<ReceiptText size={22}/>} label="Movimentações" value={String(filtered.length)} note="Após filtros aplicados"/></section>
+    <section className="finance-table-section card-surface">
+      <div className="cashops-filterbar">
+        <div className="small-search"><Search size={14}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar código, evento, categoria..."/></div>
+        <select value={typeFilter} onChange={e=>setTypeFilter(e.target.value as any)} aria-label="Filtrar por tipo"><option value="all">Todos os tipos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option></select>
+        <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} aria-label="Filtrar por status"><option value="all">Todos os status</option><option value="liquidado">Liquidado</option><option value="pendente">Pendente</option><option value="cancelado">Cancelado</option><option value="estornado">Estornado</option></select>
+        <select value={categoryFilter} onChange={e=>setCategoryFilter(e.target.value)} aria-label="Filtrar por categoria"><option value="all">Todas as categorias</option>{categories.map(c=><option key={c} value={c}>{c}</option>)}</select>
+        <button className="tool-btn" onClick={exportCsv}><Download size={15}/> Exportar CSV</button>
+      </div>
+      <div className="finance360-table-wrap"><table><thead><tr><th>Transação</th><th>Data</th><th>Evento</th><th>Categoria</th><th>Descrição</th><th>Status</th><th>Valor</th></tr></thead><tbody>{filtered.map(r=><tr key={r.id}><td><strong>{r.code}</strong></td><td>{date(r.occurredAt)}</td><td>{r.event?.title||'Geral'}</td><td>{r.category}</td><td>{r.description}</td><td><span className={`fa-status ${r.status}`}>{r.status}</span></td><td><strong className={r.type==='entrada'?'cashops-positive':'cashops-negative'}>{r.type==='entrada'?'+ ':'- '}{money(r.amountCents)}</strong></td></tr>)}</tbody></table></div>{!filtered.length&&<div className="finops360-empty">Nenhuma movimentação encontrada com os filtros atuais.</div>}
+    </section>
   </>
 }
 
