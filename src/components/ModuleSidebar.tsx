@@ -1,5 +1,5 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
-// FASE 25.3.2 RELEASE: 25.3.2-premium-sidebar-typography-2026-09-02
+// FASE 25.3.2.1 RELEASE: 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02
 import { canAccess, type AppUser } from '../auth/model'
 import {
   ArrowLeft, WalletCards, HandCoins, TrendingUp, ReceiptText, TrendingDown, Landmark, Scale,
@@ -139,7 +139,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
   const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
 
   return (
-    <aside className="module-sidebar" data-finance-release="25.3.2-premium-sidebar-typography-2026-09-02">
+    <aside className="module-sidebar" data-finance-release="25.3.2.1-premium-sidebar-auto-collapse-2026-09-02">
       <div className="sidebar-top-bar">
         <button className="back-module" onClick={onHome}>
           <ArrowLeft size={18} />
@@ -167,6 +167,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Financeiro"
           open={openFinance}
           onToggle={() => setOpenFinance(!openFinance)}
+          onClose={() => setOpenFinance(false)}
         >
           {cashFinanceItems.map((it, index) => {
             const isActive =
@@ -202,6 +203,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Contabilidade"
           open={openAccounting}
           onToggle={() => setOpenAccounting(!openAccounting)}
+          onClose={() => setOpenAccounting(false)}
         >
           {accountingFinanceItems.map((it, index) => (
             <NavItem
@@ -219,6 +221,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Marketing"
           open={openMarketing}
           onToggle={() => setOpenMarketing(!openMarketing)}
+          onClose={() => setOpenMarketing(false)}
         >
           {marketingItems.map((it, index) => (
             <NavItem
@@ -236,6 +239,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Remarketing"
           open={openRemarketing}
           onToggle={() => setOpenRemarketing(!openRemarketing)}
+          onClose={() => setOpenRemarketing(false)}
         >
           {remarketingItems.map((it, index) => (
             <NavItem
@@ -254,6 +258,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             label="Administração"
             open={openAdmin}
             onToggle={() => setOpenAdmin(!openAdmin)}
+            onClose={() => setOpenAdmin(false)}
           >
             {adminItems.map((it, index) => (
               <NavItem
@@ -275,15 +280,24 @@ function CollapsibleSection({
   label,
   open,
   onToggle,
+  onClose,
   children
 }: {
   label: string
   open: boolean
   onToggle: () => void
+  onClose: () => void
   children: ReactNode
 }) {
   return (
-    <div className="collapsible-nav-section">
+    <div
+      className="collapsible-nav-section"
+      onMouseLeave={() => {
+        // Fase 25.3.2.1: mantém clique para expandir e recolhe automaticamente
+        // quando o ponteiro deixa todo o grupo, restaurando a navegação original.
+        if (open) onClose()
+      }}
+    >
       <button
         type="button"
         className={`collapsible-section-head ${open ? 'open' : ''}`}
