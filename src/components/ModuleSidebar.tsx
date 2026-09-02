@@ -189,7 +189,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         </CollapsibleSection>
 
         {/* Fase 24.9 — Estornos é módulo independente, fora do Financeiro */}
-        <div className="module-caption">OPERAÇÕES CRÍTICAS</div>
+        <div className="module-caption">ESTORNO</div>
         <NavItem
           item={independentRefundItem}
           active={refundIndependentPages.includes(page)}

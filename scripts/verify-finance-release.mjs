@@ -31,7 +31,7 @@ const required = [
   'Edição protegida',
   '24.9-independent-refunds-2026-09-02',
   'Central de Estornos, Reembolsos & Chargebacks',
-  'OPERAÇÕES CRÍTICAS',
+  'ESTORNO',
   'Fila de Aprovações',
   'Montante Devolvido',
   'Zona de Segurança',
