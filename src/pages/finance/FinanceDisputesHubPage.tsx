@@ -77,6 +77,10 @@ export default function FinanceDisputesHubPage({
   const [paymentFilter, setPaymentFilter] = useState('Todos')
   const [searchQuery, setSearchQuery] = useState('')
 
+  // Toast
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastVisible, setToastVisible] = useState(false)
+
   // Drawer
   const [selectedRefund, setSelectedRefund] = useState<RefundItem | null>(null)
 
@@ -91,8 +95,13 @@ export default function FinanceDisputesHubPage({
   const [newType, setNewType] = useState('Estorno integral')
   const [newReason, setNewReason] = useState('')
 
-  const flash = (msg: string) => {
+  const showToast = (msg: string) => {
+    setToastMessage(msg)
+    setToastVisible(true)
     if (notify) notify(msg)
+    setTimeout(() => {
+      setToastVisible(false)
+    }, 3000)
   }
 
   const filteredRefunds = useMemo(() => {
@@ -109,7 +118,7 @@ export default function FinanceDisputesHubPage({
   const handleDecision = (id: string, newStatus: RefundItem['status']) => {
     setRefunds(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r))
     setSelectedRefund(null)
-    flash(`Estorno #${id} atualizado para ${newStatus}.`)
+    showToast(`Estorno #${id} atualizado para ${newStatus}.`)
   }
 
   const handleCreateRefund = () => {
@@ -134,7 +143,7 @@ export default function FinanceDisputesHubPage({
     setNewValue('')
     setNewReason('')
     setModalStep(1)
-    flash(`Solicitação #${id} criada com sucesso e encaminhada para a fila de aprovação!`)
+    showToast(`Solicitação #${id} criada e enviada para a fila de aprovação.`)
   }
 
   const handleExportCSV = () => {
@@ -148,7 +157,7 @@ export default function FinanceDisputesHubPage({
     a.download = `estornos-diskingressos-${new Date().toISOString().slice(0, 10)}.csv`
     a.click()
     URL.revokeObjectURL(url)
-    flash('Relatório de Estornos exportado com sucesso!')
+    showToast('Exportação CSV concluída.')
   }
 
   const badgeClass = (st: string) => {
@@ -160,6 +169,7 @@ export default function FinanceDisputesHubPage({
 
   return (
     <div
+      id="disk-estornos-module"
       className="findisp-page disk-estornos-wrapper"
       data-finance-release="25.8-enterprise-refund-engine-2026-09-02 24.9-independent-refunds-2026-09-02"
     >
@@ -170,7 +180,7 @@ export default function FinanceDisputesHubPage({
       </span>
 
       {/* Back Button Bar */}
-      <div className="flex items-center gap-2 mb-3 px-1">
+      <div className="flex items-center gap-2 mb-2 px-6 pt-4">
         <button
           onClick={() => (onBack ? onBack() : window.history.back())}
           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 shadow-xs transition cursor-pointer"
@@ -185,40 +195,56 @@ export default function FinanceDisputesHubPage({
         <div className="di-page-head">
           <div>
             <h1>Centro de Controle de Estornos</h1>
-            <p>Gestão executiva de devoluções, aprovações, conciliação, alçadas e risco operacional.</p>
+            <p>Gestão executiva de devoluções, aprovações, conciliação e risco operacional.</p>
           </div>
           <div className="di-actions">
             <button className="di-btn" onClick={handleExportCSV}>
-              <Download size={15} /> Exportar CSV
+              ⇩ Exportar
             </button>
             <button className="di-btn di-btn-primary" onClick={() => setModalOpen(true)}>
-              <Plus size={16} /> Novo Estorno
+              ＋ Novo Estorno
             </button>
           </div>
         </div>
 
-        {/* Tabs Bar */}
-        <div className="di-tabs-bar">
+        {/* Tab Navigation */}
+        <div className="flex gap-2 border-b border-slate-200 mb-5 pb-1">
           <button
-            className={`di-tab-btn ${activeTab === 'controle' ? 'active' : ''}`}
+            className={`px-4 py-2 text-xs font-bold rounded-t-lg transition cursor-pointer flex items-center gap-1.5 border-b-2 ${
+              activeTab === 'controle'
+                ? 'text-[#ff5a2a] border-[#ff5a2a] bg-white'
+                : 'text-slate-500 border-transparent hover:text-slate-800'
+            }`}
             onClick={() => setActiveTab('controle')}
           >
             <Layers size={14} /> Centro de Controle (Fase 24.9)
           </button>
           <button
-            className={`di-tab-btn ${activeTab === 'enterprise' ? 'active' : ''}`}
+            className={`px-4 py-2 text-xs font-bold rounded-t-lg transition cursor-pointer flex items-center gap-1.5 border-b-2 ${
+              activeTab === 'enterprise'
+                ? 'text-[#ff5a2a] border-[#ff5a2a] bg-white'
+                : 'text-slate-500 border-transparent hover:text-slate-800'
+            }`}
             onClick={() => setActiveTab('enterprise')}
           >
             <Activity size={14} /> Motor Enterprise (Fase 25.8)
           </button>
           <button
-            className={`di-tab-btn ${activeTab === 'chargebacks' ? 'active' : ''}`}
+            className={`px-4 py-2 text-xs font-bold rounded-t-lg transition cursor-pointer flex items-center gap-1.5 border-b-2 ${
+              activeTab === 'chargebacks'
+                ? 'text-[#ff5a2a] border-[#ff5a2a] bg-white'
+                : 'text-slate-500 border-transparent hover:text-slate-800'
+            }`}
             onClick={() => setActiveTab('chargebacks')}
           >
             <ShieldCheck size={14} /> Chargebacks & Contestações
           </button>
           <button
-            className={`di-tab-btn ${activeTab === 'impact' ? 'active' : ''}`}
+            className={`px-4 py-2 text-xs font-bold rounded-t-lg transition cursor-pointer flex items-center gap-1.5 border-b-2 ${
+              activeTab === 'impact'
+                ? 'text-[#ff5a2a] border-[#ff5a2a] bg-white'
+                : 'text-slate-500 border-transparent hover:text-slate-800'
+            }`}
             onClick={() => setActiveTab('impact')}
           >
             <FileSpreadsheet size={14} /> Impacto Financeiro & Reversões
@@ -231,7 +257,7 @@ export default function FinanceDisputesHubPage({
             <div className="di-filters">
               <div className="di-field">
                 <label>Período</label>
-                <select value={periodFilter} onChange={e => setPeriodFilter(e.target.value)}>
+                <select id="periodFilter" value={periodFilter} onChange={e => setPeriodFilter(e.target.value)}>
                   <option>Este mês</option>
                   <option>Hoje</option>
                   <option>Últimos 7 dias</option>
@@ -240,7 +266,7 @@ export default function FinanceDisputesHubPage({
               </div>
               <div className="di-field">
                 <label>Evento</label>
-                <select value={eventFilter} onChange={e => setEventFilter(e.target.value)}>
+                <select id="eventFilter" value={eventFilter} onChange={e => setEventFilter(e.target.value)}>
                   <option>Todos os eventos</option>
                   <option>Show Roupa Nova</option>
                   <option>Música e Natureza</option>
@@ -249,7 +275,7 @@ export default function FinanceDisputesHubPage({
               </div>
               <div className="di-field">
                 <label>Status</label>
-                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+                <select id="statusFilter" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                   <option>Todos</option>
                   <option>Em análise</option>
                   <option>Aguardando aprovação</option>
@@ -259,7 +285,7 @@ export default function FinanceDisputesHubPage({
               </div>
               <div className="di-field">
                 <label>Pagamento</label>
-                <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)}>
+                <select id="paymentFilter" value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)}>
                   <option>Todos</option>
                   <option>PIX</option>
                   <option>Cartão</option>
@@ -269,16 +295,15 @@ export default function FinanceDisputesHubPage({
               <div className="di-field">
                 <label>Busca</label>
                 <input
+                  id="tableSearch"
                   placeholder="Pedido ou cliente..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                 />
               </div>
-              <div className="flex items-end">
-                <button className="di-btn w-full" onClick={() => {}}>
-                  <Filter size={14} /> Filtrar
-                </button>
-              </div>
+              <button className="di-btn" onClick={() => {}}>
+                Filtrar
+              </button>
             </div>
 
             {/* 6 Top KPIs */}
@@ -289,12 +314,12 @@ export default function FinanceDisputesHubPage({
                 <div className="sub">vs. período anterior</div>
               </div>
               <div className="di-kpi orange">
-                <div className="label">Montante Devolvido</div>
+                <div className="label">Montante estornado</div>
                 <div className="value">R$ 1.160,00</div>
                 <div className="sub">2 operações concluídas</div>
               </div>
               <div className="di-kpi">
-                <div className="label">Fila de Aprovações</div>
+                <div className="label">Solicitações pendentes</div>
                 <div className="value">R$ 2.020,00</div>
                 <div className="sub">{filteredRefunds.length} solicitações em fila</div>
               </div>
@@ -317,20 +342,20 @@ export default function FinanceDisputesHubPage({
 
             {/* Main Layout Grid */}
             <div className="di-layout">
-              {/* Left: Fila de Aprovacoes Table */}
+              {/* Left: Fila de Aprovações */}
               <div className="di-card">
                 <div className="di-card-head">
                   <div>
                     <div className="di-card-title">Fila de Aprovações Pendentes</div>
                     <div className="di-card-desc">Operações ordenadas por prioridade e alçada financeira.</div>
                   </div>
-                  <span className="di-count">
+                  <span className="di-count" id="pendingCount">
                     {filteredRefunds.length} pendente{filteredRefunds.length === 1 ? '' : 's'}
                   </span>
                 </div>
 
                 <div className="di-table-wrap">
-                  <table className="di-table">
+                  <table id="refundTable">
                     <thead>
                       <tr>
                         <th>Pedido</th>
@@ -343,7 +368,7 @@ export default function FinanceDisputesHubPage({
                         <th>Ação</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="refundRows">
                       {filteredRefunds.length > 0 ? (
                         filteredRefunds.map(r => (
                           <tr key={r.id}>
@@ -387,8 +412,8 @@ export default function FinanceDisputesHubPage({
               <div className="di-card">
                 <div className="di-card-head">
                   <div>
-                    <div className="di-card-title">Chargebacks & Risco</div>
-                    <div className="di-card-desc">Indicadores de gateway, ERP e taxa de chargeback.</div>
+                    <div className="di-card-title">Conciliação & Risco Operacional</div>
+                    <div className="di-card-desc">Indicadores de gateway, ERP e chargeback.</div>
                   </div>
                 </div>
 
@@ -399,7 +424,7 @@ export default function FinanceDisputesHubPage({
                   </div>
                   <div className="di-risk-copy">
                     <strong>Zona de Segurança Ativa</strong>
-                    <p>Meta operacional ≤ 1,00%. A taxa atual está rigorosamente dentro do limite configurado.</p>
+                    <p>Meta operacional ≤ 1,00%. A taxa atual está dentro do limite configurado.</p>
                     <span className="di-badge green">● Normal</span>
                   </div>
                 </div>
@@ -431,10 +456,7 @@ export default function FinanceDisputesHubPage({
                 </div>
 
                 <div className="di-alert">
-                  <AlertTriangle size={18} className="flex-none text-amber-600" />
-                  <span>
-                    <strong>1 divergência em monitoramento:</strong> existe R$ 860,00 em solicitações pendentes aguardando aprovação de alçada.
-                  </span>
+                  ⚠ <span><strong>1 divergência em monitoramento:</strong> existe R$ 860,00 em solicitações pendentes ainda não executadas.</span>
                 </div>
               </div>
             </div>
@@ -590,17 +612,21 @@ export default function FinanceDisputesHubPage({
       </section>
 
       {/* Drawer Lateral de Detalhes */}
-      {selectedRefund && (
-        <div className="di-overlay" onClick={() => setSelectedRefund(null)}>
+      <div
+        className={`di-overlay ${selectedRefund ? 'show' : ''}`}
+        id="drawerOverlay"
+        onClick={() => setSelectedRefund(null)}
+      >
+        {selectedRefund && (
           <aside className="di-drawer" onClick={e => e.stopPropagation()}>
             <div className="di-drawer-head">
-              <h2>Estorno #{selectedRefund.id}</h2>
+              <h2 id="drawerTitle">Detalhes do estorno #{selectedRefund.id}</h2>
               <button className="di-close" onClick={() => setSelectedRefund(null)}>
-                <X size={18} />
+                ×
               </button>
             </div>
 
-            <div className="di-drawer-body">
+            <div className="di-drawer-body" id="drawerBody">
               <div className="di-section">
                 <h3>Resumo da operação</h3>
                 <div className="di-info-grid">
@@ -653,21 +679,24 @@ export default function FinanceDisputesHubPage({
                 <div className="di-timeline">
                   <div className="di-tl">
                     <strong>Solicitação criada</strong>
-                    <time>16/07/2026 · 09:42 · Atendente SAC</time>
+                    <br />
+                    <time>16/07/2026 · 09:42 · Operador</time>
                   </div>
                   <div className="di-tl">
-                    <strong>Validação automática de elegibilidade</strong>
-                    <time>16/07/2026 · 09:43 · Motor Enterprise SafeSaff</time>
+                    <strong>Validação automática concluída</strong>
+                    <br />
+                    <time>16/07/2026 · 09:43 · Sistema</time>
                   </div>
                   <div className="di-tl">
                     <strong>Encaminhado para {selectedRefund.level}</strong>
-                    <time>16/07/2026 · 09:44 · Workflow de Alçada</time>
+                    <br />
+                    <time>16/07/2026 · 09:44 · Workflow</time>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="di-footer-actions">
+            <div className="di-footer-actions" id="drawerActions">
               <button
                 className="di-btn di-btn-danger"
                 onClick={() => handleDecision(selectedRefund.id, 'Reprovado')}
@@ -676,7 +705,7 @@ export default function FinanceDisputesHubPage({
               </button>
               <button
                 className="di-btn"
-                onClick={() => flash('Solicitação devolvida para análise complementar.')}
+                onClick={() => showToast('Solicitação devolvida para análise complementar.')}
               >
                 Solicitar análise
               </button>
@@ -688,107 +717,114 @@ export default function FinanceDisputesHubPage({
               </button>
             </div>
           </aside>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Modal Stepper: Novo Estorno */}
-      {modalOpen && (
-        <div className="di-modal-overlay" onClick={() => setModalOpen(false)}>
-          <div className="di-modal-box" onClick={e => e.stopPropagation()}>
-            <div className="di-modal-head">
-              <h2>Novo Estorno</h2>
-              <button className="di-close" onClick={() => setModalOpen(false)}>
-                <X size={18} />
-              </button>
-            </div>
+      {/* Modal: Novo Estorno */}
+      <div className={`di-modal ${modalOpen ? 'show' : ''}`} id="newRefundModal">
+        <div className="di-modal-box">
+          <div className="di-modal-head">
+            <h2>Novo Estorno</h2>
+            <button className="di-close" onClick={() => setModalOpen(false)}>
+              ×
+            </button>
+          </div>
 
-            <div className="di-modal-body">
-              <div className="di-stepper">
-                <div className={`di-step ${modalStep >= 1 ? 'active' : ''}`}>
-                  <i />1. Pedido
-                </div>
-                <div className={`di-step ${modalStep >= 2 ? 'active' : ''}`}>
-                  <i />2. Motivo
-                </div>
-                <div className={`di-step ${modalStep >= 3 ? 'active' : ''}`}>
-                  <i />3. Modalidade
-                </div>
-                <div className={`di-step ${modalStep >= 4 ? 'active' : ''}`}>
-                  <i />4. Revisão
-                </div>
+          <div className="di-modal-body">
+            <div className="di-stepper">
+              <div className={`di-step ${modalStep >= 1 ? 'active' : ''}`}>
+                <i />1. Pedido
               </div>
-
-              <div className="di-form-grid">
-                <div>
-                  <label>Nº do pedido</label>
-                  <input
-                    placeholder="#154350"
-                    value={newOrder}
-                    onChange={e => setNewOrder(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label>Cliente</label>
-                  <input
-                    placeholder="Nome do cliente"
-                    value={newClient}
-                    onChange={e => setNewClient(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label>Evento</label>
-                  <select value={newEvent} onChange={e => setNewEvent(e.target.value)}>
-                    <option>Show Roupa Nova</option>
-                    <option>Música e Natureza</option>
-                    <option>Samba 90 Graus</option>
-                  </select>
-                </div>
-                <div>
-                  <label>Valor (R$)</label>
-                  <input
-                    placeholder="R$ 0,00"
-                    value={newValue}
-                    onChange={e => setNewValue(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label>Forma de pagamento</label>
-                  <select value={newPayment} onChange={e => setNewPayment(e.target.value)}>
-                    <option>PIX</option>
-                    <option>Cartão</option>
-                    <option>Voucher</option>
-                  </select>
-                </div>
-                <div>
-                  <label>Tipo</label>
-                  <select value={newType} onChange={e => setNewType(e.target.value)}>
-                    <option>Estorno integral</option>
-                    <option>Estorno parcial</option>
-                    <option>Conversão em voucher</option>
-                  </select>
-                </div>
-                <div className="full">
-                  <label>Motivo do estorno</label>
-                  <textarea
-                    placeholder="Informe o motivo e contexto da solicitação..."
-                    value={newReason}
-                    onChange={e => setNewReason(e.target.value)}
-                  />
-                </div>
+              <div className={`di-step ${modalStep >= 2 ? 'active' : ''}`}>
+                <i />2. Motivo
+              </div>
+              <div className={`di-step ${modalStep >= 3 ? 'active' : ''}`}>
+                <i />3. Modalidade
+              </div>
+              <div className={`di-step ${modalStep >= 4 ? 'active' : ''}`}>
+                <i />4. Revisão
               </div>
             </div>
 
-            <div className="di-modal-footer">
-              <button className="di-btn" onClick={() => setModalOpen(false)}>
-                Cancelar
-              </button>
-              <button className="di-btn di-btn-primary" onClick={handleCreateRefund}>
-                Criar solicitação
-              </button>
+            <div className="di-form-grid">
+              <div>
+                <label>Nº do pedido</label>
+                <input
+                  id="newOrder"
+                  placeholder="#154350"
+                  value={newOrder}
+                  onChange={e => setNewOrder(e.target.value)}
+                />
+              </div>
+              <div>
+                <label>Cliente</label>
+                <input
+                  id="newClient"
+                  placeholder="Nome do cliente"
+                  value={newClient}
+                  onChange={e => setNewClient(e.target.value)}
+                />
+              </div>
+              <div>
+                <label>Evento</label>
+                <select id="newEvent" value={newEvent} onChange={e => setNewEvent(e.target.value)}>
+                  <option>Show Roupa Nova</option>
+                  <option>Música e Natureza</option>
+                  <option>Samba 90 Graus</option>
+                </select>
+              </div>
+              <div>
+                <label>Valor</label>
+                <input
+                  id="newValue"
+                  placeholder="R$ 0,00"
+                  value={newValue}
+                  onChange={e => setNewValue(e.target.value)}
+                />
+              </div>
+              <div>
+                <label>Forma de pagamento</label>
+                <select id="newPayment" value={newPayment} onChange={e => setNewPayment(e.target.value)}>
+                  <option>PIX</option>
+                  <option>Cartão</option>
+                  <option>Voucher</option>
+                </select>
+              </div>
+              <div>
+                <label>Tipo</label>
+                <select value={newType} onChange={e => setNewType(e.target.value)}>
+                  <option>Estorno integral</option>
+                  <option>Estorno parcial</option>
+                  <option>Conversão em voucher</option>
+                </select>
+              </div>
+              <div className="full">
+                <label>Motivo do estorno</label>
+                <textarea
+                  id="newReason"
+                  placeholder="Informe o motivo e contexto da solicitação..."
+                  value={newReason}
+                  onChange={e => setNewReason(e.target.value)}
+                />
+              </div>
             </div>
           </div>
+
+          <div className="di-modal-footer">
+            <button className="di-btn" onClick={() => setModalOpen(false)}>
+              Cancelar
+            </button>
+            <button className="di-btn di-btn-primary" onClick={handleCreateRefund}>
+              Criar solicitação
+            </button>
+          </div>
         </div>
-      )}
+      </div>
+
+      {/* Toast */}
+      <div className={`di-toast ${toastVisible ? 'show' : ''}`} id="toast">
+        {toastMessage}
+      </div>
     </div>
   )
 }
