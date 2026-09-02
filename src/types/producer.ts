@@ -42,6 +42,11 @@ export type NavigationPage =
   | 'evento-logs'
   // Hub Financeiro & Modules
   | 'financeiro'
+  | 'finance-dashboard'
+  | 'finance-advance'
+  | 'finance-split'
+  | 'finance-methods'
+  | 'finance-reports'
   | 'fin-hub'
   | 'fin-saldo'
   | 'fin-repasses'
