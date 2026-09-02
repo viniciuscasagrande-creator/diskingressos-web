@@ -564,256 +564,63 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {!collapsed && financeiroOpen && (
               <div className="ml-3 pl-3 border-l border-slate-700/60 my-1 space-y-0.5 max-h-[420px] overflow-y-auto sidebar-scroll pr-1">
                 <button
-                  onClick={() => onNavigate('fin-hub')}
+                  onClick={() => onNavigate('finance-dashboard')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'financeiro' || currentPage === 'fin-hub'
+                    currentPage === 'finance-dashboard' || currentPage === 'financeiro' || currentPage === 'fin-hub'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <LayoutGrid size={13} className="text-[#06B6D4]" />
+                  <WalletCards size={14} className="text-[#06B6D4]" />
                   <span>Dashboard Financeiro</span>
                 </button>
 
                 <button
-                  onClick={() => onNavigate('fin-saldo')}
+                  onClick={() => onNavigate('finance-advance')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-saldo' || currentPage === 'saldo'
+                    currentPage === 'finance-advance' || currentPage === 'fin-antecipacoes'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                  <span>Saldo Consolidado</span>
-                </button>
-
-                {can('finance', 'requestPayout') && (
-                  <button
-                    onClick={() => onNavigate('fin-repasses')}
-                    className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                      currentPage === 'fin-repasses' || currentPage === 'repasses'
-                        ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                        : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                    }`}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                    <span>Solicitações de Repasse</span>
-                  </button>
-                )}
-
-                {can('finance', 'anticipate') && (
-                  <button
-                    onClick={() => onNavigate('fin-antecipacoes')}
-                    className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                      currentPage === 'fin-antecipacoes'
-                        ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                        : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                    }`}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                    <span>Antecipações</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => onNavigate('fin-extrato')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-extrato' || currentPage === 'extrato'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                  <span>Extrato Detalhado</span>
+                  <Zap size={14} className="text-amber-400" />
+                  <span>Antecipações</span>
                 </button>
 
                 <button
-                  onClick={() => onNavigate('fin-pdv')}
+                  onClick={() => onNavigate('finance-split')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-pdv' || (currentPage as string) === 'finance-pdv'
+                    currentPage === 'finance-split' || currentPage === 'fin-split'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  <span>Pontos de Venda (PDV)</span>
+                  <Split size={14} className="text-indigo-400" />
+                  <span>Divisão de Receitas</span>
                 </button>
 
                 <button
-                  onClick={() => onNavigate('fin-refunds')}
+                  onClick={() => onNavigate('finance-methods')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-refunds' || (currentPage as string) === 'finance-refunds'
+                    currentPage === 'finance-methods' || currentPage === 'fin-methods'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
-                  <span>Devoluções / Estornos</span>
+                  <CreditCard size={14} className="text-emerald-400" />
+                  <span>Pagamentos & Taxas</span>
                 </button>
 
                 <button
-                  onClick={() => onNavigate('fin-despesas')}
+                  onClick={() => onNavigate('finance-reports')}
                   className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-despesas'
+                    currentPage === 'finance-reports' || currentPage === 'fin-reports'
                       ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
                       : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
                   }`}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                  <span>Despesas</span>
-                </button>
-
-                {can('finance', 'viewBankAccounts') && (
-                  <button
-                    onClick={() => onNavigate('fin-contas')}
-                    className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                      currentPage === 'fin-contas'
-                        ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                        : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                    }`}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                    <span>Contas Bancárias</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => onNavigate('fin-bordero')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-bordero'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
-                  <span>Borderô / Assinaturas</span>
-                </button>
-
-                {/* Header Seção: OPERAÇÕES AVANÇADAS & GESTÃO */}
-                <div className="pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-orange-400/90 pl-1">
-                  Operações Avançadas & Gestão
-                </div>
-
-                <button
-                  onClick={() => onNavigate('fin-advanced')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-advanced'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
-                  <span>Financeiro Advanced</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('fin-conciliacao')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-conciliacao'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-orange-400" />
-                  <span>Conciliação Bancária</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('fin-spread')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-spread'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-pink-400" />
-                  <span>Financeiro Spread</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('simulador-spread')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'simulador-spread' || (currentPage as string) === 'finance-spread-simulator'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-                  <span>Simulador de Spread</span>
-                </button>
-
-                {can('finance', 'manageSplit') && (
-                  <button
-                    onClick={() => onNavigate('fin-split')}
-                    className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                      currentPage === 'fin-split'
-                        ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                        : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                    }`}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
-                    <span>Split Financeiro</span>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => onNavigate('fin-inteligencia')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-inteligencia'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-                  <span>Inteligência Financeira</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('fin-operators')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-operators' || (currentPage as string) === 'finance-operators'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
-                  <span>Operadoras & Gateways</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('fin-methods')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-methods' || (currentPage as string) === 'finance-methods'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  <span>Métodos de Pagamento</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('fin-custom')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-custom' || (currentPage as string) === 'finance-custom'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
-                  <span>Pagamentos Customizados</span>
-                </button>
-
-                <button
-                  onClick={() => onNavigate('fin-negociacoes')}
-                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
-                    currentPage === 'fin-negociacoes' || (currentPage as string) === 'finance-negotiations'
-                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
-                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
-                  }`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-teal-400" />
-                  <span>Negociações Financeiras</span>
+                  <FileSpreadsheet size={14} className="text-sky-400" />
+                  <span>Relatórios Financeiros</span>
                 </button>
               </div>
             )}

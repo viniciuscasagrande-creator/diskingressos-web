@@ -68,13 +68,10 @@ const mainItems: Item[] = [
 // 2. FINANCEIRO: MÓDULOS DE GESTÃO E CAIXA
 const cashFinanceItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards },
-  { key: 'finance-pdv', label: 'Pontos de Venda (PDV)', icon: Store },
-  { key: 'finance-advance', label: 'Antecipação & Spread', icon: Zap },
-  { key: 'finance-split', label: 'Split & Coprodução', icon: Split },
-  { key: 'finance-operators', label: 'Operadoras & Gateways', icon: ShieldCheck },
-  { key: 'finance-negotiations', label: 'Negociações & Taxas', icon: Building2 },
-  { key: 'finance-methods', label: 'Meios de Pagamento & Taxas', icon: CreditCard },
-  { key: 'finance-bordero', label: 'Borderô & Relatórios DRE', icon: FileSignature },
+  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
+  { key: 'finance-split', label: 'Divisão de Receitas', icon: Split },
+  { key: 'finance-methods', label: 'Pagamentos & Taxas', icon: CreditCard },
+  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
 ]
 
 // 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
