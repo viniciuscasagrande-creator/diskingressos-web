@@ -49,7 +49,7 @@ type Item = {
   badge?: string
 }
 
-// 1. MENU PRINCIPAL (Base corporativa)
+// 1. MENU PRINCIPAL
 const mainItems: Item[] = [
   { key: 'profile-dashboard', label: 'Dashboard', icon: BarChart3 },
   { key: 'admin-producers', label: 'Dados da Produtora', icon: Building2 },
@@ -357,7 +357,7 @@ function CollapsibleSection({
     <div
       className="collapsible-nav-section"
       onMouseLeave={() => {
-        // Fase 25.3.2.1: auto-collapse apenas no desktop hover
+        // Fase 25.3.2.1: auto-collapse no desktop hover
         if (open && window.innerWidth >= 768) {
           onClose()
         }
