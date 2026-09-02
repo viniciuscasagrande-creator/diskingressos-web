@@ -1,14 +1,11 @@
-import { useState, type ComponentType, type ReactNode } from 'react'
-// FASE 25.3.2.1 RELEASE: 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02
+import { useState, useEffect, type ComponentType } from 'react'
 import { canAccess, type AppUser } from '../auth/model'
 import {
-  ArrowLeft, WalletCards, HandCoins, TrendingUp, ReceiptText, TrendingDown, Landmark, Scale,
-  ChartNoAxesCombined, Split, Brain, CreditCard, ShieldCheck, Ticket,
-  PlusSquare, SlidersHorizontal, Users, ScanFace, BarChart3, MonitorSmartphone, ShoppingCart,
-  LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
-  Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
-  FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
-  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2
+  ArrowLeft, ArrowLeftRight, WalletCards, HandCoins, ReceiptText, TrendingDown,
+  Landmark, Scale, ChartNoAxesCombined, Split, Brain, CreditCard, ShieldCheck,
+  Ticket, PlusSquare, Users, ScanFace, BarChart3, MonitorSmartphone,
+  LockKeyhole, MessageCircle, Building2, Headphones, FileSpreadsheet,
+  Zap, Undo2, Store
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -49,308 +46,209 @@ type Item = {
   label: string
   icon: ComponentType<{ size?: number; strokeWidth?: number }>
   badge?: string
-  tier?: 'standard' | 'advanced' | 'expert'
+  onClick?: () => void
 }
 
-// 1. MENU PRINCIPAL
-const mainItems: Item[] = [
-  { key: 'profile-dashboard', label: 'Dashboard', icon: BarChart3 },
-  { key: 'events', label: 'Todos os Eventos', icon: Ticket },
-  { key: 'operations', label: 'Núcleo Operacional', icon: ChartNoAxesCombined },
-  { key: 'new-event', label: 'Novo Evento', icon: PlusSquare },
-  { key: 'lots', label: 'Configurar Lotes', icon: SlidersHorizontal },
-  { key: 'participants', label: 'Participantes', icon: Users },
-  { key: 'facial', label: 'Status Faciais', icon: ScanFace },
-  { key: 'pos', label: 'Terminais POS', icon: MonitorSmartphone },
-  { key: 'sac-hub', label: 'Atendimento / SAC', icon: Headphones },
-  { key: 'admin-hub', label: 'Administração', icon: Building2 },
-]
-
-// 2. FINANCEIRO: MÓDULOS DE GESTÃO E CAIXA
-const independentRefundItem: Item = { key: 'finance-refunds', label: 'Estornos', icon: Undo2, badge: 'ERP' }
-
-const cashFinanceItems: Item[] = [
-  { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards },
-  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
-  { key: 'finance-split', label: 'Divisão de Receitas', icon: Split },
-  { key: 'finance-methods', label: 'Pagamentos & Taxas', icon: CreditCard },
-  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
-]
-
-// 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO)
-const accountingFinanceItems: Item[] = [
-  { key: 'accounting-dashboard', label: 'Dashboard Contábil', icon: BarChart3, badge: 'Contábil' },
-  { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck },
-  { key: 'finance-cost-centers', label: 'Centros de Custos', icon: Boxes },
-  { key: 'finance-accounting-entries', label: 'Lançamentos Contábeis', icon: FileText },
-  { key: 'accounting-journal', label: 'Livro Diário Oficial', icon: BookOpenText },
-  { key: 'accounting-ledger', label: 'Livro Razão Analítico', icon: BookMarked },
-  { key: 'finance-dre', label: 'DRE & Orçamento', icon: BarChart3 },
-  { key: 'accounting-trial-balance', label: 'Balancete', icon: Scale },
-  { key: 'accounting-balance-sheet', label: 'Balanço Patrimonial', icon: Landmark },
-  { key: 'accounting-taxes', label: 'Fiscal & Tributos', icon: FileSpreadsheet },
-  { key: 'finance-closing', label: 'Fechamento Contábil', icon: LockKeyhole },
-  { key: 'accounting-sped', label: 'SPED / ECD / ECF', icon: FileSpreadsheet },
-]
-
-// 4. MARKETING & GROWTH
-const marketingItems: Item[] = [
-  { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
-  { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
-  { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
-  { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },
-  { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
-  { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
-  { key: 'marketing-utm-central', label: 'Central UTM & Conversões', icon: Link2, badge: 'Novo' },
-  { key: 'marketing-whatsapp', label: 'WhatsApp', icon: MessageCircle },
-  { key: 'marketing-email', label: 'E-mail Marketing', icon: Mail },
-  { key: 'marketing-coupons', label: 'Cupons & Descontos', icon: Tags },
-  { key: 'marketing-cashback', label: 'Cashback Promocional', icon: WalletCards },
-  { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
-]
-
-// 5. REMARKETING & RESGATE
-const remarketingItems: Item[] = [
-  { key: 'remarketing-hub', label: 'Hub Remarketing', icon: Repeat2 },
-  { key: 'remarketing-dashboard', label: 'Dashboard', icon: BarChart3 },
-  { key: 'remarketing-carts', label: 'Carrinhos Abandonados', icon: ShoppingCart },
-  { key: 'remarketing-flows', label: 'Fluxos de Recuperação', icon: Repeat2 },
-  { key: 'remarketing-whatsapp', label: 'WhatsApp Remarketing', icon: MessageCircle },
-  { key: 'remarketing-email', label: 'E-mail Remarketing', icon: Mail },
-  { key: 'remarketing-payments', label: 'Recuperação de Pagamento', icon: Clock3 }
-]
-
-// 6. ADMINISTRAÇÃO & GOVERNANÇA
-const adminItems: Item[] = [
-  { key: 'admin-hub', label: 'Central Administrativa', icon: Building2 },
-  { key: 'admin-users', label: 'Usuários e Acessos', icon: UserCog },
-  { key: 'admin-producers', label: 'Produtoras', icon: Building2 },
-  { key: 'admin-permissions', label: 'Perfis e Permissões', icon: ShieldCheck },
-  { key: 'admin-audit', label: 'Logs de Auditoria', icon: ScrollText },
-  { key: 'admin-security', label: 'Segurança & LGPD', icon: LockKeyhole }
-]
-
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
-  const refundIndependentPages: PageKey[] = ['finance-refunds', 'finance-disputes', 'finance-chargebacks']
-  const [openFinance, setOpenFinance] = useState((page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page))
-  const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
-  const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
-  const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
-  const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
+  const isFinancePage = (page.startsWith('finance-') || page === 'finance')
+  const [viewMode, setViewMode] = useState<'main' | 'finance'>(isFinancePage ? 'finance' : 'main')
+  const [collapsed, setCollapsed] = useState(false)
+
+  useEffect(() => {
+    if (isFinancePage) {
+      setViewMode('finance')
+    }
+  }, [page, isFinancePage])
+
+  // 1. MENU PRINCIPAL (1:1 com o vídeo de referência)
+  const mainItems: Item[] = [
+    { key: 'profile-dashboard', label: 'Dashboard', icon: BarChart3 },
+    { key: 'admin-producers', label: 'Dados da Produtora', icon: Building2 },
+    { key: 'facial', label: 'Status Faciais', icon: ScanFace },
+    { key: 'events', label: 'Todos os Eventos', icon: Ticket },
+    {
+      key: 'finance-dashboard',
+      label: 'Financeiro',
+      icon: WalletCards,
+      onClick: () => {
+        setViewMode('finance')
+        onNavigate('finance-dashboard')
+      }
+    },
+    { key: 'new-event', label: 'Novo Evento', icon: PlusSquare },
+    { key: 'pos', label: 'Terminais POS', icon: MonitorSmartphone },
+    { key: 'marketing-communications', label: 'Mensagens', icon: MessageCircle },
+    { key: 'sac-hub', label: 'SAC / Atendimento', icon: Headphones },
+    { key: 'admin-users', label: 'Gerenciar Acessos', icon: LockKeyhole },
+    { key: 'admin-hub', label: 'Administração', icon: ShieldCheck },
+    { key: 'events', label: 'Clube Rua da Musica', icon: Store }
+  ]
+
+  // 2. SUBMENU FINANCEIRO (1:1 com o vídeo de referência)
+  const financeItems: Item[] = [
+    { key: 'finance-dashboard', label: 'Hub Financeiro', icon: WalletCards },
+    { key: 'finance', label: 'Saldo Consolidado', icon: WalletCards },
+    { key: 'finance-payouts', label: 'Solicitações de Repasse', icon: HandCoins },
+    { key: 'finance-advance', label: 'Antecipações', icon: Zap },
+    { key: 'finance-statement', label: 'Extrato Detalhado', icon: ReceiptText },
+    { key: 'finance-expenses', label: 'Despesas', icon: TrendingDown },
+    { key: 'finance-bank-accounts', label: 'Contas Bancárias', icon: Landmark },
+    { key: 'finance-bordero', label: 'Borderô', icon: FileSpreadsheet },
+    { key: 'finance-negotiations', label: 'Negociações', icon: Scale }
+  ]
+
+  // 3. OPERAÇÕES AVANÇADAS FINANCEIRAS
+  const financeAdvancedItems: Item[] = [
+    { key: 'finance-advanced', label: 'Financeiro Advanced', icon: ChartNoAxesCombined },
+    { key: 'finance-split', label: 'Split Financeiro', icon: Split },
+    { key: 'finance-intelligence', label: 'Inteligência Financ.', icon: Brain },
+    { key: 'finance-methods', label: 'Métodos de Pagamento', icon: CreditCard }
+  ]
+
+  // 4. ESTORNO INDEPENDENTE (Fase 24.9)
+  const independentRefundItem: Item = {
+    key: 'finance-refunds',
+    label: 'Estornos & Reembolsos',
+    icon: Undo2,
+    badge: 'ERP'
+  }
 
   return (
-    <aside className="module-sidebar" data-finance-release="25.3.2.1-premium-sidebar-auto-collapse-2026-09-02">
+    <aside
+      className={`module-sidebar ${collapsed ? 'collapsed' : ''}`}
+      data-finance-release="25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
+    >
+      {/* Top Header Row com botão de colapso ⇄ */}
       <div className="sidebar-top-bar">
-        <button className="back-module" onClick={onHome}>
-          <ArrowLeft size={18} />
-          <span>Navegação</span>
-        </button>
+        {viewMode === 'main' ? (
+          <div className="sidebar-title-row">
+            {!collapsed && <span className="sidebar-title-text">Navegação</span>}
+            <button
+              type="button"
+              className="sidebar-toggle-btn"
+              onClick={() => setCollapsed(!collapsed)}
+              title={collapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+              aria-label="Alternar recolhimento"
+            >
+              <ArrowLeftRight size={15} />
+            </button>
+          </div>
+        ) : (
+          <div className="sidebar-title-row">
+            <button
+              type="button"
+              className="sidebar-back-btn"
+              onClick={() => {
+                setViewMode('main')
+                onHome()
+              }}
+              title="Voltar ao Menu Principal"
+            >
+              <ArrowLeft size={16} />
+              {!collapsed && <span>Voltar</span>}
+            </button>
+            <button
+              type="button"
+              className="sidebar-toggle-btn"
+              onClick={() => setCollapsed(!collapsed)}
+              title={collapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+              aria-label="Alternar recolhimento"
+            >
+              <ArrowLeftRight size={15} />
+            </button>
+          </div>
+        )}
       </div>
 
       <nav className="module-nav">
-        <div className="module-caption">MENU PRINCIPAL</div>
-        {mainItems.map((it, index) => {
-          if (it.key === 'new-event' && user && user.role !== 'producer-admin' && user.role !== 'admin-master' && user.role !== 'admin') return null
-          if (it.key === 'admin-hub' && !canAdmin) return null
-          return (
-            <NavItem
-              key={`${it.key}-${index}`}
-              item={it}
-              active={page === it.key || (it.key === 'events' && ['edit-event', 'event-dashboard'].includes(page))}
-              onNavigate={onNavigate}
-            />
-          )
-        })}
+        {viewMode === 'main' ? (
+          <>
+            {!collapsed && <div className="module-caption">MENU PRINCIPAL</div>}
+            {mainItems.map((it, index) => {
+              if (it.key === 'new-event' && user && user.role !== 'producer-admin' && user.role !== 'admin-master' && user.role !== 'admin') return null
+              if (it.key === 'admin-hub' && !canAdmin) return null
 
-        {/* Section: Financeiro (5 Pilares Principais) */}
-        <CollapsibleSection
-          label="Financeiro"
-          icon={WalletCards}
-          open={openFinance}
-          onToggle={() => setOpenFinance(!openFinance)}
-          onClose={() => setOpenFinance(false)}
-        >
-          {cashFinanceItems.map((it, index) => {
-            const isActive =
-              (it.key === 'finance-dashboard' && ['finance', 'finance-dashboard', 'finance-hub', 'finance-producer-account', 'finance-statement', 'finance-payouts', 'finance-cashflow', 'finance-bank-accounts', 'finance-expenses', 'finance-payables', 'finance-receivables', 'finance-reconciliation'].includes(page)) ||
-              (it.key === 'finance-advance' && ['finance-advance', 'finance-spread', 'finance-spread-simulator'].includes(page)) ||
-              (it.key === 'finance-split' && ['finance-split', 'finance-settlement', 'finance-settlements', 'finance-negotiations'].includes(page)) ||
-              (it.key === 'finance-methods' && ['finance-methods', 'finance-custom', 'finance-operators', 'finance-gateways', 'finance-intelligence', 'finance-rates'].includes(page)) ||
-              (it.key === 'finance-reports' && ['finance-reports', 'finance-bordero', 'finance-advanced', 'finance-consolidated'].includes(page)) ||
-              page === it.key
+              const isActive =
+                page === it.key ||
+                (it.key === 'events' && ['edit-event', 'event-dashboard'].includes(page)) ||
+                (it.key === 'finance-dashboard' && isFinancePage)
 
-            return (
+              return (
+                <NavItem
+                  key={`${it.key}-${index}`}
+                  item={it}
+                  active={isActive}
+                  collapsed={collapsed}
+                  onNavigate={it.onClick || (() => onNavigate(it.key))}
+                />
+              )
+            })}
+          </>
+        ) : (
+          <>
+            {financeItems.map((it, index) => {
+              const isActive = page === it.key || (it.key === 'finance-dashboard' && page === 'finance-hub')
+              return (
+                <NavItem
+                  key={`fin-${it.key}-${index}`}
+                  item={it}
+                  active={isActive}
+                  collapsed={collapsed}
+                  onNavigate={() => onNavigate(it.key)}
+                />
+              )
+            })}
+
+            {!collapsed && <div className="module-caption">OPERAÇÕES AVANÇADAS</div>}
+            {financeAdvancedItems.map((it, index) => (
               <NavItem
-                key={`cash-${it.key}-${index}`}
-                item={it}
-                active={isActive}
-                onNavigate={onNavigate}
-                indent
-              />
-            )
-          })}
-        </CollapsibleSection>
-
-        {/* Fase 24.9 — Estornos é módulo independente, fora do Financeiro */}
-        <div className="module-caption">ESTORNO</div>
-        <NavItem
-          item={independentRefundItem}
-          active={refundIndependentPages.includes(page)}
-          onNavigate={onNavigate}
-        />
-
-        {/* Section: Financeiro Contábil & Borderôs */}
-        <CollapsibleSection
-          label="Contabilidade"
-          icon={Scale}
-          open={openAccounting}
-          onToggle={() => setOpenAccounting(!openAccounting)}
-          onClose={() => setOpenAccounting(false)}
-        >
-          {accountingFinanceItems.map((it, index) => (
-            <NavItem
-              key={`acc-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* Section: Marketing */}
-        <CollapsibleSection
-          label="Marketing"
-          icon={Megaphone}
-          open={openMarketing}
-          onToggle={() => setOpenMarketing(!openMarketing)}
-          onClose={() => setOpenMarketing(false)}
-        >
-          {marketingItems.map((it, index) => (
-            <NavItem
-              key={`mkt-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* Section: Remarketing */}
-        <CollapsibleSection
-          label="Remarketing"
-          icon={Repeat2}
-          open={openRemarketing}
-          onToggle={() => setOpenRemarketing(!openRemarketing)}
-          onClose={() => setOpenRemarketing(false)}
-        >
-          {remarketingItems.map((it, index) => (
-            <NavItem
-              key={`rmk-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-        </CollapsibleSection>
-
-        {/* Section: Administração */}
-        {canAdmin && (
-          <CollapsibleSection
-            label="Administração"
-            icon={Building2}
-            open={openAdmin}
-            onToggle={() => setOpenAdmin(!openAdmin)}
-            onClose={() => setOpenAdmin(false)}
-          >
-            {adminItems.map((it, index) => (
-              <NavItem
-                key={`adm-${it.key}-${index}`}
+                key={`adv-${it.key}-${index}`}
                 item={it}
                 active={page === it.key}
-                onNavigate={onNavigate}
-                indent
+                collapsed={collapsed}
+                onNavigate={() => onNavigate(it.key)}
               />
             ))}
-          </CollapsibleSection>
+
+            {/* Estornos Independente */}
+            {!collapsed && <div className="module-caption">ESTORNO</div>}
+            <NavItem
+              item={independentRefundItem}
+              active={['finance-refunds', 'finance-disputes', 'finance-chargebacks'].includes(page)}
+              collapsed={collapsed}
+              onNavigate={() => onNavigate('finance-refunds')}
+            />
+          </>
         )}
       </nav>
     </aside>
   )
 }
 
-function CollapsibleSection({
-  icon: Icon,
-  label,
-  open,
-  onToggle,
-  onClose,
-  children
-}: {
-  icon: ComponentType<{ size?: number; strokeWidth?: number }>
-  label: string
-  open: boolean
-  onToggle: () => void
-  onClose: () => void
-  children: ReactNode
-}) {
-  return (
-    <div
-      className="collapsible-nav-section"
-      onMouseLeave={() => {
-        // Fase 25.3.2.1: mantém clique para expandir e recolhe automaticamente
-        // quando o ponteiro deixa todo o grupo, restaurando a navegação original.
-        if (open) onClose()
-      }}
-    >
-      <button
-        type="button"
-        className={`collapsible-section-head ${open ? 'open' : ''}`}
-        onClick={onToggle}
-        aria-expanded={open}
-      >
-        <span className="module-nav-icon" aria-hidden="true">
-          <Icon size={18} strokeWidth={1.8} />
-        </span>
-        <span className="module-nav-label">{label}</span>
-        <span className="collapsible-section-chevron" aria-hidden="true">
-          <ChevronRight size={14} />
-        </span>
-      </button>
-      <div className={`collapsible-section-body ${open ? 'open' : ''}`} aria-hidden={!open}>
-        <div className="collapsible-section-inner">{children}</div>
-      </div>
-    </div>
-  )
-}
-
 function NavItem({
   item,
   active,
-  onNavigate,
-  indent = false
+  collapsed,
+  onNavigate
 }: {
   item: Item
   active: boolean
-  onNavigate: (p: PageKey) => void
-  indent?: boolean
+  collapsed: boolean
+  onNavigate: () => void
 }) {
   const Icon = item.icon
   return (
     <button
-      className={`module-nav-item ${active ? 'active' : ''} ${indent ? 'indent' : ''}`}
-      onClick={() => onNavigate(item.key)}
+      className={`module-nav-item ${active ? 'active' : ''}`}
+      onClick={onNavigate}
       title={item.label}
       aria-current={active ? 'page' : undefined}
     >
       <span className="module-nav-icon" aria-hidden="true">
         <Icon size={18} strokeWidth={1.8} />
       </span>
-      <span className="module-nav-label">{item.label}</span>
-      {item.badge && <span className="nav-item-badge">{item.badge}</span>}
-      {item.tier === 'expert' && <span className="expert-dot" title="Recurso Expert" />}
+      {!collapsed && <span className="module-nav-label">{item.label}</span>}
+      {!collapsed && item.badge && <span className="nav-item-badge">{item.badge}</span>}
     </button>
   )
 }
