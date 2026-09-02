@@ -14,9 +14,16 @@ const required = [
   'Repasses',
   'Fluxo de Caixa',
   'Conciliação',
-  '24.5-cash-center-2026-09-02',
+  '24.6-receivables-agenda-2026-09-02',
+  '24.7-payouts-agenda-2026-09-02',
   'Extrato & Movimentações',
-  'Central de Saldo, Extrato e Movimentações'
+  'Central de Saldo, Extrato e Movimentações',
+  'AGENDA FINANCEIRA',
+  'Recebimentos previstos',
+  'Resumo de caixa projetado',
+  'AGENDA DE PAGAMENTOS AO PRODUTOR',
+  'Esteira de Repasse',
+  'Impacto previsto no caixa'
 ]
 
 function collect(dir) {
@@ -43,4 +50,4 @@ function assertContains(scope, files, terms) {
 
 assertContains('src', collect('src'), required)
 assertContains('dist', collect('dist'), required)
-console.log('[FINANCE RELEASE] Fases 24.1 a 24.5 confirmadas no build.')
+console.log('[FINANCE RELEASE] Fases 24.1 a 24.7 confirmadas no build.')

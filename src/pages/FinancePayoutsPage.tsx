@@ -19,10 +19,25 @@ type Props = {
 const brl = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
+const FINANCE_RELEASE_MARKER = '24.7-payouts-agenda-2026-09-02'
+
+const parseBrDate = (value: string) => {
+  const [day, month, year] = value.split('/').map(Number)
+  return new Date(year, month - 1, day, 12, 0, 0, 0)
+}
+
+const dayDiff = (date: Date, base: Date) => {
+  const ms = 24 * 60 * 60 * 1000
+  const a = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+  const b = new Date(base.getFullYear(), base.getMonth(), base.getDate()).getTime()
+  return Math.round((a - b) / ms)
+}
+
 export default function FinancePayoutsPage({ events, notify, onNavigate }: Props) {
   const [drilldown] = useState(() => consumeFinanceDrilldown('finance-payouts'))
   const [search, setSearch] = useState(drilldown?.eventName || '')
   const [statusFilter, setStatusFilter] = useState(drilldown?.status || 'all')
+  const [agendaFilter, setAgendaFilter] = useState<'all' | 'today' | '7' | '15'>('all')
   const [showRequestModal, setShowRequestModal] = useState(false)
   const [selectedPayout, setSelectedPayout] = useState<Payout | null>(null)
   const [payoutList, setPayoutList] = useState<Payout[]>(payouts)
@@ -38,6 +53,34 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
   const availableBalance = financeSummary.availableBalance
   const totalTransferredMonth = financeSummary.transfers
   const nextPayoutScheduled = financeSummary.nextPayout
+  const today = useMemo(() => {
+    const now = new Date()
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0)
+  }, [])
+
+  const payoutAgenda = useMemo(() => {
+    const active = payoutList.filter(p => p.status !== 'Pago')
+    const scheduled = active.filter(p => ['Agendado', 'Processando'].includes(p.status))
+    const underReview = active.filter(p => p.status.toLowerCase().includes('análise'))
+
+    const inWindow = (days: number, exactToday = false) => scheduled.filter(p => {
+      const diff = dayDiff(parseBrDate(p.scheduledFor), today)
+      return exactToday ? diff === 0 : diff >= 0 && diff <= days
+    })
+
+    const todayItems = inWindow(0, true)
+    const next7 = inWindow(7)
+    const next15 = inWindow(15)
+    const scheduledTotal = scheduled.reduce((sum, p) => sum + p.net, 0)
+    const reviewTotal = underReview.reduce((sum, p) => sum + p.net, 0)
+    const paidTotal = payoutList.filter(p => p.status === 'Pago').reduce((sum, p) => sum + p.net, 0)
+
+    return {
+      todayItems, next7, next15, underReview, scheduled,
+      scheduledTotal, reviewTotal, paidTotal,
+      projectedBalance: Math.max(availableBalance - scheduledTotal, 0),
+    }
+  }, [payoutList, today, availableBalance])
 
   const filtered = useMemo(() => {
     return payoutList.filter(p => {
@@ -50,9 +93,16 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
       const normalizedStatus = p.status.toLowerCase()
       const matchesStatus = statusFilter === 'all' ||
         (statusFilter === 'pending' ? !['pago'].includes(normalizedStatus) : normalizedStatus === statusFilter.toLowerCase())
-      return matchesSearch && matchesStatus
+
+      const diff = dayDiff(parseBrDate(p.scheduledFor), today)
+      const matchesAgenda = agendaFilter === 'all' ||
+        (agendaFilter === 'today' ? diff === 0 :
+          agendaFilter === '7' ? diff >= 0 && diff <= 7 :
+          diff >= 0 && diff <= 15)
+
+      return matchesSearch && matchesStatus && matchesAgenda
     })
-  }, [payoutList, search, statusFilter])
+  }, [payoutList, search, statusFilter, agendaFilter, today])
 
   const handleRequestSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -90,11 +140,12 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
 
   return (
     <div className="finance-dashboard-wrapper">
+      <span className="sr-only" data-finance-release={FINANCE_RELEASE_MARKER}>{FINANCE_RELEASE_MARKER}</span>
       {/* Back to Dashboard bar */}
       <div className="flex items-center gap-2 mb-3">
         <button
           onClick={() => onNavigate ? onNavigate('finance-dashboard') : window.history.back()}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 shadow-xs transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -179,6 +230,112 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
             Sacar
           </button>
         </article>
+      </section>
+
+      {/* Fase 24.7 — Agenda de Pagamentos ao Produtor */}
+      <section className="card-surface" style={{ marginTop: '16px', padding: '18px' }}>
+        <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
+          <div>
+            <span className="eyebrow">AGENDA DE PAGAMENTOS AO PRODUTOR</span>
+            <h3 style={{ marginTop: '4px' }}>Programação de repasses, compliance e liquidação bancária</h3>
+            <p className="page-subtitle" style={{ marginTop: '4px' }}>
+              Visão consolidada das próximas saídas financeiras para produtoras, com impacto previsto no saldo disponível.
+            </p>
+          </div>
+          <button
+            className="btn secondary"
+            onClick={() => onNavigate?.('finance-cashflow')}
+          >
+            <Calendar size={15} /> Ver no Fluxo de Caixa
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <button
+            type="button"
+            onClick={() => { setAgendaFilter('today'); setStatusFilter('all') }}
+            className={`text-left rounded-xl border p-4 transition ${agendaFilter === 'today' ? 'border-cyan-400/70 bg-cyan-400/10' : 'border-slate-700/70 bg-slate-900/40 hover:border-slate-600'}`}
+          >
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Hoje</span>
+            <strong className="block text-xl mt-1">{brl(payoutAgenda.todayItems.reduce((s, p) => s + p.net, 0))}</strong>
+            <span className="text-xs text-slate-400">{payoutAgenda.todayItems.length} pagamento(s) previsto(s)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setAgendaFilter('7'); setStatusFilter('all') }}
+            className={`text-left rounded-xl border p-4 transition ${agendaFilter === '7' ? 'border-cyan-400/70 bg-cyan-400/10' : 'border-slate-700/70 bg-slate-900/40 hover:border-slate-600'}`}
+          >
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Próximos 7 dias</span>
+            <strong className="block text-xl mt-1">{brl(payoutAgenda.next7.reduce((s, p) => s + p.net, 0))}</strong>
+            <span className="text-xs text-slate-400">{payoutAgenda.next7.length} liquidação(ões) programada(s)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setAgendaFilter('15'); setStatusFilter('all') }}
+            className={`text-left rounded-xl border p-4 transition ${agendaFilter === '15' ? 'border-cyan-400/70 bg-cyan-400/10' : 'border-slate-700/70 bg-slate-900/40 hover:border-slate-600'}`}
+          >
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Próximos 15 dias</span>
+            <strong className="block text-xl mt-1">{brl(payoutAgenda.next15.reduce((s, p) => s + p.net, 0))}</strong>
+            <span className="text-xs text-slate-400">{payoutAgenda.next15.length} pagamento(s) no horizonte</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setAgendaFilter('all'); setStatusFilter('em análise') }}
+            className="text-left rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 hover:border-amber-400/60 transition"
+          >
+            <span className="text-xs font-bold text-amber-300 uppercase tracking-wide">Aguardando compliance</span>
+            <strong className="block text-xl mt-1">{brl(payoutAgenda.reviewTotal)}</strong>
+            <span className="text-xs text-slate-400">{payoutAgenda.underReview.length} solicitação(ões) para análise</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 mt-4">
+          <div className="xl:col-span-2 rounded-xl border border-slate-700/70 bg-slate-900/35 p-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
+              <div>
+                <strong className="text-sm">Esteira de Repasse</strong>
+                <p className="text-xs text-slate-400 mt-1">Da solicitação do produtor até a confirmação bancária.</p>
+              </div>
+              {(agendaFilter !== 'all' || statusFilter !== 'all') && (
+                <button
+                  type="button"
+                  className="text-action"
+                  onClick={() => { setAgendaFilter('all'); setStatusFilter('all') }}
+                >
+                  <X size={13} /> Limpar filtro da agenda
+                </button>
+              )}
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              {[
+                ['1', 'Solicitado', payoutList.length],
+                ['2', 'Compliance', payoutAgenda.underReview.length],
+                ['3', 'Agendado', payoutList.filter(p => p.status === 'Agendado').length],
+                ['4', 'Processando', payoutList.filter(p => p.status === 'Processando').length],
+                ['5', 'Pago', payoutList.filter(p => p.status === 'Pago').length],
+              ].map(([step, label, count]) => (
+                <div key={String(step)} className="rounded-lg border border-slate-700/60 bg-slate-950/35 p-3">
+                  <span className="text-[11px] text-cyan-300 font-bold">ETAPA {step}</span>
+                  <strong className="block text-sm mt-1">{label}</strong>
+                  <span className="text-xs text-slate-400">{count} registro(s)</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-slate-700/70 bg-slate-900/35 p-4">
+            <strong className="text-sm">Impacto previsto no caixa</strong>
+            <div className="mt-3 space-y-2 text-sm">
+              <div className="flex justify-between gap-3"><span className="text-slate-400">Saldo disponível</span><strong>{brl(availableBalance)}</strong></div>
+              <div className="flex justify-between gap-3"><span className="text-slate-400">Repasses agendados</span><strong>{brl(payoutAgenda.scheduledTotal)}</strong></div>
+              <div className="flex justify-between gap-3"><span className="text-slate-400">Em compliance</span><strong>{brl(payoutAgenda.reviewTotal)}</strong></div>
+              <div className="border-t border-slate-700/70 pt-2 flex justify-between gap-3"><span className="text-slate-300">Saldo após agendados</span><strong className="text-emerald-400">{brl(payoutAgenda.projectedBalance)}</strong></div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Table Section */}

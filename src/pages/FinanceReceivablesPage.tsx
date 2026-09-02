@@ -52,6 +52,21 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
   const totalIn60Days = 171120.90
   const totalAlreadyAdvanced = 45000.00
 
+  // Fase 24.6 — agenda financeira de recebíveis.
+  // Em produção estes valores devem vir da API financeira/agendamentos da adquirente.
+  const receivablesAgenda = [
+    { label: 'Hoje', period: 'D+0', amount: 8202.50, count: 1, status: 'Processando' },
+    { label: 'Próximos 7 dias', period: 'D+7', amount: 31580.00, count: 24, status: 'Previsto' },
+    { label: 'Próximos 15 dias', period: 'D+15', amount: 74430.00, count: 61, status: 'Previsto' },
+    { label: 'Próximos 30 dias', period: 'D+30', amount: totalIn30Days, count: 138, status: 'Previsto' },
+    { label: '31 a 60 dias', period: 'D+60', amount: totalIn60Days, count: 117, status: 'Futuro' },
+  ]
+
+  const agendaMax = Math.max(...receivablesAgenda.map(item => item.amount))
+  const projected60Days = totalIn30Days + totalIn60Days
+  const projectedFees = projected60Days * 0.0328
+  const projectedNet = projected60Days - projectedFees
+
   const exportReceivablesCSV = () => {
     const headers = ['ID', 'Titulo', 'Evento', 'Cliente', 'Forma', 'Data Venda', 'Vencimento', 'Parcela', 'Valor Bruto (R$)', 'Taxa Gateway (R$)', 'Valor Liquido (R$)', 'Status']
     const rows = [headers.join(';')]
@@ -84,12 +99,13 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
   }
 
   return (
-    <div className="finance-dashboard-wrapper">
+    <div className="finance-dashboard-wrapper" data-finance-release="24.6-receivables-agenda-2026-09-02">
+      <span className="sr-only">24.6-receivables-agenda-2026-09-02</span>
       {/* Back to Dashboard bar */}
       <div className="flex items-center gap-2 mb-3">
         <button
           onClick={() => onNavigate ? onNavigate('finance-dashboard') : window.history.back()}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 shadow-xs transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -176,6 +192,95 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
             </div>
           </div>
         </article>
+      </section>
+
+      {/* Fase 24.6 — Agenda Financeira */}
+      <section className="card-surface" style={{ marginBottom: '16px', padding: '18px' }}>
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <span className="eyebrow">AGENDA FINANCEIRA</span>
+            <h2 style={{ margin: '4px 0 5px', fontSize: '18px', fontWeight: 800 }}>Recebimentos previstos</h2>
+            <p className="page-subtitle" style={{ margin: 0 }}>
+              Visão do calendário de liquidação para antecipar caixa, repasses e compromissos financeiros.
+            </p>
+          </div>
+          <button
+            className="tool-btn"
+            onClick={() => onNavigate?.('finance-cashflow')}
+            title="Abrir Fluxo de Caixa"
+          >
+            <Calendar size={15} /> Abrir Fluxo de Caixa
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3 mb-4">
+          {receivablesAgenda.map(item => (
+            <article key={item.period} className="rounded-xl border border-slate-700/70 bg-slate-900/45 p-4">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-[11px] font-extrabold tracking-wide text-slate-400">{item.period}</span>
+                <span className="text-[10px] font-bold px-2 py-1 rounded-full border border-slate-700 text-slate-300">
+                  {item.status}
+                </span>
+              </div>
+              <strong className="block text-base text-white">{brl(item.amount)}</strong>
+              <span className="block text-xs text-slate-400 mt-1">{item.label}</span>
+              <span className="block text-[11px] text-slate-500 mt-2">{item.count} liquidações previstas</span>
+            </article>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-[1.55fr_1fr] gap-4">
+          <div className="rounded-xl border border-slate-700/70 bg-slate-900/35 p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <strong className="text-sm text-white">Projeção de liquidação</strong>
+                <div className="text-xs text-slate-500 mt-1">Distribuição dos recebíveis por janela financeira</div>
+              </div>
+              <span className="text-xs font-bold text-slate-400">Próximos 60 dias</span>
+            </div>
+            <div className="space-y-3">
+              {receivablesAgenda.map(item => (
+                <div key={`bar-${item.period}`} className="grid grid-cols-[95px_1fr_115px] items-center gap-3">
+                  <span className="text-xs text-slate-400">{item.period}</span>
+                  <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-cyan-500/80"
+                      style={{ width: `${Math.max(5, (item.amount / agendaMax) * 100)}%` }}
+                    />
+                  </div>
+                  <strong className="text-xs text-right text-slate-200">{brl(item.amount)}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-slate-700/70 bg-slate-900/35 p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <ShieldCheck size={16} className="text-emerald-400" />
+              <strong className="text-sm text-white">Resumo de caixa projetado</strong>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between gap-3 text-xs">
+                <span className="text-slate-400">Bruto previsto (60 dias)</span>
+                <strong className="text-slate-100">{brl(projected60Days)}</strong>
+              </div>
+              <div className="flex justify-between gap-3 text-xs">
+                <span className="text-slate-400">Taxas estimadas</span>
+                <strong className="text-amber-300">- {brl(projectedFees)}</strong>
+              </div>
+              <div className="border-t border-slate-700 pt-3 flex justify-between gap-3">
+                <span className="text-xs font-bold text-slate-300">Líquido projetado</span>
+                <strong className="text-sm text-emerald-400">{brl(projectedNet)}</strong>
+              </div>
+              <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 flex gap-2">
+                <AlertCircle size={15} className="text-amber-400 shrink-0 mt-0.5" />
+                <span className="text-[11px] leading-4 text-slate-400">
+                  Valores são previsões de liquidação e podem variar por estornos, chargebacks e regras da adquirente.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Table Section */}

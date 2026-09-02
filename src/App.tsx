@@ -695,13 +695,13 @@ export default function App() {
           <FinanceCashOperationsPage mode="statement" events={visibleEvents} producerId={scopedProducerId ?? undefined} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-payouts' && (
-          <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} eventId={selectedEvent?.id} initialTab="payouts" notify={notify} onBack={() => setPage('finance-dashboard')} />
+          <FinancePayoutsPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-cashflow' && (
           <FinanceCashFlowPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-receivables' && (
-          <FinanceOperations360Page producerId={scopedProducerId ?? undefined} initialTab="receivables" notify={notify} />
+          <FinanceReceivablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-payables' && (
           <FinancePayablesPage events={visibleEvents} notify={notify} onNavigate={navigate} />
