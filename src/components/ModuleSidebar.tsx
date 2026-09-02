@@ -1,4 +1,5 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
+// FASE 25.3.2 RELEASE: 25.3.2-premium-sidebar-typography-2026-09-02
 import { canAccess, type AppUser } from '../auth/model'
 import {
   ArrowLeft, WalletCards, HandCoins, TrendingUp, ReceiptText, TrendingDown, Landmark, Scale,
@@ -138,7 +139,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
   const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
 
   return (
-    <aside className="module-sidebar">
+    <aside className="module-sidebar" data-finance-release="25.3.2-premium-sidebar-typography-2026-09-02">
       <div className="sidebar-top-bar">
         <button className="back-module" onClick={onHome}>
           <ArrowLeft size={18} />
@@ -283,11 +284,20 @@ function CollapsibleSection({
 }) {
   return (
     <div className="collapsible-nav-section">
-      <button type="button" className="collapsible-section-head" onClick={onToggle}>
+      <button
+        type="button"
+        className={`collapsible-section-head ${open ? 'open' : ''}`}
+        onClick={onToggle}
+        aria-expanded={open}
+      >
         <span>{label}</span>
-        {open ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
+        <span className="collapsible-section-chevron" aria-hidden="true">
+          <ChevronRight size={14} />
+        </span>
       </button>
-      {open && <div className="collapsible-section-body">{children}</div>}
+      <div className={`collapsible-section-body ${open ? 'open' : ''}`} aria-hidden={!open}>
+        <div className="collapsible-section-inner">{children}</div>
+      </div>
     </div>
   )
 }
@@ -308,9 +318,13 @@ function NavItem({
     <button
       className={`module-nav-item ${active ? 'active' : ''} ${indent ? 'indent' : ''}`}
       onClick={() => onNavigate(item.key)}
+      title={item.label}
+      aria-current={active ? 'page' : undefined}
     >
-      <Icon size={19} strokeWidth={1.9} />
-      <span>{item.label}</span>
+      <span className="module-nav-icon" aria-hidden="true">
+        <Icon size={18} strokeWidth={1.8} />
+      </span>
+      <span className="module-nav-label">{item.label}</span>
       {item.badge && <span className="nav-item-badge">{item.badge}</span>}
       {item.tier === 'expert' && <span className="expert-dot" title="Recurso Expert" />}
     </button>

@@ -69,19 +69,148 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
 .phase6-shell .global-profile .avatar{width:40px;height:40px;font-weight:500;background:#e8eaed}
 .phase6-shell .global-profile .online{width:12px;height:12px;background:#0bb18d}
 
-.module-sidebar{
-  grid-column:1;grid-row:2/5;background:#222a36;color:white;
-  min-height:calc(100vh - 72px);border-right:1px solid #303946;
-  position:sticky;top:72px;height:calc(100vh - 72px);overflow-y:auto;z-index:45;
-  scrollbar-width:thin;scrollbar-color:#8390a0 transparent;
+.module-sidebar {
+  grid-column: 1;
+  grid-row: 2/5;
+  background: #171c25;
+  color: #dce4f2;
+  min-height: calc(100vh - 72px);
+  border-right: 1px solid #28303d;
+  position: sticky;
+  top: 72px;
+  height: calc(100vh - 72px);
+  overflow-y: auto;
+  z-index: 45;
+  scrollbar-width: thin;
+  scrollbar-color: #3b4657 transparent;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
-.module-sidebar::-webkit-scrollbar{width:8px}.module-sidebar::-webkit-scrollbar-thumb{background:#778494;border-radius:8px;border:2px solid #222a36}
-.back-module{
-  width:100%;height:98px;padding:0 19px;border:0;border-bottom:1px solid rgba(255,255,255,.04);
-  background:#222a36;color:#fff;display:flex;align-items:center;gap:14px;font-size:17px;font-weight:700;text-align:left;
+.module-sidebar::-webkit-scrollbar {
+  width: 6px;
 }
-.back-module span{flex:1}.back-module>i{width:43px;height:43px;border-radius:50%;background:#38424f;display:grid;place-items:center;position:relative;font-style:normal}.back-module>i svg{position:absolute}.back-module>i svg:first-child{transform:translateX(-4px)}.back-module>i svg:last-child{transform:translateX(4px)}
-.module-nav{padding:0 0 24px}.module-nav-item{width:100%;min-height:52px;border:0;background:transparent;color:#f7f9fc;display:flex;align-items:center;gap:20px;padding:0 20px;font-size:16px;font-weight:600;text-align:left}.module-nav-item svg{width:23px;color:#f4f7fb;stroke-width:1.8;flex:none}.module-nav-item span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.module-nav-item:hover{background:#343e4a}.module-nav-item.active{background:#4a535f}.module-nav-item.active svg{color:#fff}.module-caption{margin:0;padding:17px 15px 13px;color:#a2aab5;font-size:13px;font-weight:600}.nav-divider{height:1px;background:#3c4552;margin-top:0}
+.module-sidebar::-webkit-scrollbar-thumb {
+  background: #3b4657;
+  border-radius: 6px;
+}
+.sidebar-top-bar {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.back-module {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: #171c25;
+  color: #dce4f2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+.back-module:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+}
+.back-module span {
+  flex: 1;
+}
+.module-nav {
+  padding: 8px 0 24px;
+  display: flex;
+  flex-direction: column;
+}
+.module-caption {
+  margin: 0;
+  padding: 14px 16px 6px;
+  color: #8490a5;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.module-nav-item {
+  width: calc(100% - 16px);
+  height: 38px;
+  min-height: 38px;
+  border: 0;
+  background: transparent;
+  color: #b9c5d8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  margin: 1px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+.module-nav-item:hover {
+  background: #242c3a;
+  color: #ffffff;
+}
+.module-nav-item.active {
+  background: #242c3a;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: inset 3px 0 0 #ff5a2a;
+}
+.nav-item-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: #8fa0b5;
+}
+.module-nav-item:hover .nav-item-icon,
+.module-nav-item.active .nav-item-icon {
+  color: #ffffff;
+}
+.nav-item-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.3;
+}
+.module-nav-item.indent {
+  padding-left: 24px;
+}
+.module-nav-item.indent .nav-item-label {
+  font-size: 12.5px;
+}
+.nav-item-badge {
+  margin-left: auto;
+  background: #323b4c;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.module-nav-item.active .nav-item-badge {
+  background: #ff5a2a;
+  color: #ffffff;
+}
+.nav-divider {
+  height: 1px;
+  background: #28303d;
+  margin: 8px 12px;
+}
 
 .module-titlebar{
   grid-column:2;grid-row:2;background:#fff;border-bottom:1px solid #cfd6df;
@@ -1348,38 +1477,44 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
 
 /* Collapsible Nav Sections */
 .collapsible-nav-section {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   margin-top: 6px;
-  padding-top: 4px;
+  padding-top: 2px;
 }
 .collapsible-section-head {
-  width: 100%;
-  height: 40px;
-  padding: 0 16px;
+  width: calc(100% - 16px);
+  height: 34px;
+  padding: 0 10px;
+  margin: 1px 8px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: transparent;
   border: 0;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
+  color: #8490a5;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: all 0.15s ease;
+  font-family: inherit;
 }
 .collapsible-section-head:hover {
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.04);
+  color: #dce4f2;
 }
 .collapsible-section-body {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 }
 .module-nav-item.indent {
-  padding-left: 28px;
+  padding-left: 24px;
+}
+.module-nav-item.indent .nav-item-label {
+  font-size: 12.5px;
 }
 
 /* Finance Dashboard Wrapper */
