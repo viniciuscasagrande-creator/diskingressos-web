@@ -9,7 +9,8 @@ const uiRequired = [
   'AGENDA DE PAGAMENTOS AO PRODUTOR','Esteira de Repasse','Impacto previsto no caixa',
   '24.8-event-financial-negotiation-2026-09-02','Central de negociação econômica por evento','Histórico de alterações','SALVAR NEGOCIAÇÃO','Edição protegida',
   '24.9-independent-refunds-2026-09-02','Central de Estornos, Reembolsos & Chargebacks','ESTORNO','Fila de Aprovações','Montante Devolvido','Zona de Segurança',
-  '25.3.2.1-premium-sidebar-auto-collapse-2026-09-02','module-nav-icon','module-nav-label','collapsible-section-chevron'
+  '25.3.2.1-premium-sidebar-auto-collapse-2026-09-02','module-nav-icon','module-nav-label','collapsible-section-chevron',
+  '25.3.3-navigation-rail-premium-2026-09-02','rail-icon','rail-label'
 ]
 
 const architectureRequired = [
@@ -43,4 +44,4 @@ const architectureBody=body([...collect('src'),...collect('server'),...collect('
 assertContains('src/UI',srcBody,uiRequired)
 assertContains('dist/UI',distBody,uiRequired)
 assertContains('arquitetura backend/db',architectureBody,architectureRequired)
-console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + Fases 25.0 a 25.3.2.1 confirmadas no build.')
+console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + Fases 25.0 a 25.3.3 confirmadas no build.')
