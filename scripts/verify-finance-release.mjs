@@ -38,7 +38,13 @@ const required = [
   '25.0-master-erp-crm-finance-producer-2026-09-02',
   'Ledger append-only',
   'financial_agreement_versions',
-  'financial_audit_logs'
+  'financial_audit_logs',
+  '25.1-ledger-chart-of-accounts-2026-09-02',
+  'Ledger Contábil e Plano de Contas',
+  'defaultTicketingChartOfAccounts',
+  'ledger_account_balances',
+  'ledger_producer_balances',
+  'assert_ledger_batch_balanced'
 ]
 
 function collect(dir) {
@@ -65,4 +71,4 @@ function assertContains(scope, files, terms) {
 
 assertContains('src', collect('src'), required)
 assertContains('dist', collect('dist'), required)
-console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + fundação 25.0 confirmadas no build.')
+console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + Fases 25.0 e 25.1 confirmadas no build.')
