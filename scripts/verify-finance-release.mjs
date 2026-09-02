@@ -81,3 +81,9 @@ const phase2561 = '25.6.1-sidebar-reference-navigation-2026-09-02';
 const phase2561Body = body([...collect('src'), ...collect('.')]);
 assertContains('Fase 25.6.1', phase2561Body, [phase2561, 'safesaff.sidebar.collapsed', 'safesaff-sidebar--collapsed', 'safesaff-sidebar-toggle', 'PanelLeftClose', 'PanelLeftOpen']);
 console.log('[FINANCE RELEASE] Fase 25.6.1 Sidebar Premium confirmada.');
+
+// Fase 25.7 — Integrações de Marketing 360°
+const phase257 = '25.7-marketing-integrations-360-2026-09-02';
+const phase257Body = body([...collect('src'), ...collect('.')]);
+assertContains('Fase 25.7', phase257Body, [phase257, 'marketingIntegrationCatalog', 'TrackingIntegrationsManager', 'tiktok', 'clarity', 'microsoft_ads', 'pinterest', 'snapchat', 'linkedin']);
+console.log('[FINANCE RELEASE] Fase 25.7 Integrações de Marketing 360° confirmada.');

@@ -90,7 +90,7 @@ marketingRouter.post('/utm/actions',requireRoles(...marketingWriteRoles),async(r
  res.status(201).json(row)
 })
 
-const providers=['meta_pixel','ga4','gtm','google_ads','whatsapp','email','automation_api'] as const
+const providers=['meta_pixel','meta_capi','tiktok_pixel','tiktok_events_api','ga4','gtm','google_ads','linkedin_insight','pinterest_tag','snapchat_pixel','microsoft_ads','microsoft_clarity','whatsapp','email','automation_api'] as const
 const trackingSchema=z.object({provider:z.enum(providers),scope:z.enum(['global','producer','event']),mode:z.enum(['inherit','own','disabled']),externalId:z.string().optional().nullable(),configJson:z.string().optional().nullable(),producerId:z.number().int().positive().optional().nullable(),eventId:z.number().int().positive().optional().nullable()})
 marketingRouter.get('/tracking',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{const producerId=requestedProducerId(req);const eventId=req.query.eventId?Number(req.query.eventId):undefined;const rows=await prisma.trackingConfig.findMany({where:{OR:[{scope:'global'},...(producerId?[{scope:'producer',producerId}]:[]),...(eventId?[{scope:'event',eventId}]:[])]},orderBy:[{provider:'asc'},{scope:'asc'}]});res.json(rows)})
 marketingRouter.put('/tracking',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
@@ -175,7 +175,7 @@ marketingRouter.delete('/integrations/:id',requireRoles(...marketingWriteRoles),
 
 marketingRouter.post('/integrations/:id/test',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
   const id=Number(req.params.id);const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
-  const ok=Boolean(current.pixelId&&current.tokenCiphertext&&current.status==='ativo');const now=new Date();const message=ok?'Configuração local válida. Pronta para envio à Conversion API.':'Pixel, token ou status da integração precisam ser revisados.'
+  const ok=Boolean(current.pixelId&&current.tokenCiphertext&&current.status==='ativo');const now=new Date();const message=ok?`Configuração local de ${current.provider} válida. Credencial criptografada e integração pronta para uso pelo conector do provedor.`:'Identificador, credencial ou status da integração precisam ser revisados.'
   const updated=await prisma.trackingIntegration.update({where:{id},data:{lastTestAt:now,lastTestStatus:ok?'ok':'erro',lastError:ok?null:message}})
   await prisma.trackingDeliveryLog.create({data:{integrationId:id,producerId:current.producerId,eventName:'ConnectionTest',status:ok?'ok':'erro',responseCode:ok?200:400,message}})
   await audit(req,'marketing.integration.test','TrackingIntegration',String(id),{ok})

@@ -9,7 +9,7 @@ import {
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
   FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2,
-  PanelLeftClose, PanelLeftOpen
+  PanelLeftClose, PanelLeftOpen, Play, Activity
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -102,6 +102,8 @@ const marketingItems: Item[] = [
   { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
   { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },
   { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
+  { key: 'marketing-tiktok-ads', label: 'TikTok Ads', icon: Play },
+  { key: 'marketing-tracking', label: 'Pixels & Integrações', icon: Activity, badge: '360°' },
   { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
   { key: 'marketing-utm-central', label: 'Central UTM & Conversões', icon: Link2, badge: 'Novo' },
   { key: 'marketing-whatsapp', label: 'WhatsApp', icon: MessageCircle },
@@ -157,7 +159,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
     <aside
       className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''}`}
       aria-label="Navegação principal"
-      data-finance-release="25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
+      data-finance-release="25.7-marketing-integrations-360-2026-09-02 25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
     >
       <div className="sidebar-top-bar safesaff-sidebar-header">
         <button className="back-module safesaff-sidebar-home" onClick={onHome} title="Ir para o início" aria-label="Ir para o início">
