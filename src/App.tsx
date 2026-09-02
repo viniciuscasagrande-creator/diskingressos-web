@@ -416,7 +416,8 @@ export default function App() {
             const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
             if (isGlobalAdmin(u)) tasks.push(getUsers().then(setUsers))
             await Promise.all(tasks)
-            window.history.pushState({}, '', isGlobalAdmin(u) ? '/' : '/dashboard')
+            const targetUrl = initialPage === firstPageFor(u) ? (isGlobalAdmin(u) ? '/' : '/dashboard') : (window.location.pathname.startsWith('/app/') ? window.location.pathname : `/app/${initialPage}`)
+            window.history.pushState({ page: initialPage }, '', targetUrl)
             return u
           } catch (e) {
             // Nunca simular login de produtor com seed local quando a API/cloud falhar.
