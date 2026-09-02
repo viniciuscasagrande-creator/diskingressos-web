@@ -308,7 +308,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <div className="flex items-center gap-3">
               <button
                 onClick={() => onNavigate ? onNavigate('profile-dashboard') : window.history.back()}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-200 border border-slate-700/80 transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-200 border border-slate-200 transition cursor-pointer"
                 title="Voltar ao Painel Principal"
               >
                 <ArrowLeft size={14} className="text-[#06B6D4]" />

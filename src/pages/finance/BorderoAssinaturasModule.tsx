@@ -106,7 +106,7 @@ export const BorderoAssinaturasModule: React.FC<BorderoAssinaturasModuleProps> =
           <div>
             <div className="flex items-center gap-2">
               <span className="text-[18px] font-black text-slate-900">DiskIngressos</span>
-              <span className="rounded bg-slate-900 text-white px-2 py-0.5 text-[10px] font-bold uppercase">
+              <span className="rounded bg-white text-slate-900 px-2 py-0.5 text-[10px] font-bold uppercase">
                 BORDERÔ OFICIAL DE FECHAMENTO
               </span>
             </div>
@@ -218,7 +218,7 @@ export const BorderoAssinaturasModule: React.FC<BorderoAssinaturasModuleProps> =
             <Shield size={18} className="text-[#10B981]" />
             <div>
               <span className="font-bold block text-slate-800">Autenticidade e Assinatura Digital</span>
-              <span className="font-mono text-[10px] text-slate-400">
+              <span className="font-mono text-[10px] text-slate-500">
                 HASH: sha256-8a901f4c78d02e89b41a7f01c900e234bc89f001
               </span>
             </div>

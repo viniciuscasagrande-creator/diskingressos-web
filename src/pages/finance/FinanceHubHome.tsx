@@ -97,7 +97,7 @@ export const FinanceHubHome: React.FC<FinanceHubHomeProps> = ({ onSelectModule }
               onClick={() => setActiveCategory(cat.id)}
               className={`rounded-btn px-3 py-2 text-xs font-bold transition whitespace-nowrap select-none ${
                 activeCategory === cat.id
-                  ? 'bg-[#1677FF] text-white shadow-xs'
+                  ? 'bg-[#1677FF] text-slate-900 shadow-xs'
                   : 'bg-[#F8FAFC] border border-[#E2E8F0] text-[#64748B] hover:bg-white hover:text-[#0E1726]'
               }`}
             >

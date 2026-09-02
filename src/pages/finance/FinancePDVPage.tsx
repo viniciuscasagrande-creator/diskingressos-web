@@ -190,7 +190,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -198,28 +198,28 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
       </div>
 
       {/* Executive Header */}
-      <div className="rounded-xl p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-md border border-slate-700/60">
+      <div className="rounded-xl p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-slate-900 shadow-md border border-slate-200">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Store className="text-amber-400" size={24} />
-              <h2 className="text-xl font-black tracking-tight text-white">
+              <h2 className="text-xl font-black tracking-tight text-slate-900">
                 DISKINGRESSOS · PDV FINANCEIRO
               </h2>
             </div>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-700">
               Empresa: DiskIngressos S.A. | Monitoramento de Bilheterias Físicas e PDVs Integrados
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 text-center">
-              <span className="text-[10px] uppercase font-bold text-slate-300 block">Caixas Abertos</span>
-              <span className="text-base font-black text-white">{caixas.length}</span>
+              <span className="text-[10px] uppercase font-bold text-slate-700 block">Caixas Abertos</span>
+              <span className="text-base font-black text-slate-900">{caixas.length}</span>
             </div>
             <div className="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 text-center">
-              <span className="text-[10px] uppercase font-bold text-slate-300 block">Operadores</span>
-              <span className="text-base font-black text-white">42</span>
+              <span className="text-[10px] uppercase font-bold text-slate-700 block">Operadores</span>
+              <span className="text-base font-black text-slate-900">42</span>
             </div>
             <div className="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -234,7 +234,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
             </button>
             <button
               onClick={handleSimulateSale}
-              className="bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 transition border border-slate-600"
+              className="bg-slate-700 hover:bg-slate-600 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg flex items-center gap-1.5 transition border border-slate-600"
               title="Simular Venda em Tempo Real"
             >
               <RefreshCw size={13} />
@@ -253,44 +253,44 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
 
       {/* Primary KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-xl shadow-xs">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Receita do Dia</span>
+        <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Receita do Dia</span>
           <h3 className="text-lg font-black text-sky-400">{formatMoney(totalRevenue)}</h3>
         </div>
-        <div className="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-xl shadow-xs">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Ingressos Vendidos</span>
+        <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Ingressos Vendidos</span>
           <h3 className="text-lg font-black text-emerald-400">{totalSold.toLocaleString('pt-BR')}</h3>
         </div>
-        <div className="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-xl shadow-xs">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Ticket Médio</span>
+        <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Ticket Médio</span>
           <h3 className="text-lg font-black text-indigo-400">{formatMoney(avgTicket)}</h3>
         </div>
-        <div className="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-xl shadow-xs">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">PIX Recebido</span>
+        <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">PIX Recebido</span>
           <h3 className="text-lg font-black text-amber-400">{formatMoney(totalPix)}</h3>
         </div>
-        <div className="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-xl shadow-xs">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Crédito / Débito</span>
+        <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Crédito / Débito</span>
           <h3 className="text-lg font-black text-cyan-400">{formatMoney(totalCards)}</h3>
         </div>
       </div>
 
       {/* Secondary KPI Info Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-        <div className="bg-slate-900/60 border border-slate-800 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-400 flex items-center gap-1.5"><Banknote size={14} className="text-emerald-400" /> Dinheiro em Caixa:</span>
-          <span className="font-bold text-white">{formatMoney(totalCash)}</span>
+        <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+          <span className="text-slate-500 flex items-center gap-1.5"><Banknote size={14} className="text-emerald-400" /> Dinheiro em Caixa:</span>
+          <span className="font-bold text-slate-900">{formatMoney(totalCash)}</span>
         </div>
-        <div className="bg-slate-900/60 border border-slate-800 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-400 flex items-center gap-1.5"><X size={14} className="text-rose-400" /> Cancelamentos:</span>
+        <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+          <span className="text-slate-500 flex items-center gap-1.5"><X size={14} className="text-rose-400" /> Cancelamentos:</span>
           <span className="font-bold text-rose-400">{formatMoney(totalCancel)}</span>
         </div>
-        <div className="bg-slate-900/60 border border-slate-800 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-400 flex items-center gap-1.5"><RotateCcw size={14} className="text-amber-400" /> Estornos:</span>
+        <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+          <span className="text-slate-500 flex items-center gap-1.5"><RotateCcw size={14} className="text-amber-400" /> Estornos:</span>
           <span className="font-bold text-amber-400">{formatMoney(totalRefunds)}</span>
         </div>
-        <div className="bg-slate-900/60 border border-slate-800 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-400 flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-400" /> Aprovação Cartão:</span>
+        <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
+          <span className="text-slate-500 flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-400" /> Aprovação Cartão:</span>
           <span className="font-bold text-emerald-400">98,9%</span>
         </div>
       </div>
@@ -300,9 +300,9 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
         {/* Left Column: Tables */}
         <div className="lg:col-span-2 space-y-5">
           {/* Tabela de Desempenho por PDV */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-3.5 border-b border-slate-800 flex justify-between items-center bg-slate-800/40">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-3.5 border-b border-slate-200 flex justify-between items-center bg-slate-100">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <Store size={16} className="text-sky-400" />
                 Desempenho por Pontos de Venda (PDVs)
               </h3>
@@ -313,7 +313,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                  <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                     <th className="py-2.5 px-3">Ponto de Venda</th>
                     <th className="py-2.5 px-2 text-center">Operadores</th>
                     <th className="py-2.5 px-2 text-center">Vendas</th>
@@ -322,20 +322,20 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
                     <th className="py-2.5 px-2 text-center">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {pdvs.map(p => (
                     <tr
                       key={p.id}
                       onClick={() => setSelectedPDV(p)}
-                      className={`hover:bg-slate-800/50 cursor-pointer transition ${
-                        selectedPDV?.id === p.id ? 'bg-sky-950/40 font-semibold text-white' : ''
+                      className={`hover:bg-slate-100 cursor-pointer transition ${
+                        selectedPDV?.id === p.id ? 'bg-sky-950/40 font-semibold text-slate-900' : ''
                       }`}
                     >
-                      <td className="py-2.5 px-3 font-medium text-white">{p.name}</td>
-                      <td className="py-2.5 px-2 text-center text-slate-400">{p.operators || '—'}</td>
+                      <td className="py-2.5 px-3 font-medium text-slate-900">{p.name}</td>
+                      <td className="py-2.5 px-2 text-center text-slate-500">{p.operators || '—'}</td>
                       <td className="py-2.5 px-2 text-center font-mono">{p.salesCount}</td>
                       <td className="py-2.5 px-3 text-right font-bold text-emerald-400 font-mono">{formatMoney(p.revenue)}</td>
-                      <td className="py-2.5 px-3 text-right font-mono text-slate-300">{formatMoney(p.ticket)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-slate-700">{formatMoney(p.ticket)}</td>
                       <td className="py-2.5 px-2 text-center">
                         <span className="text-[10px] bg-emerald-950/60 text-emerald-400 px-2 py-0.5 rounded font-bold border border-emerald-800/40">
                           {p.status}
@@ -349,9 +349,9 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
           </div>
 
           {/* Monitor de Caixas Físicos (Terminais) */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-3.5 border-b border-slate-800 bg-slate-800/40 flex justify-between items-center">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <MonitorSmartphone size={16} className="text-amber-400" />
                 Monitor de Caixas Físicos (Terminais)
               </h3>
@@ -359,7 +359,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                  <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                     <th className="py-2.5 px-3">Caixa</th>
                     <th className="py-2.5 px-3">Ponto de Venda</th>
                     <th className="py-2.5 px-3">Operador</th>
@@ -368,12 +368,12 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
                     <th className="py-2.5 px-3 text-center">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {caixas.map(c => (
-                    <tr key={c.id} className="hover:bg-slate-800/50">
+                    <tr key={c.id} className="hover:bg-slate-100">
                       <td className="py-2.5 px-3 font-mono font-bold text-sky-400">{c.id}</td>
-                      <td className="py-2.5 px-3 text-white">{c.pdv}</td>
-                      <td className="py-2.5 px-3 text-slate-300">{c.operator}</td>
+                      <td className="py-2.5 px-3 text-slate-900">{c.pdv}</td>
+                      <td className="py-2.5 px-3 text-slate-700">{c.operator}</td>
                       <td className="py-2.5 px-2 text-center font-mono">{c.sales}</td>
                       <td className="py-2.5 px-3 text-right font-bold text-emerald-400 font-mono">{formatMoney(c.value)}</td>
                       <td className="py-2.5 px-3 text-center">
@@ -400,49 +400,49 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
         <div className="space-y-5">
           {/* Card Detalhes do PDV Selecionado */}
           {selectedPDV && (
-            <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-4 shadow-sm">
-              <div className="border-b border-slate-800 pb-3">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Detalhes do Ponto de Venda</span>
-                <h4 className="text-base font-extrabold text-white mt-0.5">{selectedPDV.name}</h4>
+            <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-4 shadow-sm">
+              <div className="border-b border-slate-200 pb-3">
+                <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">Detalhes do Ponto de Venda</span>
+                <h4 className="text-base font-extrabold text-slate-900 mt-0.5">{selectedPDV.name}</h4>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
-                  <span className="text-slate-400 block text-[10px] uppercase">Receita Total</span>
+                <div className="bg-slate-100 p-2.5 rounded-lg border border-slate-200">
+                  <span className="text-slate-500 block text-[10px] uppercase">Receita Total</span>
                   <span className="font-bold text-emerald-400 text-sm font-mono">{formatMoney(selectedPDV.revenue)}</span>
                 </div>
-                <div className="bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
-                  <span className="text-slate-400 block text-[10px] uppercase">Ingressos</span>
-                  <span className="font-bold text-white text-sm font-mono">{selectedPDV.salesCount}</span>
+                <div className="bg-slate-100 p-2.5 rounded-lg border border-slate-200">
+                  <span className="text-slate-500 block text-[10px] uppercase">Ingressos</span>
+                  <span className="font-bold text-slate-900 text-sm font-mono">{selectedPDV.salesCount}</span>
                 </div>
               </div>
 
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">📱 PIX Recebido:</span>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">📱 PIX Recebido:</span>
                   <span className="font-mono text-amber-400 font-semibold">{formatMoney(selectedPDV.pix)}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">💳 Cartão de Crédito:</span>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">💳 Cartão de Crédito:</span>
                   <span className="font-mono text-sky-400 font-semibold">{formatMoney(selectedPDV.credit)}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">💳 Cartão de Débito:</span>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">💳 Cartão de Débito:</span>
                   <span className="font-mono text-cyan-400 font-semibold">{formatMoney(selectedPDV.debit)}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">💵 Dinheiro em Espécie:</span>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">💵 Dinheiro em Espécie:</span>
                   <span className="font-mono text-emerald-400 font-semibold">{formatMoney(selectedPDV.cash)}</span>
                 </div>
                 {selectedPDV.cancel > 0 && (
-                  <div className="flex justify-between py-1 border-b border-slate-800/60">
-                    <span className="text-slate-400">❌ Cancelamentos:</span>
+                  <div className="flex justify-between py-1 border-b border-slate-200">
+                    <span className="text-slate-500">❌ Cancelamentos:</span>
                     <span className="font-mono text-rose-400 font-semibold">{formatMoney(selectedPDV.cancel)}</span>
                   </div>
                 )}
                 {selectedPDV.refund > 0 && (
-                  <div className="flex justify-between py-1 border-b border-slate-800/60">
-                    <span className="text-slate-400">🔄 Estornos Efetuados:</span>
+                  <div className="flex justify-between py-1 border-b border-slate-200">
+                    <span className="text-slate-500">🔄 Estornos Efetuados:</span>
                     <span className="font-mono text-rose-300 font-semibold">{formatMoney(selectedPDV.refund)}</span>
                   </div>
                 )}
@@ -451,49 +451,49 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
           )}
 
           {/* Formas de Pagamento Share */}
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-3 shadow-sm">
-            <h4 className="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-sm">
+            <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-2">
               <CreditCard size={16} className="text-indigo-400" />
               Volume por Método de Pagamento
             </h4>
 
             <div className="space-y-2.5 text-xs">
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Cartão de Crédito (46,8%)</span>
-                  <span className="font-mono font-bold text-white">{formatMoney(totalCards * 0.75)}</span>
+                  <span className="font-mono font-bold text-slate-900">{formatMoney(totalCards * 0.75)}</span>
                 </div>
-                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-sky-500 rounded-full" style={{ width: '46.8%' }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>PIX Instantâneo (34,8%)</span>
-                  <span className="font-mono font-bold text-white">{formatMoney(totalPix)}</span>
+                  <span className="font-mono font-bold text-slate-900">{formatMoney(totalPix)}</span>
                 </div>
-                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-amber-500 rounded-full" style={{ width: '34.8%' }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Cartão de Débito (12,2%)</span>
-                  <span className="font-mono font-bold text-white">{formatMoney(totalCards * 0.25)}</span>
+                  <span className="font-mono font-bold text-slate-900">{formatMoney(totalCards * 0.25)}</span>
                 </div>
-                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-cyan-500 rounded-full" style={{ width: '12.2%' }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Dinheiro (6,2%)</span>
-                  <span className="font-mono font-bold text-white">{formatMoney(totalCash)}</span>
+                  <span className="font-mono font-bold text-slate-900">{formatMoney(totalCash)}</span>
                 </div>
-                <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-emerald-500 rounded-full" style={{ width: '6.2%' }} />
                 </div>
               </div>
@@ -505,91 +505,91 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
       {/* Modal: Novo PDV */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-100">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <Store size={16} className="text-amber-400" />
                 Cadastrar Novo Ponto de Venda (PDV)
               </h3>
-              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-slate-900">
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleCreatePDV} className="p-5 space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Nome do PDV / Local</label>
+                <label className="block text-slate-700 font-semibold mb-1">Nome do PDV / Local</label>
                 <input
                   type="text"
                   required
                   value={newPDVName}
                   onChange={e => setNewPDVName(e.target.value)}
                   placeholder="Ex: Bilheteria Portão Principal"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-hidden focus:border-amber-400"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 placeholder-slate-500 focus:outline-hidden focus:border-amber-400"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Qtd. Operadores</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Qtd. Operadores</label>
                   <input
                     type="number"
                     min="1"
                     value={newPDVOps}
                     onChange={e => setNewPDVOps(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Qtd. Caixas Físicos</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Qtd. Caixas Físicos</label>
                   <input
                     type="number"
                     min="1"
                     value={newPDVCaixas}
                     onChange={e => setNewPDVCaixas(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Nome do Operador Principal</label>
+                <label className="block text-slate-700 font-semibold mb-1">Nome do Operador Principal</label>
                 <input
                   type="text"
                   required
                   value={newPDVOpName}
                   onChange={e => setNewPDVOpName(e.target.value)}
                   placeholder="Ex: Marcelo Silva"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Abertura PIX (R$)</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Abertura PIX (R$)</label>
                   <input
                     type="number"
                     value={newPDVPix}
                     onChange={e => setNewPDVPix(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Abertura Crédito (R$)</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Abertura Crédito (R$)</label>
                   <input
                     type="number"
                     value={newPDVCredit}
                     onChange={e => setNewPDVCredit(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg"
                 >
                   Cancelar
                 </button>
@@ -608,47 +608,47 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
       {/* Modal: Sangria de Caixa */}
       {sangriaModalOpen && selectedCaixa && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl">
+            <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-100">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <Banknote size={16} className="text-rose-400" />
                 Sangria de Caixa · {selectedCaixa.id}
               </h3>
-              <button onClick={() => setSangriaModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setSangriaModalOpen(false)} className="text-slate-500 hover:text-slate-900">
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleSangria} className="p-5 space-y-4 text-xs">
-              <div className="bg-slate-800/70 p-3 rounded-lg border border-slate-700/60">
-                <div className="text-slate-400 text-[11px]">Operador: <span className="text-white font-bold">{selectedCaixa.operator}</span></div>
-                <div className="text-slate-400 text-[11px]">PDV: <span className="text-white font-bold">{selectedCaixa.pdv}</span></div>
-                <div className="text-slate-400 text-[11px] mt-1">Saldo em Caixa: <span className="text-emerald-400 font-bold font-mono">{formatMoney(selectedCaixa.value)}</span></div>
+              <div className="bg-slate-100/70 p-3 rounded-lg border border-slate-200">
+                <div className="text-slate-500 text-[11px]">Operador: <span className="text-slate-900 font-bold">{selectedCaixa.operator}</span></div>
+                <div className="text-slate-500 text-[11px]">PDV: <span className="text-slate-900 font-bold">{selectedCaixa.pdv}</span></div>
+                <div className="text-slate-500 text-[11px] mt-1">Saldo em Caixa: <span className="text-emerald-400 font-bold font-mono">{formatMoney(selectedCaixa.value)}</span></div>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Valor da Sangria (R$)</label>
+                <label className="block text-slate-700 font-semibold mb-1">Valor da Sangria (R$)</label>
                 <input
                   type="number"
                   step="0.01"
                   required
                   value={sangriaValue}
                   onChange={e => setSangriaValue(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono font-bold text-sm"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono font-bold text-sm"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setSangriaModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-lg shadow-sm"
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-slate-900 font-extrabold rounded-lg shadow-sm"
                 >
                   Confirmar Sangria
                 </button>

@@ -584,7 +584,7 @@ export default function App() {
                 }
                 window.scrollTo({ top: 0 })
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#17212F] hover:bg-[#253245] text-slate-300 hover:text-white border border-slate-700/70 transition shadow-xs cursor-pointer select-none"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#17212F] hover:bg-[#253245] text-slate-700 hover:text-slate-900 border border-slate-200 transition shadow-xs cursor-pointer select-none"
               title="Voltar ao Painel Anterior"
             >
               <ArrowLeft size={14} className="text-[#06B6D4]" />

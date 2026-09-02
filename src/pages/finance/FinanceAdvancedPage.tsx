@@ -79,7 +79,7 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -87,20 +87,20 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
       </div>
 
       {/* Header */}
-      <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3 shadow-sm">
+      <div className="bg-white border border-slate-200 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-3 shadow-sm">
         <div>
-          <h2 className="text-lg font-black text-white flex items-center gap-2">
+          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
             <TrendingUp className="text-emerald-400" size={20} />
             Financeiro Advanced · Fluxo Previsto x Realizado
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Controle de liquidez, contas a receber, pagamentos agendados e provisão de caixa
           </p>
         </div>
 
         <button
           onClick={() => setModalOpen(true)}
-          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition"
+          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition"
         >
           <Plus size={15} /> Novo Lançamento
         </button>
@@ -108,40 +108,40 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
 
       {/* KPIs Row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
-        <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-          <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Receita Hoje</span>
+        <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+          <span className="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Receita Hoje</span>
           <h4 className="text-base font-black text-emerald-400 mt-1 font-mono">R$ 85.420,00</h4>
           <span className="text-[10px] text-emerald-400 font-semibold mt-0.5 block">+12.4% vs média</span>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-          <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Contas a Receber</span>
+        <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+          <span className="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Contas a Receber</span>
           <h4 className="text-base font-black text-sky-400 mt-1 font-mono">{formatMoney(totalReceber)}</h4>
-          <span className="text-[10px] text-slate-400 font-semibold mt-0.5 block">Previsão 30 dias</span>
+          <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">Previsão 30 dias</span>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-          <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Contas a Pagar</span>
+        <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+          <span className="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Contas a Pagar</span>
           <h4 className="text-base font-black text-rose-400 mt-1 font-mono">{formatMoney(totalPagar)}</h4>
-          <span className="text-[10px] text-slate-400 font-semibold mt-0.5 block">Vencimentos ativos</span>
+          <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">Vencimentos ativos</span>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-          <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Saldo em Caixa</span>
-          <h4 className="text-base font-black text-white mt-1 font-mono">{formatMoney(saldoCaixa)}</h4>
+        <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+          <span className="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Saldo em Caixa</span>
+          <h4 className="text-base font-black text-slate-900 mt-1 font-mono">{formatMoney(saldoCaixa)}</h4>
           <span className="text-[10px] text-emerald-400 font-semibold mt-0.5 block">Disponível imediato</span>
         </div>
 
-        <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-          <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Inadimplência</span>
+        <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+          <span className="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Inadimplência</span>
           <h4 className="text-base font-black text-amber-400 mt-1 font-mono">2,31%</h4>
-          <span className="text-[10px] text-slate-400 font-semibold mt-0.5 block">Dentro da meta (&lt;3%)</span>
+          <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">Dentro da meta (&lt;3%)</span>
         </div>
       </div>
 
       {/* Visual Fluxo Previsto x Realizado */}
-      <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-3 shadow-sm text-xs">
-        <h3 className="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-2">
+      <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-sm text-xs">
+        <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-2">
           <BarChart3 size={16} className="text-sky-400" />
           Fluxo de Caixa: Previsto vs Realizado (Semestral)
         </h3>
@@ -155,9 +155,9 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
             { month: 'Maio', prev: 450000, real: 480000 },
             { month: 'Junho', prev: 520000, real: 560000 }
           ].map(m => (
-            <div key={m.month} className="p-3 bg-slate-800/40 rounded-xl border border-slate-700/50 space-y-1.5">
-              <span className="font-bold text-white block">{m.month}</span>
-              <div className="text-[11px] font-mono text-slate-400">Prev: {formatMoney(m.prev)}</div>
+            <div key={m.month} className="p-3 bg-slate-100 rounded-xl border border-slate-200/50 space-y-1.5">
+              <span className="font-bold text-slate-900 block">{m.month}</span>
+              <div className="text-[11px] font-mono text-slate-500">Prev: {formatMoney(m.prev)}</div>
               <div className="text-xs font-mono font-bold text-emerald-400">Real: {formatMoney(m.real)}</div>
             </div>
           ))}
@@ -167,9 +167,9 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
       {/* Tables Grid: Receber & Pagar */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Contas a Receber */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-sm text-xs">
-          <div className="p-3.5 border-b border-slate-800 bg-slate-800/40 flex justify-between items-center">
-            <h3 className="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm text-xs">
+          <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
+            <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-2">
               <TrendingUp size={15} className="text-emerald-400" />
               Contas a Receber
             </h3>
@@ -179,18 +179,18 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                   <th className="py-2.5 px-3">Lançamento / Origem</th>
                   <th className="py-2.5 px-3">Evento</th>
                   <th className="py-2.5 px-3 text-right">Valor</th>
                   <th className="py-2.5 px-3 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-300">
+              <tbody className="divide-y divide-slate-800/60 text-slate-700">
                 {receber.map(r => (
-                  <tr key={r.id} className="hover:bg-slate-800/50">
-                    <td className="py-2.5 px-3 font-semibold text-white">{r.name}</td>
-                    <td className="py-2.5 px-3 text-slate-400">{r.event}</td>
+                  <tr key={r.id} className="hover:bg-slate-100">
+                    <td className="py-2.5 px-3 font-semibold text-slate-900">{r.name}</td>
+                    <td className="py-2.5 px-3 text-slate-500">{r.event}</td>
                     <td className="py-2.5 px-3 text-right font-bold font-mono text-emerald-400">{formatMoney(r.value)}</td>
                     <td className="py-2.5 px-3 text-center">
                       <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${r.status === 'Aprovado' ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}`}>
@@ -205,9 +205,9 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
         </div>
 
         {/* Contas a Pagar */}
-        <div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-sm text-xs">
-          <div className="p-3.5 border-b border-slate-800 bg-slate-800/40 flex justify-between items-center">
-            <h3 className="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-2">
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm text-xs">
+          <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
+            <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-2">
               <TrendingDown size={15} className="text-rose-400" />
               Contas a Pagar (Despesas)
             </h3>
@@ -217,18 +217,18 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                   <th className="py-2.5 px-3">Fornecedor / Credor</th>
                   <th className="py-2.5 px-3">Vencimento</th>
                   <th className="py-2.5 px-3 text-right">Valor</th>
                   <th className="py-2.5 px-2 text-center">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-300">
+              <tbody className="divide-y divide-slate-800/60 text-slate-700">
                 {pagar.map(p => (
-                  <tr key={p.id} className="hover:bg-slate-800/50">
-                    <td className="py-2.5 px-3 font-semibold text-white">{p.vendor}</td>
-                    <td className="py-2.5 px-3 font-mono text-slate-400">{p.due}</td>
+                  <tr key={p.id} className="hover:bg-slate-100">
+                    <td className="py-2.5 px-3 font-semibold text-slate-900">{p.vendor}</td>
+                    <td className="py-2.5 px-3 font-mono text-slate-500">{p.due}</td>
                     <td className="py-2.5 px-3 text-right font-bold font-mono text-rose-400">{formatMoney(p.value)}</td>
                     <td className="py-2.5 px-2 text-center">
                       <button
@@ -249,22 +249,22 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
       {/* Modal: Novo Lançamento */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-100">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <Plus size={16} className="text-emerald-400" />
                 Novo Lançamento Financeiro
               </h3>
-              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-slate-900">
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleCreateTransaction} className="p-5 space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Tipo de Lançamento</label>
+                <label className="block text-slate-700 font-semibold mb-1">Tipo de Lançamento</label>
                 <div className="flex gap-4">
-                  <label className="flex items-center gap-1.5 text-white font-bold cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-slate-900 font-bold cursor-pointer">
                     <input
                       type="radio"
                       name="txtype"
@@ -274,7 +274,7 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
                     />
                     Receita (A Receber)
                   </label>
-                  <label className="flex items-center gap-1.5 text-white font-bold cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-slate-900 font-bold cursor-pointer">
                     <input
                       type="radio"
                       name="txtype"
@@ -288,43 +288,43 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Nome / Descrição / Fornecedor</label>
+                <label className="block text-slate-700 font-semibold mb-1">Nome / Descrição / Fornecedor</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Patrocínio ou Fornecedor"
                   value={txName}
                   onChange={e => setTxName(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                 />
               </div>
 
               {txType === 'receita' ? (
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Evento Relacionado</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Evento Relacionado</label>
                   <input
                     type="text"
                     placeholder="Ex: Festival de Verão"
                     value={txDesc}
                     onChange={e => setTxDesc(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                   />
                 </div>
               ) : (
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Data de Vencimento</label>
+                  <label className="block text-slate-700 font-semibold mb-1">Data de Vencimento</label>
                   <input
                     type="date"
                     required
                     value={txDate}
                     onChange={e => setTxDate(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Valor (R$)</label>
+                <label className="block text-slate-700 font-semibold mb-1">Valor (R$)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -332,21 +332,21 @@ export default function FinanceAdvancedPage({ notify, onBack, onNavigate }: { no
                   placeholder="Ex: 15000.00"
                   value={txVal}
                   onChange={e => setTxVal(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono font-bold"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono font-bold"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-lg shadow-sm"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold rounded-lg shadow-sm"
                 >
                   Salvar Lançamento
                 </button>

@@ -108,7 +108,7 @@ export default function FinanceReportsExecutivePage({ events, producerId, produc
       <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <button
           onClick={() => (onBack ? onBack() : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -134,13 +134,13 @@ export default function FinanceReportsExecutivePage({ events, producerId, produc
           </button>
           <button
             onClick={() => flash('Gerando planilha financeira multi-abas Excel (.xlsx)...')}
-            className="h-10 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-emerald-600 cursor-pointer"
+            className="h-10 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-slate-900 text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-emerald-600 cursor-pointer"
           >
             <FileSpreadsheet size={15} /> Excel (.xlsx)
           </button>
           <button
             onClick={() => flash('Gerando Relatório Executivo Oficial em PDF com DRE e Assinatura...')}
-            className="h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-blue-600 cursor-pointer"
+            className="h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-slate-900 text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-blue-600 cursor-pointer"
           >
             <FileText size={15} /> PDF Executivo
           </button>

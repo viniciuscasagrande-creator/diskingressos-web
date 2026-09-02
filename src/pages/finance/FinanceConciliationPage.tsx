@@ -88,7 +88,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -96,13 +96,13 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
       </div>
 
       {/* Header */}
-      <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex justify-between items-center shadow-sm">
+      <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
-          <h2 className="text-lg font-black text-white flex items-center gap-2">
+          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
             <Scale className="text-teal-400" size={20} />
             Conciliação Bancária
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Ajuste e validação de extratos bancários, adquirentes e liquidações automáticas
           </p>
         </div>
@@ -112,8 +112,8 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
         {/* Left: Bank Selection & Filters */}
         <div className="md:col-span-4 space-y-4">
           {/* Selecionar Banco */}
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-3 text-xs shadow-sm">
-            <h3 className="font-bold text-sm text-white border-b border-slate-800 pb-2 flex items-center gap-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 text-xs shadow-sm">
+            <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
               <Landmark size={15} className="text-sky-400" />
               Selecionar Banco
             </h3>
@@ -129,8 +129,8 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                   key={key}
                   className={`flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition ${
                     selectedBank === key
-                      ? 'bg-sky-950/60 border-sky-600/60 text-white font-bold'
-                      : 'bg-slate-800/40 border-slate-700/50 text-slate-300 hover:bg-slate-800'
+                      ? 'bg-sky-950/60 border-sky-600/60 text-slate-900 font-bold'
+                      : 'bg-slate-100 border-slate-200/50 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
                   <input
@@ -147,14 +147,14 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
           </div>
 
           {/* Filtros de Extrato */}
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-3 text-xs shadow-sm">
-            <h3 className="font-bold text-sm text-white border-b border-slate-800 pb-2 flex items-center gap-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 text-xs shadow-sm">
+            <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
               <Filter size={15} className="text-amber-400" />
               Filtros de Extrato
             </h3>
 
             <div className="space-y-2 pt-1">
-              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={filterPixIn}
@@ -164,7 +164,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                 <span>PIX Recebido</span>
               </label>
 
-              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={filterPixOut}
@@ -174,7 +174,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                 <span>PIX Pago (Repasses)</span>
               </label>
 
-              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={filterTed}
@@ -184,7 +184,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                 <span>TED / Transferência</span>
               </label>
 
-              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={filterCards}
@@ -194,7 +194,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                 <span>Cartão de Crédito / Débito</span>
               </label>
 
-              <label className="flex items-center gap-2 text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={filterBoleto}
@@ -208,9 +208,9 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
         </div>
 
         {/* Right: Identified Divergences & Batch Actions */}
-        <div className="md:col-span-8 bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-4 shadow-sm text-xs">
-          <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-            <h3 className="font-bold text-sm text-white flex items-center gap-2">
+        <div className="md:col-span-8 bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
+          <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+            <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
               <AlertTriangle size={16} className="text-amber-400" />
               Divergências Identificadas
             </h3>
@@ -221,9 +221,9 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
 
           <div className="space-y-3 pt-1">
             {divergences.length === 0 ? (
-              <div className="p-8 text-center text-slate-400">
+              <div className="p-8 text-center text-slate-500">
                 <CheckCircle2 size={32} className="text-emerald-400 mx-auto mb-2" />
-                <p className="font-bold text-white">Extrato totalmente conciliado!</p>
+                <p className="font-bold text-slate-900">Extrato totalmente conciliado!</p>
                 <span className="text-[11px]">Nenhuma divergência pendente para o banco selecionado.</span>
               </div>
             ) : (
@@ -233,8 +233,8 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                   onClick={() => handleToggleSelect(d.id)}
                   className={`p-3.5 rounded-xl border cursor-pointer transition ${
                     d.selected
-                      ? 'bg-slate-800/80 border-sky-600/70 shadow-xs'
-                      : 'bg-slate-800/40 border-slate-700/50 hover:bg-slate-800/60'
+                      ? 'bg-slate-100 border-sky-600/70 shadow-xs'
+                      : 'bg-slate-100 border-slate-200/50 hover:bg-slate-100'
                   }`}
                 >
                   <div className="flex justify-between items-start gap-3">
@@ -246,8 +246,8 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                       </div>
 
                       <div className="space-y-1">
-                        <div className="font-bold text-white text-xs">{d.title}</div>
-                        <div className="text-[11.5px] text-slate-300">{d.description}</div>
+                        <div className="font-bold text-slate-900 text-xs">{d.title}</div>
+                        <div className="text-[11.5px] text-slate-700">{d.description}</div>
                         <div className="text-[11px] text-sky-400 font-semibold flex items-center gap-1">
                           <span>💡 {d.suggestion}</span>
                         </div>
@@ -264,10 +264,10 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
           </div>
 
           {/* Action Buttons Footer */}
-          <div className="flex flex-wrap justify-end gap-2 pt-3 border-t border-slate-800">
+          <div className="flex flex-wrap justify-end gap-2 pt-3 border-t border-slate-200">
             <button
               onClick={() => notify?.('Exportando logs de divergências bancárias em CSV...')}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg flex items-center gap-1.5 transition"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg flex items-center gap-1.5 transition"
             >
               <Download size={14} /> Exportar
             </button>
@@ -279,7 +279,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
             </button>
             <button
               onClick={handleReconcileSelected}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-lg flex items-center gap-1.5 transition shadow-sm"
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold rounded-lg flex items-center gap-1.5 transition shadow-sm"
             >
               <Check size={14} /> Conciliar Selecionados
             </button>

@@ -98,7 +98,7 @@ export const ContasBancariasModule: React.FC<{ onBack: () => void }> = ({ onBack
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-btn bg-slate-900 text-white">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-btn bg-white text-slate-900">
                     <Building2 size={20} />
                   </div>
                   <div>

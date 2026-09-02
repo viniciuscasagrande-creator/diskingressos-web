@@ -56,7 +56,7 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -64,29 +64,29 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
       </div>
 
       {/* Header */}
-      <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex justify-between items-center shadow-sm">
+      <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
-          <h2 className="text-lg font-black text-white flex items-center gap-2">
+          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
             <Sliders className="text-purple-400" size={20} />
             Pagamentos Customizados & Parcerias
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Regras de cobrança especiais, cortesias e acordos tarifários personalizados por produtor/evento
           </p>
         </div>
 
         <button
           onClick={() => setModalOpen(true)}
-          className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition"
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-slate-900 font-extrabold text-xs rounded-lg flex items-center gap-1.5 shadow-sm transition"
         >
           <Plus size={15} /> Nova Regra Customizada
         </button>
       </div>
 
       {/* Rules Table */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-sm text-xs">
-        <div className="p-3.5 border-b border-slate-800 bg-slate-800/40 flex justify-between items-center">
-          <h3 className="font-bold text-xs text-white uppercase tracking-wider">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm text-xs">
+        <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
+          <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider">
             Regras de Cobrança e Gateway Especiais
           </h3>
           <span className="text-purple-300 bg-purple-950/60 border border-purple-800/40 px-2 py-0.5 rounded font-bold">
@@ -97,7 +97,7 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+              <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                 <th className="py-2.5 px-3">Regra / Nome</th>
                 <th className="py-2.5 px-3">Tipo de Acordo</th>
                 <th className="py-2.5 px-3">Evento Aplicado</th>
@@ -106,12 +106,12 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
                 <th className="py-2.5 px-2 text-center">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-300">
+            <tbody className="divide-y divide-slate-800/60 text-slate-700">
               {rules.map(r => (
-                <tr key={r.id} className="hover:bg-slate-800/50">
-                  <td className="py-2.5 px-3 font-bold text-white">{r.name}</td>
+                <tr key={r.id} className="hover:bg-slate-100">
+                  <td className="py-2.5 px-3 font-bold text-slate-900">{r.name}</td>
                   <td className="py-2.5 px-3 text-purple-300 font-medium">{r.type}</td>
-                  <td className="py-2.5 px-3 text-slate-300">{r.event}</td>
+                  <td className="py-2.5 px-3 text-slate-700">{r.event}</td>
                   <td className="py-2.5 px-3 text-center font-mono font-bold text-emerald-400">{r.rate}</td>
                   <td className="py-2.5 px-3 text-center">
                     <span className="text-[10px] bg-emerald-950 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-800/40">
@@ -137,36 +137,36 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
       {/* Modal: Nova Regra */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/50">
-              <h3 className="font-bold text-white text-sm flex items-center gap-2">
+          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-100">
+              <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
                 <Sliders size={16} className="text-purple-400" />
                 Nova Regra de Pagamento Customizado
               </h3>
-              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-slate-900">
                 <X size={18} />
               </button>
             </div>
 
             <form onSubmit={handleAddRule} className="p-5 space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Nome da Regra</label>
+                <label className="block text-slate-700 font-semibold mb-1">Nome da Regra</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Parceria Patrocinador"
                   value={ruleName}
                   onChange={e => setRuleName(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Tipo de Acordo</label>
+                <label className="block text-slate-700 font-semibold mb-1">Tipo de Acordo</label>
                 <select
                   value={ruleType}
                   onChange={e => setRuleType(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                 >
                   <option value="Taxa Zero Gateway">Taxa Zero Gateway</option>
                   <option value="MDR Reduzido">MDR Reduzido</option>
@@ -176,40 +176,40 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Evento Aplicado</label>
+                <label className="block text-slate-700 font-semibold mb-1">Evento Aplicado</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: Festival de Balonismo ou Todos"
                   value={ruleEvent}
                   onChange={e => setRuleEvent(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">MDR / Tarifa Customizada</label>
+                <label className="block text-slate-700 font-semibold mb-1">MDR / Tarifa Customizada</label>
                 <input
                   type="text"
                   required
                   placeholder="Ex: 1.2% ou R$ 0,00"
                   value={ruleRate}
                   onChange={e => setRuleRate(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                  className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-extrabold rounded-lg shadow-sm"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-slate-900 font-extrabold rounded-lg shadow-sm"
                 >
                   Salvar Regra
                 </button>

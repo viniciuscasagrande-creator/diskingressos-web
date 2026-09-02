@@ -157,7 +157,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -165,16 +165,16 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       </div>
 
       {/* Event Info Header */}
-      <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
+      <div className="bg-white border border-slate-200 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
         <div className="flex flex-wrap items-center gap-4">
           <div>
-            <label className="text-[10px] uppercase font-bold text-slate-400 block mb-1">
+            <label className="text-[10px] uppercase font-bold text-slate-500 block mb-1">
               Selecionar Evento para Negociação
             </label>
             <select
               value={selectedEventId}
               onChange={e => setSelectedEventId(Number(e.target.value))}
-              className="bg-slate-800 border border-slate-700 text-white font-bold text-xs rounded-lg px-3 py-2 min-w-[280px] focus:outline-hidden focus:border-sky-400"
+              className="bg-slate-100 border border-slate-200 text-slate-900 font-bold text-xs rounded-lg px-3 py-2 min-w-[280px] focus:outline-hidden focus:border-sky-400"
             >
               {events.map(ev => (
                 <option key={ev.id} value={ev.id}>
@@ -184,14 +184,14 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             </select>
           </div>
 
-          <div className="text-xs text-slate-300 space-y-0.5 border-l border-slate-800 pl-4">
+          <div className="text-xs text-slate-700 space-y-0.5 border-l border-slate-200 pl-4">
             <div className="flex items-center gap-1.5">
-              <Calendar size={13} className="text-slate-400" />
-              <span>Início das Vendas: <strong className="text-white">01/07/2025 às 16h38</strong></span>
+              <Calendar size={13} className="text-slate-500" />
+              <span>Início das Vendas: <strong className="text-slate-900">01/07/2025 às 16h38</strong></span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Calendar size={13} className="text-slate-400" />
-              <span>Final das Vendas: <strong className="text-white">{curEvent.date}</strong></span>
+              <Calendar size={13} className="text-slate-500" />
+              <span>Final das Vendas: <strong className="text-slate-900">{curEvent.date}</strong></span>
             </div>
           </div>
         </div>
@@ -209,18 +209,18 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       </div>
 
       {/* Top Title & Sub-tabs */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-800 pb-3">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-200 pb-3">
         <div>
-          <h2 className="text-lg font-black text-white flex items-center gap-2">
+          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
             <Handshake className="text-sky-400" size={20} />
             Negociações Financeiras
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Regras de receita, adiantamentos, tributação por setor e resultado econômico
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <div className="flex flex-wrap gap-1.5 bg-white p-1 rounded-xl border border-slate-200">
           {(
             [
               ['receita', 'RECEITA'],
@@ -235,8 +235,8 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
               onClick={() => setActiveTab(key)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                 activeTab === key
-                  ? 'bg-sky-600 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  ? 'bg-sky-600 text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
               {label}
@@ -248,18 +248,18 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       {/* TAB 1: RECEITA */}
       {activeTab === 'receita' && (
         <div className="space-y-4">
-          <div className="bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-3.5 border-b border-slate-800 bg-slate-800/40 flex justify-between items-center">
-              <h3 className="font-bold text-xs text-white uppercase tracking-wider">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
+              <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Informações sobre a Receita de Vendas
               </h3>
-              <span className="text-[11px] text-slate-400">MDR, taxas de antecipação e receita líquida</span>
+              <span className="text-[11px] text-slate-500">MDR, taxas de antecipação e receita líquida</span>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold text-[11px]">
+                  <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold text-[11px]">
                     <th className="py-2.5 px-3">Forma de Pagamento</th>
                     <th className="py-2.5 px-2 text-center">Taxa Pgto %</th>
                     <th className="py-2.5 px-2 text-center">Pgto Taxa Serv.</th>
@@ -272,19 +272,19 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                     <th className="py-2.5 px-3 text-right">Receita Líquida</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {receitas.map((r, i) => (
-                    <tr key={i} className="hover:bg-slate-800/50">
-                      <td className="py-2.5 px-3 font-semibold text-white">{r.metodo}</td>
+                    <tr key={i} className="hover:bg-slate-100">
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">{r.metodo}</td>
                       <td className="py-2.5 px-2 text-center font-mono text-sky-400 font-bold">{r.taxa_pagamento.toFixed(2)}%</td>
                       <td className="py-2.5 px-2 text-center">
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${r.pgto_taxa_servico === 2 ? 'bg-emerald-950 text-emerald-400' : 'bg-slate-800 text-slate-400'}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${r.pgto_taxa_servico === 2 ? 'bg-emerald-950 text-emerald-400' : 'bg-slate-100 text-slate-500'}`}>
                           {r.pgto_taxa_servico === 2 ? 'Sim' : 'Não'}
                         </span>
                       </td>
                       <td className="py-2.5 px-2 text-center font-mono text-amber-400">{r.tx_ant_am.toFixed(2)}%</td>
                       <td className="py-2.5 px-2 text-center">
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${r.pgto_ant === 2 ? 'bg-emerald-950 text-emerald-400' : 'bg-slate-800 text-slate-400'}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${r.pgto_ant === 2 ? 'bg-emerald-950 text-emerald-400' : 'bg-slate-100 text-slate-500'}`}>
                           {r.pgto_ant === 2 ? 'Sim' : 'Não'}
                         </span>
                       </td>
@@ -297,10 +297,10 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-slate-800/60 font-bold text-white border-t-2 border-slate-700">
+                  <tr className="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-200">
                     <td colSpan={6} className="py-3 px-3 text-right uppercase text-xs">Totais Acumulados:</td>
                     <td className="py-3 px-2 text-center font-mono text-sky-400">{totalQtdIngressos}</td>
-                    <td className="py-3 px-3 text-right font-mono text-white">{formatMoney(totalReceitaBruta)}</td>
+                    <td className="py-3 px-3 text-right font-mono text-slate-900">{formatMoney(totalReceitaBruta)}</td>
                     <td className="py-3 px-3 text-right font-mono text-amber-400">{formatMoney(totalTaxasServico)}</td>
                     <td className="py-3 px-3 text-right font-mono text-emerald-400 text-sm">{formatMoney(totalReceitaLiquida)}</td>
                   </tr>
@@ -312,7 +312,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
           <div className="flex justify-end">
             <button
               onClick={() => notify?.('Configurações de negociação gravadas com sucesso no banco de dados!')}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-lg flex items-center gap-2 transition shadow-sm"
+              className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold text-xs px-5 py-2.5 rounded-lg flex items-center gap-2 transition shadow-sm"
             >
               <Save size={15} />
               SALVAR RECEITA
@@ -324,9 +324,9 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       {/* TAB 2: DESPESAS */}
       {activeTab === 'despesas' && (
         <div className="space-y-4">
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl shadow-sm space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <TrendingDown size={16} className="text-rose-400" />
                 Custos e Despesas Operacionais do Evento
               </h3>
@@ -340,25 +340,25 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             </div>
 
             {showAddExpense && (
-              <form onSubmit={handleSaveExpense} className="p-4 bg-slate-800/60 border border-slate-700/60 rounded-xl space-y-3 text-xs">
+              <form onSubmit={handleSaveExpense} className="p-4 bg-slate-100 border border-slate-200 rounded-xl space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Fornecedor / Credor</label>
+                    <label className="block text-slate-700 font-semibold mb-1">Fornecedor / Credor</label>
                     <input
                       type="text"
                       required
                       placeholder="Ex: Palco & Estruturas"
                       value={newExpSupplier}
                       onChange={e => setNewExpSupplier(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                      className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Categoria</label>
+                    <label className="block text-slate-700 font-semibold mb-1">Categoria</label>
                     <select
                       value={newExpCategory}
                       onChange={e => setNewExpCategory(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                      className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                     >
                       <option value="Som & Luz">Som & Luz</option>
                       <option value="Segurança">Segurança</option>
@@ -368,7 +368,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                     </select>
                   </div>
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Valor (R$)</label>
+                    <label className="block text-slate-700 font-semibold mb-1">Valor (R$)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -376,17 +376,17 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                       placeholder="Ex: 5000.00"
                       value={newExpVal}
                       onChange={e => setNewExpVal(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                      className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Data Vencimento</label>
+                    <label className="block text-slate-700 font-semibold mb-1">Data Vencimento</label>
                     <input
                       type="date"
                       required
                       value={newExpDate}
                       onChange={e => setNewExpDate(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                      className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                     />
                   </div>
                 </div>
@@ -395,13 +395,13 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                   <button
                     type="button"
                     onClick={() => setShowAddExpense(false)}
-                    className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg font-bold"
+                    className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg font-bold"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold"
+                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 rounded-lg font-bold"
                   >
                     Salvar Despesa
                   </button>
@@ -412,7 +412,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                  <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                     <th className="py-2.5 px-3">Fornecedor / Credor</th>
                     <th className="py-2.5 px-3">Categoria</th>
                     <th className="py-2.5 px-3">Vencimento</th>
@@ -421,12 +421,12 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                     <th className="py-2.5 px-2 text-center">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {despesas.map((d, i) => (
-                    <tr key={i} className="hover:bg-slate-800/50">
-                      <td className="py-2.5 px-3 font-semibold text-white">{d.fornecedor}</td>
-                      <td className="py-2.5 px-3 text-slate-400">{d.categoria}</td>
-                      <td className="py-2.5 px-3 font-mono text-slate-300">{d.data}</td>
+                    <tr key={i} className="hover:bg-slate-100">
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">{d.fornecedor}</td>
+                      <td className="py-2.5 px-3 text-slate-500">{d.categoria}</td>
+                      <td className="py-2.5 px-3 font-mono text-slate-700">{d.data}</td>
                       <td className="py-2.5 px-3">
                         <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${d.status === 'Pago' ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}`}>
                           {d.status}
@@ -446,7 +446,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-slate-800/60 font-bold text-white border-t-2 border-slate-700">
+                  <tr className="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-200">
                     <td colSpan={4} className="py-3 px-3 text-right uppercase text-xs">Total de Despesas:</td>
                     <td className="py-3 px-3 text-right font-mono text-rose-400 text-sm">{formatMoney(totalDespesas)}</td>
                     <td />
@@ -461,15 +461,15 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       {/* TAB 3: PATROCÍNIO */}
       {activeTab === 'patrocinio' && (
         <div className="space-y-4">
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl shadow-sm space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <TrendingUp size={16} className="text-emerald-400" />
                 Contratos de Patrocínio & Marcas Parceiras
               </h3>
               <button
                 onClick={() => setShowAddSponsor(!showAddSponsor)}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
+                className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
               >
                 <Plus size={14} />
                 Novo Patrocínio
@@ -477,25 +477,25 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             </div>
 
             {showAddSponsor && (
-              <form onSubmit={handleSaveSponsor} className="p-4 bg-slate-800/60 border border-slate-700/60 rounded-xl space-y-3 text-xs">
+              <form onSubmit={handleSaveSponsor} className="p-4 bg-slate-100 border border-slate-200 rounded-xl space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Marca / Patrocinador</label>
+                    <label className="block text-slate-700 font-semibold mb-1">Marca / Patrocinador</label>
                     <input
                       type="text"
                       required
                       placeholder="Ex: Bebidas do Sul"
                       value={newSponsName}
                       onChange={e => setNewSponsName(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                      className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Cota / Categoria</label>
+                    <label className="block text-slate-700 font-semibold mb-1">Cota / Categoria</label>
                     <select
                       value={newSponsTier}
                       onChange={e => setNewSponsTier(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                      className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900"
                     >
                       <option value="Master">Cota Master (Apresenta)</option>
                       <option value="Gold">Cota Ouro (Patrocínio)</option>
@@ -503,7 +503,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                     </select>
                   </div>
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Valor do Contrato (R$)</label>
+                    <label className="block text-slate-700 font-semibold mb-1">Valor do Contrato (R$)</label>
                     <input
                       type="number"
                       step="0.01"
@@ -511,7 +511,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                       placeholder="Ex: 25000.00"
                       value={newSponsVal}
                       onChange={e => setNewSponsVal(e.target.value)}
-                      className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                      className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
                     />
                   </div>
                 </div>
@@ -520,13 +520,13 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                   <button
                     type="button"
                     onClick={() => setShowAddSponsor(false)}
-                    className="px-3 py-1.5 bg-slate-800 text-slate-300 rounded-lg font-bold"
+                    className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg font-bold"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold"
+                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 rounded-lg font-bold"
                   >
                     Salvar Patrocínio
                   </button>
@@ -537,7 +537,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                  <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                     <th className="py-2.5 px-3">Marca / Patrocinador</th>
                     <th className="py-2.5 px-3">Cota / Categoria</th>
                     <th className="py-2.5 px-3">Status</th>
@@ -545,10 +545,10 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                     <th className="py-2.5 px-2 text-center">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {patrocinios.map((p, i) => (
-                    <tr key={i} className="hover:bg-slate-800/50">
-                      <td className="py-2.5 px-3 font-semibold text-white">{p.marca}</td>
+                    <tr key={i} className="hover:bg-slate-100">
+                      <td className="py-2.5 px-3 font-semibold text-slate-900">{p.marca}</td>
                       <td className="py-2.5 px-3 text-amber-300 font-medium">{p.categoria}</td>
                       <td className="py-2.5 px-3">
                         <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded font-bold">
@@ -569,7 +569,7 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-slate-800/60 font-bold text-white border-t-2 border-slate-700">
+                  <tr className="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-200">
                     <td colSpan={3} className="py-3 px-3 text-right uppercase text-xs">Total de Patrocínios:</td>
                     <td className="py-3 px-3 text-right font-mono text-emerald-400 text-sm">{formatMoney(totalPatrocinio)}</td>
                     <td />
@@ -585,15 +585,15 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
       {activeTab === 'advanced' && (
         <div className="space-y-4">
           {/* Negociação de Adiantamento */}
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl shadow-sm space-y-4">
-            <h3 className="font-bold text-xs text-white uppercase tracking-wider border-b border-slate-800 pb-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm space-y-4">
+            <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2">
               Parcelas de Adiantamento (Advanced)
             </h3>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                  <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                     <th className="py-2.5 px-3 text-center">Nº Parcela</th>
                     <th className="py-2.5 px-3 text-center">Valor Acordado</th>
                     <th className="py-2.5 px-3 text-center">Valor Pago</th>
@@ -602,26 +602,26 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
                     <th className="py-2.5 px-3 text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                <tbody className="divide-y divide-slate-800/60 text-slate-700">
                   {advancedInstallments.map((inst, i) => (
-                    <tr key={i} className="hover:bg-slate-800/50">
+                    <tr key={i} className="hover:bg-slate-100">
                       <td className="py-2.5 px-3 text-center font-mono font-bold text-sky-400">#{inst.numero}</td>
                       <td className="py-2.5 px-3 text-center font-mono">{formatMoney(inst.valor)}</td>
-                      <td className="py-2.5 px-3 text-center font-mono text-slate-400">{formatMoney(inst.valor_pago)}</td>
+                      <td className="py-2.5 px-3 text-center font-mono text-slate-500">{formatMoney(inst.valor_pago)}</td>
                       <td className="py-2.5 px-3 text-center">
                         <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${inst.status === 1 ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}`}>
                           {inst.status === 1 ? 'PAGO' : 'AGUARDANDO'}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-center font-mono text-slate-400">{inst.data}</td>
+                      <td className="py-2.5 px-3 text-center font-mono text-slate-500">{inst.data}</td>
                       <td className="py-2.5 px-3 text-right">
                         <button
                           disabled={inst.status === 1}
                           onClick={() => handlePayInstallment(i)}
                           className={`text-xs font-bold px-3 py-1 rounded-md transition ${
                             inst.status === 1
-                              ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                              : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                              ? 'bg-slate-100 text-slate-500 cursor-not-allowed'
+                              : 'bg-emerald-600 hover:bg-emerald-500 text-slate-900'
                           }`}
                         >
                           {inst.status === 1 ? 'Liquidado' : 'Pagar'}
@@ -635,9 +635,9 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
           </div>
 
           {/* Divisão Tributária por Setor (disk_area_taxes) */}
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl shadow-sm space-y-3">
-            <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-              <h3 className="font-bold text-xs text-white uppercase tracking-wider flex items-center gap-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm space-y-3">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+              <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-2">
                 <Layers size={15} className="text-indigo-400" />
                 Divisão Tributária e Tarifária por Setores (disk_area_taxes)
               </h3>
@@ -649,23 +649,23 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 bg-slate-800/20 text-slate-400 font-semibold">
+                  <tr className="border-b border-slate-200 bg-slate-100/20 text-slate-500 font-semibold">
                     <th className="py-2 px-3">Setor (Área)</th>
                     <th className="py-2 px-3">Canal (Forma de Vendas)</th>
                     <th className="py-2 px-3 text-center">Taxa de Conveniência (Tax)</th>
                     <th className="py-2 px-3 text-center">Comissão (Commission)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
-                  <tr className="hover:bg-slate-800/50">
-                    <td className="py-2 px-3 font-semibold text-white">Pista Premium</td>
-                    <td className="py-2 px-3 text-slate-400">Site / App DiskIngressos</td>
+                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                  <tr className="hover:bg-slate-100">
+                    <td className="py-2 px-3 font-semibold text-slate-900">Pista Premium</td>
+                    <td className="py-2 px-3 text-slate-500">Site / App DiskIngressos</td>
                     <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">15.0 %</td>
                     <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">10.0 %</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/50">
-                    <td className="py-2 px-3 font-semibold text-white">Camarote VIP</td>
-                    <td className="py-2 px-3 text-slate-400">PDV Físico / Quiosque</td>
+                  <tr className="hover:bg-slate-100">
+                    <td className="py-2 px-3 font-semibold text-slate-900">Camarote VIP</td>
+                    <td className="py-2 px-3 text-slate-500">PDV Físico / Quiosque</td>
                     <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">10.0 %</td>
                     <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">8.0 %</td>
                   </tr>
@@ -681,56 +681,56 @@ export default function FinanceNegotiationsPage({ notify, onBack, onNavigate }: 
         <div className="space-y-4">
           {/* Summary KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
-            <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Receita de Ingressos (Bruta)</span>
-              <h4 className="text-base font-black text-white mt-1 font-mono">{formatMoney(totalReceitaBruta)}</h4>
+            <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+              <span className="text-slate-500 block text-[10px] uppercase font-bold">Receita de Ingressos (Bruta)</span>
+              <h4 className="text-base font-black text-slate-900 mt-1 font-mono">{formatMoney(totalReceitaBruta)}</h4>
             </div>
-            <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Receita de Patrocínios</span>
+            <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+              <span className="text-slate-500 block text-[10px] uppercase font-bold">Receita de Patrocínios</span>
               <h4 className="text-base font-black text-emerald-400 mt-1 font-mono">{formatMoney(totalPatrocinio)}</h4>
             </div>
-            <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Total de Custos & Despesas</span>
+            <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+              <span className="text-slate-500 block text-[10px] uppercase font-bold">Total de Custos & Despesas</span>
               <h4 className="text-base font-black text-rose-400 mt-1 font-mono">{formatMoney(totalDespesas)}</h4>
             </div>
-            <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Taxas de Operadoras (MDR)</span>
+            <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+              <span className="text-slate-500 block text-[10px] uppercase font-bold">Taxas de Operadoras (MDR)</span>
               <h4 className="text-base font-black text-amber-400 mt-1 font-mono">{formatMoney(totalTaxasOperadoras)}</h4>
             </div>
-            <div className="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl">
-              <span className="text-slate-400 block text-[10px] uppercase font-bold">Taxas de Serviço (Conveniência)</span>
+            <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
+              <span className="text-slate-500 block text-[10px] uppercase font-bold">Taxas de Serviço (Conveniência)</span>
               <h4 className="text-base font-black text-cyan-400 mt-1 font-mono">{formatMoney(totalTaxasServico)}</h4>
             </div>
-            <div className="bg-gradient-to-r from-emerald-900/80 to-emerald-800/80 border border-emerald-700/60 p-3.5 rounded-xl text-white">
+            <div className="bg-gradient-to-r from-emerald-900/80 to-emerald-800/80 border border-emerald-700/60 p-3.5 rounded-xl text-slate-900">
               <span className="text-emerald-200 block text-[10px] uppercase font-bold">Resultado Líquido do Evento</span>
-              <h4 className="text-lg font-black text-white mt-1 font-mono">{formatMoney(resultadoLiquidoFinal)}</h4>
+              <h4 className="text-lg font-black text-slate-900 mt-1 font-mono">{formatMoney(resultadoLiquidoFinal)}</h4>
             </div>
           </div>
 
           {/* DRE Progress Card */}
-          <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-3 shadow-sm">
-            <h3 className="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-2">
+          <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-sm">
+            <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-2">
               <FileText size={16} className="text-sky-400" />
               Visão de Resultado Econômico (DRE do Evento)
             </h3>
 
             <div className="space-y-3 text-xs">
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Receitas Totais (Ingressos + Patrocínios)</span>
                   <span className="font-mono font-bold text-emerald-400">{formatMoney(resultadoEconomicoReceitas)}</span>
                 </div>
-                <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-emerald-500 rounded-full" style={{ width: '100%' }} />
                 </div>
               </div>
 
               <div>
-                <div className="flex justify-between text-slate-300 mb-1">
+                <div className="flex justify-between text-slate-700 mb-1">
                   <span>Custos & Taxas Totais (Despesas + MDR + Conveniência)</span>
                   <span className="font-mono font-bold text-rose-400">{formatMoney(resultadoEconomicoCustos)}</span>
                 </div>
-                <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-rose-500 rounded-full" style={{ width: `${Math.min(100, Math.round(ratioCustos))}%` }} />
                 </div>
               </div>

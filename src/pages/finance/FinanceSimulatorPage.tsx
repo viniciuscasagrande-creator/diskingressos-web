@@ -37,7 +37,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onBack ? onBack() : onNavigate ? onNavigate('finance-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-700 hover:text-slate-900 border border-slate-200 transition cursor-pointer"
         >
           <ArrowLeft size={14} className="text-[#06B6D4]" />
           <span>Voltar ao Dashboard Financeiro</span>
@@ -45,13 +45,13 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
       </div>
 
       {/* Header */}
-      <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-xl flex justify-between items-center shadow-sm">
+      <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
-          <h2 className="text-lg font-black text-white flex items-center gap-2">
+          <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
             <Calculator className="text-amber-400" size={20} />
             Simulador de Spread & Tarifas
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Simule taxas de adquirentes, adiantamentos e margem líquida por venda de ingressos
           </p>
         </div>
@@ -59,14 +59,14 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Input Parameters Form */}
-        <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-xl space-y-4 shadow-sm text-xs">
-          <h3 className="font-bold text-sm text-white border-b border-slate-800 pb-2 flex items-center gap-2">
+        <div className="bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
+          <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
             <Percent size={15} className="text-sky-400" />
             Parâmetros de Simulação
           </h3>
 
           <div>
-            <label className="block text-slate-300 font-semibold mb-1 uppercase tracking-wider text-[10px]">
+            <label className="block text-slate-700 font-semibold mb-1 uppercase tracking-wider text-[10px]">
               Valor da Venda (R$)
             </label>
             <div className="relative">
@@ -76,20 +76,20 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
                 step="0.01"
                 value={saleValue}
                 onChange={e => setSaleValue(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-white font-mono font-bold text-sm focus:outline-hidden focus:border-amber-400"
+                className="w-full bg-slate-100 border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-slate-900 font-mono font-bold text-sm focus:outline-hidden focus:border-amber-400"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 uppercase tracking-wider text-[10px]">
+              <label className="block text-slate-700 font-semibold mb-1 uppercase tracking-wider text-[10px]">
                 Parcelas
               </label>
               <select
                 value={installments}
                 onChange={e => setInstallments(Number(e.target.value))}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold"
+                className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-semibold"
               >
                 <option value={1}>1x à Vista</option>
                 <option value={2}>2x Sem Juros</option>
@@ -103,13 +103,13 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 uppercase tracking-wider text-[10px]">
+              <label className="block text-slate-700 font-semibold mb-1 uppercase tracking-wider text-[10px]">
                 Antecipação Automática
               </label>
               <select
                 value={anticipation}
                 onChange={e => setAnticipation(e.target.value as any)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-semibold"
+                className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-semibold"
               >
                 <option value="yes">Sim (Antecipado)</option>
                 <option value="no">Não (Recebe parcelado)</option>
@@ -119,7 +119,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 uppercase tracking-wider text-[10px]">
+              <label className="block text-slate-700 font-semibold mb-1 uppercase tracking-wider text-[10px]">
                 Taxa Gateway (%)
               </label>
               <input
@@ -127,11 +127,11 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
                 step="0.01"
                 value={gatewayTax}
                 onChange={e => setGatewayTax(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
               />
             </div>
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 uppercase tracking-wider text-[10px]">
+              <label className="block text-slate-700 font-semibold mb-1 uppercase tracking-wider text-[10px]">
                 Taxa Cartão (%)
               </label>
               <input
@@ -139,11 +139,11 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
                 step="0.01"
                 value={cardTax}
                 onChange={e => setCardTax(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
               />
             </div>
             <div>
-              <label className="block text-slate-300 font-semibold mb-1 uppercase tracking-wider text-[10px]">
+              <label className="block text-slate-700 font-semibold mb-1 uppercase tracking-wider text-[10px]">
                 Comissão Disk (%)
               </label>
               <input
@@ -151,7 +151,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
                 step="0.01"
                 value={platformTax}
                 onChange={e => setPlatformTax(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-mono"
               />
             </div>
           </div>
@@ -166,43 +166,43 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
         </div>
 
         {/* Output Result Card */}
-        <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 border border-slate-800 p-5 rounded-xl flex flex-col justify-between shadow-lg text-xs space-y-4">
+        <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 border border-slate-200 p-5 rounded-xl flex flex-col justify-between shadow-lg text-xs space-y-4">
           <div>
-            <h3 className="font-bold text-sm text-white border-b border-slate-800 pb-2 flex items-center gap-2">
+            <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
               <Scale size={15} className="text-amber-400" />
               Resultado da Simulação
             </h3>
 
             <div className="space-y-3 py-2">
-              <div className="flex justify-between items-center text-slate-300">
+              <div className="flex justify-between items-center text-slate-700">
                 <span>Receita Bruta</span>
-                <span className="font-mono font-bold text-white text-sm">{formatMoney(val)}</span>
+                <span className="font-mono font-bold text-slate-900 text-sm">{formatMoney(val)}</span>
               </div>
-              <div className="flex justify-between items-center text-slate-300">
+              <div className="flex justify-between items-center text-slate-700">
                 <span>Taxas Operacionais (Cartão + Gateway)</span>
                 <span className="font-mono font-bold text-rose-400">- {formatMoney(opsCost)}</span>
               </div>
-              <div className="flex justify-between items-center text-slate-300">
+              <div className="flex justify-between items-center text-slate-700">
                 <span>Comissão DiskIngressos ({platPct}%)</span>
                 <span className="font-mono font-bold text-rose-400">- {formatMoney(platCost)}</span>
               </div>
               {anticipation === 'yes' && (
-                <div className="flex justify-between items-center text-slate-300">
+                <div className="flex justify-between items-center text-slate-700">
                   <span>Custo de Antecipação ({installments}x parcelas)</span>
                   <span className="font-mono font-bold text-rose-400">- {formatMoney(antCost)}</span>
                 </div>
               )}
 
-              <div className="border-t border-slate-800 pt-2 flex justify-between items-center">
+              <div className="border-t border-slate-200 pt-2 flex justify-between items-center">
                 <span className="font-bold text-emerald-400 text-sm">Lucro Líquido Recebido</span>
                 <span className="font-mono font-black text-emerald-400 text-lg">{formatMoney(netProfit)}</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/60 p-3.5 rounded-xl flex justify-between items-center">
+          <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl flex justify-between items-center">
             <div>
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Spread Efetivo</span>
+              <span className="text-[10px] uppercase font-bold text-slate-500 block">Spread Efetivo</span>
               <span className="text-[11px] text-slate-500">Tarifa total retida pela plataforma</span>
             </div>
             <h2 className="text-xl font-black text-amber-400 font-mono">{effectiveSpread.toFixed(2)} %</h2>
