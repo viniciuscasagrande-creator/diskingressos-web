@@ -19,6 +19,8 @@ type Props = {
   events: EventItem[]
   mode: Mode
   notify: (m: string) => void
+  fixedEventId?: number
+  embedded?: boolean
 }
 
 const kindByMode: Partial<Record<Mode, string>> = {
@@ -28,13 +30,13 @@ const kindByMode: Partial<Record<Mode, string>> = {
   postevent: 'pos_evento'
 }
 
-export default function RecoveryCenterPage({ producerId, events, mode, notify }: Props) {
+export default function RecoveryCenterPage({ producerId, events, mode, notify, fixedEventId, embedded = false }: Props) {
   const [rows, setRows] = useState<RecoveryOpportunity[]>([])
   const [summary, setSummary] = useState<AutomationSummary | null>(null)
   const [dashboard, setDashboard] = useState<RecoveryDashboard | null>(null)
   const [busy, setBusy] = useState<number | null>(null)
   const [copiedId, setCopiedId] = useState<number | null>(null)
-  const [selectedEventId, setSelectedEventId] = useState<number | 'all' | ''>(mode === 'carts' ? '' : 'all')
+  const [selectedEventId, setSelectedEventId] = useState<number | 'all' | ''>(fixedEventId || (mode === 'carts' ? '' : 'all'))
   const [recoveryEvents, setRecoveryEvents] = useState<RecoveryEventOption[]>([])
   const [statusFilter, setStatusFilter] = useState<'all' | 'aberto' | 'em_recuperacao' | 'recuperado'>('all')
 
@@ -146,15 +148,20 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
         getAutomationSummary(producerId || undefined, eventId),
         getRecoveryDashboard(producerId || undefined, eventId)
       ])
-      setRows(r && r.length ? r : (mode === 'carts' ? [] : mockOpportunities))
+      setRows(r && r.length ? r : ((mode === 'carts' || fixedEventId) ? [] : mockOpportunities))
       setSummary(s)
       setDashboard(d)
     } catch {
-      setRows(mode === 'carts' ? [] : mockOpportunities)
+      setRows((mode === 'carts' || fixedEventId) ? [] : mockOpportunities)
     }
   }
 
   useEffect(() => {
+    if (fixedEventId) {
+      setSelectedEventId(fixedEventId)
+      setRecoveryEvents([])
+      return
+    }
     if (mode === 'carts') {
       setSelectedEventId('')
       setRows([])
@@ -165,7 +172,7 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
       setSelectedEventId('all')
       setRecoveryEvents([])
     }
-  }, [producerId, mode])
+  }, [producerId, mode, fixedEventId])
 
   useEffect(() => {
     load()
@@ -229,7 +236,7 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
   })
 
   return (
-    <section className="growth-page">
+    <section className={embedded ? "growth-page recovery-center-embedded" : "growth-page"}>
       {/* 1. Header & Actions */}
       <div className="growth-intro" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div>
@@ -317,33 +324,41 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
       {/* 3. Filter Bar */}
       <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', padding: '14px 18px', borderRadius: '12px', marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          {/* Event selector */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '13px' }}>
-            <Filter size={14} color="#64748B" />
-            <select
-              value={selectedEventId}
-              onChange={e => setSelectedEventId(e.target.value === '' ? '' : e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              style={{ background: 'transparent', border: 0, fontWeight: 700, color: '#0F172A', cursor: 'pointer', outline: 'none', minWidth: '230px' }}
-            >
-              {mode === 'carts' ? (
-                <>
-                  <option value="">Selecione um evento com abandono</option>
-                  {recoveryEvents.map(ev => (
-                    <option key={ev.id} value={ev.id}>
-                      {ev.title} — {ev.openCount} pendente(s)
-                    </option>
-                  ))}
-                </>
-              ) : (
-                <>
-                  <option value="all">Todos os eventos ({events.length})</option>
-                  {events.map(ev => (
-                    <option key={ev.id} value={ev.id}>{ev.title}</option>
-                  ))}
-                </>
-              )}
-            </select>
-          </div>
+          {/* Event selector / locked event context */}
+          {fixedEventId ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#EFF6FF', padding: '7px 12px', borderRadius: '8px', border: '1px solid #BFDBFE', fontSize: '13px', fontWeight: 800, color: '#1D4ED8' }}>
+              <Filter size={14} />
+              <span>{events.find(ev => ev.id === fixedEventId)?.title || `Evento ${fixedEventId}`}</span>
+              <span style={{ fontSize: '10px', background: '#DBEAFE', padding: '2px 6px', borderRadius: '999px' }}>ESCOPO FIXO</span>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '13px' }}>
+              <Filter size={14} color="#64748B" />
+              <select
+                value={selectedEventId}
+                onChange={e => setSelectedEventId(e.target.value === '' ? '' : e.target.value === 'all' ? 'all' : Number(e.target.value))}
+                style={{ background: 'transparent', border: 0, fontWeight: 700, color: '#0F172A', cursor: 'pointer', outline: 'none', minWidth: '230px' }}
+              >
+                {mode === 'carts' ? (
+                  <>
+                    <option value="">Selecione um evento com abandono</option>
+                    {recoveryEvents.map(ev => (
+                      <option key={ev.id} value={ev.id}>
+                        {ev.title} — {ev.openCount} pendente(s)
+                      </option>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <option value="all">Todos os eventos ({events.length})</option>
+                    {events.map(ev => (
+                      <option key={ev.id} value={ev.id}>{ev.title}</option>
+                    ))}
+                  </>
+                )}
+              </select>
+            </div>
+          )}
 
           {/* Status selector */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#F1F5F9', padding: '4px', borderRadius: '8px', fontSize: '12px', fontWeight: 600 }}>

@@ -1,14 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import {
   BarChart3, CalendarDays, CheckCircle2, CircleDollarSign, Clock3, Download, Eye, FileBarChart2,
   Link2, MapPin, Megaphone, MousePointerClick, Plus, ScanLine, Search, Settings2, ShieldCheck, Ticket,
-  TrendingUp, UserCog, Users, Waves, Copy, ExternalLink, Tags, Activity, Globe2, ArrowLeft
+  TrendingUp, UserCog, Users, Waves, Copy, ExternalLink, Tags, Activity, Globe2, ArrowLeft, Repeat2
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import type { Participant } from '../data/participants'
 import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
 import UtmConversionsCenter from '../components/UtmConversionsCenter'
+import RecoveryCenterPage from './RecoveryCenterPage'
+import { getAutomationSummary, getRecoveryDashboard, type AutomationSummary, type RecoveryDashboard } from '../services/api'
 import type { PageKey } from '../components/ModuleSidebar'
 
 type Props={event:EventItem;participants:Participant[];page:PageKey;onNavigate:(p:PageKey)=>void;notify:(message:string)=>void}
@@ -25,7 +27,7 @@ export default function EventContextPage({event,participants,page,onNavigate,not
  if(page==='event-ga4') return <Ga4 event={event}/>
  if(page==='event-traffic') return <Traffic event={event}/>
  if(page==='event-meta-ads') return <MetaAds event={event} notify={notify}/>
- if(page==='event-remarketing') return <Remarketing event={event} notify={notify}/>
+ if(page==='event-remarketing') return <Remarketing event={event} notify={notify} onNavigate={onNavigate}/>
  return <Generic event={event} page={page} onNavigate={onNavigate} notify={notify}/>
 }
 
@@ -147,8 +149,72 @@ function Traffic({event}:{event:EventItem}){return <div className="event-context
 
 function MetaAds({event,notify}:{event:EventItem;notify:(m:string)=>void}){const campaigns=[['Lançamento','Ativa','R$ 2.400','R$ 10.080','4,20x'],['Último lote','Ativa','R$ 1.650','R$ 6.270','3,80x'],['Remarketing Checkout','Pausada','R$ 780','R$ 2.262','2,90x']];return <div className="event-context-page"><HeaderBlock eyebrow="MÍDIA" title="Campanhas Meta Ads" description="Campanhas e métricas Meta Ads filtradas exclusivamente para o evento." event={event} action={<button className="btn primary" onClick={()=>notify('Nova campanha Meta Ads iniciada.')}><Plus size={16}/> Nova campanha</button>}/><section className="growth-kpis event-context-kpis"><Kpi icon={CircleDollarSign} label="Investimento" value="R$ 4.830" note="Período selecionado"/><Kpi icon={MousePointerClick} label="Cliques" value="6.420" note="CTR 3,91%"/><Kpi icon={Ticket} label="Conversões" value="1.248" note="Compras atribuídas"/><Kpi icon={TrendingUp} label="ROAS" value="3,85x" note="Retorno sobre mídia"/></section><section className="growth-panel"><div className="context-table-wrap"><table className="context-table"><thead><tr><th>Campanha</th><th>Status</th><th>Investimento</th><th>Receita</th><th>ROAS</th><th></th></tr></thead><tbody>{campaigns.map(c=><tr key={c[0]}><td><strong>{c[0]}</strong><small>Evento {event.code}</small></td><td><span className={`mini-status ${c[1]==='Ativa'?'ativo':'pendente'}`}>{c[1]}</span></td><td>{c[2]}</td><td>{c[3]}</td><td><strong>{c[4]}</strong></td><td><button className="table-action" onClick={()=>notify(`Campanha ${c[0]} aberta.`)}>Gerenciar</button></td></tr>)}</tbody></table></div></section></div>}
 
-function Remarketing({event,notify}:{event:EventItem;notify:(m:string)=>void}){return <div className="event-context-page"><HeaderBlock eyebrow="RECUPERAÇÃO" title="Remarketing do Evento" description="Carrinhos, públicos e automações de recuperação relacionados exclusivamente ao evento." event={event}/><section className="growth-kpis event-context-kpis"><Kpi icon={Ticket} label="Carrinhos abandonados" value="184" note="Últimos 30 dias"/><Kpi icon={CircleDollarSign} label="Potencial" value="R$ 28.740" note="Receita recuperável"/><Kpi icon={CheckCircle2} label="Recuperados" value="47" note="25,5% dos carrinhos"/><Kpi icon={TrendingUp} label="Receita recuperada" value="R$ 8.960" note="Atribuída aos fluxos"/></section><section className="context-card-grid"><ContextAction icon={Waves} title="Carrinho abandonado" text="Fluxo WhatsApp + E-mail após 30 minutos." action={()=>notify('Fluxo de carrinho aberto.')}/><ContextAction icon={CircleDollarSign} title="Pagamento pendente" text="Recuperação de PIX e pagamentos não concluídos." action={()=>notify('Fluxo de pagamento aberto.')}/><ContextAction icon={Users} title="Públicos" text="Segmentos de visitantes e compradores do evento." action={()=>notify('Públicos do evento abertos.')}/><ContextAction icon={Megaphone} title="Campanhas" text="Ativações para públicos quentes e semelhantes." action={()=>notify('Campanhas de remarketing abertas.')}/></section></div>}
+function Remarketing({event,notify,onNavigate}:{event:EventItem;notify:(m:string)=>void;onNavigate:(p:PageKey)=>void}){
+  type RemarketingTab='overview'|'carts'|'payments'|'flows'|'whatsapp'|'email'
+  const [tab,setTab]=useState<RemarketingTab>('overview')
+  const [summary,setSummary]=useState<AutomationSummary|null>(null)
+  const [dashboard,setDashboard]=useState<RecoveryDashboard|null>(null)
+  const [loading,setLoading]=useState(false)
 
+  const refresh=async()=>{
+    setLoading(true)
+    try{
+      const [s,d]=await Promise.all([
+        getAutomationSummary(event.producerId,event.id),
+        getRecoveryDashboard(event.producerId,event.id)
+      ])
+      setSummary(s);setDashboard(d)
+    }catch{
+      setSummary(null);setDashboard(null)
+    }finally{setLoading(false)}
+  }
+  useEffect(()=>{refresh()},[event.id,event.producerId])
+
+  const openCount=dashboard?.open ?? summary?.openRecoveries ?? 0
+  const inRecovery=dashboard?.inRecovery ?? 0
+  const recovered=dashboard?.recovered ?? summary?.recoveredCount ?? 0
+  const potentialCents=dashboard?.potentialCents ?? summary?.potentialCents ?? 0
+  const recoveredCents=dashboard?.recoveredCents ?? summary?.recoveredCents ?? 0
+  const total=openCount+inRecovery+recovered
+  const rate=total>0?((recovered/total)*100):0
+  const money=(cents:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format((cents||0)/100)
+
+  const tabs:[RemarketingTab,string][]=[['overview','Visão Geral'],['carts','Carrinhos Abandonados'],['payments','Pagamento Pendente'],['flows','Fluxos'],['whatsapp','WhatsApp'],['email','E-mail']]
+
+  return <div className="event-context-page event-remarketing-functional">
+    <HeaderBlock eyebrow="RECUPERAÇÃO" title="Remarketing do Evento" description="Carrinhos, pagamentos e automações filtrados exclusivamente pelo evento e pela produtora proprietária." event={event} action={<div style={{display:'flex',gap:'8px',alignItems:'center'}}><button className="btn secondary" onClick={refresh} disabled={loading}><Activity size={15}/>{loading?'Atualizando...':'Atualizar'}</button><div className="event-context-badge"><span>Evento ativo</span><strong>{event.code}</strong></div></div>}/>
+
+    <section className="event-remarketing-security-strip">
+      <ShieldCheck size={17}/>
+      <div><strong>Escopo protegido</strong><span> producerId {event.producerId} • eventId {event.id}. Nenhum dado de outra produtora é carregado nesta tela.</span></div>
+    </section>
+
+    <section className="growth-kpis event-context-kpis">
+      <Kpi icon={Ticket} label="Carrinhos em aberto" value={String(openCount)} note={`${inRecovery} em recuperação`}/>
+      <Kpi icon={CircleDollarSign} label="Potencial" value={money(potentialCents)} note="Receita recuperável"/>
+      <Kpi icon={CheckCircle2} label="Recuperados" value={String(recovered)} note={`${rate.toFixed(1).replace('.',',')}% das oportunidades`}/>
+      <Kpi icon={TrendingUp} label="Receita recuperada" value={money(recoveredCents)} note="Atribuída aos fluxos"/>
+    </section>
+
+    <section className="event-remarketing-tabs" aria-label="Funções de remarketing do evento">
+      {tabs.map(([key,label])=><button key={key} type="button" className={tab===key?'active':''} onClick={()=>setTab(key)}>{label}</button>)}
+      <button type="button" onClick={()=>onNavigate('event-meta-ads')}>Campanhas Meta Ads</button>
+    </section>
+
+    {tab==='overview' ? <>
+      <section className="context-card-grid event-remarketing-actions">
+        <ContextAction icon={Waves} title="Carrinho abandonado" text="Consultar oportunidades e iniciar WhatsApp/E-mail para este evento." action={()=>setTab('carts')}/>
+        <ContextAction icon={CircleDollarSign} title="Pagamento pendente" text="Recuperar PIX e pagamentos não concluídos exclusivamente deste evento." action={()=>setTab('payments')}/>
+        <ContextAction icon={Repeat2} title="Fluxos automáticos" text="Gerenciar réguas, gatilhos e fila multicanal de recuperação." action={()=>setTab('flows')}/>
+        <ContextAction icon={Megaphone} title="Campanhas" text="Abrir campanhas Meta Ads mantendo este evento como contexto ativo." action={()=>onNavigate('event-meta-ads')}/>
+      </section>
+      <section className="event-remarketing-overview-grid">
+        <article className="growth-panel"><div className="panel-head"><h3>Saúde da recuperação</h3><p>Resumo operacional do evento selecionado.</p></div><div className="context-operation-list"><Row label="Oportunidades abertas" value={String(openCount)}/><Row label="Em recuperação" value={String(inRecovery)}/><Row label="Recuperadas" value={String(recovered)}/><Row label="Taxa de recuperação" value={`${rate.toFixed(1).replace('.',',')}%`}/></div></article>
+        <article className="growth-panel"><div className="panel-head"><h3>Canais</h3><p>Entregas e receita por canal.</p></div><div className="context-operation-list"><Row label="WhatsApp — tentativas" value={String(dashboard?.byChannel?.whatsapp?.attempts||0)}/><Row label="WhatsApp — recuperadas" value={String(dashboard?.byChannel?.whatsapp?.recovered||0)}/><Row label="E-mail — tentativas" value={String(dashboard?.byChannel?.email?.attempts||0)}/><Row label="E-mail — recuperadas" value={String(dashboard?.byChannel?.email?.recovered||0)}/></div></article>
+      </section>
+    </> : <RecoveryCenterPage producerId={event.producerId} events={[event]} mode={tab} fixedEventId={event.id} embedded notify={notify}/>} 
+  </div>
+}
 function Generic({event,page,onNavigate,notify}:{event:EventItem;page:PageKey;onNavigate:(p:PageKey)=>void;notify:(m:string)=>void}){const labels:Partial<Record<PageKey,{eyebrow:string;title:string;description:string}>>={'event-users':{eyebrow:'ADMINISTRAÇÃO',title:'Usuários do Evento',description:'Controle quais usuários podem visualizar ou operar este evento.'},'event-audit':{eyebrow:'AUDITORIA',title:'Logs do Evento',description:'Histórico de operações executadas dentro do contexto deste evento.'},'event-permissions':{eyebrow:'SEGURANÇA',title:'Permissões do Evento',description:'Permissões específicas e herança de acessos da produtora.'}};const meta=labels[page]||{eyebrow:'EVENTO',title:'Evento',description:'Módulo contextual do evento.'};const Icon=iconFor(page);return <div className="event-context-page"><HeaderBlock {...meta} event={event}/><section className="context-module-panel"><div className="context-module-icon"><Icon size={28}/></div><div className="context-module-copy"><h3>{meta.title}</h3><p>Todo dado utiliza automaticamente <strong>eventId {event.id}</strong> e <strong>producerId {event.producerId}</strong>.</p></div><button className="btn primary" onClick={()=>notify(`${meta.title}: ação executada.`)}>Executar ação</button></section><section className="growth-panel"><div className="panel-head"><h3>Navegação preservada</h3><p>Troque de função sem sair do evento.</p></div><div className="context-quick-actions"><button onClick={()=>onNavigate('event-dashboard')}>Dashboard</button><button onClick={()=>onNavigate('event-reports')}>Relatórios</button><button onClick={()=>onNavigate('event-ga4')}>Analytics</button><button onClick={()=>onNavigate('event-remarketing')}>Remarketing</button></div></section></div>}
 
 function Dashboard({event,participants,onNavigate}:{event:EventItem;participants:Participant[];onNavigate:(p:PageKey)=>void}){const people=participants.filter(p=>p.eventId===event.id);const present=people.filter(p=>p.checkin==='presente').length;return <div className="event-context-page"><section className="context-page-heading"><div><p className="eyebrow">PAINEL DO EVENTO</p><h2>{event.title}</h2><p>{event.venue} • {event.city} • {event.date}</p></div><span className={`status-pill ${event.status}`}>{event.status}</span></section><section className="growth-kpis event-context-kpis"><Kpi icon={CircleDollarSign} label="Receita" value={`R$ ${event.total}`} note="Receita do evento"/><Kpi icon={Ticket} label="Vendas" value={String(event.sales)} note={`${event.available} disponíveis`}/><Kpi icon={Users} label="Participantes" value={String(people.length)} note={`${present} check-ins`}/><Kpi icon={TrendingUp} label="Ocupação" value={event.occupancy} note="Capacidade utilizada"/></section><section className="event-context-two-col"><div className="growth-panel"><div className="panel-head"><h3>Acesso rápido</h3><p>Todos os destinos mantêm este evento selecionado.</p></div><div className="context-launch-grid"><Launch icon={Ticket} label="Consultar Ingresso" onClick={()=>onNavigate('event-tickets')}/><Launch icon={FileBarChart2} label="Relatórios" onClick={()=>onNavigate('event-reports')}/><Launch icon={BarChart3} label="Analytics GA4" onClick={()=>onNavigate('event-ga4')}/><Launch icon={Megaphone} label="Meta Ads" onClick={()=>onNavigate('event-meta-ads')}/><Launch icon={Waves} label="Remarketing" onClick={()=>onNavigate('event-remarketing')}/><Launch icon={CircleDollarSign} label="Negociação Financeira" onClick={()=>onNavigate('finance-negotiations')}/><Launch icon={Settings2} label="Detalhes" onClick={()=>onNavigate('event-details')}/></div></div><div className="growth-panel"><div className="panel-head"><h3>Operação em tempo real</h3><p>Resumo operacional do evento selecionado.</p></div><div className="context-operation-list"><Row label="Check-ins realizados" value={`${present}/${people.length||event.sales}`}/><Row label="Ingressos disponíveis" value={event.available.toLocaleString('pt-BR')}/><Row label="Cortesias" value={event.courtesy.toLocaleString('pt-BR')}/><Row label="Status" value={event.status}/></div></div></section></div>}

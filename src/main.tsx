@@ -6,6 +6,7 @@ import './styles.css'
 import './styles/limitless-enterprise.css'
 import './styles/responsive-enterprise-360.css'
 import './styles/sidebar-enterprise.css'
+import './styles/disk-estornos.css'
 
 document.documentElement.dataset.uiFramework = 'limitless'
 document.documentElement.dataset.marketingIntegrationsRelease = '25.7-marketing-integrations-360-2026-09-02'
@@ -18,6 +19,8 @@ const root = document.getElementById('root')
 if (!root) {
   throw new Error('Elemento #root não encontrado no index.html')
 }
+
+document.documentElement.dataset.eventRemarketingRelease = '25.8.2-event-remarketing-functional-2026-09-02'
 
 try {
   ReactDOM.createRoot(root).render(
