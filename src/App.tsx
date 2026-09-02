@@ -17,6 +17,7 @@ import FinanceHubPage from './pages/FinanceHubPage'
 import FinanceCommandCenterPage from './pages/FinanceCommandCenterPage'
 import FinanceDashboardPage from './pages/FinanceDashboardPage'
 import FinanceBalancesPage from './pages/FinanceBalancesPage'
+import FinanceProducerAccountPage from './pages/FinanceProducerAccountPage'
 import FinanceCashOperationsPage from './pages/FinanceCashOperationsPage'
 import FinanceStatementPage from './pages/FinanceStatementPage'
 import FinancePayoutsPage from './pages/FinancePayoutsPage'
@@ -72,6 +73,7 @@ const mobileInternalHeaderPages = new Set<PageKey>([
   'marketing-utm-central',
   'finance-dashboard',
   'finance',
+  'finance-producer-account',
   'finance-statement',
   'finance-cashflow',
   'finance-receivables',
@@ -114,6 +116,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'finance-dashboard': 'Dashboard Financeiro',
   'finance-hub': 'Hub Financeiro',
   'finance': 'Saldos',
+  'finance-producer-account': 'Conta Gráfica do Produtor',
   'finance-statement': 'Extrato Financeiro',
   'finance-cashflow': 'Fluxo de Caixa',
   'finance-receivables': 'Contas a Receber',
@@ -690,6 +693,9 @@ export default function App() {
         {/* FASE 17.3 & 17.4: OPERAÇÕES FINANCEIRAS INTEGRADAS */}
         {page === 'finance' && (
           <FinanceCashOperationsPage mode="balance" events={visibleEvents} producerId={scopedProducerId ?? undefined} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'finance-producer-account' && (
+          <FinanceProducerAccountPage events={visibleEvents} producerId={scopedProducerId} notify={notify} onNavigate={navigate} />
         )}
         {page === 'finance-statement' && (
           <FinanceCashOperationsPage mode="statement" events={visibleEvents} producerId={scopedProducerId ?? undefined} notify={notify} onNavigate={navigate} />

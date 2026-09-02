@@ -15,6 +15,7 @@ const brl=(c?:number|null)=>new Intl.NumberFormat('pt-BR',{style:'currency',curr
 const base:{title:string;subtitle:string;items:Shortcut[]}[]=[
 {title:'OPERAÇÕES DE CAIXA',subtitle:'Rotinas financeiras e saldos do dia a dia',items:[
 {title:'Saldo',desc:'Saldo consolidado, disponível, bloqueado e previsto.',page:'finance',icon:WalletCards,tone:'blue'},
+{title:'Conta do Produtor',desc:'Conta gráfica, buckets, reservas e saldo derivado do Ledger.',page:'finance-producer-account',icon:CircleDollarSign,tone:'cyan'},
 {title:'Solicitar Repasse',desc:'Transferências, aprovação, programação e comprovantes.',page:'finance-payouts',icon:HandCoins,tone:'green'},
 {title:'Antecipações',desc:'Simule e antecipe recebíveis elegíveis.',page:'finance-advance',icon:Zap,tone:'orange'},
 {title:'Extrato',desc:'Entradas, saídas, vendas, taxas e repasses.',page:'finance-statement',icon:ReceiptText,tone:'purple'},
@@ -50,12 +51,13 @@ export default function FinanceCommandCenterPage({events,producerId,notify,onNav
  const groups=useMemo(()=>base.map(g=>({...g,items:g.items.filter(x=>(x.title+' '+x.desc).toLowerCase().includes(q.toLowerCase()))})),[q])
  const selectedEventName=events.find(e=>e.id===eventId)?.title
  const openHubPage=(page:PageKey,label:string,status?:string)=>navigateWithFinanceDrilldown(onNavigate,page,{status,eventName:selectedEventName,source:'finance-dashboard-hub',label})
- return <div className="finance-command" data-finance-release={LEDGER_RELEASE}>
+ return <div className="finance-command" data-finance-release="25.3-producer-ledger-account-2026-09-02">
  <span className="sr-only">{ERP_ARCHITECTURE_RELEASE} {ERP_FEATURE_FLAGS.join(' ')} {LEDGER_FEATURE_FLAGS.join(' ')} defaultTicketingChartOfAccounts</span>
  <header className="finance-command-hero"><div><span className="finance-command-eyebrow">FINANCEIRO</span><h1>Dashboard Financeiro</h1><p>Controle de saldos, recebíveis, taxas, pagamentos, repasses e liquidações.</p></div><div className="finance-command-actions"><select value={eventId??''} onChange={e=>setEventId(e.target.value?Number(e.target.value):undefined)}><option value="">Todos os eventos</option>{events.map(e=><option key={e.id} value={e.id}>{e.title}</option>)}</select><button onClick={()=>load(true)}><RefreshCw size={16}/>{loading?'Atualizando...':'Atualizar'}</button><button className="primary" onClick={()=>onNavigate('finance-payouts')}><HandCoins size={16}/>Solicitar Repasse</button></div></header>
  <nav className="finance-hub-nav" aria-label="Navegação interna do Dashboard Financeiro">
    <button className="active" type="button" aria-current="page"><LayoutDashboard size={15}/><span>Visão Geral</span></button>
    <button type="button" onClick={()=>openHubPage('finance','Saldo')}><WalletCards size={15}/><span>Saldo</span></button>
+   <button type="button" onClick={()=>openHubPage('finance-producer-account','Conta do Produtor')}><CircleDollarSign size={15}/><span>Conta do Produtor</span></button>
    <button type="button" onClick={()=>openHubPage('finance-statement','Extrato')}><List size={15}/><span>Extrato</span></button>
    <button type="button" onClick={()=>openHubPage('finance-receivables','Recebíveis','open')}><BanknoteArrowDown size={15}/><span>Recebíveis</span></button>
    <button type="button" onClick={()=>openHubPage('finance-payouts','Repasses')}><HandCoins size={15}/><span>Repasses</span></button>

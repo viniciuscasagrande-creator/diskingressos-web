@@ -12,10 +12,10 @@ const uiRequired = [
 ]
 
 const architectureRequired = [
-  '25.0-master-erp-crm-finance-producer-2026-09-02','25.1-ledger-chart-of-accounts-2026-09-02','25.2-split-financial-agreements-2026-09-02',
+  '25.0-master-erp-crm-finance-producer-2026-09-02','25.1-ledger-chart-of-accounts-2026-09-02','25.2-split-financial-agreements-2026-09-02','25.3-producer-ledger-account-2026-09-02',
   'Ledger append-only','financial_agreement_versions','financial_audit_logs','Ledger Contábil e Plano de Contas','defaultTicketingChartOfAccounts',
   'ledger_account_balances','ledger_producer_balances','assert_ledger_batch_balanced',
-  'Motor de Split e Contratos Financeiros','financial_agreement_rules','financial_agreement_participants','split_executions','split_allocations','active_financial_agreements'
+  'Motor de Split e Contratos Financeiros','Conta Gráfica do Produtor','Saldo do Produtor','BUCKETS FINANCEIROS','financial_agreement_rules','financial_agreement_participants','split_executions','split_allocations','active_financial_agreements'
 ]
 
 function collect(dir) {
@@ -42,4 +42,4 @@ const architectureBody=body([...collect('src'),...collect('server'),...collect('
 assertContains('src/UI',srcBody,uiRequired)
 assertContains('dist/UI',distBody,uiRequired)
 assertContains('arquitetura backend/db',architectureBody,architectureRequired)
-console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + Fases 25.0 a 25.2 confirmadas no build.')
+console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + Fases 25.0 a 25.3 confirmadas no build.')
