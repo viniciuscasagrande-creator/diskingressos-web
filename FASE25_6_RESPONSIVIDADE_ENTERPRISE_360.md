@@ -1,24 +1,38 @@
 # Fase 25.6 — Responsividade Enterprise 360°
 
-Release: `25.6-enterprise-responsiveness-360-2026-09-02`
+Release: `25.6-responsive-enterprise-360-2026-09-02`
 
 ## Objetivo
-Transformar a responsividade em regra estrutural obrigatória do SafeSaff, cobrindo Dashboard, Financeiro, Contabilidade, ERP, CRM, SAC, Marketing, Estornos e Portal do Produtor.
+Transformar responsividade em regra transversal do Design System SafeSaff + Limitless, preservando o desktop aprovado e adaptando ERP, Financeiro, Contabilidade, CRM, SAC, Marketing, Estornos, Administração e Portal do Produtor para notebook, tablet e mobile.
 
-## 4 Faixas de Dispositivos Padronizadas
-1. **Desktop Grande (`>= 1440px`)**: visualização plena, 4 colunas de KPIs, navegação completa, tabelas expandidas.
-2. **Notebook (`1024px – 1439px`)**: densidade controlada, 2 a 3 colunas de KPIs, respiro proporcional.
-3. **Tablet (`768px – 1023px`)**: 2 colunas de cards, tabelas com scroll touch horizontal protegido, toolbars adaptativas.
-4. **Mobile (`< 768px` e Pequeno `< 480px`)**: layout em coluna única, KPIs verticais fluidos, gráficos 100% de largura, modais em tela cheia com safe-area e botões de ação touch amigáveis.
+## Breakpoints oficiais
+- Desktop amplo: >= 1440px
+- Notebook: 1200–1439px
+- Tablet / notebook compacto: 768–1199px
+- Mobile: 480–767px
+- Mobile compacto: < 480px
 
-## Componentes e Tokens Integrados
-- `.erp-grid`: grid adaptativo com `auto-fit` e `minmax(min(100%, 260px), 1fr)`.
-- `.financial-table-wrapper` e `.ll-table-frame`: proteção contra overflow com scroll momentum.
-- `.page-toolbar` e `.page-actions`: transição flex → stack no mobile.
-- `src/styles/enterprise-responsive.css`: regras de layout fluidas para todo o ecossistema.
-- `db/migrations/025_06_enterprise_responsive_preferences.sql`: persistência de preferências de viewport e densidade.
+## Implementação
+A nova camada `src/styles/responsive-enterprise-360.css` é importada por último no `main.tsx`, portanto funciona como camada de adaptação sem substituir o Limitless nem reescrever regras de negócio.
 
-## Governança e Preservação
-- Design System Limitless (Fase 25.3.4) mantido como fundação.
-- Alinhamento financeiro (textos à esquerda, números/valores à direita + `tabular-nums`) preservado em todas as resoluções.
-- Sidebar com auto-collapse e Estornos independente preservados.
+### Regras
+- grids financeiros reduzem 5/6 → 3 → 2 → 1 colunas conforme a largura;
+- sidebar usa o drawer mobile já existente;
+- Navigation Rail mantém scroll horizontal, snap e touch;
+- tabelas permanecem completas e ganham viewport horizontal segura em telas estreitas;
+- toolbars, filtros e ações quebram linha e ocupam largura útil;
+- modais mobile passam a sheet inferior quase full-screen;
+- formulários passam para uma coluna no mobile;
+- gráficos/canvas/SVG nunca ultrapassam o container;
+- inputs usam 16px no mobile para evitar zoom automático em navegadores móveis;
+- targets de toque têm pelo menos 44px;
+- safe-area é respeitada na navegação inferior;
+- valores financeiros mantêm `tabular-nums` e alinhamento numérico;
+- telas ultrawide recebem limite de leitura de 1920px;
+- `prefers-reduced-motion` é respeitado.
+
+## Telas financeiras 25.4/25.5
+Recebíveis, liquidação, repasses, reservas e disponibilidade financeira receberam regras explícitas para KPIs, waterfall, cards, tabelas e visualizações em tablet/mobile.
+
+## Governança
+Todo novo componente visual do SafeSaff deve nascer compatível com esta camada. Responsividade deixa de ser correção posterior e passa a ser requisito de aceite.

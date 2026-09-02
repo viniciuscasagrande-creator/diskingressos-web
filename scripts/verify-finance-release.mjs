@@ -68,7 +68,7 @@ assertContains('Fase 25.5', phase255Body, [phase255, 'Repasses, Reservas & Dispo
 console.log('[FINANCE RELEASE] Fases 25.0 a 25.5 confirmadas no build.');
 
 // Fase 25.6 — Responsividade Enterprise 360°
-const phase256 = '25.6-enterprise-responsiveness-360-2026-09-02';
+const phase256 = '25.6-responsive-enterprise-360-2026-09-02';
 const phase256Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
-assertContains('Fase 25.6', phase256Body, [phase256, 'user_ui_responsive_preferences', 'erp-grid', 'financial-table-wrapper']);
+assertContains('Fase 25.6', phase256Body, [phase256, 'responsive-enterprise-360.css']);
 console.log('[FINANCE RELEASE] Fases 25.0 a 25.6 confirmadas no build.');

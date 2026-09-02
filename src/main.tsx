@@ -5,6 +5,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import './styles.css'
 import './styles/limitless-enterprise.css'
 import './styles/enterprise-responsive.css'
+import './styles/responsive-enterprise-360.css'
 
 const root = document.getElementById('root')
 
