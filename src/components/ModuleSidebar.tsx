@@ -170,7 +170,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
               (it.key === 'finance-advance' && ['finance-advance', 'finance-spread', 'finance-spread-simulator'].includes(page)) ||
               (it.key === 'finance-split' && ['finance-split', 'finance-settlement', 'finance-settlements', 'finance-negotiations'].includes(page)) ||
               (it.key === 'finance-methods' && ['finance-methods', 'finance-custom', 'finance-operators', 'finance-gateways', 'finance-refunds', 'finance-intelligence', 'finance-rates', 'finance-disputes', 'finance-chargebacks'].includes(page)) ||
-              (it.key === 'finance-bordero' && ['finance-bordero', 'finance-reports', 'finance-advanced', 'finance-consolidated'].includes(page)) ||
+              (it.key === 'finance-reports' && ['finance-reports', 'finance-bordero', 'finance-advanced', 'finance-consolidated'].includes(page)) ||
               page === it.key
 
             return (
