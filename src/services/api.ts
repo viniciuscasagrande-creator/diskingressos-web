@@ -94,13 +94,15 @@ export const getMessageTemplates=(producerId?:number,eventId?:number,channel?:st
 export const createMessageTemplate=(body:any)=>request<MessageTemplate>('/automation/templates',{method:'POST',body:JSON.stringify(body)})
 export const getAutomationExecutions=(producerId?:number)=>request<AutomationExecution[]>(`/automation/executions${qs({producerId})}`)
 export const getRecoveries=(producerId?:number,eventId?:number,kind?:string)=>request<RecoveryOpportunity[]>(`/automation/recoveries${qs({producerId,eventId})}${kind?`${qs({producerId,eventId})?'&':'?'}kind=${encodeURIComponent(kind)}`:''}`)
+export type RecoveryEventOption={id:number;title:string;code:string;producerId:number;abandonedCount:number;openCount:number;potentialCents:number}
+export const getRecoveryEvents=(producerId?:number,kind='carrinho')=>request<RecoveryEventOption[]>(`/automation/recovery-events${qs({producerId})}${qs({producerId})?'&':'?'}kind=${encodeURIComponent(kind)}`)
 export const createRecovery=(body:any)=>request<RecoveryOpportunity>('/automation/recoveries',{method:'POST',body:JSON.stringify(body)})
 export const markRecoveryRecovered=(id:number,revenueCents?:number)=>request<RecoveryOpportunity>(`/automation/recoveries/${id}/recover`,{method:'PATCH',body:JSON.stringify(revenueCents===undefined?{}:{revenueCents})})
 export const startRecovery=(id:number,channel?:'whatsapp'|'email'|'multicanal')=>request<any>(`/automation/recoveries/${id}/start`,{method:'POST',body:JSON.stringify(channel?{channel}:{})})
-export const processRecoveryQueue=()=>request<{enrolled?:number;processed:number;sent:number}>('/automation/recoveries/process-queue',{method:'POST',body:JSON.stringify({limit:100})})
+export const processRecoveryQueue=(eventId?:number)=>request<{enrolled?:number;processed:number;sent:number}>('/automation/recoveries/process-queue',{method:'POST',body:JSON.stringify({limit:100,eventId})})
 export type RecoveryDashboard={open:number;inRecovery:number;recovered:number;potentialCents:number;recoveredCents:number;byChannel:Record<string,{attempts:number;recovered:number;revenueCents:number}>;campaigns:Array<{campaign:string;source:string|null;opportunities:number;recovered:number;revenueCents:number}>}
 export const getRecoveryDashboard=(producerId?:number,eventId?:number)=>request<RecoveryDashboard>(`/automation/recovery-dashboard${qs({producerId,eventId})}`)
-export const getAutomationSummary=(producerId?:number)=>request<AutomationSummary>(`/automation/summary${qs({producerId})}`)
+export const getAutomationSummary=(producerId?:number,eventId?:number)=>request<AutomationSummary>(`/automation/summary${qs({producerId,eventId})}`)
 
 export type SupportTicket={id:number;code:string;subject:string;description:string;category:string;impact:string;urgency:string;priority:string;status:string;channel:string;requesterName:string;requesterEmail:string|null;requesterPhone:string|null;assignedTo:string|null;responseDueAt:string;resolutionDueAt:string;resolvedAt:string|null;slaBreached:boolean;producerId:number;eventId:number|null;createdAt:string}
 export type SupportSummary={total:number;open:number;p1:number;overdue:number;resolved:number;slaCompliance:number}

@@ -6,8 +6,8 @@ import {
 } from 'lucide-react';
 import type { EventItem } from '../../types/event';
 import { 
-  getRecoveries, markRecoveryRecovered, getAutomationSummary, 
-  type RecoveryOpportunity, type AutomationSummary 
+  getRecoveries, markRecoveryRecovered, getAutomationSummary, getRecoveryEvents, 
+  type RecoveryOpportunity, type AutomationSummary, type RecoveryEventOption 
 } from '../../services/api';
 import { Button } from '../../components/ui/Button';
 
@@ -27,21 +27,30 @@ export const RecoveryCenterPage: React.FC<RecoveryCenterPageProps> = ({
   const [opportunities, setOpportunities] = useState<RecoveryOpportunity[]>([]);
   const [summary, setSummary] = useState<AutomationSummary | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<number | ''>(mode === 'carts' ? '' : '');
+  const [recoveryEvents, setRecoveryEvents] = useState<RecoveryEventOption[]>([]);
   const [kindFilter, setKindFilter] = useState<string>(
     mode === 'carts' ? 'carrinho' : mode === 'payments' ? 'pagamento' : mode === 'inactive' ? 'inativo' : mode === 'postevent' ? 'pos_evento' : 'all'
   );
 
   const loadData = async () => {
+    if (mode === 'carts' && typeof selectedEventId !== 'number') {
+      setOpportunities([]);
+      setSummary(null);
+      return;
+    }
     setLoading(true);
     try {
       const actualKind = kindFilter === 'all' ? undefined : kindFilter;
+      const eventId = typeof selectedEventId === 'number' ? selectedEventId : undefined;
       const [opps, sum] = await Promise.all([
-        getRecoveries(producerId || undefined, undefined, actualKind),
-        getAutomationSummary(producerId || undefined),
+        getRecoveries(producerId || undefined, eventId, actualKind),
+        getAutomationSummary(producerId || undefined, eventId),
       ]);
       setOpportunities(opps);
       setSummary(sum);
     } catch (err: any) {
+      setOpportunities([]);
       if (notify) notify(`Erro ao carregar oportunidades: ${err.message}`);
     } finally {
       setLoading(false);
@@ -49,8 +58,17 @@ export const RecoveryCenterPage: React.FC<RecoveryCenterPageProps> = ({
   };
 
   useEffect(() => {
+    if (mode === 'carts') {
+      setSelectedEventId('');
+      getRecoveryEvents(producerId || undefined, 'carrinho').then(setRecoveryEvents).catch(() => setRecoveryEvents([]));
+    } else {
+      setRecoveryEvents([]);
+    }
+  }, [producerId, mode]);
+
+  useEffect(() => {
     loadData();
-  }, [producerId, kindFilter]);
+  }, [producerId, kindFilter, selectedEventId, mode]);
 
   const handleRecover = async (id: number, customerName: string) => {
     try {
@@ -111,7 +129,19 @@ export const RecoveryCenterPage: React.FC<RecoveryCenterPageProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {mode === 'carts' && (
+            <select
+              value={selectedEventId}
+              onChange={(e) => setSelectedEventId(e.target.value ? Number(e.target.value) : '')}
+              className="h-9 px-3 rounded-btn border border-amber-300 bg-amber-50 text-xs font-bold text-slate-800 outline-none min-w-[260px]"
+            >
+              <option value="">Selecione um evento com abandono</option>
+              {recoveryEvents.map((ev) => (
+                <option key={ev.id} value={ev.id}>{ev.title} — {ev.openCount} pendente(s)</option>
+              ))}
+            </select>
+          )}
           <select
             value={kindFilter}
             onChange={(e) => setKindFilter(e.target.value)}
@@ -129,6 +159,12 @@ export const RecoveryCenterPage: React.FC<RecoveryCenterPageProps> = ({
           </Button>
         </div>
       </div>
+
+      {mode === 'carts' && typeof selectedEventId !== 'number' && (
+        <div className="rounded-card border border-amber-200 bg-amber-50 p-4 text-xs font-semibold text-amber-800">
+          Selecione um evento para visualizar os carrinhos abandonados. Somente eventos da produtora autenticada com abandono aparecem nesta lista.
+        </div>
+      )}
 
       {/* 4 Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -8,8 +8,8 @@ import {
 import type { EventItem } from '../data/events'
 import {
   getAutomationSummary, getRecoveries, markRecoveryRecovered,
-  startRecovery, processRecoveryQueue, getRecoveryDashboard,
-  type AutomationSummary, type RecoveryOpportunity, type RecoveryDashboard
+  startRecovery, processRecoveryQueue, getRecoveryDashboard, getRecoveryEvents,
+  type AutomationSummary, type RecoveryOpportunity, type RecoveryDashboard, type RecoveryEventOption
 } from '../services/api'
 
 type Mode = 'carts' | 'flows' | 'whatsapp' | 'email' | 'payments' | 'inactive' | 'postevent' | 'automation'
@@ -34,7 +34,8 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
   const [dashboard, setDashboard] = useState<RecoveryDashboard | null>(null)
   const [busy, setBusy] = useState<number | null>(null)
   const [copiedId, setCopiedId] = useState<number | null>(null)
-  const [selectedEventId, setSelectedEventId] = useState<number | 'all'>('all')
+  const [selectedEventId, setSelectedEventId] = useState<number | 'all' | ''>(mode === 'carts' ? '' : 'all')
+  const [recoveryEvents, setRecoveryEvents] = useState<RecoveryEventOption[]>([])
   const [statusFilter, setStatusFilter] = useState<'all' | 'aberto' | 'em_recuperacao' | 'recuperado'>('all')
 
   const kind = kindByMode[mode]
@@ -130,25 +131,45 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
     ]
   }, [events])
 
-  const load = () => {
-    Promise.all([
-      getRecoveries(producerId || undefined, undefined, kind),
-      getAutomationSummary(producerId || undefined),
-      getRecoveryDashboard(producerId || undefined)
-    ])
-      .then(([r, s, d]) => {
-        setRows(r && r.length ? r : mockOpportunities)
-        setSummary(s)
-        setDashboard(d)
-      })
-      .catch(() => {
-        setRows(mockOpportunities)
-      })
+  const load = async () => {
+    const eventId = typeof selectedEventId === 'number' ? selectedEventId : undefined
+    // Carrinho abandonado exige seleção explícita do evento. Nunca carrega dados de todos os eventos.
+    if (mode === 'carts' && !eventId) {
+      setRows([])
+      setSummary(null)
+      setDashboard(null)
+      return
+    }
+    try {
+      const [r, s, d] = await Promise.all([
+        getRecoveries(producerId || undefined, eventId, kind),
+        getAutomationSummary(producerId || undefined, eventId),
+        getRecoveryDashboard(producerId || undefined, eventId)
+      ])
+      setRows(r && r.length ? r : (mode === 'carts' ? [] : mockOpportunities))
+      setSummary(s)
+      setDashboard(d)
+    } catch {
+      setRows(mode === 'carts' ? [] : mockOpportunities)
+    }
   }
 
   useEffect(() => {
-    load()
+    if (mode === 'carts') {
+      setSelectedEventId('')
+      setRows([])
+      getRecoveryEvents(producerId || undefined, 'carrinho')
+        .then(setRecoveryEvents)
+        .catch(() => setRecoveryEvents([]))
+    } else {
+      setSelectedEventId('all')
+      setRecoveryEvents([])
+    }
   }, [producerId, mode])
+
+  useEffect(() => {
+    load()
+  }, [producerId, mode, selectedEventId])
 
   const begin = async (r: RecoveryOpportunity) => {
     try {
@@ -180,7 +201,8 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
 
   const process = async () => {
     try {
-      const r = await processRecoveryQueue()
+      if (mode === 'carts' && typeof selectedEventId !== 'number') { notify('Selecione um evento antes de processar a fila de carrinhos abandonados.'); return }
+      const r = await processRecoveryQueue(typeof selectedEventId === 'number' ? selectedEventId : undefined)
       notify(`${r.sent} mensagem(ns) de resgate processada(s) na fila multicanal!`)
       await load()
     } catch (e: any) {
@@ -197,7 +219,8 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
 
   // Filtered rows
   const displayRows = rows.filter(r => {
-    if (selectedEventId !== 'all' && r.eventId !== selectedEventId) return false
+    if (typeof selectedEventId === 'number' && r.eventId !== selectedEventId) return false
+    if (mode === 'carts' && typeof selectedEventId !== 'number') return false
     if (statusFilter !== 'all' && r.status !== statusFilter) return false
     if (mode === 'whatsapp' && r.preferredChannel !== 'whatsapp') return false
     if (mode === 'email' && r.preferredChannel !== 'email') return false
@@ -227,6 +250,8 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             onClick={process}
+            disabled={mode === 'carts' && typeof selectedEventId !== 'number'}
+            title={mode === 'carts' && typeof selectedEventId !== 'number' ? 'Selecione um evento com abandono' : 'Processar fila de resgate'}
             className="h-10 px-4 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-amber-600 cursor-pointer"
           >
             <Send size={15} /> Processar Fila de Resgate
@@ -297,15 +322,26 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
             <Filter size={14} color="#64748B" />
             <select
               value={selectedEventId}
-              onChange={e => setSelectedEventId(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-              style={{ background: 'transparent', border: 0, fontWeight: 600, color: '#0F172A', cursor: 'pointer', outline: 'none' }}
+              onChange={e => setSelectedEventId(e.target.value === '' ? '' : e.target.value === 'all' ? 'all' : Number(e.target.value))}
+              style={{ background: 'transparent', border: 0, fontWeight: 700, color: '#0F172A', cursor: 'pointer', outline: 'none', minWidth: '230px' }}
             >
-              <option value="all">Todos os eventos ({events.length})</option>
-              {events.map(ev => (
-                <option key={ev.id} value={ev.id}>
-                  {ev.title}
-                </option>
-              ))}
+              {mode === 'carts' ? (
+                <>
+                  <option value="">Selecione um evento com abandono</option>
+                  {recoveryEvents.map(ev => (
+                    <option key={ev.id} value={ev.id}>
+                      {ev.title} — {ev.openCount} pendente(s)
+                    </option>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <option value="all">Todos os eventos ({events.length})</option>
+                  {events.map(ev => (
+                    <option key={ev.id} value={ev.id}>{ev.title}</option>
+                  ))}
+                </>
+              )}
             </select>
           </div>
 
@@ -341,6 +377,16 @@ export default function RecoveryCenterPage({ producerId, events, mode, notify }:
           Exibindo <strong>{displayRows.length}</strong> registro(s)
         </span>
       </div>
+
+      {mode === 'carts' && typeof selectedEventId !== 'number' && (
+        <div style={{ marginTop: '16px', padding: '18px', border: '1px solid #FDE68A', background: '#FFFBEB', borderRadius: '12px', display: 'flex', gap: '10px', alignItems: 'center', color: '#92400E' }}>
+          <AlertTriangle size={18} />
+          <div>
+            <strong style={{ display: 'block', fontSize: '13px' }}>Selecione um evento para visualizar os abandonos.</strong>
+            <span style={{ fontSize: '12px' }}>A lista contém somente eventos da produtora autenticada que possuem carrinhos abandonados.</span>
+          </div>
+        </div>
+      )}
 
       {/* 4. Table of Recovery Opportunities */}
       <article className="growth-panel" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '12px', marginTop: '16px', overflow: 'hidden' }}>

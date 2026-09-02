@@ -105,3 +105,9 @@ const phase258 = '25.8-enterprise-refund-engine-2026-09-02';
 const phase258Body = body([...collect('src'), ...collect('server'), ...collect('.')]);
 assertContains('Fase 25.8', phase258Body, [phase258, 'Motor Enterprise', 'findisp-page', 'reversal-plan', 'eligibility']);
 console.log('[FINANCE RELEASE] Fase 25.8 Motor Enterprise de Estornos confirmada.');
+
+// Fase 25.8.1 — Carrinho Abandonado com Escopo por Produtora e Evento
+const phase2581 = '25.8.1-abandoned-cart-tenant-event-scope-2026-09-02';
+const phase2581Body = body([...collect('src'), ...collect('server'), ...collect('.')]);
+assertContains('Fase 25.8.1', phase2581Body, [phase2581, 'recovery-events', 'Selecione um evento com abandono']);
+console.log('[FINANCE RELEASE] Fase 25.8.1 Carrinho Abandonado por Produtora e Evento confirmada.');

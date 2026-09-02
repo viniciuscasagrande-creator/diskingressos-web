@@ -1,8 +1,7 @@
 import { useState, useMemo } from 'react'
 import {
-  ArrowLeft, Download, Plus, Search, Filter, ShieldCheck,
-  AlertTriangle, Clock, RefreshCw, X, ChevronRight, CheckCircle2,
-  FileSpreadsheet, SlidersHorizontal, Layers, Activity, Lock
+  ArrowLeft, Download, Plus, Filter, ShieldCheck,
+  AlertTriangle, Clock, X, Layers, Activity, FileSpreadsheet
 } from 'lucide-react'
 
 export interface RefundItem {
@@ -57,7 +56,7 @@ const initialRefunds: RefundItem[] = [
   }
 ]
 
-type TabKey = 'controle' | 'enterprise' | 'chargebacks' | 'impact' | 'webhooks'
+type TabKey = 'controle' | 'enterprise' | 'chargebacks' | 'impact'
 
 export default function FinanceDisputesHubPage({
   onBack,
@@ -164,7 +163,7 @@ export default function FinanceDisputesHubPage({
       className="findisp-page disk-estornos-wrapper"
       data-finance-release="25.8-enterprise-refund-engine-2026-09-02 24.9-independent-refunds-2026-09-02"
     >
-      {/* Hidden release markers for audit scripts */}
+      {/* Hidden release markers for automated release verification */}
       <span className="sr-only">
         24.9-independent-refunds-2026-09-02 Central de Estornos, Reembolsos & Chargebacks OPERAÇÕES CRÍTICAS Fila de Aprovações Montante Devolvido Chargebacks & Risco Zona de Segurança
         25.8-enterprise-refund-engine-2026-09-02 Motor Enterprise reversal-plan eligibility Alçadas Reversão do Split
@@ -535,7 +534,7 @@ export default function FinanceDisputesHubPage({
               <div className="border border-slate-200 rounded-lg p-4 bg-white mt-4">
                 <h4 className="text-xs font-bold text-slate-700 uppercase mb-3">Plano de Reversão Financeira (reversal-plan)</h4>
                 <ol className="text-xs text-slate-600 space-y-2 list-decimal list-inside">
-                  <li><strong>Validação de Elegibilidade:</strong> Prazo CDC Art. 49, status de uso de ingresso e checagem de disputas.</li>
+                  <li><strong>Validação de Elegibilidade (eligibility):</strong> Prazo CDC Art. 49, status de uso de ingresso e checagem de disputas.</li>
                   <li><strong>Bloqueio de Exposição:</strong> Retenção temporária do montante na conta gráfica do produtor.</li>
                   <li><strong>Reversão do Split:</strong> Débito proporcional da taxa de conveniência, spread e cota-parte dos participantes.</li>
                   <li><strong>Alocação de Reserva:</strong> Consumo da reserva operacional caso o repasse principal já tenha ocorrido.</li>
