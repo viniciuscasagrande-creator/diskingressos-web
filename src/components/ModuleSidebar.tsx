@@ -165,6 +165,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         {/* Section: Financeiro (5 Pilares Principais) */}
         <CollapsibleSection
           label="Financeiro"
+          icon={WalletCards}
           open={openFinance}
           onToggle={() => setOpenFinance(!openFinance)}
           onClose={() => setOpenFinance(false)}
@@ -201,6 +202,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         {/* Section: Financeiro Contábil & Borderôs */}
         <CollapsibleSection
           label="Contabilidade"
+          icon={Scale}
           open={openAccounting}
           onToggle={() => setOpenAccounting(!openAccounting)}
           onClose={() => setOpenAccounting(false)}
@@ -219,6 +221,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         {/* Section: Marketing */}
         <CollapsibleSection
           label="Marketing"
+          icon={Megaphone}
           open={openMarketing}
           onToggle={() => setOpenMarketing(!openMarketing)}
           onClose={() => setOpenMarketing(false)}
@@ -237,6 +240,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         {/* Section: Remarketing */}
         <CollapsibleSection
           label="Remarketing"
+          icon={Repeat2}
           open={openRemarketing}
           onToggle={() => setOpenRemarketing(!openRemarketing)}
           onClose={() => setOpenRemarketing(false)}
@@ -256,6 +260,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         {canAdmin && (
           <CollapsibleSection
             label="Administração"
+            icon={Building2}
             open={openAdmin}
             onToggle={() => setOpenAdmin(!openAdmin)}
             onClose={() => setOpenAdmin(false)}
@@ -277,12 +282,14 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 }
 
 function CollapsibleSection({
+  icon: Icon,
   label,
   open,
   onToggle,
   onClose,
   children
 }: {
+  icon: ComponentType<{ size?: number; strokeWidth?: number }>
   label: string
   open: boolean
   onToggle: () => void
@@ -304,7 +311,10 @@ function CollapsibleSection({
         onClick={onToggle}
         aria-expanded={open}
       >
-        <span>{label}</span>
+        <span className="module-nav-icon" aria-hidden="true">
+          <Icon size={18} strokeWidth={1.8} />
+        </span>
+        <span className="module-nav-label">{label}</span>
         <span className="collapsible-section-chevron" aria-hidden="true">
           <ChevronRight size={14} />
         </span>
