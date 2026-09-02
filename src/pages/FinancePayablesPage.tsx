@@ -1,4 +1,5 @@
 import { useState, useMemo, type FormEvent } from 'react'
+import { consumeFinanceDrilldown } from '../utils/financeDrilldown'
 import {
   ArrowUpRight, Landmark, Search, Filter, Download, Plus,
   CheckCircle2, Clock, Calendar, AlertCircle, X, Building2,
@@ -20,9 +21,10 @@ const brl = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
 export default function FinancePayablesPage({ events, notify, onNavigate }: Props) {
-  const [search, setSearch] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [drilldown] = useState(() => consumeFinanceDrilldown('finance-payables'))
+  const [search, setSearch] = useState(drilldown?.eventName || '')
+  const [categoryFilter, setCategoryFilter] = useState(drilldown?.category || 'all')
+  const [statusFilter, setStatusFilter] = useState(drilldown?.status || 'all')
   const [showAddModal, setShowAddModal] = useState(false)
   const [payablesList, setPayablesList] = useState<PayableItem[]>(payablesSeed)
 
@@ -46,7 +48,9 @@ export default function FinancePayablesPage({ events, notify, onNavigate }: Prop
         p.event.toLowerCase().includes(q)
 
       const matchesCat = categoryFilter === 'all' || p.category === categoryFilter
-      const matchesStatus = statusFilter === 'all' || p.status.toLowerCase() === statusFilter.toLowerCase()
+      const normalizedStatus = p.status.toLowerCase()
+      const matchesStatus = statusFilter === 'all' ||
+        (statusFilter === 'open' ? normalizedStatus !== 'pago' : normalizedStatus === statusFilter.toLowerCase())
 
       return matchesSearch && matchesCat && matchesStatus
     })
@@ -241,6 +245,7 @@ export default function FinancePayablesPage({ events, notify, onNavigate }: Prop
                 <Clock size={13} />
                 <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                   <option value="all">Todos os status</option>
+                  <option value="open">Em aberto do Dashboard</option>
                   <option value="agendado">Agendado</option>
                   <option value="pendente">Pendente</option>
                   <option value="pago">Pago</option>

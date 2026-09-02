@@ -1,4 +1,5 @@
 import { useState, useMemo, type FormEvent } from 'react'
+import { consumeFinanceDrilldown } from '../utils/financeDrilldown'
 import {
   Landmark, Banknote, Calendar, Plus, Download, Eye, CheckCircle2,
   Clock, AlertCircle, Search, Filter, X, ArrowUpRight, Zap, Copy, Building2, ArrowLeft
@@ -19,8 +20,9 @@ const brl = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
 export default function FinancePayoutsPage({ events, notify, onNavigate }: Props) {
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [drilldown] = useState(() => consumeFinanceDrilldown('finance-payouts'))
+  const [search, setSearch] = useState(drilldown?.eventName || '')
+  const [statusFilter, setStatusFilter] = useState(drilldown?.status || 'all')
   const [showRequestModal, setShowRequestModal] = useState(false)
   const [selectedPayout, setSelectedPayout] = useState<Payout | null>(null)
   const [payoutList, setPayoutList] = useState<Payout[]>(payouts)
@@ -45,7 +47,9 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
         (p.producer || '').toLowerCase().includes(q) ||
         (p.bankAccount || '').toLowerCase().includes(q)
 
-      const matchesStatus = statusFilter === 'all' || p.status.toLowerCase() === statusFilter.toLowerCase()
+      const normalizedStatus = p.status.toLowerCase()
+      const matchesStatus = statusFilter === 'all' ||
+        (statusFilter === 'pending' ? !['pago'].includes(normalizedStatus) : normalizedStatus === statusFilter.toLowerCase())
       return matchesSearch && matchesStatus
     })
   }, [payoutList, search, statusFilter])
@@ -206,6 +210,7 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
               <Filter size={13} />
               <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                 <option value="all">Todos os status</option>
+                <option value="pending">Pendentes do Dashboard</option>
                 <option value="pago">Pago</option>
                 <option value="agendado">Agendado</option>
                 <option value="processando">Processando</option>

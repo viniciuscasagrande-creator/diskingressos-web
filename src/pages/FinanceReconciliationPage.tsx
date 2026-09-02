@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { consumeFinanceDrilldown } from '../utils/financeDrilldown'
 import {
   Scale, Landmark, Filter, AlertCircle, ArrowUpRight, CreditCard,
   ScanLine, Download, Pencil, CheckCircle2, ArrowLeft, Check
@@ -61,6 +62,7 @@ const initialDivergences: DivergenceItem[] = [
 ]
 
 export default function FinanceReconciliationPage({ events, notify, onNavigate, onBack }: Props) {
+  const [drilldown] = useState(() => consumeFinanceDrilldown('finance-reconciliation'))
   const [selectedBank, setSelectedBank] = useState<string>('Banco Santander')
   const [filterPixIn, setFilterPixIn] = useState<boolean>(true)
   const [filterPixOut, setFilterPixOut] = useState<boolean>(true)
@@ -109,6 +111,9 @@ export default function FinanceReconciliationPage({ events, notify, onNavigate, 
   }
 
   const activeCount = divergences.filter(d => d.status !== 'Conciliado').length
+  const visibleDivergences = drilldown?.status === 'divergent'
+    ? divergences.filter(d => d.status !== 'Conciliado')
+    : divergences
 
   return (
     <div className="ds-finance-page-wrapper w-full space-y-4">
@@ -234,7 +239,7 @@ export default function FinanceReconciliationPage({ events, notify, onNavigate, 
             </span>
           </div>
 
-          {divergences.map(d => (
+          {visibleDivergences.map(d => (
             <div key={d.id} className="ds-divergence-card">
               <div className="ds-divergence-icon-wrap">
                 {d.icon === 'arrow' && <ArrowUpRight size={20} />}

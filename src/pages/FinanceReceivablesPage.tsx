@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { consumeFinanceDrilldown } from '../utils/financeDrilldown'
 import {
   ArrowDownLeft, CreditCard, Search, Filter, Download, Zap, Eye,
   CheckCircle2, Clock, Calendar, AlertCircle, X, ShieldCheck, ArrowLeft
@@ -19,8 +20,9 @@ const brl = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
 export default function FinanceReceivablesPage({ events, notify, onNavigate }: Props) {
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
+  const [drilldown] = useState(() => consumeFinanceDrilldown('finance-receivables'))
+  const [search, setSearch] = useState(drilldown?.eventName || '')
+  const [statusFilter, setStatusFilter] = useState(drilldown?.status || 'all')
   const [methodFilter, setMethodFilter] = useState('all')
   const [showAdvanceModal, setShowAdvanceModal] = useState(false)
   const [advanceAmount, setAdvanceAmount] = useState(50000)
@@ -36,7 +38,9 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
         r.event.toLowerCase().includes(q) ||
         r.client.toLowerCase().includes(q)
 
-      const matchesStatus = statusFilter === 'all' || r.status.toLowerCase() === statusFilter.toLowerCase()
+      const normalizedStatus = r.status.toLowerCase()
+      const matchesStatus = statusFilter === 'all' ||
+        (statusFilter === 'open' ? normalizedStatus !== 'liquidado' : normalizedStatus === statusFilter.toLowerCase())
       const matchesMethod = methodFilter === 'all' || r.method.toLowerCase() === methodFilter.toLowerCase()
 
       return matchesSearch && matchesStatus && matchesMethod
@@ -197,6 +201,7 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
                 <Filter size={13} />
                 <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                   <option value="all">Todos os status</option>
+                  <option value="open">Em aberto do Dashboard</option>
                   <option value="a vencer">A Vencer</option>
                   <option value="processando">Processando</option>
                   <option value="antecipado">Antecipado</option>
