@@ -72,3 +72,9 @@ const phase256 = '25.6-responsive-enterprise-360-2026-09-02';
 const phase256Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
 assertContains('Fase 25.6', phase256Body, [phase256, 'responsive-enterprise-360.css']);
 console.log('[FINANCE RELEASE] Fases 25.0 a 25.6 confirmadas no build.');
+
+// Fase 25.6.1 — Sidebar Premium Baseada no Vídeo
+const phase2561 = '25.6.1-sidebar-reference-navigation-2026-09-02';
+const phase2561Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
+assertContains('Fase 25.6.1', phase2561Body, [phase2561, 'sidebar-enterprise.css']);
+console.log('[FINANCE RELEASE] Fases 25.0 a 25.6.1 confirmadas no build.');

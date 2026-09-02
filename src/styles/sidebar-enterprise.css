@@ -1,0 +1,470 @@
+/* ==========================================================================
+   FASE 25.6.1 — SIDEBAR PREMIUM RESPONSIVA IGUAL À REFERÊNCIA DO VÍDEO
+   Release: 25.6.1-sidebar-reference-navigation-2026-09-02
+   ========================================================================== */
+
+:root {
+  --sidebar-expanded: 280px;
+  --sidebar-collapsed: 76px;
+  --sidebar-bg: #1e2530;
+  --sidebar-bg-alt: #191f28;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-text: #cad3df;
+  --sidebar-text-muted: rgba(255, 255, 255, 0.45);
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.07);
+  --sidebar-active-bg: rgba(255, 255, 255, 0.12);
+  --sidebar-active-accent: #38bdf8;
+  --sidebar-transition: width 220ms cubic-bezier(0.4, 0, 0.2, 1), transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 1. ESTRUTURA DO SHELL & CONTÊINER PRINCIPAL */
+.phase6-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: var(--sidebar-expanded) minmax(0, 1fr);
+  grid-template-rows: 72px 98px minmax(calc(100vh - 170px), auto) auto;
+  background: #f1f4f8;
+  transition: grid-template-columns 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.phase6-shell.sidebar-collapsed-mode {
+  grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr);
+}
+
+.phase6-shell .global-topbar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  height: 72px;
+  display: grid;
+  grid-template-columns: var(--sidebar-expanded) 1fr auto;
+  background: #1e2530;
+  border-bottom: 1px solid var(--sidebar-border);
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  transition: grid-template-columns 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.phase6-shell.sidebar-collapsed-mode .global-topbar {
+  grid-template-columns: var(--sidebar-collapsed) 1fr auto;
+}
+
+/* 2. SIDEBAR CONTAINER */
+.module-sidebar,
+.safesaff-sidebar {
+  grid-column: 1;
+  grid-row: 2 / 5;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  min-height: calc(100vh - 72px);
+  border-right: 1px solid var(--sidebar-border);
+  position: sticky;
+  top: 72px;
+  width: var(--sidebar-expanded);
+  height: calc(100vh - 72px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 45;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+  transition: var(--sidebar-transition);
+}
+
+.module-sidebar::-webkit-scrollbar,
+.safesaff-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.module-sidebar::-webkit-scrollbar-thumb,
+.safesaff-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+}
+
+/* ESTADO RECOLHIDO (COLLAPSED) */
+.module-sidebar.collapsed,
+.safesaff-sidebar--collapsed {
+  width: var(--sidebar-collapsed) !important;
+  min-width: var(--sidebar-collapsed) !important;
+}
+
+/* 3. CABEÇALHO DA SIDEBAR */
+.sidebar-top-bar,
+.safesaff-sidebar-header {
+  height: 48px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--sidebar-border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: var(--sidebar-bg-alt);
+  box-sizing: border-box;
+}
+
+.sidebar-title-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sidebar-title-text {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* BOTÃO CIRCULAR DE RECOLHER/EXPANDIR (⇄) */
+.sidebar-toggle-btn,
+.safesaff-sidebar-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: auto;
+  flex: none;
+}
+
+.sidebar-toggle-btn:hover,
+.safesaff-sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.04);
+}
+
+/* BOTÃO VOLTAR NO SUBMENU */
+.sidebar-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.sidebar-back-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #38bdf8;
+}
+
+/* 4. LISTA DE NAVEGAÇÃO & SEÇÕES */
+.module-nav,
+.safesaff-sidebar-nav {
+  padding: 6px 0 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.module-caption,
+.sidebar-section-title,
+.safesaff-sidebar-section {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sidebar-text-muted);
+  padding: 14px 16px 6px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* 5. ITEM DO MENU (FAIXA HORIZONTAL COMPLETA 1:1 COM O VÍDEO) */
+.module-nav-item,
+.safesaff-sidebar-item {
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sidebar-text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+  position: relative;
+  user-select: none;
+}
+
+/* HOVER */
+.module-nav-item:hover,
+.safesaff-sidebar-item:hover {
+  background: var(--sidebar-hover-bg);
+  color: #ffffff;
+}
+
+/* ATIVO: FAIXA HORIZONTAL COMPLETA */
+.module-nav-item.active,
+.safesaff-sidebar-item--active {
+  background: var(--sidebar-active-bg) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* ÍCONE CENTRALIZADO (22px) */
+.module-nav-icon,
+.nav-item-icon,
+.safesaff-sidebar-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: #94a3b8;
+  transition: color 0.15s ease;
+}
+
+.module-nav-item:hover .module-nav-icon,
+.module-nav-item:hover .nav-item-icon,
+.module-nav-item.active .module-nav-icon,
+.module-nav-item.active .nav-item-icon,
+.safesaff-sidebar-item:hover .safesaff-sidebar-icon,
+.safesaff-sidebar-item--active .safesaff-sidebar-icon {
+  color: #ffffff;
+}
+
+/* LABEL DO ITEM */
+.module-nav-label,
+.nav-item-label,
+.safesaff-sidebar-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+/* BADGES */
+.nav-item-badge,
+.safesaff-sidebar-badge {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.module-nav-item.active .nav-item-badge,
+.safesaff-sidebar-item--active .safesaff-sidebar-badge {
+  background: #0c83ff;
+  color: #ffffff;
+}
+
+/* SUBITENS INDENTADOS */
+.module-nav-item.indent {
+  padding-left: 36px;
+}
+
+.module-nav-item.indent .module-nav-label {
+  font-size: 12.5px;
+  color: #94a3b8;
+}
+
+.module-nav-item.indent:hover .module-nav-label,
+.module-nav-item.indent.active .module-nav-label {
+  color: #ffffff;
+}
+
+/* 6. COMPORTAMENTO EM MODO RECOLHIDO (COLLAPSED) */
+.module-sidebar.collapsed .module-nav-item,
+.safesaff-sidebar--collapsed .safesaff-sidebar-item {
+  width: 100%;
+  padding: 0;
+  justify-content: center;
+}
+
+.module-sidebar.collapsed .module-caption,
+.safesaff-sidebar--collapsed .module-caption,
+.module-sidebar.collapsed .sidebar-section-title,
+.safesaff-sidebar--collapsed .sidebar-section-title {
+  display: none;
+}
+
+.module-sidebar.collapsed .module-nav-label,
+.safesaff-sidebar--collapsed .module-nav-label,
+.module-sidebar.collapsed .nav-item-badge,
+.safesaff-sidebar--collapsed .nav-item-badge {
+  display: none;
+}
+
+/* 7. ACORDEÃO E AUTO-COLLAPSE (FASES 25.3.2 & 25.3.2.1) */
+.collapsible-nav-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.collapsible-section-head {
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sidebar-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.collapsible-section-head:hover {
+  background: var(--sidebar-hover-bg);
+  color: #ffffff;
+}
+
+.collapsible-section-head.open {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.collapsible-section-chevron {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  color: #94a3b8;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s ease;
+}
+
+.collapsible-section-head:hover .collapsible-section-chevron {
+  color: #ffffff;
+}
+
+.collapsible-section-head.open .collapsible-section-chevron {
+  transform: rotate(90deg);
+  color: var(--sidebar-active-accent);
+}
+
+.collapsible-section-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.18s ease;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.collapsible-section-body.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.collapsible-section-inner {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 8. RESPONSIVIDADE TABLET (768px - 1024px) */
+@media (max-width: 1024px) {
+  .phase6-shell {
+    grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr);
+  }
+  .phase6-shell .global-topbar {
+    grid-template-columns: var(--sidebar-collapsed) 1fr auto;
+  }
+}
+
+/* 9. RESPONSIVIDADE MOBILE / DRAWER (< 768px) */
+@media (max-width: 768px) {
+  .phase6-shell {
+    display: block !important;
+  }
+
+  .phase6-shell .global-topbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    height: 64px !important;
+    padding: 0 14px !important;
+  }
+
+  .module-sidebar,
+  .safesaff-sidebar,
+  .event-context-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 1002 !important;
+    width: min(86vw, 320px) !important;
+    max-width: 320px !important;
+    height: 100dvh !important;
+    transform: translateX(-105%);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.4);
+    padding-bottom: calc(30px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .mobile-nav-open .module-sidebar,
+  .mobile-nav-open .safesaff-sidebar,
+  .mobile-nav-open .event-context-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .mobile-nav-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 15, 25, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 1001;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .mobile-nav-open .mobile-nav-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.safesaff-drawer-open {
+    overflow: hidden !important;
+  }
+}

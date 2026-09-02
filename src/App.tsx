@@ -321,6 +321,24 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState)
   }, [])
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileNavOpen) {
+        setMobileNavOpen(false)
+      }
+    }
+    if (mobileNavOpen) {
+      document.body.classList.add('safesaff-drawer-open')
+    } else {
+      document.body.classList.remove('safesaff-drawer-open')
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      document.body.classList.remove('safesaff-drawer-open')
+    }
+  }, [mobileNavOpen])
+
   const module = useMemo(() => moduleFor(page, user), [page, user])
   const notify = (m: string) => {
     setToast(m)
