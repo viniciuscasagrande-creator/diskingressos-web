@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   AlertOctagon, AlertTriangle, CheckCircle2, Clock, DollarSign,
-  FileText, Plus, RefreshCw, Send, ShieldAlert, ShieldCheck, X, Zap
+  FileText, Plus, RefreshCw, Send, ShieldAlert, ShieldCheck, X, Zap, ArrowLeft
 } from 'lucide-react'
 import {
   getFinanceDisputesSummary, getFinanceDisputesRefunds, createFinanceDisputesRefund,
@@ -23,7 +23,7 @@ type Props = {
 const money = (c = 0) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(c / 100)
 const pct = (val = 0) => `${val.toFixed(1)}%`
 
-export default function FinanceDisputesHubPage({ producerId, eventId, initialTab = 'refunds', notify }: Props) {
+export default function FinanceDisputesHubPage({ producerId, eventId, initialTab = 'refunds', notify, onBack }: Props) {
   const [tab, setTab] = useState<Tab>(initialTab)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -62,14 +62,24 @@ export default function FinanceDisputesHubPage({ producerId, eventId, initialTab
   }, [initialTab])
 
   return (
-    <div className="findisp-page">
+    <div className="findisp-page" data-finance-release="24.9-independent-refunds-2026-09-02">
+      {/* Back Button */}
+      <div className="flex items-center gap-2 mb-2">
+        <button
+          onClick={() => (onBack ? onBack() : window.history.back())}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-300 shadow-xs transition cursor-pointer"
+        >
+          <ArrowLeft size={14} className="text-[#06B6D4]" />
+          <span>Voltar ao Painel</span>
+        </button>
+      </div>
+
       <header className="findisp-hero">
         <div>
-          <span>FINANCEIRO 360° · FASE 20.4</span>
-          <h1>Estornos, Chargebacks, Devoluções & Disputas</h1>
+          <span>ERP · FASE 24.9 · MÓDULO INDEPENDENTE</span>
+          <h1>Central de Estornos, Reembolsos & Chargebacks</h1>
           <p>
-            Central de exceções e proteção financeira: fluxo de aprovação com gateway,
-            gestão de chargebacks com SLA de evidências e reversões contábeis automáticas.
+            Operação independente para devoluções financeiras, alçadas de aprovação, conciliação, chargebacks, vouchers e auditoria — integrada ao Financeiro, SAC e gateways.
           </p>
         </div>
         <button className="fa-btn secondary" onClick={load}>
@@ -87,7 +97,7 @@ export default function FinanceDisputesHubPage({ producerId, eventId, initialTab
         <div className="findisp-kpi warning">
           <Clock size={22} />
           <div>
-            <small>Estornos Pendentes</small>
+            <small>Fila de Aprovações</small>
             <strong>{summary?.pendingRefundsCount || 0} solicitações</strong>
             <span className="findisp-kpi-sub">Total solicitado: {money(summary?.totalRequestedRefundCents)}</span>
           </div>
@@ -95,7 +105,7 @@ export default function FinanceDisputesHubPage({ producerId, eventId, initialTab
         <div className="findisp-kpi success">
           <CheckCircle2 size={22} />
           <div>
-            <small>Estornos Efetivados</small>
+            <small>Montante Devolvido</small>
             <strong>{money(summary?.totalCompletedRefundCents)}</strong>
             <span className="findisp-kpi-sub">{summary?.partialRefundsCount || 0} parciais</span>
           </div>
@@ -103,7 +113,7 @@ export default function FinanceDisputesHubPage({ producerId, eventId, initialTab
         <div className="findisp-kpi danger">
           <ShieldAlert size={22} />
           <div>
-            <small>Chargebacks em Aberto</small>
+            <small>Chargebacks & Risco</small>
             <strong>{money(summary?.openChargebacksCents)}</strong>
             <span className="findisp-kpi-sub">{summary?.openChargebacksCount || 0} contestações ativas</span>
           </div>
@@ -111,7 +121,7 @@ export default function FinanceDisputesHubPage({ producerId, eventId, initialTab
         <div className="findisp-kpi highlight">
           <ShieldCheck size={22} />
           <div>
-            <small>Taxa de Recuperação</small>
+            <small>Zona de Segurança</small>
             <strong>{pct(summary?.recoveryRatePct || 0)}</strong>
             <span className="findisp-kpi-sub">Disputas ganhas: {money(summary?.wonChargebacksCents)}</span>
           </div>

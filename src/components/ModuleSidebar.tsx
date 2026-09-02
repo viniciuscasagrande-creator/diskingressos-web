@@ -7,7 +7,7 @@ import {
   LockKeyhole, MessageCircle, Megaphone, Repeat2, Building2, ChevronRight, UserCog, ScrollText,
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
-  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store
+  FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -19,7 +19,7 @@ export type PageKey =
   // FINANCEIRO
   | 'finance-dashboard' | 'finance-hub' | 'finance' | 'finance-statement' | 'finance-cashflow' | 'finance-receivables' | 'finance-payables' | 'finance-spread-simulator'
   | 'finance-payouts' | 'finance-advance' | 'finance-reconciliation' | 'finance-bank-accounts' | 'finance-expenses' | 'finance-bordero' | 'finance-consolidated'
-  | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds' | 'finance-gateways' | 'finance-advanced' | 'finance-rates' | 'finance-pdv'
+  | 'finance-spread' | 'finance-split' | 'finance-methods' | 'finance-reports' | 'finance-sales' | 'finance-bank' | 'finance-intelligence' | 'finance-custom' | 'finance-operators' | 'finance-negotiations' | 'finance-refunds' | 'finance-disputes' | 'finance-chargebacks' | 'finance-gateways' | 'finance-advanced' | 'finance-rates' | 'finance-pdv'
   | 'finance-accounting' | 'finance-cost-centers' | 'finance-chart-accounts' | 'finance-accounting-entries' | 'finance-obligations' | 'finance-dre' | 'finance-borderos' | 'finance-signatures' | 'finance-closing'
   // CONTABILIDADE
   | 'accounting-dashboard' | 'accounting-chart' | 'accounting-journal' | 'accounting-ledger' | 'accounting-entries' | 'accounting-cost-centers'
@@ -66,6 +66,8 @@ const mainItems: Item[] = [
 ]
 
 // 2. FINANCEIRO: MÓDULOS DE GESTÃO E CAIXA
+const independentRefundItem: Item = { key: 'finance-refunds', label: 'Estornos', icon: Undo2, badge: 'ERP' }
+
 const cashFinanceItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards },
   { key: 'finance-advance', label: 'Antecipações', icon: Zap },
@@ -128,7 +130,8 @@ const adminItems: Item[] = [
 ]
 
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user }: Props) {
-  const [openFinance, setOpenFinance] = useState(page.startsWith('finance-') || page === 'finance')
+  const refundIndependentPages: PageKey[] = ['finance-refunds', 'finance-disputes', 'finance-chargebacks']
+  const [openFinance, setOpenFinance] = useState((page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page))
   const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
   const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
   const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
@@ -169,7 +172,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
               (it.key === 'finance-dashboard' && ['finance', 'finance-dashboard', 'finance-hub', 'finance-statement', 'finance-payouts', 'finance-cashflow', 'finance-bank-accounts', 'finance-expenses', 'finance-payables', 'finance-receivables', 'finance-reconciliation'].includes(page)) ||
               (it.key === 'finance-advance' && ['finance-advance', 'finance-spread', 'finance-spread-simulator'].includes(page)) ||
               (it.key === 'finance-split' && ['finance-split', 'finance-settlement', 'finance-settlements', 'finance-negotiations'].includes(page)) ||
-              (it.key === 'finance-methods' && ['finance-methods', 'finance-custom', 'finance-operators', 'finance-gateways', 'finance-refunds', 'finance-intelligence', 'finance-rates', 'finance-disputes', 'finance-chargebacks'].includes(page)) ||
+              (it.key === 'finance-methods' && ['finance-methods', 'finance-custom', 'finance-operators', 'finance-gateways', 'finance-intelligence', 'finance-rates'].includes(page)) ||
               (it.key === 'finance-reports' && ['finance-reports', 'finance-bordero', 'finance-advanced', 'finance-consolidated'].includes(page)) ||
               page === it.key
 
@@ -184,6 +187,14 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             )
           })}
         </CollapsibleSection>
+
+        {/* Fase 24.9 — Estornos é módulo independente, fora do Financeiro */}
+        <div className="module-caption">OPERAÇÕES CRÍTICAS</div>
+        <NavItem
+          item={independentRefundItem}
+          active={refundIndependentPages.includes(page)}
+          onNavigate={onNavigate}
+        />
 
         {/* Section: Financeiro Contábil & Borderôs */}
         <CollapsibleSection

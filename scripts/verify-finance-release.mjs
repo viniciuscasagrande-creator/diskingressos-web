@@ -28,7 +28,13 @@ const required = [
   'Central de negociação econômica por evento',
   'Histórico de alterações',
   'SALVAR NEGOCIAÇÃO',
-  'Edição protegida'
+  'Edição protegida',
+  '24.9-independent-refunds-2026-09-02',
+  'Central de Estornos, Reembolsos & Chargebacks',
+  'OPERAÇÕES CRÍTICAS',
+  'Fila de Aprovações',
+  'Montante Devolvido',
+  'Zona de Segurança'
 ]
 
 function collect(dir) {
@@ -55,4 +61,4 @@ function assertContains(scope, files, terms) {
 
 assertContains('src', collect('src'), required)
 assertContains('dist', collect('dist'), required)
-console.log('[FINANCE RELEASE] Fases 24.1 a 24.8 confirmadas no build.')
+console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 confirmadas no build.')

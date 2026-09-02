@@ -9,6 +9,7 @@ import FinanceNegotiationsPage from '../FinanceNegotiationsPage'
 import FinanceOperatorsGatewaysPage from '../FinanceOperatorsGatewaysPage'
 import FinanceIntelligencePage from '../FinanceIntelligencePage'
 import FinanceRefundsPage from '../FinanceRefundsPage'
+import FinanceDisputesHubPage from '../FinanceDisputesHubPage'
 import FinanceAdvancedPage from '../FinanceAdvancedPage'
 import FinanceSplitPage from '../FinanceSplitPage'
 import FinancePDVPage from '../FinancePDVPage'
@@ -90,7 +91,7 @@ export default function AdvancedTaxesRouter({ activeModule, onNavigate, onBack, 
     case 'finance-refunds':
     case 'finance-disputes':
     case 'finance-chargebacks':
-      return <FinanceRefundsPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+      return <FinanceDisputesHubPage producerId={props.producerId} eventId={props.eventId} notify={props.notify} onBack={handleBack} />
 
     case 'fin-reports':
     case 'relatorios-financeiros':
