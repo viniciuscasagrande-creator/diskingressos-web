@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DISKINGRESSOS — CENTRO DE CONTROLE DE ESTORNOS (EXATO AO HTML)
+   DISKINGRESSOS — CENTRO DE CONTROLE DE ESTORNOS (EXATO AO HTML & MODAIS CENTRALIZADOS)
    ========================================================================== */
 
 :root {
@@ -510,30 +510,48 @@
   border-radius: 99px;
 }
 
-/* Overlay & Drawer Lateral */
+/* ==========================================================================
+   MODAIS CENTRALIZADOS NO MEIO DA TELA (ALINHAMENTO CENTRAL OBRIGATÓRIO)
+   ========================================================================== */
+
+@keyframes diModalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Overlay do Modal de Detalhes / Análise de Estorno (CENTRALIZADO) */
 .di-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(8, 14, 25, 0.45);
-  z-index: 50;
+  background: rgba(8, 14, 25, 0.58);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .di-drawer {
-  height: 100%;
-  width: min(560px, 94vw);
+  position: relative;
+  width: min(640px, 94vw);
+  max-height: 88vh;
+  margin: auto;
   background: #fff;
-  box-shadow: -15px 0 45px rgba(0, 0, 0, 0.18);
-  overflow-y: auto;
+  border-radius: 16px;
+  border: 1px solid var(--di-border);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: slideInRight 0.2s ease-out;
-}
-
-@keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  animation: diModalPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .di-drawer-head {
@@ -565,6 +583,7 @@
   place-items: center;
   cursor: pointer;
   color: #475569;
+  transition: background 0.15s ease;
 }
 
 .di-close:hover {
@@ -574,11 +593,16 @@
 
 .di-drawer-body {
   padding: 20px;
+  overflow-y: auto;
   flex: 1;
 }
 
 .di-section {
   margin-bottom: 22px;
+}
+
+.di-section:last-child {
+  margin-bottom: 0;
 }
 
 .di-section h3 {
@@ -656,25 +680,31 @@
   gap: 9px;
 }
 
-/* Modal Novo Estorno */
+/* Modal de Novo Estorno (CENTRALIZADO) */
 .di-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(8, 14, 25, 0.5);
-  z-index: 60;
+  background: rgba(8, 14, 25, 0.58);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .di-modal-box {
+  position: relative;
   width: min(720px, 96vw);
   max-height: 90vh;
+  margin: auto;
   overflow: auto;
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--di-border);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.28);
+  animation: diModalPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .di-modal-head {
@@ -683,6 +713,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
 }
 
 .di-modal-head h2 {
@@ -765,9 +799,12 @@
   display: flex;
   justify-content: flex-end;
   gap: 9px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
 }
 
-/* Toast */
+/* Toast Notification */
 .di-toast {
   position: fixed;
   right: 20px;
@@ -779,7 +816,7 @@
   box-shadow: var(--di-shadow);
   font-size: 12px;
   font-weight: 600;
-  z-index: 100;
+  z-index: 1100;
   display: flex;
   align-items: center;
   gap: 8px;
