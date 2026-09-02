@@ -9,8 +9,7 @@ const uiRequired = [
   'AGENDA DE PAGAMENTOS AO PRODUTOR','Esteira de Repasse','Impacto previsto no caixa',
   '24.8-event-financial-negotiation-2026-09-02','Central de negociação econômica por evento','Histórico de alterações','SALVAR NEGOCIAÇÃO','Edição protegida',
   '24.9-independent-refunds-2026-09-02','Central de Estornos, Reembolsos & Chargebacks','ESTORNO','Fila de Aprovações','Montante Devolvido','Zona de Segurança',
-  '25.3.2.1-premium-sidebar-auto-collapse-2026-09-02','module-nav-icon','module-nav-label','collapsible-section-chevron',
-  '25.3.3-navigation-rail-premium-2026-09-02','rail-icon','rail-label'
+  '25.3.2.1-premium-sidebar-auto-collapse-2026-09-02','25.3.3-navigation-rail-financial-typography-2026-09-02','module-nav-icon','module-nav-label','collapsible-section-chevron'
 ]
 
 const architectureRequired = [
