@@ -270,6 +270,16 @@ function firstPageFor(user: AppUser): PageKey {
   return 'profile-dashboard'
 }
 
+function resolvePageFromPath(path: string, user: AppUser): PageKey {
+  const clean = path.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+  if (!clean || clean === 'login' || clean === 'dashboard') {
+    return firstPageFor(user)
+  }
+  if (clean === 'eventos') return 'events'
+  if (clean in titleMap) return clean as PageKey
+  return firstPageFor(user)
+}
+
 export default function App() {
   const [users, setUsers] = useState<AppUser[]>(seedUsers)
   const [producers, setProducers] = useState(seedProducers)
@@ -278,7 +288,13 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState<'ativos' | 'inativos' | 'todos'>('todos')
   const [view, setView] = useState<'horizontal' | 'compact'>('horizontal')
-  const [page, setPage] = useState<PageKey>('events')
+  const [page, setPage] = useState<PageKey>(() => {
+    if (typeof window !== 'undefined') {
+      const clean = window.location.pathname.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+      if (clean in titleMap) return clean as PageKey
+    }
+    return 'events'
+  })
   const [events, setEvents] = useState<EventItem[]>([])
   const [participants, setParticipants] = useState<Participant[]>(seedParticipants)
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null)
@@ -370,7 +386,8 @@ export default function App() {
         setUser(u)
         const producerSelection: number | 'all' = isGlobalAdmin(u) ? 'all' : (u.producerId || 'all')
         setSelectedProducer(producerSelection)
-        setPage(firstPageFor(u))
+        const initialPage = typeof window !== 'undefined' ? resolvePageFromPath(window.location.pathname, u) : firstPageFor(u)
+        setPage(initialPage)
         const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
         if (isGlobalAdmin(u)) tasks.push(getUsers().then(setUsers))
         await Promise.all(tasks)
@@ -392,7 +409,8 @@ export default function App() {
             const producerSelection: number | 'all' = isGlobalAdmin(u) ? 'all' : (u.producerId || 'all')
             setUser(u)
             setSelectedProducer(producerSelection)
-            setPage(firstPageFor(u))
+            const initialPage = typeof window !== 'undefined' ? resolvePageFromPath(window.location.pathname, u) : firstPageFor(u)
+            setPage(initialPage)
             // O login só é concluído visualmente depois que o escopo real da produtora
             // e seus eventos forem carregados da mesma API que autenticou o usuário.
             const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
