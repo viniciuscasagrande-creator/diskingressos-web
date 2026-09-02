@@ -1,0 +1,704 @@
+/* ==========================================================================
+   ESTORNO DE INGRESSOS — MÓDULO INDEPENDENTE ERP (TEMA CLARO ALTO CONTRASTE)
+   ========================================================================== */
+
+.findisp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  color: #0f172a;
+  min-height: calc(100vh - 4rem);
+  font-family: inherit;
+}
+
+/* Header Executivo */
+.findisp-hero-modern {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  background: #ffffff;
+  padding: 1.5rem 1.75rem;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.findisp-hero-modern .badge-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+.findisp-hero-modern h1 {
+  font-size: 1.625rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.375rem 0;
+}
+
+.findisp-hero-modern p {
+  font-size: 0.875rem;
+  color: #475569;
+  margin: 0;
+  max-width: 44rem;
+  line-height: 1.45;
+}
+
+.findisp-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.findisp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid transparent;
+}
+
+.findisp-btn.primary {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 1px 2px 0 rgba(2, 132, 199, 0.2);
+}
+
+.findisp-btn.primary:hover {
+  background: #0369a1;
+  border-color: #0369a1;
+}
+
+.findisp-btn.secondary {
+  background: #ffffff;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+.findisp-btn.secondary:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.findisp-btn.ai {
+  background: #fdf4ff;
+  color: #86198f;
+  border-color: #f0abfc;
+}
+
+.findisp-btn.ai:hover {
+  background: #fae8ff;
+  border-color: #e879f9;
+}
+
+/* Faixa de Filtros */
+.findisp-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  background: #ffffff;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.findisp-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.findisp-filter-item label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.findisp-filter-item select,
+.findisp-filter-item input {
+  padding: 0.4375rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #cbd5e1;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: #ffffff;
+  outline: none;
+}
+
+.findisp-filter-item select:focus,
+.findisp-filter-item input:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+/* Grid de KPIs */
+.findisp-kpi-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.findisp-kpi-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.125rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.findisp-kpi-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.findisp-kpi-card-header span {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.findisp-kpi-card-header .icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+}
+
+.findisp-kpi-card .kpi-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.findisp-kpi-card .kpi-sub {
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.findisp-kpi-card .kpi-period {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+/* Cores dos KPIs */
+.findisp-kpi-card.blue .icon-wrap { background: #e0f2fe; color: #0284c7; }
+.findisp-kpi-card.blue .kpi-sub { color: #0369a1; }
+
+.findisp-kpi-card.green .icon-wrap { background: #dcfce7; color: #15803d; }
+.findisp-kpi-card.green .kpi-sub { color: #166534; }
+
+.findisp-kpi-card.amber .icon-wrap { background: #fef3c7; color: #b45309; }
+.findisp-kpi-card.amber .kpi-sub { color: #92400e; }
+
+.findisp-kpi-card.purple .icon-wrap { background: #f3e8ff; color: #7e22ce; }
+.findisp-kpi-card.purple .kpi-sub { color: #6b21a8; }
+
+.findisp-kpi-card.rose .icon-wrap { background: #ffe4e6; color: #be123c; }
+.findisp-kpi-card.rose .kpi-sub { color: #9f1239; }
+
+/* Faixa de Resumo Financeiro */
+.findisp-summary-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.625rem;
+  padding: 0.75rem 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.findisp-summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.findisp-summary-item small {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.findisp-summary-item strong {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.findisp-summary-divider {
+  width: 1px;
+  height: 1.75rem;
+  background: #e2e8f0;
+}
+
+/* Abas */
+.findisp-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.25rem;
+}
+
+.findisp-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #475569;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.findisp-tab-btn:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+.findisp-tab-btn.active {
+  color: #0284c7;
+  background: #e0f2fe;
+}
+
+.findisp-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  background: #cbd5e1;
+  color: #1e293b;
+}
+
+.findisp-tab-btn.active .findisp-tab-badge {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+/* Card Principal da Tabela */
+.findisp-table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.findisp-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.findisp-table-header h3 {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.findisp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.findisp-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.findisp-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.findisp-table tr:hover td {
+  background: #f8fafc;
+}
+
+/* Badges da Tabela */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-badge.pending { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.status-badge.analysis { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.status-badge.processing { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.status-badge.completed { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.status-badge.rejected { background: #ffe4e6; color: #9f1239; border: 1px solid #fecdd3; }
+
+.alcada-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.alcada-badge.manager { background: #ffedd5; color: #9a3412; border-color: #fed7aa; }
+.alcada-badge.director { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+.action-btn-analyze {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  background: #0284c7;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.action-btn-analyze:hover {
+  background: #0369a1;
+}
+
+/* Drawer Lateral de Análise */
+.findisp-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.findisp-drawer {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  height: 100%;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideInRight 0.2s ease-out;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.findisp-drawer-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: #f8fafc;
+}
+
+.findisp-drawer-header h2 {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+}
+
+.findisp-drawer-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.625rem;
+  padding: 1rem;
+}
+
+.drawer-section h4 {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+  margin: 0 0 0.25rem 0;
+}
+
+.drawer-financial-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.breakdown-row.total {
+  border-top: 2px solid #e2e8f0;
+  padding-top: 0.5rem;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  color: #0f172a;
+}
+
+.drawer-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.timeline-step {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.timeline-time {
+  font-weight: 700;
+  color: #64748b;
+  min-width: 3.5rem;
+}
+
+.timeline-desc strong {
+  color: #1e293b;
+}
+
+.timeline-desc p {
+  margin: 0.125rem 0 0 0;
+  color: #64748b;
+}
+
+.findisp-drawer-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  display: flex;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+/* Painel de Diagnóstico do Assistente */
+.findisp-ai-diagnostic {
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.findisp-ai-diagnostic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #6b21a8;
+}
+
+.findisp-ai-diagnostic-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.ai-card {
+  background: #ffffff;
+  border: 1px solid #f3e8ff;
+  border-radius: 0.5rem;
+  padding: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+}
+
+.ai-card strong {
+  color: #581c87;
+  font-weight: 700;
+}
+
+.ai-card p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+/* Seção de Conciliação e Risco */
+.findisp-reconciliation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.findisp-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.findisp-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.findisp-card-head h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.chargeback-semaphore {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 0.625rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.chargeback-semaphore.normal strong {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #15803d;
+}
+
+.semaphore-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* Barras de Métodos de Pagamento */
+.method-breakdown-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.method-breakdown-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.method-bar-track {
+  height: 0.5rem;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.method-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.method-bar-fill.pix { background: #0284c7; }
+.method-bar-fill.card { background: #7c3aed; }
+.method-bar-fill.voucher { background: #16a34a; }
