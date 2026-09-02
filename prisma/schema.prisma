@@ -1358,3 +1358,44 @@ model PaymentWebhookEvent {
 
 
 
+
+// ===== Fase 25.8 — Motor Enterprise de Estornos =====
+model RefundApprovalStep {
+  id              Int       @id @default(autoincrement())
+  refundRequestId Int
+  approvalLevel   Int
+  status          String    @default("pending")
+  actorId         String?
+  actorRole       String?
+  decisionNotes   String?
+  decidedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  @@unique([refundRequestId, approvalLevel])
+  @@index([refundRequestId, status])
+}
+
+model RefundEligibilitySnapshot {
+  id                  Int      @id @default(autoincrement())
+  refundRequestId     Int
+  eligible            Boolean
+  riskLevel           String
+  requiredApprovals   Int      @default(1)
+  checksJson          String
+  blockingReasonsJson String
+  evaluatedBy         String?
+  createdAt           DateTime @default(now())
+  @@index([refundRequestId, createdAt])
+}
+
+model RefundReversalPlan {
+  id              Int       @id @default(autoincrement())
+  refundRequestId Int
+  strategy        String    @default("compensating_entries")
+  amountCents     Int
+  status          String    @default("planned")
+  planJson        String
+  createdBy       String?
+  executedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  @@index([refundRequestId, status])
+}

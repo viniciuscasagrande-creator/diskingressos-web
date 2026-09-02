@@ -99,3 +99,9 @@ const phase25711 = '25.7.1.1-sidebar-typography-hotfix-2026-09-02';
 const phase25711Body = body([...collect('src'), ...collect('.')]);
 assertContains('Fase 25.7.1.1', phase25711Body, [phase25711, 'SafeSaff Inter', 'sidebar-enterprise.css']);
 console.log('[FINANCE RELEASE] Fase 25.7.1.1 Correção Definitiva Tipografia Sidebar confirmada.');
+
+// Fase 25.8 — Motor Enterprise de Estornos
+const phase258 = '25.8-enterprise-refund-engine-2026-09-02';
+const phase258Body = body([...collect('src'), ...collect('server'), ...collect('.')]);
+assertContains('Fase 25.8', phase258Body, [phase258, 'Motor Enterprise', 'findisp-page', 'reversal-plan', 'eligibility']);
+console.log('[FINANCE RELEASE] Fase 25.8 Motor Enterprise de Estornos confirmada.');

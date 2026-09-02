@@ -512,3 +512,15 @@ export const payFinanceExpense=(id:number)=>request<FinanceExpense>(`/finance/ca
 
 export type ScopeDiagnostics={ok:boolean;code?:string;message?:string;user:{id:number;email:string;role:string;producerId:number|null};producer?:{id:number;name:string;status:string;_count:{events:number;marketingCampaigns:number;users:number}}|null;events?:Array<{id:number;code:string;title:string;status:string;_count:{marketingCampaigns:number}}>;totalEvents?:number;totalCampaigns?:number}
 export const getScopeDiagnostics=()=>request<ScopeDiagnostics>('/scope/diagnostics')
+
+// ===== Fase 25.8 — Motor Enterprise de Estornos =====
+export type RefundEnterpriseOverview = {
+  release:string; pendingApprovals:number; pendingAmountCents:number; criticalCases:number; partialRefunds:number;
+  policy:{level1MaxCents:number;level2FromCents:number;level3FromCents:number;immutableLedger:boolean;requesterCannotApproveCritical:boolean};
+  capabilities:string[]
+}
+export type RefundEligibility = {eligible:boolean;riskLevel:'low'|'medium'|'high'|'critical';requiredApprovals:number;checks:Array<{key:string;label:string;status:'ok'|'warning'|'blocked';detail:string}>;blockingReasons:string[]}
+export const getRefundEnterpriseOverview=(producerId?:number,eventId?:number)=>request<RefundEnterpriseOverview>(`/finance/disputes/enterprise/overview${qs({producerId,eventId})}`)
+export const evaluateRefund=(id:number)=>request<RefundEligibility>(`/finance/disputes/refunds/${id}/eligibility`,{method:'POST'})
+export const enterpriseApproveRefund=(id:number,notes?:string)=>request<{complete:boolean;currentLevel:number;requiredApprovals:number}>(`/finance/disputes/refunds/${id}/enterprise-approve`,{method:'POST',body:JSON.stringify({notes})})
+export const createRefundReversalPlan=(id:number)=>request<any>(`/finance/disputes/refunds/${id}/reversal-plan`,{method:'POST'})

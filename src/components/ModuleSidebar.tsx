@@ -32,7 +32,7 @@ export type PageKey =
   // POS & ADMIN & OUTROS
   | 'pos' | 'pos-terminals' | 'pos-sales' | 'pos-closing'
   | 'admin-hub' | 'admin-users' | 'admin-producers' | 'admin-permissions' | 'admin-audit' | 'admin-security'
-  | 'marketing-hub' | 'marketing-dashboard' | 'marketing-campaigns' | 'marketing-ready-campaigns' | 'marketing-create' | 'marketing-meta-ads' | 'marketing-google-ads' | 'marketing-tiktok-ads' | 'marketing-influencers' | 'marketing-automations' | 'marketing-whatsapp' | 'marketing-email' | 'marketing-crm' | 'marketing-audiences' | 'marketing-coupons' | 'marketing-cashback' | 'marketing-coins' | 'marketing-gamification' | 'marketing-referral' | 'marketing-affiliates' | 'marketing-utm-central' | 'marketing-links' | 'marketing-tracking' | 'marketing-conversions' | 'marketing-remarketing' | 'marketing-recovery' | 'marketing-reports' | 'marketing-channel-performance' | 'marketing-campaign-ranking' | 'marketing-funnel-insights' | 'marketing-communications'
+  | 'marketing-hub' | 'marketing-dashboard' | 'marketing-campaigns' | 'marketing-ready-campaigns' | 'marketing-create' | 'marketing-meta-ads' | 'marketing-google-ads' | 'marketing-tiktok-ads' | 'marketing-influencers' | 'marketing-automations' | 'marketing-whatsapp' | 'marketing-email' | 'marketing-crm' | 'marketing-audiences' | 'marketing-coupons' | 'marketing-cashback' | 'marketing-coins' | 'marketing-gamification' | 'marketing-referral' | 'marketing-affiliates' | 'marketing-utm-central' | 'marketing-links' | 'marketing-tracking' | 'marketing-attribution' | 'marketing-conversions' | 'marketing-remarketing' | 'marketing-recovery' | 'marketing-reports' | 'marketing-channel-performance' | 'marketing-campaign-ranking' | 'marketing-funnel-insights' | 'marketing-communications'
   | 'remarketing-hub' | 'remarketing-dashboard' | 'remarketing-carts' | 'remarketing-audiences' | 'remarketing-segments' | 'remarketing-flows' | 'remarketing-whatsapp' | 'remarketing-email' | 'remarketing-payments' | 'remarketing-inactive' | 'remarketing-postevent' | 'remarketing-automation' | 'remarketing-reports'
   | 'sac-hub' | 'sac-dashboard' | 'sac-tickets' | 'sac-new' | 'sac-sla' | 'sac-integrations' | 'sac-knowledge' | 'sac-reports'
 
@@ -104,6 +104,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
   { key: 'marketing-tiktok-ads', label: 'TikTok Ads', icon: Play },
   { key: 'marketing-tracking', label: 'Pixels & Integrações', icon: Activity, badge: '360°' },
+  { key: 'marketing-attribution', label: 'Atribuição Multicanal', icon: Scale, badge: '25.7.2' },
   { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
   { key: 'marketing-utm-central', label: 'Central UTM & Conversões', icon: Link2, badge: 'Novo' },
   { key: 'marketing-whatsapp', label: 'WhatsApp', icon: MessageCircle },
@@ -159,7 +160,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
     <aside
       className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''}`}
       aria-label="Navegação principal"
-      data-finance-release="25.7.1.1-sidebar-typography-hotfix-2026-09-02 25.7.1-universal-conversion-engine-2026-09-02 25.7-marketing-integrations-360-2026-09-02 25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
+      data-finance-release="25.8-enterprise-refund-engine-2026-09-02 25.7.1.1-sidebar-typography-hotfix-2026-09-02 25.7.1-universal-conversion-engine-2026-09-02 25.7-marketing-integrations-360-2026-09-02 25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
     >
       <div className="sidebar-top-bar safesaff-sidebar-header">
         <button className="back-module safesaff-sidebar-home" onClick={onHome} title="Ir para o início" aria-label="Ir para o início">

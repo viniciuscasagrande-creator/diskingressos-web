@@ -6,6 +6,7 @@ import './styles.css'
 import './styles/limitless-enterprise.css'
 import './styles/responsive-enterprise-360.css'
 import './styles/sidebar-enterprise.css'
+import './styles/disk-estornos.css'
 
 document.documentElement.dataset.uiFramework = 'limitless'
 document.documentElement.dataset.marketingIntegrationsRelease = '25.7-marketing-integrations-360-2026-09-02'

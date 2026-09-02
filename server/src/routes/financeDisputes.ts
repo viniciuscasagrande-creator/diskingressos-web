@@ -4,6 +4,7 @@ import { prisma } from '../prisma.js'
 import { audit } from '../audit.js'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 import { requestedProducerId, writeProducerId } from '../tenant.js'
+import { evaluateRefundEligibility, buildReversalPlan } from '../services/refundEnterpriseEngine.js'
 
 export const financeDisputesRouter = Router()
 
@@ -374,4 +375,76 @@ financeDisputesRouter.post('/payment-events/webhook', async (req, res) => {
   }
 
   res.status(201).json({ ok: true, webhookId: webhookRecord.id, status: 'processed' })
+})
+
+
+// ===== Fase 25.8 — Motor Enterprise de Estornos =====
+financeDisputesRouter.get('/enterprise/overview', requireAuth, async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req)
+  const eventId = req.query.eventId ? Number(req.query.eventId) : undefined
+  const where = { ...(producerId ? { producerId } : {}), ...(eventId ? { eventId } : {}) }
+  const refunds = await prisma.refundRequest.findMany({ where, orderBy: { createdAt: 'desc' }, take: 200 })
+  const pending = refunds.filter(r => ['solicitado','requested','under_review'].includes(r.status))
+  const critical = refunds.filter(r => r.amountCents >= 500000 && !['estornado','refunded','completed'].includes(r.status))
+  const partial = refunds.filter(r => r.kind === 'parcial')
+  res.json({
+    release: '25.8-enterprise-refund-engine-2026-09-02',
+    pendingApprovals: pending.length,
+    pendingAmountCents: pending.reduce((a,r)=>a+r.amountCents,0),
+    criticalCases: critical.length,
+    partialRefunds: partial.length,
+    policy: { level1MaxCents: 99999, level2FromCents: 100000, level3FromCents: 500000, immutableLedger: true, requesterCannotApproveCritical: true },
+    capabilities: ['eligibility','multi_level_approval','partial_refund','split_reversal','reserve_consumption','gateway_idempotency','ledger_compensation','sla','audit']
+  })
+})
+
+financeDisputesRouter.post('/refunds/:id/eligibility', requireAuth, async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const producerId = requestedProducerId(req)
+  const current = await prisma.refundRequest.findFirst({ where: { id, ...(producerId ? { producerId } : {}) } })
+  if (!current) return res.status(404).json({ message: 'Solicitação de estorno não encontrada.' })
+  const result = evaluateRefundEligibility(current)
+  await prisma.refundEligibilitySnapshot.create({ data: {
+    refundRequestId: id, eligible: result.eligible, riskLevel: result.riskLevel,
+    requiredApprovals: result.requiredApprovals, checksJson: JSON.stringify(result.checks),
+    blockingReasonsJson: JSON.stringify(result.blockingReasons), evaluatedBy: String(req.auth!.id)
+  }})
+  await audit(req, req.auth!.id, current.producerId, 'eligibility', 'refund-request', String(id), result)
+  res.json(result)
+})
+
+financeDisputesRouter.post('/refunds/:id/enterprise-approve', requireAuth, async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const body = z.object({ notes: z.string().max(1000).optional() }).parse(req.body || {})
+  const producerId = requestedProducerId(req)
+  const current = await prisma.refundRequest.findFirst({ where: { id, ...(producerId ? { producerId } : {}) } })
+  if (!current) return res.status(404).json({ message: 'Solicitação de estorno não encontrada.' })
+  const eligibility = evaluateRefundEligibility(current)
+  if (!eligibility.eligible) return res.status(409).json({ message: 'Estorno bloqueado pelas regras de elegibilidade.', eligibility })
+  if (eligibility.requiredApprovals >= 2 && current.requestedBy === String(req.auth!.id)) {
+    return res.status(403).json({ message: 'Segregação de função: o solicitante não pode aprovar este estorno de alçada elevada.' })
+  }
+  const prior = await prisma.refundApprovalStep.findMany({ where: { refundRequestId: id, status: 'approved' } })
+  const nextLevel = prior.length + 1
+  if (nextLevel > eligibility.requiredApprovals) return res.status(409).json({ message: 'Todas as alçadas necessárias já foram aprovadas.' })
+  const step = await prisma.refundApprovalStep.upsert({
+    where: { refundRequestId_approvalLevel: { refundRequestId: id, approvalLevel: nextLevel } },
+    create: { refundRequestId: id, approvalLevel: nextLevel, status: 'approved', actorId: String(req.auth!.id), actorRole: req.auth!.role, decisionNotes: body.notes, decidedAt: new Date() },
+    update: { status: 'approved', actorId: String(req.auth!.id), actorRole: req.auth!.role, decisionNotes: body.notes, decidedAt: new Date() }
+  })
+  const complete = nextLevel >= eligibility.requiredApprovals
+  if (complete) await prisma.refundRequest.update({ where: { id }, data: { status: 'aprovado', approvedBy: String(req.auth!.id), approvedAt: new Date() } })
+  await audit(req, req.auth!.id, current.producerId, 'enterprise-approve', 'refund-request', String(id), { level: nextLevel, required: eligibility.requiredApprovals, complete })
+  res.json({ step, complete, currentLevel: nextLevel, requiredApprovals: eligibility.requiredApprovals })
+})
+
+financeDisputesRouter.post('/refunds/:id/reversal-plan', requireAuth, async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const producerId = requestedProducerId(req)
+  const current = await prisma.refundRequest.findFirst({ where: { id, ...(producerId ? { producerId } : {}) } })
+  if (!current) return res.status(404).json({ message: 'Solicitação de estorno não encontrada.' })
+  const plan = buildReversalPlan(current)
+  const saved = await prisma.refundReversalPlan.create({ data: { refundRequestId: id, amountCents: current.amountCents, strategy: plan.strategy, planJson: JSON.stringify(plan), createdBy: String(req.auth!.id) } })
+  await audit(req, req.auth!.id, current.producerId, 'reversal-plan', 'refund-request', String(id), { planId: saved.id, strategy: plan.strategy })
+  res.json({ ...plan, planId: saved.id })
 })

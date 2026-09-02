@@ -20,6 +20,7 @@ import MarketingHubOSPage from './marketing/MarketingHubOSPage'
 import WhatsAppMarketingPage from './marketing/WhatsAppMarketingPage'
 import EmailMarketingPage from './marketing/EmailMarketingPage'
 import MarketingReportsPage from './marketing/MarketingReportsPage'
+import MarketingAttributionPage from './marketing/MarketingAttributionPage'
 import {
   createMarketingCampaign, getMarketingCampaigns, getResolvedTracking,
   getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign,
@@ -51,6 +52,7 @@ export type Mode =
   | 'utm-central'
   | 'links'
   | 'tracking'
+  | 'attribution'
   | 'conversions'
   | 'remarketing'
   | 'recovery'
@@ -136,6 +138,7 @@ const hubGroups: HubGroup[] = [
       { id: 'marketing-utm-central', title: 'Central UTM & Conversões', description: 'Dashboard executivo completo de UTMs.', icon: Link2, badge: 'Novo' },
       { id: 'marketing-links', title: 'Links, UTMs e QR Codes', description: 'URLs curtas e QR codes para totens/posts.', icon: QrCode },
       { id: 'marketing-tracking', title: 'Pixel & Analytics', description: 'Meta CAPI, GA4, TikTok Pixel e GTM.', icon: Activity },
+      { id: 'marketing-attribution', title: 'Atribuição Multicanal', description: 'UTM, click IDs, receita e ROAS por jornada.', icon: Scale, badge: '25.7.2' },
       { id: 'marketing-conversions', title: 'Central de Conversões', description: 'Jornada clique → sessão → carrinho → compra.', icon: MousePointerClick },
       { id: 'marketing-remarketing', title: 'Remarketing', description: 'Recuperação de checkouts e abandono.', icon: RefreshCw },
       { id: 'marketing-recovery', title: 'Recuperação de Vendas', description: 'Acompanhamento de receita resgatada.', icon: ShieldCheck }
@@ -267,6 +270,10 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
           />
         </section>
       )
+    }
+
+    if (mode === 'attribution') {
+      return <MarketingAttributionPage events={events} producerName={producerName} notify={notify} />
     }
 
     if (mode === 'tracking') {
