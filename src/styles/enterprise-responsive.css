@@ -1,0 +1,189 @@
+/*
+ * SafeSaff Enterprise Responsiveness 360°
+ * Fase 25.6
+ * Sistema de responsividade estrutural cobrindo Desktop, Notebook, Tablet e Mobile
+ */
+
+:root {
+  --bp-mobile-sm: 480px;
+  --bp-mobile: 768px;
+  --bp-tablet: 1024px;
+  --bp-notebook: 1440px;
+
+  --spacing-page-desktop: 24px;
+  --spacing-page-notebook: 18px;
+  --spacing-page-tablet: 14px;
+  --spacing-page-mobile: 10px;
+}
+
+/* Base Fluid Grid System */
+.erp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
+.erp-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.erp-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.erp-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Page Layout Wrappers */
+.page-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Financial Tables - Enterprise Responsive */
+.financial-table-wrapper,
+.ll-table-frame {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--ll-radius-lg, 8px);
+  position: relative;
+}
+
+.financial-table-wrapper table,
+.ll-table-frame table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+}
+
+/* Density Adaptations */
+[data-density="compact"] .ll-card-body {
+  padding: 0.75rem 0.875rem;
+}
+[data-density="compact"] .ll-stat {
+  padding: 0.625rem 0.75rem;
+}
+[data-density="compact"] .ll-table th,
+[data-density="compact"] .ll-table td {
+  padding: 0.5rem 0.75rem;
+}
+
+/* Breakpoint: Notebook (max-width: 1439px) */
+@media (max-width: 1439px) {
+  .erp-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .finance-command-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Breakpoint: Tablet (max-width: 1023px) */
+@media (max-width: 1023px) {
+  .erp-grid-3,
+  .erp-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .finance-command-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .page-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .page-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Breakpoint: Mobile (max-width: 767px) */
+@media (max-width: 767px) {
+  .erp-grid,
+  .erp-grid-2,
+  .erp-grid-3,
+  .erp-grid-4 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .finance-command-kpis {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .page-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .page-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .page-actions button,
+  .page-actions .ll-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Modals: full screen friendly on mobile */
+  .utm-modal-card,
+  .modal-dialog-responsive {
+    width: 95vw !important;
+    max-width: 100% !important;
+    margin: 10px auto !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Typography on mobile */
+  .finance-command h1,
+  .page-title {
+    font-size: 20px !important;
+  }
+  .finance-command-section-head h2,
+  .section-title {
+    font-size: 15px !important;
+  }
+
+  /* Small search input fluid */
+  .small-search {
+    width: 100% !important;
+  }
+}
+
+/* Breakpoint: Small Mobile (max-width: 479px) */
+@media (max-width: 479px) {
+  .page-actions {
+    grid-template-columns: 1fr;
+  }
+  .finance-command-kpi strong {
+    font-size: 17px !important;
+  }
+}

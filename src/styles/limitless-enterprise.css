@@ -1,0 +1,168 @@
+/*
+ * SafeSaff + Limitless Enterprise UI
+ * Fase 25.3.4
+ * Design tokens derived from the licensed Limitless package supplied by the company.
+ * The original package is preserved in /vendor/limitless and is NOT globally imported,
+ * avoiding Bootstrap/legacy selector collisions with the React/Tailwind application.
+ */
+
+:root {
+  --ll-primary:#0c83ff;
+  --ll-primary-rgb:12,131,255;
+  --ll-success:#059669;
+  --ll-info:#049aad;
+  --ll-warning:#f58646;
+  --ll-danger:#ef4444;
+  --ll-dark:#252b36;
+  --ll-gray-100:#f9fafb;
+  --ll-gray-200:#f3f4f6;
+  --ll-gray-300:#e5e7eb;
+  --ll-gray-400:#d1d5db;
+  --ll-gray-500:#9ca3af;
+  --ll-gray-600:#6b7280;
+  --ll-gray-700:#4b5563;
+  --ll-gray-800:#374151;
+  --ll-gray-900:#1f2937;
+  --ll-body-bg:#f1f4f9;
+  --ll-body-color:#1f2937;
+  --ll-border:#d1d5db;
+  --ll-radius:.375rem;
+  --ll-radius-lg:.5rem;
+  --ll-radius-xl:1rem;
+  --ll-shadow-sm:0 1px 2px rgba(0,0,0,.10);
+  --ll-shadow:0 1px 3px rgba(0,0,0,.125);
+  --ll-shadow-lg:0 6px 12px rgba(0,0,0,.15);
+  --ll-focus:0 0 0 .125rem rgba(12,131,255,.25);
+  --ll-font:"Inter", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --ll-body-size:.875rem;
+  --ll-line-height:1.5715;
+
+  /* SafeSaff aliases — one source of truth */
+  --safe-primary:var(--ll-primary);
+  --safe-surface:#fff;
+  --safe-canvas:var(--ll-body-bg);
+  --safe-text:var(--ll-body-color);
+  --safe-muted:var(--ll-gray-600);
+  --safe-border:var(--ll-gray-300);
+  --safe-radius:var(--ll-radius-lg);
+}
+
+html[data-ui-framework="limitless"] body {
+  font-family:var(--ll-font);
+  font-size:var(--ll-body-size);
+  line-height:var(--ll-line-height);
+  color:var(--ll-body-color);
+  background:var(--ll-body-bg);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* Financial alignment policy: labels left, comparable values right */
+html[data-ui-framework="limitless"] :is(.financial-value,.numeric-value,.table-number,.money,.currency,.amount,[data-align="number"]) {
+  text-align:right !important;
+  font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:"tnum" 1,"lnum" 1;
+}
+html[data-ui-framework="limitless"] :is(.text-column,.table-label,[data-align="text"]) { text-align:left !important; }
+
+/* Global enterprise typography scale — intentionally restrained */
+html[data-ui-framework="limitless"] :is(.page-title,.page-head h1,.finance-page-title) {
+  font-size:1.625rem;
+  line-height:1.25;
+  font-weight:650;
+  letter-spacing:-.025em;
+}
+html[data-ui-framework="limitless"] :is(.section-title,.panel-title,.card-title,.fa-panel-head h3) {
+  font-size:1rem;
+  line-height:1.45;
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+html[data-ui-framework="limitless"] :is(.eyebrow,.section-kicker,.menu-caption) {
+  font-size:.6875rem;
+  line-height:1.4;
+  font-weight:650;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* Limitless-compatible primitives for React */
+.ll-card {
+  background:#fff;
+  border:1px solid var(--ll-gray-300);
+  border-radius:var(--ll-radius-lg);
+  box-shadow:var(--ll-shadow-sm);
+  min-width:0;
+}
+.ll-card-header { display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1rem 1.125rem;border-bottom:1px solid var(--ll-gray-300); }
+.ll-card-body { padding:1.125rem; }
+.ll-card-footer { padding:.875rem 1.125rem;border-top:1px solid var(--ll-gray-300);background:var(--ll-gray-100); }
+.ll-card-title { margin:0;font-size:1rem;font-weight:600;color:var(--ll-gray-900); }
+.ll-card-subtitle { margin:.25rem 0 0;color:var(--ll-gray-600);font-size:.8125rem; }
+.ll-card.is-interactive { transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease; }
+.ll-card.is-interactive:hover { transform:translateY(-1px);box-shadow:0 8px 20px rgba(31,41,55,.08);border-color:var(--ll-gray-400); }
+
+.ll-stat { display:grid;grid-template-columns:auto 1fr;gap:.75rem 1rem;align-items:start;padding:1rem 1.125rem; }
+.ll-stat-icon { width:2.25rem;height:2.25rem;border-radius:.5rem;display:grid;place-items:center;background:rgba(var(--ll-primary-rgb),.08);color:var(--ll-primary); }
+.ll-stat-copy { min-width:0; }
+.ll-stat-label { color:var(--ll-gray-600);font-size:.75rem;font-weight:500; }
+.ll-stat-value { display:block;margin-top:.2rem;color:var(--ll-gray-900);font-size:1.25rem;line-height:1.2;font-weight:650;font-variant-numeric:tabular-nums; }
+.ll-stat-meta { display:block;margin-top:.25rem;color:var(--ll-gray-500);font-size:.6875rem; }
+
+.ll-toolbar { min-height:3.25rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.625rem .75rem;background:#fff;border:1px solid var(--ll-gray-300);border-radius:var(--ll-radius-lg); }
+.ll-toolbar-group { display:flex;align-items:center;gap:.5rem;flex-wrap:wrap; }
+.ll-btn { min-height:2.375rem;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:1px solid var(--ll-gray-400);border-radius:var(--ll-radius);padding:.45rem .8rem;background:#fff;color:var(--ll-gray-800);font-size:.8125rem;font-weight:550;transition:.15s ease; }
+.ll-btn:hover { background:var(--ll-gray-100);border-color:var(--ll-gray-500); }
+.ll-btn:focus-visible { outline:none;box-shadow:var(--ll-focus); }
+.ll-btn-primary { background:var(--ll-primary);border-color:var(--ll-primary);color:#fff; }
+.ll-btn-primary:hover { background:#0877e8;border-color:#0877e8; }
+.ll-btn-danger { background:var(--ll-danger);border-color:var(--ll-danger);color:#fff; }
+
+.ll-badge { display:inline-flex;align-items:center;gap:.25rem;min-height:1.35rem;padding:.1rem .45rem;border-radius:999px;background:var(--ll-gray-200);color:var(--ll-gray-700);font-size:.625rem;font-weight:700;line-height:1;white-space:nowrap; }
+.ll-badge-primary{background:rgba(var(--ll-primary-rgb),.10);color:#086acb}.ll-badge-success{background:#ecfdf5;color:#047857}.ll-badge-warning{background:#fff7ed;color:#c2410c}.ll-badge-danger{background:#fef2f2;color:#b91c1c}
+
+.ll-field { display:grid;gap:.35rem; }
+.ll-label { color:var(--ll-gray-700);font-size:.75rem;font-weight:550; }
+.ll-control { width:100%;min-height:2.5rem;border:1px solid var(--ll-gray-400);border-radius:var(--ll-radius);background:#fff;padding:.45rem .7rem;color:var(--ll-gray-900);font:inherit;outline:none; }
+.ll-control:hover { border-color:var(--ll-gray-500); }
+.ll-control:focus { border-color:var(--ll-primary);box-shadow:var(--ll-focus); }
+.ll-help { color:var(--ll-gray-500);font-size:.6875rem; }
+
+.ll-table-frame { width:100%;overflow:auto;background:#fff;border:1px solid var(--ll-gray-300);border-radius:var(--ll-radius-lg); }
+.ll-table { width:100%;border-collapse:collapse;font-size:.8125rem; }
+.ll-table thead th { position:relative;padding:.7rem .8rem;background:var(--ll-gray-100);border-bottom:1px solid var(--ll-gray-300);color:var(--ll-gray-600);font-size:.6875rem;font-weight:650;letter-spacing:.035em;text-transform:uppercase;text-align:left;white-space:nowrap; }
+.ll-table tbody td { padding:.75rem .8rem;border-bottom:1px solid var(--ll-gray-200);color:var(--ll-gray-800);vertical-align:middle; }
+.ll-table tbody tr:last-child td { border-bottom:0; }
+.ll-table tbody tr:hover td { background:#fbfcfe; }
+.ll-table :is(th,td).is-number { text-align:right;font-variant-numeric:tabular-nums lining-nums; }
+
+.ll-tabs { display:flex;align-items:center;gap:.15rem;overflow-x:auto;border-bottom:1px solid var(--ll-gray-300);scrollbar-width:none; }
+.ll-tabs::-webkit-scrollbar{display:none}.ll-tab{position:relative;display:inline-flex;align-items:center;gap:.4rem;min-height:2.75rem;padding:.55rem .8rem;border:0;background:transparent;color:var(--ll-gray-600);font-size:.8125rem;font-weight:550;white-space:nowrap}.ll-tab:hover{color:var(--ll-gray-900);background:var(--ll-gray-100)}.ll-tab.active{color:var(--ll-primary)}.ll-tab.active:after{content:"";position:absolute;left:.65rem;right:.65rem;bottom:-1px;height:2px;background:var(--ll-primary);border-radius:2px 2px 0 0}
+
+.ll-empty { min-height:13rem;display:grid;place-items:center;text-align:center;padding:2rem;color:var(--ll-gray-600); }
+.ll-empty > div { max-width:28rem; }
+
+/* Existing SafeSaff shell receives Limitless geometry without losing functionality */
+html[data-ui-framework="limitless"] .topbar { background:#252b36;box-shadow:0 1px 0 rgba(255,255,255,.04); }
+html[data-ui-framework="limitless"] .sidebar { background:#252b36; }
+html[data-ui-framework="limitless"] .content { background:var(--ll-body-bg); }
+html[data-ui-framework="limitless"] :is(.primary-btn,.tool-btn,.secondary-btn) { border-radius:var(--ll-radius); }
+html[data-ui-framework="limitless"] :is(.fa-panel,.fa-kpi,.summary-strip,.event-card) { border-color:var(--ll-gray-300);border-radius:var(--ll-radius-lg);box-shadow:var(--ll-shadow-sm); }
+html[data-ui-framework="limitless"] :is(input,select,textarea,button) { font-family:var(--ll-font); }
+html[data-ui-framework="limitless"] :is(input,select,textarea):focus-visible { outline:none; }
+
+/* Tables throughout ERP/CRM/Finance: consistent numeric scanning */
+html[data-ui-framework="limitless"] table { font-variant-numeric:tabular-nums lining-nums; }
+html[data-ui-framework="limitless"] table th { font-weight:600; }
+html[data-ui-framework="limitless"] table :is(td,th)[data-type="money"],
+html[data-ui-framework="limitless"] table :is(td,th)[data-type="number"],
+html[data-ui-framework="limitless"] table :is(td,th)[data-type="percent"] { text-align:right; }
+
+/* Scrollbars similar to Limitless, unobtrusive in dense enterprise screens */
+html[data-ui-framework="limitless"] * { scrollbar-color:#c9d1dc transparent;scrollbar-width:thin; }
+html[data-ui-framework="limitless"] *::-webkit-scrollbar{width:8px;height:8px}
+html[data-ui-framework="limitless"] *::-webkit-scrollbar-thumb{background:#c9d1dc;border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+
+@media (max-width:850px){
+  .ll-toolbar{align-items:stretch;flex-direction:column}.ll-toolbar-group{width:100%}.ll-btn{min-height:2.625rem}.ll-card-header{padding:.875rem 1rem}.ll-card-body{padding:1rem}
+}

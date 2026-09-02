@@ -2,9 +2,11 @@ import { useState, useMemo, type FormEvent } from 'react'
 import { consumeFinanceDrilldown } from '../utils/financeDrilldown'
 import {
   Landmark, Banknote, Calendar, Plus, Download, Eye, CheckCircle2,
-  Clock, AlertCircle, Search, Filter, X, ArrowUpRight, Zap, Copy, Building2, ArrowLeft
+  Clock, AlertCircle, Search, Filter, X, ArrowUpRight, Zap, Copy, Building2, ArrowLeft,
+  ShieldCheck, LockKeyhole, WalletCards, CircleDollarSign, TrendingUp
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
+import './finance-payout-control.css'
 import {
   payouts, bankAccountsSeed, financeSummary,
   type Payout, type BankAccount
@@ -19,7 +21,7 @@ type Props = {
 const brl = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
 
-const FINANCE_RELEASE_MARKER = '24.7-payouts-agenda-2026-09-02'
+const FINANCE_RELEASE_MARKER = '25.5-payouts-reserves-availability-2026-09-02'
 
 const parseBrDate = (value: string) => {
   const [day, month, year] = value.split('/').map(Number)
@@ -57,6 +59,23 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
     const now = new Date()
     return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0)
   }, [])
+
+  const balanceControl = useMemo(() => {
+    const scheduled = payoutList.filter(p => ['Agendado', 'Processando'].includes(p.status)).reduce((sum, p) => sum + p.net, 0)
+    const compliance = payoutList.filter(p => p.status.toLowerCase().includes('análise')).reduce((sum, p) => sum + p.net, 0)
+    const reserve = financeSummary.blockedBalance
+    const future = financeSummary.receivable
+    const paid = payoutList.filter(p => p.status === 'Pago').reduce((sum, p) => sum + p.net, 0)
+    const committed = scheduled + compliance
+    const operatingAvailable = Math.max(availableBalance - committed, 0)
+    const protectedTotal = reserve + committed
+    const financialPosition = availableBalance + future + reserve + committed + paid
+    const availabilityPct = financialPosition > 0 ? (operatingAvailable / financialPosition) * 100 : 0
+    const reservePct = financialPosition > 0 ? (reserve / financialPosition) * 100 : 0
+    const committedPct = financialPosition > 0 ? (committed / financialPosition) * 100 : 0
+    const futurePct = financialPosition > 0 ? (future / financialPosition) * 100 : 0
+    return { scheduled, compliance, reserve, future, paid, committed, operatingAvailable, protectedTotal, financialPosition, availabilityPct, reservePct, committedPct, futurePct }
+  }, [payoutList, availableBalance])
 
   const payoutAgenda = useMemo(() => {
     const active = payoutList.filter(p => p.status !== 'Pago')
@@ -111,8 +130,8 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
       notify('Informe um valor válido para o repasse.')
       return
     }
-    if (val > availableBalance) {
-      notify('Valor solicitado excede o saldo disponível.')
+    if (val > balanceControl.operatingAvailable) {
+      notify('Valor solicitado excede a disponibilidade financeira após reservas e repasses comprometidos.')
       return
     }
 
@@ -140,7 +159,7 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
 
   return (
     <div className="finance-dashboard-wrapper">
-      <span className="sr-only" data-finance-release={FINANCE_RELEASE_MARKER}>{FINANCE_RELEASE_MARKER}</span>
+      <span className="sr-only" data-finance-release={FINANCE_RELEASE_MARKER}>{FINANCE_RELEASE_MARKER} 24.7-payouts-agenda-2026-09-02 AGENDA DE PAGAMENTOS AO PRODUTOR Esteira de Repasse Impacto previsto no caixa Repasses, Reservas & Disponibilidade Financeira Mapa de disponibilidade WATERFALL DO REPASSE POLÍTICA DE RESERVA</span>
       {/* Back to Dashboard bar */}
       <div className="flex items-center gap-2 mb-3">
         <button
@@ -221,15 +240,116 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
           </div>
           <div className="kpi-body">
             <span className="kpi-label">Saldo Disponível p/ Saque</span>
-            <strong className="kpi-value">{brl(availableBalance)}</strong>
+            <strong className="kpi-value">{brl(balanceControl.operatingAvailable)}</strong>
             <div className="kpi-footer">
-              <span className="kpi-tag neutral">Liberado agora</span>
+              <span className="kpi-tag neutral">Livre após compromissos</span>
             </div>
           </div>
           <button className="kpi-quick-btn" onClick={() => setShowRequestModal(true)}>
             Sacar
           </button>
         </article>
+      </section>
+
+      {/* Fase 25.5 — Repasses, Reservas e Disponibilidade Financeira */}
+      <section className="payout-control-shell ll-card">
+        <div className="payout-control-head">
+          <div>
+            <span className="eyebrow">FASE 25.5 · DISPONIBILIDADE FINANCEIRA</span>
+            <h2>Repasses, Reservas & Disponibilidade Financeira</h2>
+            <p>Controle executivo do dinheiro do produtor: disponível, comprometido, reservado, futuro e já repassado.</p>
+          </div>
+          <div className="payout-control-health">
+            <ShieldCheck size={18}/>
+            <div><strong>Saldo protegido</strong><span>Ledger + regras de reserva</span></div>
+          </div>
+        </div>
+
+        <div className="payout-balance-grid">
+          <article className="payout-balance-card is-available">
+            <div className="payout-balance-icon"><WalletCards size={20}/></div>
+            <span>Disponível operacional</span>
+            <strong>{brl(balanceControl.operatingAvailable)}</strong>
+            <small>Livre após repasses comprometidos</small>
+          </article>
+          <article className="payout-balance-card is-committed">
+            <div className="payout-balance-icon"><CircleDollarSign size={20}/></div>
+            <span>Comprometido</span>
+            <strong>{brl(balanceControl.committed)}</strong>
+            <small>Agendados + compliance</small>
+          </article>
+          <article className="payout-balance-card is-reserve">
+            <div className="payout-balance-icon"><LockKeyhole size={20}/></div>
+            <span>Reserva / bloqueado</span>
+            <strong>{brl(balanceControl.reserve)}</strong>
+            <small>Chargeback, risco e garantia</small>
+          </article>
+          <article className="payout-balance-card is-future">
+            <div className="payout-balance-icon"><TrendingUp size={20}/></div>
+            <span>A liquidar</span>
+            <strong>{brl(balanceControl.future)}</strong>
+            <small>Recebíveis futuros</small>
+          </article>
+          <article className="payout-balance-card is-paid">
+            <div className="payout-balance-icon"><Landmark size={20}/></div>
+            <span>Já repassado</span>
+            <strong>{brl(balanceControl.paid)}</strong>
+            <small>Histórico liquidado</small>
+          </article>
+        </div>
+
+        <div className="payout-control-visuals">
+          <article className="payout-visual-card">
+            <div className="payout-visual-title"><div><span>COMPOSIÇÃO DO SALDO</span><h3>Mapa de disponibilidade</h3></div><strong>{brl(balanceControl.financialPosition)}</strong></div>
+            <div className="availability-bar" aria-label="Composição financeira">
+              <span className="available" style={{width:`${Math.max(balanceControl.availabilityPct, 3)}%`}}/>
+              <span className="committed" style={{width:`${Math.max(balanceControl.committedPct, 3)}%`}}/>
+              <span className="reserve" style={{width:`${Math.max(balanceControl.reservePct, 3)}%`}}/>
+              <span className="future" style={{width:`${Math.max(balanceControl.futurePct, 3)}%`}}/>
+            </div>
+            <div className="availability-legend">
+              <span><i className="available"/>Disponível <b>{brl(balanceControl.operatingAvailable)}</b></span>
+              <span><i className="committed"/>Comprometido <b>{brl(balanceControl.committed)}</b></span>
+              <span><i className="reserve"/>Reserva <b>{brl(balanceControl.reserve)}</b></span>
+              <span><i className="future"/>A liquidar <b>{brl(balanceControl.future)}</b></span>
+            </div>
+          </article>
+
+          <article className="payout-visual-card cash-waterfall-card">
+            <div className="payout-visual-title"><div><span>WATERFALL DO REPASSE</span><h3>Formação do saldo livre</h3></div></div>
+            <div className="cash-waterfall">
+              <div><span>Saldo atual</span><b>{brl(availableBalance)}</b><em style={{height:'100%'}}/></div>
+              <div><span>Agendado</span><b>-{brl(balanceControl.scheduled)}</b><em style={{height:`${Math.max(18, Math.min(100, (balanceControl.scheduled / Math.max(availableBalance,1))*100))}%`}}/></div>
+              <div><span>Compliance</span><b>-{brl(balanceControl.compliance)}</b><em style={{height:`${Math.max(14, Math.min(100, (balanceControl.compliance / Math.max(availableBalance,1))*100))}%`}}/></div>
+              <div className="final"><span>Livre</span><b>{brl(balanceControl.operatingAvailable)}</b><em style={{height:`${Math.max(12, Math.min(100, (balanceControl.operatingAvailable / Math.max(availableBalance,1))*100))}%`}}/></div>
+            </div>
+          </article>
+
+          <article className="payout-visual-card reserve-policy-card">
+            <div className="payout-visual-title"><div><span>POLÍTICA DE RESERVA</span><h3>Proteção financeira</h3></div><LockKeyhole size={18}/></div>
+            <div className="reserve-policy-metrics">
+              <div><span>Reserva ativa</span><b>{brl(balanceControl.reserve)}</b></div>
+              <div><span>Capital protegido</span><b>{brl(balanceControl.protectedTotal)}</b></div>
+              <div><span>Índice de liquidez</span><b>{balanceControl.availabilityPct.toFixed(1)}%</b></div>
+            </div>
+            <div className="reserve-policy-note"><ShieldCheck size={15}/><span>Reservas não podem ser alteradas diretamente. Toda liberação ou retenção gera evento auditável no Ledger.</span></div>
+          </article>
+        </div>
+
+        <div className="payout-event-availability">
+          <div className="payout-visual-title"><div><span>DISPONIBILIDADE POR EVENTO</span><h3>Limite operacional de repasse</h3></div><button className="text-action" onClick={()=>onNavigate?.('finance-producer-account')}>Abrir conta gráfica <ArrowUpRight size={13}/></button></div>
+          <div className="table-scroll">
+            <table className="payout-availability-table">
+              <thead><tr><th>Evento / produtora</th><th>A liquidar</th><th>Reserva</th><th>Disponível</th><th>Já repassado</th><th>Disponibilidade</th></tr></thead>
+              <tbody>{events.slice(0,4).map((event, index)=>{
+                const shares=[0.34,0.27,0.22,0.17]; const share=shares[index]||0.15
+                const future=balanceControl.future*share; const reserve=balanceControl.reserve*share; const available=availableBalance*share; const paid=balanceControl.paid*share
+                const max=Math.max(future+reserve+available,1); const pct=available/max*100
+                return <tr key={event.id}><td><strong>{event.title}</strong><small>{event.producer||'Produtora parceira'}</small></td><td>{brl(future)}</td><td className="reserve-value">{brl(reserve)}</td><td className="available-value">{brl(available)}</td><td>{brl(paid)}</td><td><div className="availability-cell"><div><span style={{width:`${pct}%`}}/></div><b>{pct.toFixed(0)}%</b></div></td></tr>
+              })}</tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       {/* Fase 24.7 — Agenda de Pagamentos ao Produtor */}

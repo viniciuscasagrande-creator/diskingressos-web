@@ -44,3 +44,31 @@ assertContains('src/UI',srcBody,uiRequired)
 assertContains('dist/UI',distBody,uiRequired)
 assertContains('arquitetura backend/db',architectureBody,architectureRequired)
 console.log('[FINANCE RELEASE] Fases 24.1 a 24.9 + Fases 25.0 a 25.3.3 confirmadas no build.')
+
+// Fase 25.3.4 — Limitless Enterprise UI
+const limitlessMarker = '25.3.4-limitless-enterprise-ui-2026-09-02';
+const root = process.cwd();
+const limitlessTheme = path.join(root, 'src/theme/limitlessManifest.ts');
+if (!fs.existsSync(limitlessTheme) || !fs.readFileSync(limitlessTheme, 'utf8').includes(limitlessMarker)) {
+  console.error('Falha: integração Limitless 25.3.4 não encontrada.');
+  process.exit(1);
+}
+console.log('[FINANCE RELEASE] Fase 25.3.4 Limitless Enterprise UI confirmada.');
+
+// Fase 25.4 — Recebíveis, Liquidação e Agenda Financeira
+const phase254 = '25.4-receivables-settlement-agenda-2026-09-02';
+const phase254Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
+assertContains('Fase 25.4', phase254Body, [phase254, 'Central de Recebíveis & Liquidação', 'Curva de liquidação', 'Mix de recebíveis', 'Saúde da liquidação', 'receivable_schedule_entries', 'receivable_agenda_summary']);
+console.log('[FINANCE RELEASE] Fases 25.0 a 25.4 confirmadas no build.');
+
+// Fase 25.5 — Repasses, Reservas e Disponibilidade Financeira
+const phase255 = '25.5-payouts-reserves-availability-2026-09-02';
+const phase255Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
+assertContains('Fase 25.5', phase255Body, [phase255, 'Repasses, Reservas & Disponibilidade Financeira', 'Mapa de disponibilidade', 'WATERFALL DO REPASSE', 'POLÍTICA DE RESERVA', 'producer_balance_reserves', 'payout_commitments', 'producer_payout_availability']);
+console.log('[FINANCE RELEASE] Fases 25.0 a 25.5 confirmadas no build.');
+
+// Fase 25.6 — Responsividade Enterprise 360°
+const phase256 = '25.6-enterprise-responsiveness-360-2026-09-02';
+const phase256Body = body([...collect('src'), ...collect('db'), ...collect('.')]);
+assertContains('Fase 25.6', phase256Body, [phase256, 'user_ui_responsive_preferences', 'erp-grid', 'financial-table-wrapper']);
+console.log('[FINANCE RELEASE] Fases 25.0 a 25.6 confirmadas no build.');
