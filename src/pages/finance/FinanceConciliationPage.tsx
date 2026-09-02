@@ -114,7 +114,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
           {/* Selecionar Banco */}
           <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 text-xs shadow-sm">
             <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-              <Landmark size={15} className="text-sky-400" />
+              <Landmark size={15} className="text-sky-700" />
               Selecionar Banco
             </h3>
 
@@ -129,7 +129,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                   key={key}
                   className={`flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition ${
                     selectedBank === key
-                      ? 'bg-sky-950/60 border-sky-600/60 text-slate-900 font-bold'
+                      ? 'bg-sky-100/60 border-sky-600/60 text-slate-900 font-bold'
                       : 'bg-slate-100 border-slate-200/50 text-slate-700 hover:bg-slate-100'
                   }`}
                 >
@@ -149,7 +149,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
           {/* Filtros de Extrato */}
           <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 text-xs shadow-sm">
             <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-              <Filter size={15} className="text-amber-400" />
+              <Filter size={15} className="text-amber-800" />
               Filtros de Extrato
             </h3>
 
@@ -211,10 +211,10 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
         <div className="md:col-span-8 bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
           <div className="flex justify-between items-center border-b border-slate-200 pb-2">
             <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-              <AlertTriangle size={16} className="text-amber-400" />
+              <AlertTriangle size={16} className="text-amber-800" />
               Divergências Identificadas
             </h3>
-            <span className="bg-amber-950/80 text-amber-300 font-bold px-2.5 py-1 rounded-lg border border-amber-800/40 text-[11px]">
+            <span className="bg-amber-100/80 text-amber-800 font-bold px-2.5 py-1 rounded-lg border border-amber-800/40 text-[11px]">
               {divergences.length} registros pendentes
             </span>
           </div>
@@ -222,7 +222,7 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
           <div className="space-y-3 pt-1">
             {divergences.length === 0 ? (
               <div className="p-8 text-center text-slate-500">
-                <CheckCircle2 size={32} className="text-emerald-400 mx-auto mb-2" />
+                <CheckCircle2 size={32} className="text-emerald-700 mx-auto mb-2" />
                 <p className="font-bold text-slate-900">Extrato totalmente conciliado!</p>
                 <span className="text-[11px]">Nenhuma divergência pendente para o banco selecionado.</span>
               </div>
@@ -241,20 +241,20 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
                     <div className="flex items-start gap-3">
                       <div className="p-2 bg-slate-700/60 rounded-lg shrink-0 mt-0.5">
                         {d.type === 'pix' && <QrCode size={16} className="text-teal-400" />}
-                        {d.type === 'card' && <CreditCard size={16} className="text-sky-400" />}
-                        {d.type === 'boleto' && <Barcode size={16} className="text-rose-400" />}
+                        {d.type === 'card' && <CreditCard size={16} className="text-sky-700" />}
+                        {d.type === 'boleto' && <Barcode size={16} className="text-rose-700" />}
                       </div>
 
                       <div className="space-y-1">
                         <div className="font-bold text-slate-900 text-xs">{d.title}</div>
                         <div className="text-[11.5px] text-slate-700">{d.description}</div>
-                        <div className="text-[11px] text-sky-400 font-semibold flex items-center gap-1">
+                        <div className="text-[11px] text-sky-700 font-semibold flex items-center gap-1">
                           <span>💡 {d.suggestion}</span>
                         </div>
                       </div>
                     </div>
 
-                    <span className="bg-rose-950/80 text-rose-300 font-bold text-[10px] px-2 py-0.5 rounded border border-rose-800/40 shrink-0">
+                    <span className="bg-rose-100/80 text-rose-700 font-bold text-[10px] px-2 py-0.5 rounded border border-rose-800/40 shrink-0">
                       {d.badge}
                     </span>
                   </div>
@@ -273,13 +273,13 @@ export default function FinanceConciliationPage({ notify, onBack, onNavigate }: 
             </button>
             <button
               onClick={() => notify?.('Formulário de lançamento manual aberto.')}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-lg flex items-center gap-1.5 transition shadow-sm"
+              className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold font-extrabold rounded-lg flex items-center gap-1.5 transition shadow-sm"
             >
               <Edit size={14} /> Ajustar Manualmente
             </button>
             <button
               onClick={handleReconcileSelected}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold rounded-lg flex items-center gap-1.5 transition shadow-sm"
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-lg flex items-center gap-1.5 transition shadow-sm"
             >
               <Check size={14} /> Conciliar Selecionados
             </button>

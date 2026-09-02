@@ -234,8 +234,8 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
         <div>
           <span className={`text-xs font-bold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 ${
             curEvent.status === 'ativos'
-              ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/40'
-              : 'bg-sky-950/60 text-sky-300 border-sky-800/40'
+              ? 'bg-emerald-100/60 text-emerald-700 border-emerald-800/40'
+              : 'bg-sky-100/60 text-sky-700 border-sky-800/40'
           }`}>
             <CheckCircle2 size={13} />
             {curEvent.status === 'ativos' ? 'Evento Ativo' : 'Evento Realizado'}
@@ -247,7 +247,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-200 pb-3">
         <div>
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <Handshake className="text-sky-400" size={20} />
+            <Handshake className="text-sky-700" size={20} />
             Negociações Financeiras
           </h2>
           <p className="text-xs text-slate-500">
@@ -291,7 +291,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
             <SummaryCard icon={TrendingUp} label="Receita líquida" value={formatMoney(totalReceitaLiquida)} tone="emerald" />
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white border border-slate-200 rounded-xl p-3">
-            <div className="flex items-center gap-2 text-xs text-slate-700"><LockKeyhole size={15} className="text-emerald-400"/><span><b className="text-slate-900">Edição protegida</b> · alterações comerciais ficam registradas em auditoria.</span></div>
+            <div className="flex items-center gap-2 text-xs text-slate-700"><LockKeyhole size={15} className="text-emerald-700"/><span><b className="text-slate-900">Edição protegida</b> · alterações comerciais ficam registradas em auditoria.</span></div>
             <span className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Produtor #{producerId || 'global'} · 24.8-event-financial-negotiation-2026-09-02</span>
           </div>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
@@ -319,39 +319,39 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                     <th className="py-2.5 px-3 text-right">Receita Líquida</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                <tbody className="divide-y divide-slate-200 text-slate-700">
                   {receitas.map((r, i) => (
                     <tr key={i} className="hover:bg-slate-100/50">
                       <td className="py-2.5 px-3 font-semibold text-slate-900">{r.metodo}</td>
-                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa pagamento ${r.metodo}`} type="number" min="0" step="0.01" value={r.taxa_pagamento} onChange={e=>updateReceita(i,{taxa_pagamento:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-sky-300 focus:border-sky-500 outline-none" /></td>
+                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa pagamento ${r.metodo}`} type="number" min="0" step="0.01" value={r.taxa_pagamento} onChange={e=>updateReceita(i,{taxa_pagamento:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-sky-700 focus:border-sky-500 outline-none" /></td>
                       <td className="py-2.5 px-2 text-center">
                         <div className="inline-flex rounded-md border border-slate-200 overflow-hidden">
                           {(['inclusa','produtor'] as const).map(opt=><button key={opt} type="button" onClick={()=>updateReceita(i,{pgto_taxa_servico:opt})} className={`px-2 py-1 text-[10px] font-bold ${r.pgto_taxa_servico===opt?'bg-sky-600 text-slate-900':'bg-white text-slate-500'}`}>{opt==='inclusa'?'Inclusa':'Produtor'}</button>)}
                         </div>
                       </td>
-                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa antecipação ${r.metodo}`} type="number" min="0" step="0.01" value={r.tx_ant_am} onChange={e=>updateReceita(i,{tx_ant_am:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-amber-300 focus:border-amber-500 outline-none" /></td>
+                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa antecipação ${r.metodo}`} type="number" min="0" step="0.01" value={r.tx_ant_am} onChange={e=>updateReceita(i,{tx_ant_am:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-amber-800 focus:border-amber-500 outline-none" /></td>
                       <td className="py-2.5 px-2 text-center">
                         <div className="inline-flex rounded-md border border-slate-200 overflow-hidden">
-                          {(['inclusa','produtor'] as const).map(opt=><button key={opt} type="button" onClick={()=>updateReceita(i,{pgto_ant:opt})} className={`px-2 py-1 text-[10px] font-bold ${r.pgto_ant===opt?'bg-amber-600 text-slate-900':'bg-white text-slate-500'}`}>{opt==='inclusa'?'Inclusa':'Produtor'}</button>)}
+                          {(['inclusa','produtor'] as const).map(opt=><button key={opt} type="button" onClick={()=>updateReceita(i,{pgto_ant:opt})} className={`px-2 py-1 text-[10px] font-bold ${r.pgto_ant===opt?'bg-amber-600 text-white':'bg-white text-slate-500'}`}>{opt==='inclusa'?'Inclusa':'Produtor'}</button>)}
                         </div>
                       </td>
-                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa parcelado ${r.metodo}`} type="number" min="0" step="0.01" value={r.taxa_parcelado} onChange={e=>updateReceita(i,{taxa_parcelado:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-indigo-300 focus:border-indigo-500 outline-none" /></td>
-                      <td className="py-2.5 px-3 text-right font-mono text-rose-300">{formatMoney(r.total_taxas)}</td>
+                      <td className="py-2.5 px-2 text-center"><input aria-label={`Taxa parcelado ${r.metodo}`} type="number" min="0" step="0.01" value={r.taxa_parcelado} onChange={e=>updateReceita(i,{taxa_parcelado:Number(e.target.value)})} className="w-20 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5 text-center font-mono text-indigo-700 focus:border-indigo-500 outline-none" /></td>
+                      <td className="py-2.5 px-3 text-right font-mono text-rose-700">{formatMoney(r.total_taxas)}</td>
                       <td className="py-2.5 px-2 text-center font-mono">{r.qtd_ingressos}</td>
                       <td className="py-2.5 px-3 text-right font-mono text-slate-800">{formatMoney(r.receita_bruta)}</td>
-                      <td className="py-2.5 px-3 text-right font-mono text-amber-300">{formatMoney(r.taxa_servico)}</td>
-                      <td className="py-2.5 px-3 text-right font-bold font-mono text-emerald-400">{formatMoney(r.receita_liquida)}</td>
+                      <td className="py-2.5 px-3 text-right font-mono text-amber-800">{formatMoney(r.taxa_servico)}</td>
+                      <td className="py-2.5 px-3 text-right font-bold font-mono text-emerald-700">{formatMoney(r.receita_liquida)}</td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr className="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-200">
                     <td colSpan={6} className="py-3 px-3 text-right uppercase text-xs">Totais Acumulados:</td>
-                    <td className="py-3 px-3 text-right font-mono text-rose-300">{formatMoney(totalTaxasOperadoras)}</td>
-                    <td className="py-3 px-2 text-center font-mono text-sky-400">{totalQtdIngressos}</td>
+                    <td className="py-3 px-3 text-right font-mono text-rose-700">{formatMoney(totalTaxasOperadoras)}</td>
+                    <td className="py-3 px-2 text-center font-mono text-sky-700">{totalQtdIngressos}</td>
                     <td className="py-3 px-3 text-right font-mono text-slate-900">{formatMoney(totalReceitaBruta)}</td>
-                    <td className="py-3 px-3 text-right font-mono text-amber-400">{formatMoney(totalTaxasServico)}</td>
-                    <td className="py-3 px-3 text-right font-mono text-emerald-400 text-sm">{formatMoney(totalReceitaLiquida)}</td>
+                    <td className="py-3 px-3 text-right font-mono text-amber-800">{formatMoney(totalTaxasServico)}</td>
+                    <td className="py-3 px-3 text-right font-mono text-emerald-700 text-sm">{formatMoney(totalReceitaLiquida)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -359,15 +359,15 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
-            <div className="flex items-center gap-2"><ShieldCheck size={17} className="text-emerald-400"/><div><h4 className="text-sm font-bold text-slate-900">Salvar negociação com rastreabilidade</h4><p className="text-[11px] text-slate-500">Informe o motivo. O registro entra no histórico de alterações do evento.</p></div></div>
+            <div className="flex items-center gap-2"><ShieldCheck size={17} className="text-emerald-700"/><div><h4 className="text-sm font-bold text-slate-900">Salvar negociação com rastreabilidade</h4><p className="text-[11px] text-slate-500">Informe o motivo. O registro entra no histórico de alterações do evento.</p></div></div>
             <div className="flex flex-col md:flex-row gap-2">
               <input value={justificativa} onChange={e=>setJustificativa(e.target.value)} placeholder="Justificativa da alteração (ex.: novo acordo comercial com o produtor)" className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500" />
-              <button onClick={saveReceita} className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold text-xs px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 transition shadow-sm"><Save size={15}/>SALVAR NEGOCIAÇÃO</button>
+              <button onClick={saveReceita} className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 transition shadow-sm"><Save size={15}/>SALVAR NEGOCIAÇÃO</button>
             </div>
           </div>
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <div className="p-3 border-b border-slate-200 flex items-center gap-2"><History size={16} className="text-sky-400"/><div><h4 className="text-xs font-bold text-slate-900">Histórico de alterações</h4><p className="text-[10px] text-slate-500">Evento → condição anterior/nova → usuário → data/hora → justificativa.</p></div></div>
-            <div className="divide-y divide-slate-800/70">{auditLog.map(row=><div key={row.id} className="p-3 grid md:grid-cols-[150px_120px_1fr_1.3fr] gap-2 text-[11px]"><span className="font-mono text-slate-500">{row.when}</span><span className="text-sky-300 font-bold">{row.user}</span><span className="text-slate-700">{row.reason}</span><span className="text-slate-500">{row.summary}</span></div>)}</div>
+            <div className="p-3 border-b border-slate-200 flex items-center gap-2"><History size={16} className="text-sky-700"/><div><h4 className="text-xs font-bold text-slate-900">Histórico de alterações</h4><p className="text-[10px] text-slate-500">Evento → condição anterior/nova → usuário → data/hora → justificativa.</p></div></div>
+            <div className="divide-y divide-slate-200/70">{auditLog.map(row=><div key={row.id} className="p-3 grid md:grid-cols-[150px_120px_1fr_1.3fr] gap-2 text-[11px]"><span className="font-mono text-slate-500">{row.when}</span><span className="text-sky-700 font-bold">{row.user}</span><span className="text-slate-700">{row.reason}</span><span className="text-slate-500">{row.summary}</span></div>)}</div>
           </div>
         </div>
       )}
@@ -378,12 +378,12 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
           <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm space-y-4">
             <div className="flex justify-between items-center border-b border-slate-200 pb-3">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <TrendingDown size={16} className="text-rose-400" />
+                <TrendingDown size={16} className="text-rose-700" />
                 Custos e Despesas Operacionais do Evento
               </h3>
               <button
                 onClick={() => setShowAddExpense(!showAddExpense)}
-                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
+                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
               >
                 <Plus size={14} />
                 Adicionar Despesa
@@ -452,7 +452,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 rounded-lg font-bold"
+                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold"
                   >
                     Salvar Despesa
                   </button>
@@ -472,22 +472,22 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                     <th className="py-2.5 px-2 text-center">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                <tbody className="divide-y divide-slate-200 text-slate-700">
                   {despesas.map((d, i) => (
                     <tr key={i} className="hover:bg-slate-100/50">
                       <td className="py-2.5 px-3 font-semibold text-slate-900">{d.fornecedor}</td>
                       <td className="py-2.5 px-3 text-slate-500">{d.categoria}</td>
                       <td className="py-2.5 px-3 font-mono text-slate-700">{d.data}</td>
                       <td className="py-2.5 px-3">
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${d.status === 'Pago' ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${d.status === 'Pago' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
                           {d.status}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-right font-bold font-mono text-rose-400">{formatMoney(d.valor)}</td>
+                      <td className="py-2.5 px-3 text-right font-bold font-mono text-rose-700">{formatMoney(d.valor)}</td>
                       <td className="py-2.5 px-2 text-center">
                         <button
                           onClick={() => setDespesas(prev => prev.filter((_, idx) => idx !== i))}
-                          className="text-slate-500 hover:text-rose-400 p-1"
+                          className="text-slate-500 hover:text-rose-700 p-1"
                           title="Remover"
                         >
                           <Trash2 size={14} />
@@ -499,7 +499,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                 <tfoot>
                   <tr className="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-200">
                     <td colSpan={4} className="py-3 px-3 text-right uppercase text-xs">Total de Despesas:</td>
-                    <td className="py-3 px-3 text-right font-mono text-rose-400 text-sm">{formatMoney(totalDespesas)}</td>
+                    <td className="py-3 px-3 text-right font-mono text-rose-700 text-sm">{formatMoney(totalDespesas)}</td>
                     <td />
                   </tr>
                 </tfoot>
@@ -515,12 +515,12 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
           <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm space-y-4">
             <div className="flex justify-between items-center border-b border-slate-200 pb-3">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <TrendingUp size={16} className="text-emerald-400" />
+                <TrendingUp size={16} className="text-emerald-700" />
                 Contratos de Patrocínio & Marcas Parceiras
               </h3>
               <button
                 onClick={() => setShowAddSponsor(!showAddSponsor)}
-                className="bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
               >
                 <Plus size={14} />
                 Novo Patrocínio
@@ -577,7 +577,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 rounded-lg font-bold"
+                    className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold"
                   >
                     Salvar Patrocínio
                   </button>
@@ -596,21 +596,21 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                     <th className="py-2.5 px-2 text-center">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                <tbody className="divide-y divide-slate-200 text-slate-700">
                   {patrocinios.map((p, i) => (
                     <tr key={i} className="hover:bg-slate-100/50">
                       <td className="py-2.5 px-3 font-semibold text-slate-900">{p.marca}</td>
-                      <td className="py-2.5 px-3 text-amber-300 font-medium">{p.categoria}</td>
+                      <td className="py-2.5 px-3 text-amber-800 font-medium">{p.categoria}</td>
                       <td className="py-2.5 px-3">
-                        <span className="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded font-bold">
+                        <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
                           {p.status}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-right font-bold font-mono text-emerald-400">{formatMoney(p.valor)}</td>
+                      <td className="py-2.5 px-3 text-right font-bold font-mono text-emerald-700">{formatMoney(p.valor)}</td>
                       <td className="py-2.5 px-2 text-center">
                         <button
                           onClick={() => setPatrocinios(prev => prev.filter((_, idx) => idx !== i))}
-                          className="text-slate-500 hover:text-rose-400 p-1"
+                          className="text-slate-500 hover:text-rose-700 p-1"
                           title="Remover"
                         >
                           <Trash2 size={14} />
@@ -622,7 +622,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                 <tfoot>
                   <tr className="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-200">
                     <td colSpan={3} className="py-3 px-3 text-right uppercase text-xs">Total de Patrocínios:</td>
-                    <td className="py-3 px-3 text-right font-mono text-emerald-400 text-sm">{formatMoney(totalPatrocinio)}</td>
+                    <td className="py-3 px-3 text-right font-mono text-emerald-700 text-sm">{formatMoney(totalPatrocinio)}</td>
                     <td />
                   </tr>
                 </tfoot>
@@ -653,14 +653,14 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                     <th className="py-2.5 px-3 text-right">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                <tbody className="divide-y divide-slate-200 text-slate-700">
                   {advancedInstallments.map((inst, i) => (
                     <tr key={i} className="hover:bg-slate-100/50">
-                      <td className="py-2.5 px-3 text-center font-mono font-bold text-sky-400">#{inst.numero}</td>
+                      <td className="py-2.5 px-3 text-center font-mono font-bold text-sky-700">#{inst.numero}</td>
                       <td className="py-2.5 px-3 text-center font-mono">{formatMoney(inst.valor)}</td>
                       <td className="py-2.5 px-3 text-center font-mono text-slate-500">{formatMoney(inst.valor_pago)}</td>
                       <td className="py-2.5 px-3 text-center">
-                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${inst.status === 1 ? 'bg-emerald-950 text-emerald-400' : 'bg-amber-950 text-amber-400'}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${inst.status === 1 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
                           {inst.status === 1 ? 'PAGO' : 'AGUARDANDO'}
                         </span>
                       </td>
@@ -672,7 +672,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                           className={`text-xs font-bold px-3 py-1 rounded-md transition ${
                             inst.status === 1
                               ? 'bg-slate-100 text-slate-500 cursor-not-allowed'
-                              : 'bg-emerald-600 hover:bg-emerald-500 text-slate-900'
+                              : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                           }`}
                         >
                           {inst.status === 1 ? 'Liquidado' : 'Pagar'}
@@ -689,10 +689,10 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
           <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm space-y-3">
             <div className="flex justify-between items-center border-b border-slate-200 pb-2">
               <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                <Layers size={15} className="text-indigo-400" />
+                <Layers size={15} className="text-indigo-700" />
                 Divisão Tributária e Tarifária por Setores (disk_area_taxes)
               </h3>
-              <span className="text-[11px] bg-indigo-950/60 text-indigo-300 px-2 py-0.5 rounded border border-indigo-800/40 font-mono">
+              <span className="text-[11px] bg-indigo-950/60 text-indigo-700 px-2 py-0.5 rounded border border-indigo-800/40 font-mono">
                 Regras por Setor
               </span>
             </div>
@@ -707,18 +707,18 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
                     <th className="py-2 px-3 text-center">Comissão (Commission)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                <tbody className="divide-y divide-slate-200 text-slate-700">
                   <tr className="hover:bg-slate-100/50">
                     <td className="py-2 px-3 font-semibold text-slate-900">Pista Premium</td>
                     <td className="py-2 px-3 text-slate-500">Site / App DiskIngressos</td>
-                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">15.0 %</td>
-                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">10.0 %</td>
+                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-700">15.0 %</td>
+                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-700">10.0 %</td>
                   </tr>
                   <tr className="hover:bg-slate-100/50">
                     <td className="py-2 px-3 font-semibold text-slate-900">Camarote VIP</td>
                     <td className="py-2 px-3 text-slate-500">PDV Físico / Quiosque</td>
-                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">10.0 %</td>
-                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-400">8.0 %</td>
+                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-700">10.0 %</td>
+                    <td className="py-2 px-3 text-center font-mono font-bold text-indigo-700">8.0 %</td>
                   </tr>
                 </tbody>
               </table>
@@ -738,22 +738,22 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
             </div>
             <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
               <span className="text-slate-500 block text-[10px] uppercase font-bold">Receita de Patrocínios</span>
-              <h4 className="text-base font-black text-emerald-400 mt-1 font-mono">{formatMoney(totalPatrocinio)}</h4>
+              <h4 className="text-base font-black text-emerald-700 mt-1 font-mono">{formatMoney(totalPatrocinio)}</h4>
             </div>
             <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
               <span className="text-slate-500 block text-[10px] uppercase font-bold">Total de Custos & Despesas</span>
-              <h4 className="text-base font-black text-rose-400 mt-1 font-mono">{formatMoney(totalDespesas)}</h4>
+              <h4 className="text-base font-black text-rose-700 mt-1 font-mono">{formatMoney(totalDespesas)}</h4>
             </div>
             <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
               <span className="text-slate-500 block text-[10px] uppercase font-bold">Taxas de Operadoras (MDR)</span>
-              <h4 className="text-base font-black text-amber-400 mt-1 font-mono">{formatMoney(totalTaxasOperadoras)}</h4>
+              <h4 className="text-base font-black text-amber-800 mt-1 font-mono">{formatMoney(totalTaxasOperadoras)}</h4>
             </div>
             <div className="bg-white border border-slate-200 p-3.5 rounded-xl">
               <span className="text-slate-500 block text-[10px] uppercase font-bold">Taxas de Serviço (Conveniência)</span>
-              <h4 className="text-base font-black text-cyan-400 mt-1 font-mono">{formatMoney(totalTaxasServico)}</h4>
+              <h4 className="text-base font-black text-cyan-800 mt-1 font-mono">{formatMoney(totalTaxasServico)}</h4>
             </div>
-            <div className="bg-gradient-to-r from-emerald-900/80 to-emerald-800/80 border border-emerald-700/60 p-3.5 rounded-xl text-slate-900">
-              <span className="text-emerald-200 block text-[10px] uppercase font-bold">Resultado Líquido do Evento</span>
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-300 p-3.5 rounded-xl text-slate-900">
+              <span className="text-emerald-800 block text-[10px] uppercase font-bold">Resultado Líquido do Evento</span>
               <h4 className="text-lg font-black text-slate-900 mt-1 font-mono">{formatMoney(resultadoLiquidoFinal)}</h4>
             </div>
           </div>
@@ -761,7 +761,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
           {/* DRE Progress Card */}
           <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-sm">
             <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-2">
-              <FileText size={16} className="text-sky-400" />
+              <FileText size={16} className="text-sky-700" />
               Visão de Resultado Econômico (DRE do Evento)
             </h3>
 
@@ -769,7 +769,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Receitas Totais (Ingressos + Patrocínios)</span>
-                  <span className="font-mono font-bold text-emerald-400">{formatMoney(resultadoEconomicoReceitas)}</span>
+                  <span className="font-mono font-bold text-emerald-700">{formatMoney(resultadoEconomicoReceitas)}</span>
                 </div>
                 <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-emerald-500 rounded-full" style={{ width: '100%' }} />
@@ -779,7 +779,7 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
               <div>
                 <div className="flex justify-between text-slate-700 mb-1">
                   <span>Custos & Taxas Totais (Despesas + MDR + Conveniência)</span>
-                  <span className="font-mono font-bold text-rose-400">{formatMoney(resultadoEconomicoCustos)}</span>
+                  <span className="font-mono font-bold text-rose-700">{formatMoney(resultadoEconomicoCustos)}</span>
                 </div>
                 <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-rose-500 rounded-full" style={{ width: `${Math.min(100, Math.round(ratioCustos))}%` }} />
@@ -793,4 +793,4 @@ export default function FinanceNegotiationsPage({ events: sourceEvents = [], eve
   )
 }
 
-function SummaryCard({icon:Icon,label,value,tone}:{icon:any;label:string;value:string;tone:'sky'|'white'|'amber'|'rose'|'emerald'}){const tones={sky:'text-sky-400',white:'text-slate-900',amber:'text-amber-400',rose:'text-rose-400',emerald:'text-emerald-400'};return <article className="bg-white border border-slate-200 rounded-xl p-3"><div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-500"><span>{label}</span><Icon size={14}/></div><strong className={`block mt-1 text-base font-black font-mono ${tones[tone]}`}>{value}</strong></article>}
+function SummaryCard({icon:Icon,label,value,tone}:{icon:any;label:string;value:string;tone:'sky'|'white'|'amber'|'rose'|'emerald'}){const tones={sky:'text-sky-700',white:'text-slate-900',amber:'text-amber-800',rose:'text-rose-700',emerald:'text-emerald-700'};return <article className="bg-white border border-slate-200 rounded-xl p-3"><div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-500"><span>{label}</span><Icon size={14}/></div><strong className={`block mt-1 text-base font-black font-mono ${tones[tone]}`}>{value}</strong></article>}

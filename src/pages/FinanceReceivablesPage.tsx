@@ -256,7 +256,7 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
 
           <div className="rounded-xl border border-slate-700/70 bg-slate-900/35 p-4">
             <div className="flex items-center gap-2 mb-4">
-              <ShieldCheck size={16} className="text-emerald-400" />
+              <ShieldCheck size={16} className="text-emerald-700" />
               <strong className="text-sm text-white">Resumo de caixa projetado</strong>
             </div>
             <div className="space-y-3">
@@ -266,14 +266,14 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
               </div>
               <div className="flex justify-between gap-3 text-xs">
                 <span className="text-slate-400">Taxas estimadas</span>
-                <strong className="text-amber-300">- {brl(projectedFees)}</strong>
+                <strong className="text-amber-800">- {brl(projectedFees)}</strong>
               </div>
               <div className="border-t border-slate-700 pt-3 flex justify-between gap-3">
                 <span className="text-xs font-bold text-slate-300">Líquido projetado</span>
-                <strong className="text-sm text-emerald-400">{brl(projectedNet)}</strong>
+                <strong className="text-sm text-emerald-700">{brl(projectedNet)}</strong>
               </div>
               <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 flex gap-2">
-                <AlertCircle size={15} className="text-amber-400 shrink-0 mt-0.5" />
+                <AlertCircle size={15} className="text-amber-800 shrink-0 mt-0.5" />
                 <span className="text-[11px] leading-4 text-slate-400">
                   Valores são previsões de liquidação e podem variar por estornos, chargebacks e regras da adquirente.
                 </span>

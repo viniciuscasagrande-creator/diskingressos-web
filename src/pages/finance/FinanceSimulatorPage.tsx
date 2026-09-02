@@ -48,7 +48,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
       <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <Calculator className="text-amber-400" size={20} />
+            <Calculator className="text-amber-800" size={20} />
             Simulador de Spread & Tarifas
           </h2>
           <p className="text-xs text-slate-500">
@@ -61,7 +61,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
         {/* Input Parameters Form */}
         <div className="bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
           <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-            <Percent size={15} className="text-sky-400" />
+            <Percent size={15} className="text-sky-700" />
             Parâmetros de Simulação
           </h3>
 
@@ -158,7 +158,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
 
           <button
             onClick={handleSimulate}
-            className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm mt-2"
+            className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold font-black text-xs rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm mt-2"
           >
             <Calculator size={15} />
             Calcular Spread
@@ -169,7 +169,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
         <div className="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 border border-slate-200 p-5 rounded-xl flex flex-col justify-between shadow-lg text-xs space-y-4">
           <div>
             <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-              <Scale size={15} className="text-amber-400" />
+              <Scale size={15} className="text-amber-800" />
               Resultado da Simulação
             </h3>
 
@@ -180,22 +180,22 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
               </div>
               <div className="flex justify-between items-center text-slate-700">
                 <span>Taxas Operacionais (Cartão + Gateway)</span>
-                <span className="font-mono font-bold text-rose-400">- {formatMoney(opsCost)}</span>
+                <span className="font-mono font-bold text-rose-700">- {formatMoney(opsCost)}</span>
               </div>
               <div className="flex justify-between items-center text-slate-700">
                 <span>Comissão DiskIngressos ({platPct}%)</span>
-                <span className="font-mono font-bold text-rose-400">- {formatMoney(platCost)}</span>
+                <span className="font-mono font-bold text-rose-700">- {formatMoney(platCost)}</span>
               </div>
               {anticipation === 'yes' && (
                 <div className="flex justify-between items-center text-slate-700">
                   <span>Custo de Antecipação ({installments}x parcelas)</span>
-                  <span className="font-mono font-bold text-rose-400">- {formatMoney(antCost)}</span>
+                  <span className="font-mono font-bold text-rose-700">- {formatMoney(antCost)}</span>
                 </div>
               )}
 
               <div className="border-t border-slate-200 pt-2 flex justify-between items-center">
-                <span className="font-bold text-emerald-400 text-sm">Lucro Líquido Recebido</span>
-                <span className="font-mono font-black text-emerald-400 text-lg">{formatMoney(netProfit)}</span>
+                <span className="font-bold text-emerald-700 text-sm">Lucro Líquido Recebido</span>
+                <span className="font-mono font-black text-emerald-700 text-lg">{formatMoney(netProfit)}</span>
               </div>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function FinanceSimulatorPage({ notify, onBack, onNavigate }: { n
               <span className="text-[10px] uppercase font-bold text-slate-500 block">Spread Efetivo</span>
               <span className="text-[11px] text-slate-500">Tarifa total retida pela plataforma</span>
             </div>
-            <h2 className="text-xl font-black text-amber-400 font-mono">{effectiveSpread.toFixed(2)} %</h2>
+            <h2 className="text-xl font-black text-amber-800 font-mono">{effectiveSpread.toFixed(2)} %</h2>
           </div>
         </div>
       </div>

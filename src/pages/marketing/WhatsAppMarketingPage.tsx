@@ -807,7 +807,7 @@ export default function WhatsAppMarketingPage({ producerId, producerName, events
                     <div>
                       <div className="flex items-center gap-1">
                         <span className="font-bold text-xs">DiskIngressos Oficial</span>
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300 fill-emerald-400" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 fill-emerald-400" />
                       </div>
                       <span className="text-[10px] text-emerald-200">Conta Comercial Verificada</span>
                     </div>

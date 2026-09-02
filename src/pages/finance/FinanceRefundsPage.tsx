@@ -91,7 +91,7 @@ export default function FinanceRefundsPage({ notify, onBack, onNavigate }: { not
       <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <RotateCcw className="text-rose-400" size={20} />
+            <RotateCcw className="text-rose-700" size={20} />
             Central de Devoluções & Cancelamentos (CDC)
           </h2>
           <p className="text-xs text-slate-500">
@@ -104,7 +104,7 @@ export default function FinanceRefundsPage({ notify, onBack, onNavigate }: { not
         {/* Left: Search & Execute */}
         <div className="md:col-span-5 bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
           <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-            <Search size={15} className="text-sky-400" />
+            <Search size={15} className="text-sky-700" />
             Localizar Venda / Pedido
           </h3>
 
@@ -122,7 +122,7 @@ export default function FinanceRefundsPage({ notify, onBack, onNavigate }: { not
               />
               <button
                 onClick={handleSearch}
-                className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-slate-900 font-bold rounded-lg transition"
+                className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition"
               >
                 Buscar
               </button>
@@ -136,10 +136,10 @@ export default function FinanceRefundsPage({ notify, onBack, onNavigate }: { not
               </span>
 
               <div className="space-y-1 text-xs">
-                <div><span className="text-slate-500">Transação:</span> <strong className="text-sky-400 font-mono">{searchResult.txId}</strong></div>
+                <div><span className="text-slate-500">Transação:</span> <strong className="text-sky-700 font-mono">{searchResult.txId}</strong></div>
                 <div><span className="text-slate-500">Cliente:</span> <strong className="text-slate-900">{searchResult.client}</strong></div>
                 <div><span className="text-slate-500">Evento:</span> <strong className="text-slate-900">{searchResult.event}</strong></div>
-                <div><span className="text-slate-500">Valor do Ingresso:</span> <strong className="text-emerald-400 font-mono text-sm">{formatMoney(searchResult.value)}</strong></div>
+                <div><span className="text-slate-500">Valor do Ingresso:</span> <strong className="text-emerald-700 font-mono text-sm">{formatMoney(searchResult.value)}</strong></div>
               </div>
 
               <div>
@@ -180,10 +180,10 @@ export default function FinanceRefundsPage({ notify, onBack, onNavigate }: { not
         <div className="md:col-span-7 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm text-xs">
           <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
             <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <Clock size={15} className="text-rose-400" />
+              <Clock size={15} className="text-rose-700" />
               Log Recente de Estornos & Cancelamentos
             </h3>
-            <span className="text-rose-300 bg-rose-950/60 border border-rose-800/40 px-2 py-0.5 rounded font-bold">
+            <span className="text-rose-700 bg-rose-100/60 border border-rose-800/40 px-2 py-0.5 rounded font-bold">
               {logs.length} registros
             </span>
           </div>
@@ -199,13 +199,13 @@ export default function FinanceRefundsPage({ notify, onBack, onNavigate }: { not
                   <th className="py-2.5 px-3 text-right">Data Estorno</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-700">
+              <tbody className="divide-y divide-slate-200 text-slate-700">
                 {logs.map((log, i) => (
                   <tr key={i} className="hover:bg-slate-100">
-                    <td className="py-2.5 px-3 font-mono font-bold text-sky-400">{log.txId}</td>
+                    <td className="py-2.5 px-3 font-mono font-bold text-sky-700">{log.txId}</td>
                     <td className="py-2.5 px-3 font-medium text-slate-900">{log.client}</td>
                     <td className="py-2.5 px-3 text-slate-700">{log.method}</td>
-                    <td className="py-2.5 px-3 text-right font-bold font-mono text-rose-400">{formatMoney(log.value)}</td>
+                    <td className="py-2.5 px-3 text-right font-bold font-mono text-rose-700">{formatMoney(log.value)}</td>
                     <td className="py-2.5 px-3 text-right font-mono text-slate-500">{log.date}</td>
                   </tr>
                 ))}

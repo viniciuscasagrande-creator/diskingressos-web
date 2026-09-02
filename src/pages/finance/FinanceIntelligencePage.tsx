@@ -54,7 +54,7 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
       <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <BrainCircuit className="text-amber-400" size={20} />
+            <BrainCircuit className="text-amber-800" size={20} />
             Inteligência Financeira (Spread Analytics)
           </h2>
           <p className="text-xs text-slate-500">
@@ -66,15 +66,15 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
       {/* Primary KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-          <span className="text-[10px] uppercase font-bold text-amber-400 block tracking-wider">Receita Líquida</span>
+          <span className="text-[10px] uppercase font-bold text-amber-800 block tracking-wider">Receita Líquida</span>
           <h3 className="text-xl font-black text-slate-900 mt-1 font-mono">R$ 5.280.000</h3>
-          <span className="text-[11px] text-emerald-400 font-semibold mt-1 flex items-center gap-1">
+          <span className="text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1">
             <TrendingUp size={13} /> +15.2% vs semestre anterior
           </span>
         </div>
 
         <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-          <span className="text-[10px] uppercase font-bold text-amber-400 block tracking-wider">EBITDA</span>
+          <span className="text-[10px] uppercase font-bold text-amber-800 block tracking-wider">EBITDA</span>
           <h3 className="text-xl font-black text-slate-900 mt-1 font-mono">R$ 1.950.000</h3>
           <span className="text-[11px] text-slate-500 font-semibold mt-1 block">
             Lucro operacional bruto
@@ -82,17 +82,17 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
         </div>
 
         <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-          <span className="text-[10px] uppercase font-bold text-amber-400 block tracking-wider">Margem Líquida</span>
+          <span className="text-[10px] uppercase font-bold text-amber-800 block tracking-wider">Margem Líquida</span>
           <h3 className="text-xl font-black text-slate-900 mt-1 font-mono">36,9%</h3>
-          <span className="text-[11px] text-emerald-400 font-semibold mt-1 flex items-center gap-1">
+          <span className="text-[11px] text-emerald-700 font-semibold mt-1 flex items-center gap-1">
             <CheckCircle2 size={13} /> Margem média consolidada
           </span>
         </div>
 
         <div className="bg-white border border-slate-200 p-4 rounded-xl shadow-sm">
-          <span className="text-[10px] uppercase font-bold text-amber-400 block tracking-wider">ROI Médio</span>
+          <span className="text-[10px] uppercase font-bold text-amber-800 block tracking-wider">ROI Médio</span>
           <h3 className="text-xl font-black text-slate-900 mt-1 font-mono">248%</h3>
-          <span className="text-[11px] text-sky-400 font-semibold mt-1 block">
+          <span className="text-[11px] text-sky-700 font-semibold mt-1 block">
             Retorno sobre Investimento
           </span>
         </div>
@@ -103,7 +103,7 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
         {/* Ranking */}
         <div className="md:col-span-5 bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
           <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-            <Trophy size={16} className="text-amber-400" />
+            <Trophy size={16} className="text-amber-800" />
             Ranking de Rentabilidade por Evento
           </h3>
 
@@ -114,7 +114,7 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
                 className="p-3 bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <span className="h-7 w-7 rounded-full bg-amber-500/20 text-amber-300 font-black flex items-center justify-center text-xs border border-amber-500/40">
+                  <span className="h-7 w-7 rounded-full bg-amber-500/20 text-amber-800 font-black flex items-center justify-center text-xs border border-amber-500/40">
                     {item.rank}
                   </span>
                   <div>
@@ -123,7 +123,7 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
                   </div>
                 </div>
 
-                <span className="bg-emerald-950/80 text-emerald-300 font-extrabold px-2.5 py-1 rounded-lg border border-emerald-800/40 font-mono text-xs">
+                <span className="bg-emerald-100/80 text-emerald-700 font-extrabold px-2.5 py-1 rounded-lg border border-emerald-800/40 font-mono text-xs">
                   Margem: {item.margin}%
                 </span>
               </div>
@@ -134,7 +134,7 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
         {/* IA Insights */}
         <div className="md:col-span-7 bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
           <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-            <Sparkles size={16} className="text-sky-400" />
+            <Sparkles size={16} className="text-sky-700" />
             IA Financeira · Insights & Otimizações
           </h3>
 
@@ -144,11 +144,11 @@ export default function FinanceIntelligencePage({ notify, onBack, onNavigate }: 
                 key={i}
                 className="p-3.5 bg-slate-100 rounded-xl border border-slate-200/50 flex items-start gap-3 hover:bg-slate-100 transition"
               >
-                <Lightbulb size={18} className="text-amber-400 shrink-0 mt-0.5" />
+                <Lightbulb size={18} className="text-amber-800 shrink-0 mt-0.5" />
                 <div className="space-y-1 flex-1">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-slate-900 text-xs">{ins.title}</span>
-                    <span className="text-[10px] font-bold bg-sky-950 text-sky-300 px-2 py-0.5 rounded border border-sky-800/40">
+                    <span className="text-[10px] font-bold bg-sky-100 text-sky-800 px-2 py-0.5 rounded border border-sky-800/40">
                       {ins.badge}
                     </span>
                   </div>

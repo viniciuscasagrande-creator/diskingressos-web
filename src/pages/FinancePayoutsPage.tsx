@@ -286,7 +286,7 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
             onClick={() => { setAgendaFilter('all'); setStatusFilter('em análise') }}
             className="text-left rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 hover:border-amber-400/60 transition"
           >
-            <span className="text-xs font-bold text-amber-300 uppercase tracking-wide">Aguardando compliance</span>
+            <span className="text-xs font-bold text-amber-800 uppercase tracking-wide">Aguardando compliance</span>
             <strong className="block text-xl mt-1">{brl(payoutAgenda.reviewTotal)}</strong>
             <span className="text-xs text-slate-400">{payoutAgenda.underReview.length} solicitação(ões) para análise</span>
           </button>
@@ -318,7 +318,7 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
                 ['5', 'Pago', payoutList.filter(p => p.status === 'Pago').length],
               ].map(([step, label, count]) => (
                 <div key={String(step)} className="rounded-lg border border-slate-700/60 bg-slate-950/35 p-3">
-                  <span className="text-[11px] text-cyan-300 font-bold">ETAPA {step}</span>
+                  <span className="text-[11px] text-cyan-800 font-bold">ETAPA {step}</span>
                   <strong className="block text-sm mt-1">{label}</strong>
                   <span className="text-xs text-slate-400">{count} registro(s)</span>
                 </div>
@@ -332,7 +332,7 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
               <div className="flex justify-between gap-3"><span className="text-slate-400">Saldo disponível</span><strong>{brl(availableBalance)}</strong></div>
               <div className="flex justify-between gap-3"><span className="text-slate-400">Repasses agendados</span><strong>{brl(payoutAgenda.scheduledTotal)}</strong></div>
               <div className="flex justify-between gap-3"><span className="text-slate-400">Em compliance</span><strong>{brl(payoutAgenda.reviewTotal)}</strong></div>
-              <div className="border-t border-slate-700/70 pt-2 flex justify-between gap-3"><span className="text-slate-300">Saldo após agendados</span><strong className="text-emerald-400">{brl(payoutAgenda.projectedBalance)}</strong></div>
+              <div className="border-t border-slate-700/70 pt-2 flex justify-between gap-3"><span className="text-slate-300">Saldo após agendados</span><strong className="text-emerald-700">{brl(payoutAgenda.projectedBalance)}</strong></div>
             </div>
           </div>
         </div>

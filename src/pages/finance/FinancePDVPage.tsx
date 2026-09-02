@@ -202,7 +202,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <Store className="text-amber-400" size={24} />
+              <Store className="text-amber-800" size={24} />
               <h2 className="text-xl font-black tracking-tight text-slate-900">
                 DISKINGRESSOS · PDV FINANCEIRO
               </h2>
@@ -223,11 +223,11 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
             </div>
             <div className="bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs font-bold text-emerald-300">Online</span>
+              <span className="text-xs font-bold text-emerald-700">Online</span>
             </div>
             <button
               onClick={() => setModalOpen(true)}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-4 py-2 rounded-lg flex items-center gap-1.5 transition shadow-sm"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold font-extrabold text-xs px-4 py-2 rounded-lg flex items-center gap-1.5 transition shadow-sm"
             >
               <Plus size={15} />
               Novo PDV
@@ -244,8 +244,8 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
         </div>
 
         {simLog && (
-          <div className="mt-3 text-xs bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 px-3 py-1.5 rounded-md flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-emerald-400" />
+          <div className="mt-3 text-xs bg-emerald-100/60 border border-emerald-500/40 text-emerald-700 px-3 py-1.5 rounded-md flex items-center gap-2">
+            <CheckCircle2 size={14} className="text-emerald-700" />
             <span>{simLog}</span>
           </div>
         )}
@@ -255,43 +255,43 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
           <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Receita do Dia</span>
-          <h3 className="text-lg font-black text-sky-400">{formatMoney(totalRevenue)}</h3>
+          <h3 className="text-lg font-black text-sky-700">{formatMoney(totalRevenue)}</h3>
         </div>
         <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
           <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Ingressos Vendidos</span>
-          <h3 className="text-lg font-black text-emerald-400">{totalSold.toLocaleString('pt-BR')}</h3>
+          <h3 className="text-lg font-black text-emerald-700">{totalSold.toLocaleString('pt-BR')}</h3>
         </div>
         <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
           <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Ticket Médio</span>
-          <h3 className="text-lg font-black text-indigo-400">{formatMoney(avgTicket)}</h3>
+          <h3 className="text-lg font-black text-indigo-700">{formatMoney(avgTicket)}</h3>
         </div>
         <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
           <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">PIX Recebido</span>
-          <h3 className="text-lg font-black text-amber-400">{formatMoney(totalPix)}</h3>
+          <h3 className="text-lg font-black text-amber-800">{formatMoney(totalPix)}</h3>
         </div>
         <div className="bg-slate-100 border border-slate-200 p-3.5 rounded-xl shadow-xs">
           <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block mb-1">Crédito / Débito</span>
-          <h3 className="text-lg font-black text-cyan-400">{formatMoney(totalCards)}</h3>
+          <h3 className="text-lg font-black text-cyan-800">{formatMoney(totalCards)}</h3>
         </div>
       </div>
 
       {/* Secondary KPI Info Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
         <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-500 flex items-center gap-1.5"><Banknote size={14} className="text-emerald-400" /> Dinheiro em Caixa:</span>
+          <span className="text-slate-500 flex items-center gap-1.5"><Banknote size={14} className="text-emerald-700" /> Dinheiro em Caixa:</span>
           <span className="font-bold text-slate-900">{formatMoney(totalCash)}</span>
         </div>
         <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-500 flex items-center gap-1.5"><X size={14} className="text-rose-400" /> Cancelamentos:</span>
-          <span className="font-bold text-rose-400">{formatMoney(totalCancel)}</span>
+          <span className="text-slate-500 flex items-center gap-1.5"><X size={14} className="text-rose-700" /> Cancelamentos:</span>
+          <span className="font-bold text-rose-700">{formatMoney(totalCancel)}</span>
         </div>
         <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-500 flex items-center gap-1.5"><RotateCcw size={14} className="text-amber-400" /> Estornos:</span>
-          <span className="font-bold text-amber-400">{formatMoney(totalRefunds)}</span>
+          <span className="text-slate-500 flex items-center gap-1.5"><RotateCcw size={14} className="text-amber-800" /> Estornos:</span>
+          <span className="font-bold text-amber-800">{formatMoney(totalRefunds)}</span>
         </div>
         <div className="bg-white border border-slate-200 p-3 rounded-lg flex items-center justify-between">
-          <span className="text-slate-500 flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-400" /> Aprovação Cartão:</span>
-          <span className="font-bold text-emerald-400">98,9%</span>
+          <span className="text-slate-500 flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-700" /> Aprovação Cartão:</span>
+          <span className="font-bold text-emerald-700">98,9%</span>
         </div>
       </div>
 
@@ -303,10 +303,10 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
             <div className="p-3.5 border-b border-slate-200 flex justify-between items-center bg-slate-100">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <Store size={16} className="text-sky-400" />
+                <Store size={16} className="text-sky-700" />
                 Desempenho por Pontos de Venda (PDVs)
               </h3>
-              <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/40">
+              <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded border border-emerald-800/40">
                 ● Atualizando
               </span>
             </div>
@@ -322,22 +322,22 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
                     <th className="py-2.5 px-2 text-center">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                <tbody className="divide-y divide-slate-200 text-slate-700">
                   {pdvs.map(p => (
                     <tr
                       key={p.id}
                       onClick={() => setSelectedPDV(p)}
                       className={`hover:bg-slate-100 cursor-pointer transition ${
-                        selectedPDV?.id === p.id ? 'bg-sky-950/40 font-semibold text-slate-900' : ''
+                        selectedPDV?.id === p.id ? 'bg-sky-100/40 font-semibold text-slate-900' : ''
                       }`}
                     >
                       <td className="py-2.5 px-3 font-medium text-slate-900">{p.name}</td>
                       <td className="py-2.5 px-2 text-center text-slate-500">{p.operators || '—'}</td>
                       <td className="py-2.5 px-2 text-center font-mono">{p.salesCount}</td>
-                      <td className="py-2.5 px-3 text-right font-bold text-emerald-400 font-mono">{formatMoney(p.revenue)}</td>
+                      <td className="py-2.5 px-3 text-right font-bold text-emerald-700 font-mono">{formatMoney(p.revenue)}</td>
                       <td className="py-2.5 px-3 text-right font-mono text-slate-700">{formatMoney(p.ticket)}</td>
                       <td className="py-2.5 px-2 text-center">
-                        <span className="text-[10px] bg-emerald-950/60 text-emerald-400 px-2 py-0.5 rounded font-bold border border-emerald-800/40">
+                        <span className="text-[10px] bg-emerald-100/60 text-emerald-700 px-2 py-0.5 rounded font-bold border border-emerald-800/40">
                           {p.status}
                         </span>
                       </td>
@@ -352,7 +352,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
             <div className="p-3.5 border-b border-slate-200 bg-slate-100 flex justify-between items-center">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
-                <MonitorSmartphone size={16} className="text-amber-400" />
+                <MonitorSmartphone size={16} className="text-amber-800" />
                 Monitor de Caixas Físicos (Terminais)
               </h3>
             </div>
@@ -368,14 +368,14 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
                     <th className="py-2.5 px-3 text-center">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-700">
+                <tbody className="divide-y divide-slate-200 text-slate-700">
                   {caixas.map(c => (
                     <tr key={c.id} className="hover:bg-slate-100">
-                      <td className="py-2.5 px-3 font-mono font-bold text-sky-400">{c.id}</td>
+                      <td className="py-2.5 px-3 font-mono font-bold text-sky-700">{c.id}</td>
                       <td className="py-2.5 px-3 text-slate-900">{c.pdv}</td>
                       <td className="py-2.5 px-3 text-slate-700">{c.operator}</td>
                       <td className="py-2.5 px-2 text-center font-mono">{c.sales}</td>
-                      <td className="py-2.5 px-3 text-right font-bold text-emerald-400 font-mono">{formatMoney(c.value)}</td>
+                      <td className="py-2.5 px-3 text-right font-bold text-emerald-700 font-mono">{formatMoney(c.value)}</td>
                       <td className="py-2.5 px-3 text-center">
                         <button
                           onClick={() => {
@@ -383,7 +383,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
                             setSangriaValue('1000')
                             setSangriaModalOpen(true)
                           }}
-                          className="bg-rose-900/40 hover:bg-rose-800/60 text-rose-300 text-[11px] font-bold px-2.5 py-1 rounded border border-rose-700/50 transition"
+                          className="bg-rose-900/40 hover:bg-rose-800/60 text-rose-700 text-[11px] font-bold px-2.5 py-1 rounded border border-rose-700/50 transition"
                         >
                           Sangria
                         </button>
@@ -409,7 +409,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="bg-slate-100 p-2.5 rounded-lg border border-slate-200">
                   <span className="text-slate-500 block text-[10px] uppercase">Receita Total</span>
-                  <span className="font-bold text-emerald-400 text-sm font-mono">{formatMoney(selectedPDV.revenue)}</span>
+                  <span className="font-bold text-emerald-700 text-sm font-mono">{formatMoney(selectedPDV.revenue)}</span>
                 </div>
                 <div className="bg-slate-100 p-2.5 rounded-lg border border-slate-200">
                   <span className="text-slate-500 block text-[10px] uppercase">Ingressos</span>
@@ -420,30 +420,30 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span className="text-slate-500">📱 PIX Recebido:</span>
-                  <span className="font-mono text-amber-400 font-semibold">{formatMoney(selectedPDV.pix)}</span>
+                  <span className="font-mono text-amber-800 font-semibold">{formatMoney(selectedPDV.pix)}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span className="text-slate-500">💳 Cartão de Crédito:</span>
-                  <span className="font-mono text-sky-400 font-semibold">{formatMoney(selectedPDV.credit)}</span>
+                  <span className="font-mono text-sky-700 font-semibold">{formatMoney(selectedPDV.credit)}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span className="text-slate-500">💳 Cartão de Débito:</span>
-                  <span className="font-mono text-cyan-400 font-semibold">{formatMoney(selectedPDV.debit)}</span>
+                  <span className="font-mono text-cyan-800 font-semibold">{formatMoney(selectedPDV.debit)}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200">
                   <span className="text-slate-500">💵 Dinheiro em Espécie:</span>
-                  <span className="font-mono text-emerald-400 font-semibold">{formatMoney(selectedPDV.cash)}</span>
+                  <span className="font-mono text-emerald-700 font-semibold">{formatMoney(selectedPDV.cash)}</span>
                 </div>
                 {selectedPDV.cancel > 0 && (
                   <div className="flex justify-between py-1 border-b border-slate-200">
                     <span className="text-slate-500">❌ Cancelamentos:</span>
-                    <span className="font-mono text-rose-400 font-semibold">{formatMoney(selectedPDV.cancel)}</span>
+                    <span className="font-mono text-rose-700 font-semibold">{formatMoney(selectedPDV.cancel)}</span>
                   </div>
                 )}
                 {selectedPDV.refund > 0 && (
                   <div className="flex justify-between py-1 border-b border-slate-200">
                     <span className="text-slate-500">🔄 Estornos Efetuados:</span>
-                    <span className="font-mono text-rose-300 font-semibold">{formatMoney(selectedPDV.refund)}</span>
+                    <span className="font-mono text-rose-700 font-semibold">{formatMoney(selectedPDV.refund)}</span>
                   </div>
                 )}
               </div>
@@ -453,7 +453,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
           {/* Formas de Pagamento Share */}
           <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-sm">
             <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-2">
-              <CreditCard size={16} className="text-indigo-400" />
+              <CreditCard size={16} className="text-indigo-700" />
               Volume por Método de Pagamento
             </h4>
 
@@ -508,7 +508,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
           <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-100">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <Store size={16} className="text-amber-400" />
+                <Store size={16} className="text-amber-800" />
                 Cadastrar Novo Ponto de Venda (PDV)
               </h3>
               <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-slate-900">
@@ -595,7 +595,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-lg shadow-sm"
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold font-extrabold rounded-lg shadow-sm"
                 >
                   Salvar PDV
                 </button>
@@ -611,7 +611,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
           <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl">
             <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-100">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <Banknote size={16} className="text-rose-400" />
+                <Banknote size={16} className="text-rose-700" />
                 Sangria de Caixa · {selectedCaixa.id}
               </h3>
               <button onClick={() => setSangriaModalOpen(false)} className="text-slate-500 hover:text-slate-900">
@@ -623,7 +623,7 @@ export default function FinancePDVPage({ notify, onBack, onNavigate }: { notify?
               <div className="bg-slate-100/70 p-3 rounded-lg border border-slate-200">
                 <div className="text-slate-500 text-[11px]">Operador: <span className="text-slate-900 font-bold">{selectedCaixa.operator}</span></div>
                 <div className="text-slate-500 text-[11px]">PDV: <span className="text-slate-900 font-bold">{selectedCaixa.pdv}</span></div>
-                <div className="text-slate-500 text-[11px] mt-1">Saldo em Caixa: <span className="text-emerald-400 font-bold font-mono">{formatMoney(selectedCaixa.value)}</span></div>
+                <div className="text-slate-500 text-[11px] mt-1">Saldo em Caixa: <span className="text-emerald-700 font-bold font-mono">{formatMoney(selectedCaixa.value)}</span></div>
               </div>
 
               <div>

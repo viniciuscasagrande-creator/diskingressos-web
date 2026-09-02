@@ -67,7 +67,7 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
       <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <Sliders className="text-purple-400" size={20} />
+            <Sliders className="text-purple-700" size={20} />
             Pagamentos Customizados & Parcerias
           </h2>
           <p className="text-xs text-slate-500">
@@ -89,7 +89,7 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
           <h3 className="font-bold text-xs text-slate-900 uppercase tracking-wider">
             Regras de Cobrança e Gateway Especiais
           </h3>
-          <span className="text-purple-300 bg-purple-950/60 border border-purple-800/40 px-2 py-0.5 rounded font-bold">
+          <span className="text-purple-700 bg-purple-950/60 border border-purple-800/40 px-2 py-0.5 rounded font-bold">
             {rules.length} regras ativas
           </span>
         </div>
@@ -106,22 +106,22 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
                 <th className="py-2.5 px-2 text-center">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-700">
+            <tbody className="divide-y divide-slate-200 text-slate-700">
               {rules.map(r => (
                 <tr key={r.id} className="hover:bg-slate-100">
                   <td className="py-2.5 px-3 font-bold text-slate-900">{r.name}</td>
-                  <td className="py-2.5 px-3 text-purple-300 font-medium">{r.type}</td>
+                  <td className="py-2.5 px-3 text-purple-700 font-medium">{r.type}</td>
                   <td className="py-2.5 px-3 text-slate-700">{r.event}</td>
-                  <td className="py-2.5 px-3 text-center font-mono font-bold text-emerald-400">{r.rate}</td>
+                  <td className="py-2.5 px-3 text-center font-mono font-bold text-emerald-700">{r.rate}</td>
                   <td className="py-2.5 px-3 text-center">
-                    <span className="text-[10px] bg-emerald-950 text-emerald-400 font-bold px-2 py-0.5 rounded border border-emerald-800/40">
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-800/40">
                       {r.status}
                     </span>
                   </td>
                   <td className="py-2.5 px-2 text-center">
                     <button
                       onClick={() => handleDeleteRule(r.id)}
-                      className="text-slate-500 hover:text-rose-400 p-1 transition"
+                      className="text-slate-500 hover:text-rose-700 p-1 transition"
                       title="Remover regra"
                     >
                       <Trash2 size={14} />
@@ -140,7 +140,7 @@ export default function FinanceCustomPayPage({ notify, onBack, onNavigate }: { n
           <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-100">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <Sliders size={16} className="text-purple-400" />
+                <Sliders size={16} className="text-purple-700" />
                 Nova Regra de Pagamento Customizado
               </h3>
               <button onClick={() => setModalOpen(false)} className="text-slate-500 hover:text-slate-900">

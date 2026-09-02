@@ -36,7 +36,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
       <div className="bg-white border border-slate-200 p-4 rounded-xl flex justify-between items-center shadow-sm">
         <div>
           <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-            <CreditCard className="text-emerald-400" size={20} />
+            <CreditCard className="text-emerald-700" size={20} />
             Métodos de Pagamento & Configurações de Tarifas
           </h2>
           <p className="text-xs text-slate-500">
@@ -49,7 +49,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
         {/* Left: Settings Form */}
         <div className="md:col-span-7 bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
           <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-            <Sliders size={15} className="text-emerald-400" />
+            <Sliders size={15} className="text-emerald-700" />
             Tarifas e Prazos por Método
           </h3>
 
@@ -57,7 +57,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             {/* PIX */}
             <div className="p-3.5 bg-slate-100 rounded-xl border border-slate-200 space-y-3">
               <div className="flex items-center gap-2 font-bold text-slate-900 text-xs">
-                <QrCode size={16} className="text-emerald-400" />
+                <QrCode size={16} className="text-emerald-700" />
                 <span>PIX Instantâneo</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -88,7 +88,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             {/* Cartão de Crédito */}
             <div className="p-3.5 bg-slate-100 rounded-xl border border-slate-200 space-y-3">
               <div className="flex items-center gap-2 font-bold text-slate-900 text-xs">
-                <CreditCard size={16} className="text-sky-400" />
+                <CreditCard size={16} className="text-sky-700" />
                 <span>Cartão de Crédito (1x à Vista)</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -119,7 +119,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             {/* Boleto Bancário */}
             <div className="p-3.5 bg-slate-100 rounded-xl border border-slate-200 space-y-3">
               <div className="flex items-center gap-2 font-bold text-slate-900 text-xs">
-                <Barcode size={16} className="text-rose-400" />
+                <Barcode size={16} className="text-rose-700" />
                 <span>Boleto Bancário Registrado</span>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -150,7 +150,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             <div className="flex justify-end pt-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold rounded-lg flex items-center gap-1.5 shadow-sm"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-lg flex items-center gap-1.5 shadow-sm"
               >
                 <Save size={14} /> Salvar Tarifas
               </button>
@@ -161,7 +161,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
         {/* Right: Share de Vendas */}
         <div className="md:col-span-5 bg-white border border-slate-200 p-5 rounded-xl space-y-4 shadow-sm text-xs">
           <h3 className="font-bold text-sm text-slate-900 border-b border-slate-200 pb-2 flex items-center gap-2">
-            <PieChart size={15} className="text-sky-400" />
+            <PieChart size={15} className="text-sky-700" />
             Share de Vendas (Volume)
           </h3>
 
@@ -169,7 +169,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="font-semibold text-slate-900">PIX Instantâneo</span>
-                <span className="font-mono font-bold text-emerald-400">45%</span>
+                <span className="font-mono font-bold text-emerald-700">45%</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div className="h-full bg-emerald-500 rounded-full" style={{ width: '45%' }} />
@@ -179,7 +179,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="font-semibold text-slate-900">Cartão de Crédito</span>
-                <span className="font-mono font-bold text-sky-400">40%</span>
+                <span className="font-mono font-bold text-sky-700">40%</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div className="h-full bg-sky-500 rounded-full" style={{ width: '40%' }} />
@@ -189,7 +189,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="font-semibold text-slate-900">Boleto Bancário</span>
-                <span className="font-mono font-bold text-rose-400">12%</span>
+                <span className="font-mono font-bold text-rose-700">12%</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div className="h-full bg-rose-500 rounded-full" style={{ width: '12%' }} />
@@ -199,7 +199,7 @@ export default function FinancePayMethodsPage({ notify, onBack, onNavigate }: { 
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="font-semibold text-slate-900">Cartão de Débito</span>
-                <span className="font-mono font-bold text-amber-400">3%</span>
+                <span className="font-mono font-bold text-amber-800">3%</span>
               </div>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div className="h-full bg-amber-500 rounded-full" style={{ width: '3%' }} />

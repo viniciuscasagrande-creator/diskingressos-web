@@ -118,18 +118,18 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
       {/* Global Action Bar */}
       <div className="bg-white border border-slate-200 p-2.5 rounded-xl flex flex-wrap items-center gap-2 shadow-sm">
         <button onClick={() => handleGlobalAction('novo')} className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs rounded-lg flex items-center gap-1.5 transition">
-          <Plus size={13} className="text-emerald-400" /> Novo
+          <Plus size={13} className="text-emerald-700" /> Novo
         </button>
         <button onClick={() => handleGlobalAction('editar')} className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs rounded-lg flex items-center gap-1.5 transition">
-          <Edit size={13} className="text-sky-400" /> Editar
+          <Edit size={13} className="text-sky-700" /> Editar
         </button>
-        <button onClick={() => handleGlobalAction('salvar')} className="px-3.5 py-1.5 bg-sky-600 hover:bg-sky-500 text-slate-900 font-extrabold text-xs rounded-lg flex items-center gap-1.5 transition shadow-xs">
+        <button onClick={() => handleGlobalAction('salvar')} className="px-3.5 py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs rounded-lg flex items-center gap-1.5 transition shadow-xs">
           <Save size={13} /> Salvar
         </button>
         <button onClick={() => handleGlobalAction('cancelar')} className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg flex items-center gap-1.5 transition">
           <X size={13} /> Cancelar
         </button>
-        <button onClick={() => handleGlobalAction('excluir')} className="px-3 py-1.5 bg-slate-100 hover:bg-rose-950 text-rose-300 font-bold text-xs rounded-lg flex items-center gap-1.5 transition border border-rose-900/40">
+        <button onClick={() => handleGlobalAction('excluir')} className="px-3 py-1.5 bg-slate-100 hover:bg-rose-100 text-rose-800 font-bold text-xs rounded-lg flex items-center gap-1.5 transition border border-rose-900/40">
           <Trash2 size={13} /> Excluir
         </button>
 
@@ -151,7 +151,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
           <History size={13} /> Histórico
         </button>
 
-        <button onClick={() => handleGlobalAction('ajuda')} className="ml-auto px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-amber-300 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+        <button onClick={() => handleGlobalAction('ajuda')} className="ml-auto px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-amber-800 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
           <HelpCircle size={13} /> Ajuda
         </button>
       </div>
@@ -164,27 +164,27 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
         </div>
         <div className="bg-white border border-slate-200 p-2.5 rounded-xl">
           <span className="text-slate-500 block text-[10px] uppercase font-bold">Aprovados</span>
-          <h4 className="text-sm font-black text-emerald-400 mt-0.5 font-mono">1.245</h4>
+          <h4 className="text-sm font-black text-emerald-700 mt-0.5 font-mono">1.245</h4>
         </div>
         <div className="bg-white border border-slate-200 p-2.5 rounded-xl">
           <span className="text-slate-500 block text-[10px] uppercase font-bold">Negados</span>
-          <h4 className="text-sm font-black text-rose-400 mt-0.5 font-mono">23</h4>
+          <h4 className="text-sm font-black text-rose-700 mt-0.5 font-mono">23</h4>
         </div>
         <div className="bg-white border border-slate-200 p-2.5 rounded-xl">
           <span className="text-slate-500 block text-[10px] uppercase font-bold">Chargebacks</span>
-          <h4 className="text-sm font-black text-amber-400 mt-0.5 font-mono">2</h4>
+          <h4 className="text-sm font-black text-amber-800 mt-0.5 font-mono">2</h4>
         </div>
         <div className="bg-white border border-slate-200 p-2.5 rounded-xl">
           <span className="text-slate-500 block text-[10px] uppercase font-bold">PIX</span>
-          <h4 className="text-sm font-black text-amber-400 mt-0.5 font-mono">430</h4>
+          <h4 className="text-sm font-black text-amber-800 mt-0.5 font-mono">430</h4>
         </div>
         <div className="bg-white border border-slate-200 p-2.5 rounded-xl">
           <span className="text-slate-500 block text-[10px] uppercase font-bold">Cartão</span>
-          <h4 className="text-sm font-black text-indigo-400 mt-0.5 font-mono">815</h4>
+          <h4 className="text-sm font-black text-indigo-700 mt-0.5 font-mono">815</h4>
         </div>
         <div className="bg-white border border-slate-200 p-2.5 rounded-xl">
           <span className="text-slate-500 block text-[10px] uppercase font-bold">Taxa Aprovação</span>
-          <h4 className="text-sm font-black text-emerald-400 mt-0.5 font-mono">98,12%</h4>
+          <h4 className="text-sm font-black text-emerald-700 mt-0.5 font-mono">98,12%</h4>
         </div>
       </div>
 
@@ -193,7 +193,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
         <div className="flex items-center gap-3">
           <div>
             <h3 className="text-base font-black text-slate-900 flex items-center gap-2">
-              <Sliders size={18} className="text-sky-400" />
+              <Sliders size={18} className="text-sky-700" />
               Gateway de Pagamentos & Operadoras
             </h3>
             <span className="text-[11px] text-slate-500">
@@ -201,7 +201,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
             </span>
           </div>
           <div className="border-l border-slate-200 pl-3">
-            <span className="text-[10px] bg-emerald-950/80 text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-800/50 flex items-center gap-1">
+            <span className="text-[10px] bg-emerald-100/80 text-emerald-700 font-bold px-2 py-0.5 rounded border border-emerald-800/50 flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Online
             </span>
@@ -235,7 +235,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
 
           <button
             onClick={handleTestConnection}
-            className="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-slate-900 font-bold rounded-lg transition"
+            className="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-lg transition"
           >
             Testar Conexão
           </button>
@@ -246,7 +246,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Sub-menu Sidebar */}
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-          <nav className="divide-y divide-slate-800/60 text-xs">
+          <nav className="divide-y divide-slate-200 text-xs">
             {(
               [
                 ['config', 'Configurações', Sliders],
@@ -268,7 +268,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
                 onClick={() => setActiveTab(key)}
                 className={`w-full flex items-center justify-between px-4 py-3 font-semibold transition ${
                   activeTab === key
-                    ? 'bg-sky-600/20 text-sky-400 font-bold border-l-4 border-sky-500'
+                    ? 'bg-sky-600/20 text-sky-700 font-bold border-l-4 border-sky-500'
                     : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
@@ -505,24 +505,24 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
                       <th className="py-2 px-3 text-right">Repasse Líquido Estimado</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 text-slate-700 font-mono">
+                  <tbody className="divide-y divide-slate-200 text-slate-700 font-mono">
                     <tr className="hover:bg-slate-100">
                       <td className="py-2 px-3 text-slate-900 font-bold">1x (À vista)</td>
-                      <td className="py-2 px-3 text-center text-sky-400">2,35%</td>
-                      <td className="py-2 px-3 text-center text-emerald-400">0,00%</td>
-                      <td className="py-2 px-3 text-right text-emerald-400 font-bold">97,65%</td>
+                      <td className="py-2 px-3 text-center text-sky-700">2,35%</td>
+                      <td className="py-2 px-3 text-center text-emerald-700">0,00%</td>
+                      <td className="py-2 px-3 text-right text-emerald-700 font-bold">97,65%</td>
                     </tr>
                     <tr className="hover:bg-slate-100">
                       <td className="py-2 px-3 text-slate-900 font-bold">2x a 6x</td>
-                      <td className="py-2 px-3 text-center text-sky-400">3,10%</td>
-                      <td className="py-2 px-3 text-center text-emerald-400">0,00%</td>
-                      <td className="py-2 px-3 text-right text-emerald-400 font-bold">96,90%</td>
+                      <td className="py-2 px-3 text-center text-sky-700">3,10%</td>
+                      <td className="py-2 px-3 text-center text-emerald-700">0,00%</td>
+                      <td className="py-2 px-3 text-right text-emerald-700 font-bold">96,90%</td>
                     </tr>
                     <tr className="hover:bg-slate-100">
                       <td className="py-2 px-3 text-slate-900 font-bold">7x a 12x</td>
-                      <td className="py-2 px-3 text-center text-sky-400">3,85%</td>
-                      <td className="py-2 px-3 text-center text-amber-400">1,99% a.m.</td>
-                      <td className="py-2 px-3 text-right text-emerald-400 font-bold">96,15%</td>
+                      <td className="py-2 px-3 text-center text-sky-700">3,85%</td>
+                      <td className="py-2 px-3 text-center text-amber-800">1,99% a.m.</td>
+                      <td className="py-2 px-3 text-right text-emerald-700 font-bold">96,15%</td>
                     </tr>
                   </tbody>
                 </table>
@@ -596,7 +596,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
               <p className="text-slate-500">
                 Lotes e telemetria sincronizados em tempo real com o adquirente ativo.
               </p>
-              <div className="p-3 bg-slate-100 rounded-lg border border-slate-200 font-mono text-[11px] text-emerald-400">
+              <div className="p-3 bg-slate-100 rounded-lg border border-slate-200 font-mono text-[11px] text-emerald-700">
                 [2026-09-01 15:20:00] Webhook HTTP 200 OK — Lote #89452 reconciliado sem divergências.
               </div>
             </div>
@@ -605,7 +605,7 @@ export default function FinanceOperatorsGatewaysPage({ notify, onBack, onNavigat
           <div className="flex justify-end pt-3 border-t border-slate-200">
             <button
               onClick={() => handleGlobalAction('salvar')}
-              className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-slate-900 font-extrabold rounded-lg flex items-center gap-1.5 shadow-sm"
+              className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-extrabold rounded-lg flex items-center gap-1.5 shadow-sm"
             >
               <Save size={14} /> Salvar Parâmetros
             </button>
