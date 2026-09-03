@@ -1,24 +1,25 @@
 # CORE_PROTECTED_MODULES — SafeSaff / PDT
 
-Release: `26.x.1.1-estornos-protected-2026-09-03`
+Release: `26.x.2-core-stability-gate-2026-09-03`
 
 ## Regra permanente
 
-O módulo **Estornos** é independente e protegido. Nenhuma fase, refatoração, agente de IA ou reorganização de menu pode removê-lo, ocultá-lo dentro do Financeiro, trocar sua rota principal ou substituir sua tela sem autorização explícita do responsável pelo produto.
+Os módulos **Eventos, Financeiro, Estornos, Marketing e Atendimento/SAC** são módulos aprovados e protegidos. Nenhuma fase, refatoração ou agente de IA pode removê-los, absorvê-los em outro módulo, ocultá-los, trocar suas rotas canônicas ou substituir suas telas sem autorização explícita do responsável pelo produto.
 
-Contrato mínimo obrigatório:
-- menu principal independente: `Estornos`;
-- rota canônica: `/app/finance-refunds`;
-- PageKey: `finance-refunds`;
-- tela: `FinanceDisputesHubPage`;
-- fluxos: Estornos & Devoluções, Chargebacks, Impacto Financeiro, Motor Enterprise e Webhooks;
-- badge ERP preservado;
-- backend e auditoria existentes preservados.
+O contrato executável está em `CORE_PROTECTED_MODULES.json` e é verificado por `scripts/verify-core-protected-modules.mjs`.
 
-## Gate de build
+### Rotas canônicas
 
-`npm run verify:protected-modules` deve passar antes do build Vercel. O script falha propositalmente se as assinaturas estruturais do módulo forem removidas.
+- Eventos: `/app/events`
+- Financeiro: `/app/finance-dashboard`
+- Estornos: `/app/finance-refunds`
+- Marketing: `/app/marketing-dashboard`
+- Atendimento / SAC: `/app/sac-hub`
 
-## Gate E2E
+## Gates
 
-`npm run test:e2e:protected` valida menu, rota e carregamento da Central de Estornos.
+- `npm run verify:protected-modules` — falha o build se assinaturas críticas desaparecerem.
+- `npm run quality:gate` — proteção + Lucide + TypeScript.
+- `npm run test:e2e:protected-core` — regressão Playwright dos cinco módulos.
+
+O `build:vercel` continua executando a proteção antes do build.

@@ -1,0 +1,11 @@
+{
+  "release": "26.x.2-core-stability-gate-2026-09-03",
+  "policy": "Módulos aprovados não podem ser removidos, absorvidos, ocultados ou ter sua rota canônica alterada sem autorização explícita do responsável pelo produto.",
+  "modules": [
+    {"id":"eventos","label":"Eventos","pageKey":"events","route":"/app/events","sidebar":"src/components/ModuleSidebar.tsx"},
+    {"id":"financeiro","label":"Financeiro","pageKey":"finance-dashboard","route":"/app/finance-dashboard","sidebar":"src/components/ModuleSidebar.tsx"},
+    {"id":"estornos","label":"Estornos","pageKey":"finance-refunds","route":"/app/finance-refunds","sidebar":"src/components/ModuleSidebar.tsx"},
+    {"id":"marketing","label":"Marketing","pageKey":"marketing-dashboard","route":"/app/marketing-dashboard","sidebar":"src/components/ModuleSidebar.tsx"},
+    {"id":"sac","label":"Atendimento / SAC","pageKey":"sac-hub","route":"/app/sac-hub","sidebar":"src/components/ModuleSidebar.tsx"}
+  ]
+}

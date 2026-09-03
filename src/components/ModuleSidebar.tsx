@@ -161,7 +161,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
     <aside
       className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''}`}
       aria-label="Navegação principal"
-      data-core-protection-release="26.x.1.1-estornos-protected-2026-09-03"
+      data-core-protection-release="26.x.2-core-stability-gate-2026-09-03"
       data-finance-release="25.8.2-event-remarketing-functional-2026-09-02 25.8.1-abandoned-cart-tenant-event-scope-2026-09-02 25.8-enterprise-refund-engine-2026-09-02 25.7.1.1-sidebar-typography-hotfix-2026-09-02 25.7.1-universal-conversion-engine-2026-09-02 25.7-marketing-integrations-360-2026-09-02 25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
     >
       <div className="sidebar-top-bar safesaff-sidebar-header">
@@ -378,7 +378,13 @@ function NavItem({
       title={item.label}
       aria-current={active ? 'page' : undefined}
       data-testid={`nav-${item.key}`}
-      data-protected-module={item.key === 'finance-refunds' ? 'estornos' : undefined}
+      data-protected-module={({
+        'events': 'eventos',
+        'finance-dashboard': 'financeiro',
+        'finance-refunds': 'estornos',
+        'marketing-dashboard': 'marketing',
+        'sac-hub': 'sac'
+      } as Partial<Record<PageKey, string>>)[item.key]}
     >
       <span className="module-nav-icon" aria-hidden="true"><Icon size={18} strokeWidth={1.8} /></span>
       <span className="module-nav-label">{item.label}</span>

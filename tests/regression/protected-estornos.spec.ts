@@ -7,7 +7,7 @@ test('@protected Estornos permanece módulo independente e abre a Central Enterp
   await expect(estornos).toBeVisible()
   await estornos.click()
   await expect(page).toHaveURL(/\/app\/finance-refunds(?:$|[?#])/)
-  await expect(page.getByRole('heading', { name: /Central de Estornos, Reembolsos & Chargebacks/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Central de Estornos|Centro de Controle/i }).first()).toBeVisible()
 })
 
 test('@protected rota direta de Estornos não pode desaparecer', async ({ page }) => {

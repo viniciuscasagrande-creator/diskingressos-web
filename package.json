@@ -56,7 +56,9 @@
     "test:e2e:report": "playwright show-report playwright-report",
     "test:e2e:deploy": "playwright test tests/homologacao-real-vercel.spec.ts --project=chromium",
     "verify:protected-modules": "node scripts/verify-core-protected-modules.mjs",
-    "test:e2e:protected": "playwright test tests/regression/protected-estornos.spec.ts --project=chromium"
+    "test:e2e:protected": "playwright test tests/regression/protected-estornos.spec.ts --project=chromium",
+    "test:e2e:protected-core": "playwright test tests/regression/protected-core-modules.spec.ts --project=chromium",
+    "quality:gate": "npm run verify:protected-modules && npm run check:lucide && npm run typecheck"
   },
   "dependencies": {
     "@prisma/client": "latest",
