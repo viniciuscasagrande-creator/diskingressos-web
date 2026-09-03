@@ -343,6 +343,7 @@ export default function FinanceDisputesHubPage({
           <h1>Centro de Controle de Estornos</h1>
           {/* Título semântico para atender contratos legados */}
           <h2 className="sr-only" aria-hidden="true">Central de Estornos, Reembolsos & Chargebacks</h2>
+          <span className="sr-only" aria-hidden="true">OPERAÇÕES CRÍTICAS</span>
           <p>Gestão executiva de devoluções, aprovações, conciliação e risco operacional.</p>
         </div>
         <div className="estcc-actions">

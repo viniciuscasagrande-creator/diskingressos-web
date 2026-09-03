@@ -21,7 +21,7 @@ Os módulos abaixo foram homologados e são **PROTEGIDOS POR GATE DE CI/BUILD**:
 1. **Eventos** (`/app/events` / `/eventos` · PageKey: `events`)
 2. **Financeiro** (`/app/finance-dashboard` · PageKey: `finance-dashboard`)
 3. **Estornos** (`/app/finance-refunds` · PageKey: `finance-refunds`)
-   - **NÃO É SUBMENU DO FINANCEIRO**. Permanece independente na seção `OPERAÇÕES CRÍTICAS`.
+   - **NÃO É SUBMENU DO FINANCEIRO**. Permanece independente como módulo no menu.
    - A tela oficial é o **Centro de Controle de Estornos** (`FinanceDisputesHubPage.tsx`), matching fiel com `DiskIngressos_Centro_Controle_Estornos.html`.
    - **NUNCA DELETAR OU SUBSTITUIR ESSA TELA.**
 4. **Marketing** (`/app/marketing-dashboard` · PageKey: `marketing-dashboard`)
