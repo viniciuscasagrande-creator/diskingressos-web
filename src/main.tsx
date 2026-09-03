@@ -63,6 +63,6 @@ document.documentElement.dataset.inventoryEngineRelease = '26.2-inventory-engine
 
 document.documentElement.dataset.customer360Release = '26.3-customer-360-crm-2026-09-03'
 
-document.documentElement.dataset.qaRelease = '26.x.3.9-playwright-contract-registry-drift-detection-2026-09-03'
+document.documentElement.dataset.qaRelease = '26.x.3.10-runtime-functional-stability-2026-09-03'
 
 document.documentElement.dataset.eventOsCompleteRelease = '26.x-complete-event-os-2026-09-03'

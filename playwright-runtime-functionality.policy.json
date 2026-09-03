@@ -1,0 +1,20 @@
+{
+  "release": "26.x.3.10-runtime-functional-stability-2026-09-03",
+  "purpose": "Bloquear regressões em rotas e módulos essenciais antes do Playwright completo.",
+  "protectedModules": [
+    {"id":"eventos","route":"/app/events","testId":"nav-events","source":"src/App.tsx"},
+    {"id":"financeiro","route":"/app/finance-dashboard","testId":"nav-finance-dashboard","source":"src/App.tsx"},
+    {"id":"estornos","route":"/app/finance-refunds","testId":"nav-finance-refunds","source":"src/pages/FinanceDisputesHubPage.tsx"},
+    {"id":"marketing","route":"/app/marketing-dashboard","testId":"nav-marketing-dashboard","source":"src/App.tsx"},
+    {"id":"sac","route":"/app/sac-hub","testId":"nav-sac-hub","source":"src/App.tsx"}
+  ],
+  "forbiddenRepairs": [
+    "remover módulo protegido",
+    "ocultar item protegido da sidebar",
+    "redirecionar Estornos para Financeiro",
+    "desativar teste com skip",
+    "reduzir assert para mascarar falha",
+    "atualizar Golden Master sem aprovação",
+    "enfraquecer producerId ou eventId"
+  ]
+}

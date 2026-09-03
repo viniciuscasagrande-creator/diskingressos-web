@@ -1,5 +1,5 @@
 {
-  "release": "26.x.3.8-playwright-change-impact-smart-regression-2026-09-03",
+  "release": "26.x.3.10-runtime-functional-stability-2026-09-03",
   "policy": "Módulos aprovados não podem ser removidos, absorvidos, ocultados ou ter sua rota canônica alterada sem autorização explícita do responsável pelo produto.",
   "modules": [
     {

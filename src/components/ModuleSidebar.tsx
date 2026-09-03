@@ -161,7 +161,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
     <aside
       className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''}`}
       aria-label="Navegação principal"
-      data-core-protection-release="26.x.3.8-playwright-change-impact-smart-regression-2026-09-03"
+      data-core-protection-release="26.x.3.10-runtime-functional-stability-2026-09-03"
       data-finance-release="25.8.2-event-remarketing-functional-2026-09-02 25.8.1-abandoned-cart-tenant-event-scope-2026-09-02 25.8-enterprise-refund-engine-2026-09-02 25.7.1.1-sidebar-typography-hotfix-2026-09-02 25.7.1-universal-conversion-engine-2026-09-02 25.7-marketing-integrations-360-2026-09-02 25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
     >
       <div className="sidebar-top-bar safesaff-sidebar-header">
