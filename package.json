@@ -75,7 +75,13 @@
     "test:pw:release-gate": "npm run quality:gate && npm run test:pw:control-center",
     "test:pw:certificate": "node scripts/certify-playwright-release.mjs",
     "test:pw:certify": "node scripts/run-playwright-release-certification.mjs",
-    "release:certify": "npm run quality:gate && npm run deploy:guard:http && npm run test:pw:certify"
+    "release:certify": "npm run quality:gate && npm run visual:baseline:verify && npm run deploy:guard:http && npm run test:pw:certify",
+    "visual:baseline:verify": "node scripts/verify-visual-baseline.mjs",
+    "test:pw:visual-lock": "npm run visual:baseline:verify && playwright test tests/visual/core-visual-contract.spec.ts --project=chromium",
+    "test:pw:diagnose": "node scripts/diagnose-playwright-failures.mjs",
+    "test:pw:control-center:diagnose": "node scripts/run-playwright-control-center.mjs; node scripts/diagnose-playwright-failures.mjs",
+    "test:pw:repair-advisor": "node scripts/generate-playwright-repair-advisor.mjs",
+    "test:pw:diagnose-and-advise": "node scripts/diagnose-playwright-failures.mjs; node scripts/generate-playwright-repair-advisor.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

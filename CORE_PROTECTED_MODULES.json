@@ -1,5 +1,5 @@
 {
-  "release": "26.x.3-deploy-guard-2026-09-03",
+  "release": "26.x.3.6-playwright-repair-advisor-2026-09-03",
   "policy": "Módulos aprovados não podem ser removidos, absorvidos, ocultados ou ter sua rota canônica alterada sem autorização explícita do responsável pelo produto.",
   "modules": [
     {

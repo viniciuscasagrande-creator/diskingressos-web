@@ -1,0 +1,121 @@
+{
+  "release": "26.x.3.6-playwright-repair-advisor-2026-09-03",
+  "modules": [
+    {
+      "id": "estornos",
+      "match": "estornos|refund|finance-refunds|chargeback",
+      "routes": [
+        "/app/finance-refunds"
+      ],
+      "files": [
+        "src/components/ModuleSidebar.tsx",
+        "src/App.tsx",
+        "src/pages/FinanceDisputesHubPage.tsx",
+        "src/pages/FinanceRefundsPage.tsx"
+      ],
+      "severity": "BLOCKER",
+      "owner": "Financeiro / Estornos"
+    },
+    {
+      "id": "central-eventos",
+      "match": "central de eventos|eventos|event-card|horizontal|comparar",
+      "routes": [
+        "/app"
+      ],
+      "files": [
+        "src/pages/EventsPage.tsx",
+        "src/components/EventCard.tsx",
+        "src/App.tsx"
+      ],
+      "severity": "BLOCKER",
+      "owner": "Eventos"
+    },
+    {
+      "id": "event-os",
+      "match": "event os|cockpit|inventory|invent[aá]rio|customer 360|live operations|incident|revenue|readiness|event day|noc",
+      "routes": [
+        "/eventos/:code/command-center"
+      ],
+      "files": [
+        "src/App.tsx",
+        "src/components/EventContextSidebar.tsx",
+        "server/src/routes/events.ts"
+      ],
+      "severity": "BLOCKER",
+      "owner": "Event OS"
+    },
+    {
+      "id": "marketing",
+      "match": "marketing|remarketing|campaign|utm|pixel",
+      "routes": [
+        "/app"
+      ],
+      "files": [
+        "src/components/ModuleSidebar.tsx",
+        "src/App.tsx",
+        "src/pages/MarketingPage.tsx",
+        "src/pages/RemarketingPage.tsx"
+      ],
+      "severity": "HIGH",
+      "owner": "Marketing"
+    },
+    {
+      "id": "sac",
+      "match": "sac|atendimento|support|ticket",
+      "routes": [
+        "/app"
+      ],
+      "files": [
+        "src/components/ModuleSidebar.tsx",
+        "src/App.tsx"
+      ],
+      "severity": "HIGH",
+      "owner": "SAC"
+    },
+    {
+      "id": "runtime",
+      "match": "runtime|console|javascript|5xx|500|uncaught|pageerror",
+      "routes": [
+        "*"
+      ],
+      "files": [
+        "src/App.tsx",
+        "src/main.tsx",
+        "src/services/api.ts",
+        "server/src/index.ts"
+      ],
+      "severity": "BLOCKER",
+      "owner": "Plataforma"
+    },
+    {
+      "id": "visual",
+      "match": "visual|golden|screenshot|snapshot|pixel",
+      "routes": [
+        "/app"
+      ],
+      "files": [
+        "src/pages/EventsPage.tsx",
+        "src/components/EventCard.tsx",
+        "src/styles",
+        "tests/visual-baselines/central-eventos-approved.png"
+      ],
+      "severity": "BLOCKER",
+      "owner": "UX/UI"
+    },
+    {
+      "id": "auth-tenant",
+      "match": "tenant|producer|unauthorized|forbidden|401|403|login|auth",
+      "routes": [
+        "/api/events/:id/*"
+      ],
+      "files": [
+        "server/src/tenant.ts",
+        "server/src/routes/events.ts",
+        "src/services/api.ts",
+        "src/contexts/AuthContext.tsx"
+      ],
+      "severity": "BLOCKER",
+      "owner": "Segurança / Multi-tenant"
+    }
+  ]
+}

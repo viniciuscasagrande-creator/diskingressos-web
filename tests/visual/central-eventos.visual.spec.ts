@@ -9,7 +9,7 @@ test('Central de Eventos — regressão visual aprovada', async ({ page }) => {
   await expect(page.getByTestId('events-page')).toBeVisible()
   await page.getByTestId('events-filter-active').click()
   await expect(page.getByTestId('event-grid')).toBeVisible()
-  await expect(page.getByTestId('events-page')).toHaveScreenshot('central-eventos.png', {
+  await expect(page.getByTestId('events-page')).toHaveScreenshot('central-eventos-approved.png', {
     animations: 'disabled',
     caret: 'hide',
     maxDiffPixelRatio: 0.01,

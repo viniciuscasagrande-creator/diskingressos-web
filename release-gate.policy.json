@@ -1,5 +1,5 @@
 {
-  "release": "26.x.3.3-playwright-release-certification-2026-09-03",
+  "release": "26.x.3.6-playwright-repair-advisor-2026-09-03",
   "baseUrl": "https://safesaff.vercel.app",
   "requireZeroFailures": true,
   "requireNonEmptySuite": true,
@@ -15,6 +15,13 @@
       "id": "central-eventos",
       "label": "Central de Eventos aprovada",
       "match": "central de eventos",
+      "minimumPassed": 1,
+      "blocking": true
+    },
+    {
+      "id": "visual-lock",
+      "label": "Golden Master Visual",
+      "match": "visual golden master|visual-lock|central de eventos permanece idêntica",
       "minimumPassed": 1,
       "blocking": true
     },

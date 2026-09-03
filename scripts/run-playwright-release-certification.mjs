@@ -11,7 +11,7 @@ const env = {
 
 const runner = spawnSync(
   process.platform === 'win32' ? 'npx.cmd' : 'npx',
-  ['playwright', 'test', 'tests/master', 'tests/regression', 'tests/quality', 'tests/responsive', 'tests/deploy-guard', '--project=chromium', '--reporter=list,json'],
+  ['playwright', 'test', 'tests/master', 'tests/regression', 'tests/quality', 'tests/responsive', 'tests/deploy-guard', 'tests/visual/core-visual-contract.spec.ts', '--project=chromium', '--reporter=list,json'],
   { stdio: 'inherit', env, shell: false }
 )
 
