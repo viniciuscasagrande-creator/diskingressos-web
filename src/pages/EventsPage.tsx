@@ -26,7 +26,7 @@ export default function EventsPage({events, query, status, setStatus, view, setV
 
   const revenue = filtered.reduce((sum, event)=> sum + Number(event.total.replace(/\./g,'').replace(',','.')), 0)
 
-  return <>
+  return <div data-testid="events-page">
     <div className="flex items-center gap-2 mb-3">
       <button
         onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}
@@ -45,9 +45,9 @@ export default function EventsPage({events, query, status, setStatus, view, setV
           <button className={view==='compact'?'active':''} onClick={()=>setView('compact')}><LayoutPanelTop size={18}/></button>
         </div>
         <div className="status-tabs events-status-tabs">
-          <button className={status==='ativos'?'active':''} onClick={()=>setStatus('ativos')}><CalendarDays size={17}/>Ativos</button>
-          <button className={status==='inativos'?'active':''} onClick={()=>setStatus('inativos')}><CalendarDays size={17}/>Inativos</button>
-          <button className={status==='todos'?'active':''} onClick={()=>setStatus('todos')}><List size={17}/>Todos</button>
+          <button data-testid="events-filter-active" className={status==='ativos'?'active':''} onClick={()=>setStatus('ativos')}><CalendarDays size={17}/>Ativos</button>
+          <button data-testid="events-filter-inactive" className={status==='inativos'?'active':''} onClick={()=>setStatus('inativos')}><CalendarDays size={17}/>Inativos</button>
+          <button data-testid="events-filter-all" className={status==='todos'?'active':''} onClick={()=>setStatus('todos')}><List size={17}/>Todos</button>
         </div>
       </div>
     </section>
@@ -65,8 +65,8 @@ export default function EventsPage({events, query, status, setStatus, view, setV
       </div>
     </section>
 
-    <section className={`event-grid ${view === 'compact' ? 'compact' : ''}`}>
+    <section data-testid="event-grid" className={`event-grid ${view === 'compact' ? 'compact' : ''}`}>
       {filtered.length ? filtered.map(event => <EventCard key={event.id} event={event} onEdit={onEdit} onLots={onLots} onDashboard={onDashboard} onOpen={onOpen}/>) : <div className="empty-state">Nenhum evento encontrado com os filtros atuais.</div>}
     </section>
-  </>
+  </div>
 }

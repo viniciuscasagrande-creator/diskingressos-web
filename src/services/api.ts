@@ -538,3 +538,38 @@ export type EventCommandCenter={
 }
 export const getEventCommandCenter=(eventId:number)=>request<EventCommandCenter>(`/events/${eventId}/command-center`)
 
+
+// ===== Fase 26.1 — Event Cockpit 360 + Activity Stream =====
+export type EventActivityType='sale'|'checkin'|'recovery'|'refund'|'finance'|'marketing'|'incident'
+export type EventActivityItem={id:string;type:EventActivityType;occurredAt:string;title:string;detail:string;status:string;amountCents?:number;severity:'success'|'info'|'warning'|'critical'|string}
+export type EventActivityStream={
+  release:string;generatedAt:string;refreshRecommendedSeconds:number;
+  event:{id:number;code:string;title:string;producerId:number;status:string};
+  pulse:{orders15m:number;revenue15mCents:number;orders1h:number;revenue1hCents:number;checkins15m:number;checkins1h:number;recovered12h:number;recoveredRevenue12hCents:number;openRefunds:number;openIncidents:number};
+  trend:Array<{hour:string;orders:number;revenueCents:number;checkins:number}>;
+  activity:EventActivityItem[]
+}
+export const getEventActivityStream=(eventId:number,limit=40)=>request<EventActivityStream>(`/events/${eventId}/activity-stream${qs({limit})}`)
+
+// ===== Fase 26.2 — Inventory Engine =====
+export type InventoryHold={id:number;producerId:number;eventId:number;lotId:number|null;code:string;quantity:number;status:string;reason:string;source:string;expiresAt:string;createdBy:string|null;releasedAt:string|null;createdAt:string}
+export type InventoryLot={id:number;name:string;sector:string|null;capacity:number;sold:number;held:number;available:number;priceCents:number;status:string;startsAt:string|null;endsAt:string|null;sales24h:number;occupancy:number;salesVelocityPerHour:number;forecastHours:number|null;forecastSoldOutAt:string|null;health:'healthy'|'attention'|'critical'}
+export type InventorySector={sector:string;capacity:number;sold:number;held:number;available:number;revenuePotentialCents:number;occupancy:number}
+export type InventoryRecommendation={code:string;severity:'info'|'warning'|'critical';title:string;message:string;lotId?:number}
+export type EventInventoryEngine={
+  release:string;generatedAt:string;event:{id:number;code:string;title:string;producerId:number;status:string};
+  summary:{capacity:number;sold:number;held:number;available:number;occupancy:number;revenuePotentialCents:number;velocityPerHour:number;forecastHours:number|null;activeLots:number};
+  lots:InventoryLot[];sectors:InventorySector[];holds:InventoryHold[];recommendations:InventoryRecommendation[]
+}
+export const getEventInventoryEngine=(eventId:number)=>request<EventInventoryEngine>(`/events/${eventId}/inventory-engine`)
+export const createInventoryHold=(eventId:number,body:{lotId:number;quantity:number;minutes:number;reason:string;source?:string})=>request<InventoryHold>(`/events/${eventId}/inventory-holds`,{method:'POST',body:JSON.stringify(body)})
+export const releaseInventoryHold=(eventId:number,holdId:number)=>request<InventoryHold>(`/events/${eventId}/inventory-holds/${holdId}/release`,{method:'PATCH'})
+
+// ===== Fase 26.3 — Customer 360 / CRM de Participantes =====
+export type Customer360Row={key:string;name:string;email:string|null;phone:string|null;document:string|null;orders:number;tickets:number;checkins:number;grossCents:number;firstPurchaseAt:string|null;lastPurchaseAt:string|null;recencyDays:number|null;frequency:number;monetaryCents:number;segment:string;score:number}
+export type EventCustomer360={release:string;generatedAt:string;event:{id:number;code:string;title:string;producerId:number};summary:{customers:number;buyers:number;participants:number;repeatCustomers:number;vipCustomers:number;atRiskCustomers:number;grossCents:number;averageTicketCents:number;identifiedRate:number};segments:Array<{name:string;customers:number;grossCents:number}>;customers:Customer360Row[]}
+export const getEventCustomer360=(eventId:number,search='')=>request<EventCustomer360>(`/events/${eventId}/customer-360${qs({search})}`)
+
+// ===== Fase 26.x completa — 26.4 a 26.15 =====
+export type EventOSAdvanced={release:string;generatedAt:string;event:{id:number;code:string;title:string;producerId:number};kpis:{revenueCents:number;paidOrders:number;checkins:number;checkins1h:number;capacity:number;sold:number;available:number;occupancy:number;openIncidents:number;criticalIncidents:number;readinessScore:number};signals:Array<{code:string;severity:string;title:string;message:string}>;readiness:Array<{key:string;label:string;status:string;detail:string|null}>;activity:Array<{id:string;title:string;detail:string;at:string;type:string}>}
+export const getEventOSAdvanced=(eventId:number)=>request<EventOSAdvanced>(`/events/${eventId}/event-os/advanced`)

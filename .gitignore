@@ -11,3 +11,9 @@ prisma/dev.db-journal
 *.tsbuildinfo
 .DS_Store
 Thumbs.db
+
+# Playwright QA artifacts
+playwright-report/
+test-results/
+blob-report/
+

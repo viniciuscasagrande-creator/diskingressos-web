@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   X, Target, Check, Globe, Sparkles, Plus, Trash2, 
   Eye, EyeOff, ShieldCheck, Zap, HelpCircle 
@@ -26,40 +26,23 @@ export const MetaPixelModal: React.FC<MetaPixelModalProps> = ({
   onClose,
   onSave,
 }) => {
+  if (!isOpen || !event) return null;
+
   const [pixelsList, setPixelsList] = useState<PixelEntry[]>([
     {
       id: '1',
       name: 'Pixel Meta Principal',
-      pixelId: event?.metaPixel?.pixelId || '891044728912903',
-      token: event?.metaPixel?.conversionApiToken || 'EAAO7ZBa9ZCl4cBAOn93821KLPZa09238472918',
-      testCode: event?.metaPixel?.testCode || 'TEST94821',
+      pixelId: event.metaPixel?.pixelId || '891044728912903',
+      token: event.metaPixel?.conversionApiToken || 'EAAO7ZBa9ZCl4cBAOn93821KLPZa09238472918',
+      testCode: event.metaPixel?.testCode || 'TEST94821',
     }
   ]);
 
-  const [googleAnalyticsId, setGoogleAnalyticsId] = useState(event?.metaPixel?.googleAnalyticsId || 'G-E7X9023412');
-  const [googleTagManagerId, setGoogleTagManagerId] = useState(event?.metaPixel?.googleTagManagerId || '');
-  const [tiktokPixelId, setTiktokPixelId] = useState(event?.metaPixel?.tiktokPixelId || '');
+  const [googleAnalyticsId, setGoogleAnalyticsId] = useState(event.metaPixel?.googleAnalyticsId || 'G-E7X9023412');
+  const [googleTagManagerId, setGoogleTagManagerId] = useState(event.metaPixel?.googleTagManagerId || '');
+  const [tiktokPixelId, setTiktokPixelId] = useState(event.metaPixel?.tiktokPixelId || '');
   const [testSuccessId, setTestSuccessId] = useState<string | null>(null);
   const [showTokens, setShowTokens] = useState<Record<string, boolean>>({});
-
-  useEffect(() => {
-    if (event?.metaPixel) {
-      setPixelsList([
-        {
-          id: '1',
-          name: 'Pixel Meta Principal',
-          pixelId: event.metaPixel.pixelId || '891044728912903',
-          token: event.metaPixel.conversionApiToken || 'EAAO7ZBa9ZCl4cBAOn93821KLPZa09238472918',
-          testCode: event.metaPixel.testCode || 'TEST94821',
-        }
-      ]);
-      setGoogleAnalyticsId(event.metaPixel.googleAnalyticsId || 'G-E7X9023412');
-      setGoogleTagManagerId(event.metaPixel.googleTagManagerId || '');
-      setTiktokPixelId(event.metaPixel.tiktokPixelId || '');
-    }
-  }, [event]);
-
-  if (!isOpen || !event) return null;
 
   const handleAddPixel = () => {
     const newEntry: PixelEntry = {

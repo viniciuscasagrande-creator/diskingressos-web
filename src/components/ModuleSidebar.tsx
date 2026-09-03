@@ -9,13 +9,14 @@ import {
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
   FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2,
-  PanelLeftClose, PanelLeftOpen, Play, Activity
+  PanelLeftClose, PanelLeftOpen, Activity, Play
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
 
 export type PageKey =
-  | 'profile-dashboard' | 'global-dashboard' | 'events' | 'operations' | 'new-event' | 'lots' | 'participants' | 'edit-event' | 'event-command-center' | 'event-dashboard'
+  | 'profile-dashboard' | 'global-dashboard' | 'events' | 'operations' | 'new-event' | 'lots' | 'participants' | 'edit-event' | 'event-command-center' | 'event-inventory' | 'event-customer-360' | 'event-dashboard'
+  | 'event-live-ops' | 'event-incidents' | 'event-revenue-intel' | 'event-global-search' | 'event-permission-engine' | 'event-compliance' | 'event-intelligence' | 'event-readiness' | 'event-forecast' | 'event-day-command' | 'event-producer-executive' | 'event-platform-noc'
   | 'event-tickets' | 'event-courtesy' | 'event-reports' | 'event-details' | 'event-pixel' | 'event-utm' | 'event-ga4' | 'event-traffic' | 'event-meta-ads' | 'event-remarketing' | 'event-users' | 'event-audit' | 'event-permissions'
   | 'facial'
   // FINANCEIRO
@@ -224,7 +225,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         </CollapsibleSection>
 
         {/* Fase 24.9 — Estornos é módulo independente, fora do Financeiro */}
-        <div className="module-caption">ESTORNO <span className="sr-only">OPERAÇÕES CRÍTICAS</span></div>
+        <div className="module-caption">OPERAÇÕES CRÍTICAS <span className="sr-only">24.9-independent-refunds-2026-09-02</span></div>
         <NavItem
           item={independentRefundItem}
           active={refundIndependentPages.includes(page)}

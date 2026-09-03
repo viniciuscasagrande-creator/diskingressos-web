@@ -97,7 +97,21 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'lots': 'Configurar Lotes',
   'participants': 'Participantes',
   'facial': 'Status Faciais',
-  'event-command-center': 'Centro de Comando do Evento',
+  'event-command-center': 'Event Cockpit 360',
+  'event-inventory': 'Inventory Engine',
+  'event-customer-360': 'Customer 360',
+  'event-live-ops': 'Live Event Operations',
+  'event-incidents': 'Incident Center',
+  'event-revenue-intel': 'Revenue & Pricing Intelligence',
+  'event-global-search': 'Global Search & Command',
+  'event-permission-engine': 'Permission Engine Enterprise',
+  'event-compliance': 'Audit & Compliance Center',
+  'event-intelligence': 'Disk Intelligence',
+  'event-readiness': 'Event Readiness & Go-Live',
+  'event-forecast': 'Analytics & Forecast Center',
+  'event-day-command': 'Event Day Command Center',
+  'event-producer-executive': 'Producer Executive Dashboard',
+  'event-platform-noc': 'Platform Operations / NOC',
   'event-dashboard': 'Dashboard do Evento',
   'event-tickets': 'Consultar Ingresso',
   'event-courtesy': 'Cortesias',
@@ -349,7 +363,8 @@ export default function App() {
   }
 
   const eventContextPages = new Set<PageKey>([
-    'event-command-center', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
+    'event-command-center', 'event-inventory', 'event-customer-360', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
+    'event-live-ops', 'event-incidents', 'event-revenue-intel', 'event-global-search', 'event-permission-engine', 'event-compliance', 'event-intelligence', 'event-readiness', 'event-forecast', 'event-day-command', 'event-producer-executive', 'event-platform-noc',
     'event-pixel', 'event-utm', 'event-ga4', 'event-traffic', 'event-meta-ads', 'event-remarketing',
     'event-users', 'event-audit', 'event-permissions'
   ])
@@ -812,16 +827,7 @@ export default function App() {
         {(page === 'finance-spread-simulator' || (page as string) === 'simulador-spread') && (
           <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
-        {['finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-refunds', 'devolucoes-estornos'].includes(page) && (
-          <FinanceDisputesHubPage
-            producerId={scopedProducerId ?? undefined}
-            eventId={selectedEvent?.id}
-            notify={notify}
-            onBack={() => setPage('finance-dashboard')}
-            onNavigate={navigate}
-          />
-        )}
-        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-reports', 'relatorios-financeiros', 'finance-pdv', 'fin-pdv', 'pdv'].includes(page) && (
+        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos', 'fin-reports', 'relatorios-financeiros', 'finance-pdv', 'fin-pdv', 'pdv'].includes(page) && (
           <AdvancedTaxesRouter
             activeModule={page}
             producerId={scopedProducerId ?? undefined}

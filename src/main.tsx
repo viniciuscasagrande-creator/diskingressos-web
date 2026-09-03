@@ -6,7 +6,6 @@ import './styles.css'
 import './styles/limitless-enterprise.css'
 import './styles/responsive-enterprise-360.css'
 import './styles/sidebar-enterprise.css'
-import './styles/disk-estornos.css'
 
 document.documentElement.dataset.uiFramework = 'limitless'
 document.documentElement.dataset.marketingIntegrationsRelease = '25.7-marketing-integrations-360-2026-09-02'
@@ -55,3 +54,15 @@ try {
   `
 }
 
+
+document.documentElement.setAttribute('data-recovery-engine-release', '25.8.3-auto-recovery-engine-2026-09-03')
+
+document.documentElement.dataset.eventOsRelease = '26.1-event-cockpit-activity-stream-2026-09-03'
+
+document.documentElement.dataset.inventoryEngineRelease = '26.2-inventory-engine-2026-09-03'
+
+document.documentElement.dataset.customer360Release = '26.3-customer-360-crm-2026-09-03'
+
+document.documentElement.dataset.qaRelease = '26.3.1-playwright-qa-automation-2026-09-03'
+
+document.documentElement.dataset.eventOsCompleteRelease = '26.x-complete-event-os-2026-09-03'

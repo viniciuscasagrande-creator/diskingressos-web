@@ -2,7 +2,7 @@ import type { ComponentType } from 'react'
 import {
   Activity, ArrowLeft, BarChart3, CalendarDays, ChevronRight, CircleGauge, FileBarChart2,
   Link2, MapPin, Megaphone, MousePointerClick, ScanLine, ScrollText, Settings2, ShieldCheck,
-  Tags, Ticket, UserCog, Users, WalletCards, Waves
+  Tags, Ticket, UserCog, Users, WalletCards, Waves, Boxes, ContactRound, Siren, Brain, Search, Gauge, Network, ClipboardCheck, Shield, LineChart, RadioTower
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import type { PageKey } from './ModuleSidebar'
@@ -11,7 +11,19 @@ type Item={key:PageKey;label:string;icon:ComponentType<{size?:number}>}
 type Props={event:EventItem;page:PageKey;onNavigate:(page:PageKey)=>void;onBack:()=>void;canAdmin?:boolean}
 
 const eventItems:Item[]=[
-  {key:'event-command-center',label:'Centro de Comando',icon:Activity},
+  {key:'event-command-center',label:'Cockpit 360',icon:Activity},
+  {key:'event-inventory',label:'Inventário',icon:Boxes},
+  {key:'event-customer-360',label:'Customer 360',icon:ContactRound},
+  {key:'event-live-ops',label:'Live Operations',icon:RadioTower},
+  {key:'event-incidents',label:'Incident Center',icon:Siren},
+  {key:'event-revenue-intel',label:'Revenue Intelligence',icon:LineChart},
+  {key:'event-global-search',label:'Busca Global',icon:Search},
+  {key:'event-intelligence',label:'Disk Intelligence',icon:Brain},
+  {key:'event-readiness',label:'Readiness / Go-Live',icon:ClipboardCheck},
+  {key:'event-forecast',label:'Forecast Center',icon:Gauge},
+  {key:'event-day-command',label:'Event Day Command',icon:Activity},
+  {key:'event-producer-executive',label:'Executive Dashboard',icon:BarChart3},
+  {key:'event-platform-noc',label:'Platform NOC',icon:Network},
   {key:'event-dashboard',label:'Dashboard',icon:CircleGauge},
   {key:'event-tickets',label:'Consultar Ingresso',icon:Ticket},
   {key:'event-courtesy',label:'Cortesias',icon:Tags},
@@ -30,6 +42,8 @@ const adminItems:Item[]=[
   {key:'event-users',label:'Usuários',icon:Users},
   {key:'event-audit',label:'Logs',icon:ScrollText},
   {key:'event-permissions',label:'Permissões',icon:ShieldCheck},
+  {key:'event-permission-engine',label:'Permission Engine',icon:Shield},
+  {key:'event-compliance',label:'Audit & Compliance',icon:ScrollText},
 ]
 
 export default function EventContextSidebar({event,page,onNavigate,onBack,canAdmin=true}:Props){

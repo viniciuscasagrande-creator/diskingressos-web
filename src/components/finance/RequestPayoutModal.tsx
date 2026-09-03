@@ -21,12 +21,12 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
   events,
   onRequestPayout,
 }) => {
+  if (!isOpen) return null;
+
   const [selectedEventId, setSelectedEventId] = useState<number>(events[0]?.id || 1);
   const [amount, setAmount] = useState<string>(String(availableBalance.toFixed(2)));
   const [bankAccount, setBankAccount] = useState<string>('Banco Itaú (Ag 0142 • CC 89410-2) - CNPJ Produtora');
   const [pixKey, setPixKey] = useState<string>('financeiro@produtora.com.br');
-
-  if (!isOpen) return null;
 
   const formatCurrency = (val: number) => {
     return val.toLocaleString('pt-BR', {

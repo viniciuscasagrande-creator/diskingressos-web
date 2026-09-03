@@ -1397,3 +1397,85 @@ model RefundReversalPlan {
   createdAt DateTime @default(now())
   @@index([refundRequestId, status])
 }
+
+// ===== Fase 26.0 — DiskIngressos Event OS =====
+model EventOperationalSnapshot {
+  id                Int      @id @default(autoincrement())
+  producerId        Int
+  eventId           Int
+  healthScore       Int      @default(0)
+  revenueCents      Int      @default(0)
+  paidOrders        Int      @default(0)
+  tickets           Int      @default(0)
+  checkins          Int      @default(0)
+  inventoryCapacity Int     @default(0)
+  inventorySold     Int      @default(0)
+  openRecoveries    Int      @default(0)
+  recoverableCents  Int      @default(0)
+  payloadJson       String?
+  capturedAt        DateTime @default(now())
+  @@index([producerId,eventId,capturedAt])
+}
+model EventIncident {
+  id          Int       @id @default(autoincrement())
+  producerId  Int
+  eventId     Int
+  code        String
+  category    String
+  severity    String    @default("warning")
+  status      String    @default("open")
+  title       String
+  description String?
+  source      String    @default("system")
+  openedBy    String?
+  resolvedBy  String?
+  openedAt    DateTime  @default(now())
+  resolvedAt  DateTime?
+  @@index([producerId,eventId,status,severity])
+}
+model EventReadinessCheck {
+  id         Int      @id @default(autoincrement())
+  producerId Int
+  eventId    Int
+  checkKey   String
+  label      String
+  status     String   @default("pending")
+  detail     String?
+  source     String   @default("system")
+  checkedAt  DateTime @default(now())
+  @@unique([producerId,eventId,checkKey])
+}
+
+// ===== Fase 26.2 — Inventory Engine =====
+model InventoryHold {
+  id         Int       @id @default(autoincrement())
+  producerId Int
+  eventId    Int
+  lotId      Int?
+  code       String    @unique
+  quantity   Int
+  status     String    @default("active")
+  reason     String
+  source     String    @default("manual")
+  expiresAt  DateTime
+  createdBy  String?
+  releasedAt DateTime?
+  createdAt  DateTime  @default(now())
+  @@index([producerId,eventId,status,expiresAt])
+  @@index([lotId,status])
+}
+model InventorySnapshot {
+  id                   Int       @id @default(autoincrement())
+  producerId           Int
+  eventId              Int
+  lotId                Int?
+  capacity             Int
+  sold                 Int
+  held                 Int       @default(0)
+  available            Int
+  salesVelocityPerHour Float     @default(0)
+  forecastSoldOutAt    DateTime?
+  capturedAt           DateTime  @default(now())
+  @@index([producerId,eventId,capturedAt])
+  @@index([lotId,capturedAt])
+}
