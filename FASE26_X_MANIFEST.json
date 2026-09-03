@@ -24,9 +24,9 @@
   "tenantBoundary": "producerId + eventId",
   "qa": {
     "lucide": "passed",
-    "zipIntegrity": "passed",
-    "fullTypecheck": "passed",
+    "zipIntegrity": "pending",
+    "fullTypecheck": "not-run-node_modules-absent",
     "typecheck": "passed",
-    "deployPlaywright": "passed"
+    "deployPlaywright": "prepared-not-executed-runner-missing-in-received-node_modules"
   }
 }

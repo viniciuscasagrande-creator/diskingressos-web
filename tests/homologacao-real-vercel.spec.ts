@@ -51,7 +51,7 @@ test.describe('Fase 26.x.1 — Homologação real do deploy', () => {
     await expect(page.locator('.login-page')).toHaveCount(0, { timeout: 15_000 })
     rows.push({ step: 'Autenticação produtor', status: 'PASS', details: `Login concluído; URL ${page.url()}` })
 
-    await page.goto('/eventos', { waitUntil: 'networkidle' })
+    await page.goto('/eventos', { waitUntil: 'domcontentloaded' })
     await expect(page.getByTestId('events-page')).toBeVisible({ timeout: 15_000 })
     const cards = page.getByTestId('event-card')
     await expect(cards.first()).toBeVisible({ timeout: 15_000 }).catch(() => null)

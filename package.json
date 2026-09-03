@@ -43,7 +43,7 @@
     "railway:start": "npm run db:generate:prod && npm run start:api",
     "cloud:scope:check": "node scripts/repair-cloud-scope.mjs",
     "cloud:bootstrap:demo": "tsx prisma/bootstrap-cloud-demo.ts",
-    "build:vercel": "npm run db:generate:prod && npm run build && npm run verify:finance-release",
+    "build:vercel": "npm run verify:protected-modules && npm run db:generate:prod && npm run build && npm run verify:finance-release",
     "db:deploy:vercel": "npm run db:generate:prod && prisma db push --schema prisma/schema.postgresql.prisma",
     "verify:finance-release": "node scripts/verify-finance-release.mjs",
     "test:e2e": "playwright test",
@@ -54,7 +54,9 @@
     "test:e2e:visual": "playwright test tests/visual",
     "test:e2e:update": "playwright test tests/visual --update-snapshots",
     "test:e2e:report": "playwright show-report playwright-report",
-    "test:e2e:deploy": "playwright test tests/homologacao-real-vercel.spec.ts --project=chromium"
+    "test:e2e:deploy": "playwright test tests/homologacao-real-vercel.spec.ts --project=chromium",
+    "verify:protected-modules": "node scripts/verify-core-protected-modules.mjs",
+    "test:e2e:protected": "playwright test tests/regression/protected-estornos.spec.ts --project=chromium"
   },
   "dependencies": {
     "@prisma/client": "latest",
