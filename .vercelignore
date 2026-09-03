@@ -5,3 +5,12 @@ prisma/dev.db
 .env.*.local
 *.log
 coverage
+vendor
+tests
+playwright-report
+test-results
+blob-report
+*.zip
+*.pdf
+*.bat
+
