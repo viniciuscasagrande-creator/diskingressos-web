@@ -3,11 +3,12 @@ import { login } from '../fixtures/auth'
 
 test('@protected Estornos permanece módulo independente e abre a Central Enterprise', async ({ page }) => {
   await login(page)
-  const estornos = page.getByTestId('nav-finance-refunds').or(page.getByRole('button', { name: /estornos/i })).first()
+  const estornos = page.getByTestId('nav-finance-refunds')
   await expect(estornos).toBeVisible()
+  await expect(estornos).toHaveAttribute('data-protected-module', 'estornos')
   await estornos.click()
   await expect(page).toHaveURL(/\/app\/finance-refunds(?:$|[?#])/)
-  await expect(page.getByRole('heading', { name: /Central de Estornos|Centro de Controle/i }).first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Central de Estornos, Reembolsos & Chargebacks/i })).toBeVisible()
 })
 
 test('@protected rota direta de Estornos não pode desaparecer', async ({ page }) => {

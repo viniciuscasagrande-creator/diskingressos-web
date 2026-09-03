@@ -31,10 +31,11 @@ for (const mod of manifest.modules) {
   else console.log(`PASS ${mod.label}: App.tsx preservado`)
 }
 
-if (!sidebar.includes('data-core-protection-release="26.x.2-core-stability-gate-2026-09-03"')) {
-  console.error('FAIL release marker do Core Stability Gate ausente')
+const releaseMarker = `data-core-protection-release="${manifest.release}"`
+if (!sidebar.includes(releaseMarker)) {
+  console.error(`FAIL release marker do Core Stability Gate ausente (${manifest.release})`)
   failed = true
-} else console.log('PASS release marker Core Stability Gate')
+} else console.log(`PASS release marker Core Stability Gate (${manifest.release})`)
 
 if (failed) {
   console.error('\nBLOQUEIO DE BUILD: um módulo CORE_PROTECTED_MODULE foi removido ou alterado fora do contrato aprovado.')

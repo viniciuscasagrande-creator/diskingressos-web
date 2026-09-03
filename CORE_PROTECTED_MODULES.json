@@ -1,11 +1,51 @@
 {
-  "release": "26.x.2-core-stability-gate-2026-09-03",
+  "release": "26.x.3-deploy-guard-2026-09-03",
   "policy": "Módulos aprovados não podem ser removidos, absorvidos, ocultados ou ter sua rota canônica alterada sem autorização explícita do responsável pelo produto.",
   "modules": [
-    {"id":"eventos","label":"Eventos","pageKey":"events","route":"/app/events","sidebar":"src/components/ModuleSidebar.tsx"},
-    {"id":"financeiro","label":"Financeiro","pageKey":"finance-dashboard","route":"/app/finance-dashboard","sidebar":"src/components/ModuleSidebar.tsx"},
-    {"id":"estornos","label":"Estornos","pageKey":"finance-refunds","route":"/app/finance-refunds","sidebar":"src/components/ModuleSidebar.tsx"},
-    {"id":"marketing","label":"Marketing","pageKey":"marketing-dashboard","route":"/app/marketing-dashboard","sidebar":"src/components/ModuleSidebar.tsx"},
-    {"id":"sac","label":"Atendimento / SAC","pageKey":"sac-hub","route":"/app/sac-hub","sidebar":"src/components/ModuleSidebar.tsx"}
-  ]
+    {
+      "id": "eventos",
+      "label": "Eventos",
+      "pageKey": "events",
+      "route": "/app/events",
+      "sidebar": "src/components/ModuleSidebar.tsx"
+    },
+    {
+      "id": "financeiro",
+      "label": "Financeiro",
+      "pageKey": "finance-dashboard",
+      "route": "/app/finance-dashboard",
+      "sidebar": "src/components/ModuleSidebar.tsx"
+    },
+    {
+      "id": "estornos",
+      "label": "Estornos",
+      "pageKey": "finance-refunds",
+      "route": "/app/finance-refunds",
+      "sidebar": "src/components/ModuleSidebar.tsx"
+    },
+    {
+      "id": "marketing",
+      "label": "Marketing",
+      "pageKey": "marketing-dashboard",
+      "route": "/app/marketing-dashboard",
+      "sidebar": "src/components/ModuleSidebar.tsx"
+    },
+    {
+      "id": "sac",
+      "label": "Atendimento / SAC",
+      "pageKey": "sac-hub",
+      "route": "/app/sac-hub",
+      "sidebar": "src/components/ModuleSidebar.tsx"
+    }
+  ],
+  "postDeployGuard": {
+    "required": true,
+    "baseUrlEnv": "PLAYWRIGHT_BASE_URL",
+    "commands": [
+      "npm run deploy:guard:http",
+      "npm run deploy:guard:e2e",
+      "npm run homologate:vercel"
+    ],
+    "policy": "Nenhum deploy é considerado homologado enquanto o Deploy Guard pós-Vercel não validar os módulos core protegidos."
+  }
 }

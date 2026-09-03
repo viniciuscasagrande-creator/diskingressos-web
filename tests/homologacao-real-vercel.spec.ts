@@ -53,9 +53,8 @@ test.describe('Fase 26.x.1 — Homologação real do deploy', () => {
 
     await page.goto('/eventos', { waitUntil: 'domcontentloaded' })
     await expect(page.getByTestId('events-page')).toBeVisible({ timeout: 15_000 })
-    const cards = page.getByTestId('event-card')
-    await expect(cards.first()).toBeVisible({ timeout: 15_000 }).catch(() => null)
     const centralShot = await shot(page, '02-central-eventos.png')
+    const cards = page.getByTestId('event-card')
     const count = await cards.count()
     rows.push({ step: 'Central de Eventos', status: count > 0 ? 'PASS' : 'WARNING', details: `${count} card(s) encontrados`, screenshot: centralShot })
 

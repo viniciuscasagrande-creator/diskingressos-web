@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { login } from '../fixtures/auth'
 
 const modules = [
-  { id: 'eventos', testId: 'nav-events', path: '/eventos', route: /\/(?:app\/)?(?:events|eventos)(?:$|[?#])/, visible: /Eventos|Todos os Eventos/i },
+  { id: 'eventos', testId: 'nav-events', path: '/app/events', route: /\/app\/events(?:$|[?#])/, visible: /Eventos|Todos os Eventos/i },
   { id: 'financeiro', testId: 'nav-finance-dashboard', path: '/app/finance-dashboard', route: /\/app\/finance-dashboard(?:$|[?#])/, visible: /Financeiro/i },
   { id: 'estornos', testId: 'nav-finance-refunds', path: '/app/finance-refunds', route: /\/app\/finance-refunds(?:$|[?#])/, visible: /Central de Estornos|Estornos/i },
   { id: 'marketing', testId: 'nav-marketing-dashboard', path: '/app/marketing-dashboard', route: /\/app\/marketing-dashboard(?:$|[?#])/, visible: /Marketing/i },
@@ -18,12 +18,9 @@ test.describe('@protected core modules', () => {
         // As entradas ficam em seções recolhíveis. A rota direta testa o contrato sem depender do estado da seção.
         await page.goto(mod.path)
       } else {
-        const nav = page.getByTestId(mod.testId).or(page.getByRole('button', { name: mod.visible })).first()
+        const nav = page.getByTestId(mod.testId)
         await expect(nav).toBeVisible()
-        const hasAttr = await nav.getAttribute('data-protected-module').catch(() => null)
-        if (hasAttr) {
-          expect(hasAttr).toBe(mod.id)
-        }
+        await expect(nav).toHaveAttribute('data-protected-module', mod.id)
         await nav.click()
       }
       await expect(page).toHaveURL(mod.route)

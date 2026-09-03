@@ -58,7 +58,11 @@
     "verify:protected-modules": "node scripts/verify-core-protected-modules.mjs",
     "test:e2e:protected": "playwright test tests/regression/protected-estornos.spec.ts --project=chromium",
     "test:e2e:protected-core": "playwright test tests/regression/protected-core-modules.spec.ts --project=chromium",
-    "quality:gate": "npm run verify:protected-modules && npm run check:lucide && npm run typecheck"
+    "quality:gate": "npm run verify:protected-modules && npm run check:lucide && npm run typecheck",
+    "deploy:guard:http": "node scripts/check-live-deploy.mjs",
+    "deploy:guard:e2e": "playwright test tests/deploy-guard/post-vercel.spec.ts --project=chromium",
+    "deploy:guard": "npm run deploy:guard:http && npm run deploy:guard:e2e",
+    "homologate:vercel": "npm run quality:gate && npm run deploy:guard"
   },
   "dependencies": {
     "@prisma/client": "latest",

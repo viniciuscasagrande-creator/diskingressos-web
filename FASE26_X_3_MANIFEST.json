@@ -1,0 +1,14 @@
+{
+  "release": "26.x.3-deploy-guard-2026-09-03",
+  "phase": "26.x.3",
+  "name": "Deploy Guard + Homologação Automática Pós-Vercel",
+  "base": "26.x.2-core-stability-gate-2026-09-03",
+  "protectedModules": ["Eventos", "Financeiro", "Estornos", "Marketing", "Atendimento / SAC"],
+  "centralEventosVisualChanged": false,
+  "deployGuard": {
+    "http": "npm run deploy:guard:http",
+    "e2e": "npm run deploy:guard:e2e",
+    "full": "npm run homologate:vercel"
+  },
+  "ci": ".github/workflows/post-vercel-homologation.yml"
+}
