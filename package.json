@@ -62,7 +62,20 @@
     "deploy:guard:http": "node scripts/check-live-deploy.mjs",
     "deploy:guard:e2e": "playwright test tests/deploy-guard/post-vercel.spec.ts --project=chromium",
     "deploy:guard": "npm run deploy:guard:http && npm run deploy:guard:e2e",
-    "homologate:vercel": "npm run quality:gate && npm run deploy:guard"
+    "homologate:vercel": "npm run quality:gate && npm run deploy:guard",
+    "test:pw:master": "playwright test tests/master tests/quality tests/responsive --project=chromium",
+    "test:pw:critical": "playwright test tests/master/estornos-critical.spec.ts tests/master/central-eventos-contract.spec.ts tests/regression/protected-core-modules.spec.ts --project=chromium",
+    "test:pw:event-os": "playwright test tests/master/event-os-complete.spec.ts --project=chromium",
+    "test:pw:runtime": "playwright test tests/quality/runtime-errors.spec.ts --project=chromium",
+    "test:pw:responsive": "playwright test tests/responsive/core-responsive.spec.ts --project=chromium",
+    "test:pw:all": "playwright test",
+    "test:pw:prod": "playwright test tests/master tests/quality tests/responsive tests/deploy-guard --project=chromium",
+    "test:pw:control-center": "node scripts/run-playwright-control-center.mjs",
+    "test:pw:report": "node scripts/generate-playwright-executive-report.mjs",
+    "test:pw:release-gate": "npm run quality:gate && npm run test:pw:control-center",
+    "test:pw:certificate": "node scripts/certify-playwright-release.mjs",
+    "test:pw:certify": "node scripts/run-playwright-release-certification.mjs",
+    "release:certify": "npm run quality:gate && npm run deploy:guard:http && npm run test:pw:certify"
   },
   "dependencies": {
     "@prisma/client": "latest",

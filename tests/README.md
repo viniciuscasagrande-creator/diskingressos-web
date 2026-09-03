@@ -49,3 +49,45 @@ npm run test:e2e:update
 ```
 
 Depois disso, `npm run test:e2e:visual` detecta regressões de pixels. Não atualize snapshots automaticamente em uma correção de UI; primeiro confira o diff.
+
+## Fase 26.x.3.1 — suíte mestre
+
+Comandos recomendados no VS Code/Windows:
+
+```powershell
+npm run test:pw:critical
+npm run test:pw:event-os
+npm run test:pw:runtime
+npm run test:pw:responsive
+npm run test:pw:master
+```
+
+Homologação sequencial local:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run-playwright-homologacao.ps1
+```
+
+Homologação do Vercel:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run-playwright-homologacao.ps1 -BaseUrl "https://safesaff.vercel.app"
+```
+
+`test:pw:critical` deve ser obrigatório antes de aprovar um deploy. Ele inclui a proteção permanente do módulo Estornos e o contrato da Central de Eventos.
+
+## Fase 26.x.3.3 — Certificação de Release
+
+Para transformar os resultados Playwright em um gate formal de liberação:
+
+```bash
+npm run test:pw:certify
+```
+
+Para executar também quality gate e smoke do deploy:
+
+```bash
+npm run release:certify
+```
+
+O certificado é salvo em `test-results/release-certificate/`. Um status `REJECTED` ou `BLOCKED` significa que o deploy não deve ser homologado.

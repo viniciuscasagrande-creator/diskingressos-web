@@ -1,0 +1,50 @@
+{
+  "release": "26.x.3.3-playwright-release-certification-2026-09-03",
+  "baseUrl": "https://safesaff.vercel.app",
+  "requireZeroFailures": true,
+  "requireNonEmptySuite": true,
+  "requiredGroups": [
+    {
+      "id": "estornos",
+      "label": "Estornos permanente",
+      "match": "estornos",
+      "minimumPassed": 3,
+      "blocking": true
+    },
+    {
+      "id": "central-eventos",
+      "label": "Central de Eventos aprovada",
+      "match": "central de eventos",
+      "minimumPassed": 1,
+      "blocking": true
+    },
+    {
+      "id": "protected-core",
+      "label": "Módulos Core protegidos",
+      "match": "protected core modules|mantém contrato de navegação|modulos core protegidos",
+      "minimumPassed": 5,
+      "blocking": true
+    },
+    {
+      "id": "event-os",
+      "label": "Event OS 26.x",
+      "match": "event os|cockpit|invent[aá]rio|customer 360|live operations|incident|revenue|readiness|event day|platform noc",
+      "minimumPassed": 1,
+      "blocking": true
+    },
+    {
+      "id": "runtime",
+      "label": "Runtime sem erro crítico",
+      "match": "sem erro js crítico|resposta 5xx|runtime",
+      "minimumPassed": 1,
+      "blocking": true
+    },
+    {
+      "id": "responsive",
+      "label": "Responsividade Core",
+      "match": "responsive|overflow horizontal",
+      "minimumPassed": 1,
+      "blocking": false
+    }
+  ]
+}
