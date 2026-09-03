@@ -1,0 +1,25 @@
+import { useEffect,useMemo,useState } from 'react'
+import { Activity,AlertTriangle,BarChart3,Brain,CheckCircle2,Clock3,Gauge,RefreshCw,Search,ShieldCheck,Siren,Users,WalletCards,Zap } from 'lucide-react'
+import type { EventItem } from '../data/events'
+import type { PageKey } from '../components/ModuleSidebar'
+import { getEventOSAdvanced,type EventOSAdvanced } from '../services/api'
+import './event-os-advanced.css'
+
+type Props={event:EventItem;page:PageKey;notify:(m:string)=>void}
+const meta:Record<string,{phase:string;title:string;desc:string}>={
+ 'event-live-ops':{phase:'26.4',title:'Live Event Operations',desc:'Check-in, portões, capacidade e ritmo de entrada em tempo real.'},
+ 'event-incidents':{phase:'26.5',title:'Incident Center',desc:'Incidentes, severidade, SLA e coordenação operacional.'},
+ 'event-revenue-intel':{phase:'26.6',title:'Revenue & Pricing Intelligence',desc:'Velocidade de vendas, forecast e inteligência de preço.'},
+ 'event-global-search':{phase:'26.7',title:'Global Search & Command',desc:'Busca operacional unificada por pedido, ingresso, cliente e transação.'},
+ 'event-permission-engine':{phase:'26.8',title:'Permission Engine Enterprise',desc:'RBAC granular por produtora, evento, módulo e ação.'},
+ 'event-compliance':{phase:'26.9',title:'Audit & Compliance Center',desc:'Trilha de auditoria, segregação e evidências de conformidade.'},
+ 'event-intelligence':{phase:'26.10',title:'Disk Intelligence',desc:'Sinais automáticos, anomalias e recomendações operacionais.'},
+ 'event-readiness':{phase:'26.11',title:'Event Readiness & Go-Live',desc:'Checklist de prontidão antes da abertura e do dia do evento.'},
+ 'event-forecast':{phase:'26.12',title:'Analytics & Forecast Center',desc:'Forecast de receita, público, vendas e tendências.'},
+ 'event-day-command':{phase:'26.13',title:'Event Day Command Center',desc:'Modo de guerra para vendas, acesso, lotação e incidentes.'},
+ 'event-producer-executive':{phase:'26.14',title:'Producer Executive Dashboard',desc:'Visão executiva consolidada da produtora com escopo protegido.'},
+ 'event-platform-noc':{phase:'26.15',title:'Platform Operations / NOC',desc:'Saúde técnica, integrações, filas, webhooks e operação da plataforma.'},
+}
+const money=(c:number)=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(c/100)
+export default function EventOSAdvancedPage({event,page}:Props){const m=meta[page]||meta['event-live-ops'];const[data,setData]=useState<EventOSAdvanced|null>(null);const[q,setQ]=useState('');const[loading,setLoading]=useState(false);const load=async()=>{setLoading(true);try{setData(await getEventOSAdvanced(event.id))}finally{setLoading(false)}};useEffect(()=>{load()},[event.id]);const activities=useMemo(()=>data?.activity.filter(x=>`${x.title} ${x.detail}`.toLowerCase().includes(q.toLowerCase()))||[],[data,q]);return <div className="eosx"><header><div><span>EVENT OS · FASE {m.phase}</span><h2>{m.title}</h2><p>{m.desc}</p></div><button onClick={load}><RefreshCw size={15}/>{loading?'Atualizando':'Atualizar'}</button></header><div className="eosx-scope"><ShieldCheck size={15}/><b>{event.code} · {event.title}</b><span>producerId + eventId protegidos no backend</span></div>{data&&<><section className="eosx-kpis"><K icon={WalletCards} l="Receita" v={money(data.kpis.revenueCents)} s={`${data.kpis.paidOrders} pedidos pagos`}/><K icon={Users} l="Acessos" v={String(data.kpis.checkins)} s={`${data.kpis.checkins1h} na última hora`}/><K icon={Gauge} l="Ocupação" v={`${data.kpis.occupancy.toFixed(1)}%`} s={`${data.kpis.available} disponíveis`}/><K icon={Siren} l="Incidentes" v={String(data.kpis.openIncidents)} s={`${data.kpis.criticalIncidents} críticos`}/><K icon={CheckCircle2} l="Readiness" v={`${data.kpis.readinessScore}%`} s="Go-live operacional"/></section><section className="eosx-grid"><div className="eosx-panel"><div className="eosx-title"><div><h3>Inteligência operacional</h3><p>Sinais compartilhados pelas fases 26.4–26.15.</p></div><Brain size={21}/></div>{data.signals.map(s=><div className={`eosx-signal ${s.severity}`} key={s.code}><AlertTriangle size={17}/><span><b>{s.title}</b><small>{s.message}</small></span></div>)}</div><div className="eosx-panel"><div className="eosx-title"><div><h3>Prontidão</h3><p>Controles antes do go-live.</p></div><Zap size={21}/></div>{data.readiness.map(r=><div className="eosx-row" key={r.key}><span>{r.label}</span><b>{r.status}</b></div>)}</div></section><section className="eosx-panel"><div className="eosx-toolbar"><div><h3>Activity & Audit Stream</h3><p>Eventos operacionais recentes.</p></div><label><Search size={15}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Buscar atividade..."/></label></div>{activities.map(a=><div className="eosx-activity" key={a.id}><Activity size={16}/><span><b>{a.title}</b><small>{a.detail}</small></span><time><Clock3 size={13}/>{new Date(a.at).toLocaleString('pt-BR')}</time></div>)}</section></>}</div>}
+function K({icon:Icon,l,v,s}:{icon:any;l:string;v:string;s:string}){return <div><Icon size={19}/><span>{l}</span><strong>{v}</strong><small>{s}</small></div>}

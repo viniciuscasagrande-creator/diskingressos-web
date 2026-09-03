@@ -13,21 +13,21 @@ export default function EventCard({event, onEdit, onLots, onDashboard, onOpen}: 
   const occupancyNum = parseFloat(event.occupancy)
   const high = occupancyNum > 50
   return (
-    <article className="event-card event-card-clickable" role="button" tabIndex={0} onClick={()=>onOpen(event)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onOpen(event)}}}>
+    <article className="event-card event-card-clickable" data-testid="event-card" data-event-id={event.id} data-event-code={event.code} data-producer-id={event.producerId} role="button" tabIndex={0} onClick={()=>onOpen(event)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onOpen(event)}}}>
       <div className={`event-cover ${event.cover}`}>
         {event.badge && <span className="cover-badge">{event.badge}</span>}
         <div className="cover-overlay">
           <strong>{event.title.split('•')[0].trim()}</strong>
           <span>{event.badge || event.category || event.city}</span>
         </div>
-        <span className="event-id">{event.code}</span>
+        <span className="event-id" data-testid="event-code">{event.code}</span>
       </div>
       <div className="event-body">
         <div>
-          <div className="title-with-status"><h3>{event.title}</h3><span className={`status-pill ${event.status}`}>{event.status}</span></div>
+          <div className="title-with-status"><h3 data-testid="event-title">{event.title}</h3><span className={`status-pill ${event.status}`}>{event.status}</span></div>
           <p className="venue"><MapPin size={17}/>{event.venue}</p>
         </div>
-        <div className="metrics event-card-metrics">
+        <div className="metrics event-card-metrics" data-testid="event-metrics">
           <Metric label="Total (R$)" value={event.total} accent="green" />
           <Metric label="Vendas" value={String(event.sales)} accent="blue" />
           <Metric label="Disponível" value={String(event.available)} accent="cyan" />

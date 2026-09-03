@@ -100,6 +100,18 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-command-center': 'Event Cockpit 360',
   'event-inventory': 'Inventory Engine',
   'event-customer-360': 'Customer 360',
+  'event-live-ops': 'Live Event Operations',
+  'event-incidents': 'Incident Center',
+  'event-revenue-intel': 'Revenue & Pricing Intelligence',
+  'event-global-search': 'Global Search & Command',
+  'event-permission-engine': 'Permission Engine Enterprise',
+  'event-compliance': 'Audit & Compliance Center',
+  'event-intelligence': 'Disk Intelligence',
+  'event-readiness': 'Event Readiness & Go-Live',
+  'event-forecast': 'Analytics & Forecast Center',
+  'event-day-command': 'Event Day Command Center',
+  'event-producer-executive': 'Producer Executive Dashboard',
+  'event-platform-noc': 'Platform Operations / NOC',
   'event-dashboard': 'Dashboard do Evento',
   'event-tickets': 'Consultar Ingresso',
   'event-courtesy': 'Cortesias',
@@ -352,6 +364,7 @@ export default function App() {
 
   const eventContextPages = new Set<PageKey>([
     'event-command-center', 'event-inventory', 'event-customer-360', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
+    'event-live-ops', 'event-incidents', 'event-revenue-intel', 'event-global-search', 'event-permission-engine', 'event-compliance', 'event-intelligence', 'event-readiness', 'event-forecast', 'event-day-command', 'event-producer-executive', 'event-platform-noc',
     'event-pixel', 'event-utm', 'event-ga4', 'event-traffic', 'event-meta-ads', 'event-remarketing',
     'event-users', 'event-audit', 'event-permissions'
   ])

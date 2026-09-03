@@ -192,3 +192,30 @@ eventsRouter.get('/:id/customer-360',async(req:AuthRequest,res)=>{
   const buyers=customers.filter(c=>c.orders>0);const grossCents=buyers.reduce((n,c)=>n+c.grossCents,0);const identified=customers.filter(c=>c.document||c.email||c.phone).length
   res.json({release:CUSTOMER_360_RELEASE,generatedAt:new Date().toISOString(),event,summary:{customers:customers.length,buyers:buyers.length,participants:participants.length,repeatCustomers:customers.filter(c=>c.orders>1).length,vipCustomers:customers.filter(c=>c.segment==='VIP'||c.segment==='Alto valor').length,atRiskCustomers:customers.filter(c=>c.segment==='Em risco').length,grossCents,averageTicketCents:buyers.length?Math.round(grossCents/buyers.length):0,identifiedRate:customers.length?Math.round(identified/customers.length*1000)/10:0},segments:Array.from(segmentMap.values()).sort((a,b)=>b.grossCents-a.grossCents),customers})
 })
+
+// ===== Fase 26.x completa — 26.4 Live Ops até 26.15 Platform NOC =====
+eventsRouter.get('/:id/event-os/advanced',async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id); const event=await prisma.event.findUnique({where:{id}})
+  if(!event)return res.status(404).json({message:'Evento não encontrado.'})
+  if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'})
+  const producerId=event.producerId, now=new Date(), h1=new Date(now.getTime()-3600000)
+  const [orders,lots,checkins,checkins1h,incidents,readiness,audits]=await Promise.all([
+    prisma.order.findMany({where:{eventId:id,producerId},select:{status:true,grossCents:true,createdAt:true},orderBy:{createdAt:'desc'},take:80}),
+    prisma.lot.findMany({where:{eventId:id,producerId},select:{capacity:true,sold:true,status:true}}),
+    prisma.checkIn.count({where:{eventId:id,producerId,status:'presente'}}),
+    prisma.checkIn.count({where:{eventId:id,producerId,status:'presente',checkedAt:{gte:h1}}}),
+    prisma.eventIncident.findMany({where:{eventId:id,producerId},orderBy:{openedAt:'desc'},take:20}),
+    prisma.eventReadinessCheck.findMany({where:{eventId:id,producerId},orderBy:{checkedAt:'desc'}}),
+    prisma.auditLog.findMany({where:{producerId},orderBy:{createdAt:'desc'},take:20}),
+  ])
+  const paid=orders.filter(x=>x.status==='pago'), revenueCents=paid.reduce((n,x)=>n+x.grossCents,0), capacity=lots.reduce((n,x)=>n+x.capacity,0), sold=lots.reduce((n,x)=>n+x.sold,0), available=Math.max(0,capacity-sold), occupancy=capacity?sold/capacity*100:0
+  const open=incidents.filter(x=>x.status!=='resolved'&&x.status!=='closed'), critical=open.filter(x=>x.severity==='critical')
+  const ok=readiness.filter(x=>x.status==='ok'||x.status==='ready'||x.status==='passed').length, readinessScore=readiness.length?Math.round(ok/readiness.length*100):0
+  const signals:any[]=[]
+  if(occupancy>=90)signals.push({code:'capacity-high',severity:'warning',title:'Capacidade próxima do limite',message:`Ocupação em ${occupancy.toFixed(1)}%.`})
+  if(critical.length)signals.push({code:'critical-incidents',severity:'critical',title:'Incidente crítico aberto',message:`${critical.length} incidente(s) crítico(s) exigem atuação.`})
+  if(readinessScore<80)signals.push({code:'readiness-low',severity:'warning',title:'Go-live requer atenção',message:`Readiness atual em ${readinessScore}%.`})
+  if(!signals.length)signals.push({code:'healthy',severity:'info',title:'Operação estável',message:'Nenhum sinal crítico detectado no contexto atual.'})
+  const activity=[...incidents.slice(0,10).map(x=>({id:`incident-${x.id}`,title:x.title,detail:`${x.category} · ${x.status} · ${x.severity}`,at:x.openedAt.toISOString(),type:'incident'})),...audits.slice(0,10).map(x=>({id:`audit-${x.id}`,title:`${x.action} · ${x.resource}`,detail:x.details||x.status,at:x.createdAt.toISOString(),type:'audit'}))].sort((a,b)=>b.at.localeCompare(a.at)).slice(0,20)
+  res.json({release:'26.x-complete-event-os-2026-09-03',generatedAt:now.toISOString(),event:{id:event.id,code:event.code,title:event.title,producerId},kpis:{revenueCents,paidOrders:paid.length,checkins,checkins1h,capacity,sold,available,occupancy,openIncidents:open.length,criticalIncidents:critical.length,readinessScore},signals,readiness:readiness.map(x=>({key:x.checkKey,label:x.label,status:x.status,detail:x.detail})),activity})
+})
