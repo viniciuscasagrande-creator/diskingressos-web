@@ -1,0 +1,68 @@
+{
+  "release": "26.x.3.7-playwright-self-healing-validation-2026-09-03",
+  "description": "Orquestra retestes focados após reparo e só libera certificação completa se a área afetada passar.",
+  "alwaysRunAfterTargeted": [
+    "npm run verify:protected-modules",
+    "npm run check:lucide"
+  ],
+  "modules": {
+    "estornos": {
+      "tests": [
+        "tests/master/estornos-critical.spec.ts",
+        "tests/regression/protected-estornos.spec.ts",
+        "tests/regression/protected-core-modules.spec.ts"
+      ]
+    },
+    "central-eventos": {
+      "tests": [
+        "tests/master/central-eventos-contract.spec.ts",
+        "tests/events/central-eventos.spec.ts",
+        "tests/visual/core-visual-contract.spec.ts"
+      ]
+    },
+    "event-os": {
+      "tests": [
+        "tests/master/event-os-complete.spec.ts",
+        "tests/event-os/cockpit.spec.ts",
+        "tests/security/tenant-isolation.spec.ts"
+      ]
+    },
+    "marketing": {
+      "tests": [
+        "tests/master/core-navigation.spec.ts",
+        "tests/regression/protected-core-modules.spec.ts",
+        "tests/quality/runtime-errors.spec.ts"
+      ]
+    },
+    "sac": {
+      "tests": [
+        "tests/master/core-navigation.spec.ts",
+        "tests/regression/protected-core-modules.spec.ts",
+        "tests/quality/runtime-errors.spec.ts"
+      ]
+    },
+    "runtime": {
+      "tests": [
+        "tests/quality/runtime-errors.spec.ts"
+      ]
+    },
+    "visual": {
+      "tests": [
+        "tests/visual/core-visual-contract.spec.ts",
+        "tests/master/central-eventos-contract.spec.ts"
+      ]
+    },
+    "auth-tenant": {
+      "tests": [
+        "tests/security/tenant-isolation.spec.ts",
+        "tests/smoke/login.spec.ts"
+      ]
+    },
+    "unclassified": {
+      "tests": [
+        "tests/master",
+        "tests/quality/runtime-errors.spec.ts"
+      ]
+    }
+  }
+}

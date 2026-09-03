@@ -3,7 +3,7 @@ import path from 'node:path'
 
 const diagFile = process.env.PLAYWRIGHT_DIAGNOSTICS_JSON || 'test-results/diagnostics/DIAGNOSTICO_PLAYWRIGHT.json'
 const outDir = process.env.PLAYWRIGHT_REPAIR_DIR || 'test-results/repair-advisor'
-const release = '26.x.3.6-playwright-repair-advisor-2026-09-03'
+const release = '26.x.3.7-playwright-self-healing-validation-2026-09-03'
 fs.mkdirSync(outDir, { recursive: true })
 
 const readJson = f => { try { return JSON.parse(fs.readFileSync(f,'utf8')) } catch { return null } }

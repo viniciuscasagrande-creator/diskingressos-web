@@ -81,7 +81,11 @@
     "test:pw:diagnose": "node scripts/diagnose-playwright-failures.mjs",
     "test:pw:control-center:diagnose": "node scripts/run-playwright-control-center.mjs; node scripts/diagnose-playwright-failures.mjs",
     "test:pw:repair-advisor": "node scripts/generate-playwright-repair-advisor.mjs",
-    "test:pw:diagnose-and-advise": "node scripts/diagnose-playwright-failures.mjs; node scripts/generate-playwright-repair-advisor.mjs"
+    "test:pw:diagnose-and-advise": "node scripts/diagnose-playwright-failures.mjs; node scripts/generate-playwright-repair-advisor.mjs",
+    "test:pw:self-healing": "node scripts/run-playwright-self-healing-validation.mjs",
+    "test:pw:self-healing:targeted": "node scripts/run-playwright-self-healing-validation.mjs --targeted-only",
+    "test:pw:self-healing:dry-run": "node scripts/run-playwright-self-healing-validation.mjs --dry-run",
+    "test:pw:repair-cycle": "npm run test:pw:diagnose-and-advise && npm run test:pw:self-healing"
   },
   "dependencies": {
     "@prisma/client": "latest",
