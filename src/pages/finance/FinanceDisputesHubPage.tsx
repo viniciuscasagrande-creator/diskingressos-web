@@ -463,7 +463,7 @@ export default function FinanceDisputesHubPage({
             <div className="estcc-kpi orange">
               <div className="label">Montante estornado</div>
               <div className="value">{formatMoney(completedAmountCents)}</div>
-              <div className="sub">{executedCount} operações concluídas</div>
+              <div className="sub">Montante Devolvido · {executedCount} operações concluídas</div>
             </div>
 
             {/* KPI 3 — Solicitações pendentes */}
