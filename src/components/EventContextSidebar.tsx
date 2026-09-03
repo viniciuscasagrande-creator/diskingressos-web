@@ -2,7 +2,7 @@ import type { ComponentType } from 'react'
 import {
   Activity, ArrowLeft, BarChart3, CalendarDays, ChevronRight, CircleGauge, FileBarChart2,
   Link2, MapPin, Megaphone, MousePointerClick, ScanLine, ScrollText, Settings2, ShieldCheck,
-  Tags, Ticket, UserCog, Users, WalletCards, Waves
+  Tags, Ticket, UserCog, Users, WalletCards, Waves, Boxes, ContactRound
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import type { PageKey } from './ModuleSidebar'
@@ -11,7 +11,9 @@ type Item={key:PageKey;label:string;icon:ComponentType<{size?:number}>}
 type Props={event:EventItem;page:PageKey;onNavigate:(page:PageKey)=>void;onBack:()=>void;canAdmin?:boolean}
 
 const eventItems:Item[]=[
-  {key:'event-command-center',label:'Centro de Comando',icon:Activity},
+  {key:'event-command-center',label:'Cockpit 360',icon:Activity},
+  {key:'event-inventory',label:'Inventário',icon:Boxes},
+  {key:'event-customer-360',label:'Customer 360',icon:ContactRound},
   {key:'event-dashboard',label:'Dashboard',icon:CircleGauge},
   {key:'event-tickets',label:'Consultar Ingresso',icon:Ticket},
   {key:'event-courtesy',label:'Cortesias',icon:Tags},

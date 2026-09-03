@@ -97,7 +97,9 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'lots': 'Configurar Lotes',
   'participants': 'Participantes',
   'facial': 'Status Faciais',
-  'event-command-center': 'Centro de Comando do Evento',
+  'event-command-center': 'Event Cockpit 360',
+  'event-inventory': 'Inventory Engine',
+  'event-customer-360': 'Customer 360',
   'event-dashboard': 'Dashboard do Evento',
   'event-tickets': 'Consultar Ingresso',
   'event-courtesy': 'Cortesias',
@@ -349,7 +351,7 @@ export default function App() {
   }
 
   const eventContextPages = new Set<PageKey>([
-    'event-command-center', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
+    'event-command-center', 'event-inventory', 'event-customer-360', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
     'event-pixel', 'event-utm', 'event-ga4', 'event-traffic', 'event-meta-ads', 'event-remarketing',
     'event-users', 'event-audit', 'event-permissions'
   ])
@@ -812,16 +814,7 @@ export default function App() {
         {(page === 'finance-spread-simulator' || (page as string) === 'simulador-spread') && (
           <SimuladorSpreadModule onBack={() => setPage('finance-dashboard')} notify={notify} />
         )}
-        {['finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-refunds', 'devolucoes-estornos'].includes(page) && (
-          <FinanceDisputesHubPage
-            producerId={scopedProducerId ?? undefined}
-            eventId={selectedEvent?.id}
-            notify={notify}
-            onBack={() => setPage('finance-dashboard')}
-            onNavigate={navigate}
-          />
-        )}
-        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-reports', 'relatorios-financeiros', 'finance-pdv', 'fin-pdv', 'pdv'].includes(page) && (
+        {['finance-advanced', 'finance-spread', 'finance-split', 'finance-rates', 'finance-gateways', 'finance-operators', 'finance-methods', 'finance-custom', 'finance-negotiations', 'finance-reports', 'finance-intelligence', 'finance-refunds', 'finance-disputes', 'finance-chargebacks', 'fin-advanced', 'fin-spread', 'simulador-spread', 'fin-split', 'split-financeiro', 'fin-bank-accounts', 'contas-bancarias', 'fin-methods', 'metodos-pagamento', 'fin-custom', 'pagamentos-customizados', 'fin-negotiations', 'negociacoes-financeiras', 'fin-operators', 'operadoras-cartao', 'fin-gateways', 'gateway-pagamentos', 'fin-inteligencia', 'inteligencia-financeira', 'fin-refunds', 'devolucoes-estornos', 'fin-reports', 'relatorios-financeiros', 'finance-pdv', 'fin-pdv', 'pdv'].includes(page) && (
           <AdvancedTaxesRouter
             activeModule={page}
             producerId={scopedProducerId ?? undefined}

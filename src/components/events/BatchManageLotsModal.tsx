@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, Layers3, Plus, Trash2 } from 'lucide-react';
 import type { EventItem, TicketBatch } from '../../types/event';
 
@@ -15,19 +15,13 @@ export const BatchManageLotsModal: React.FC<BatchManageLotsModalProps> = ({
   onClose,
   onSaveBatches,
 }) => {
-  const [batches, setBatches] = useState<TicketBatch[]>(event?.batches || []);
+  if (!isOpen || !event) return null;
+
+  const [batches, setBatches] = useState<TicketBatch[]>(event.batches || []);
   const [newBatchName, setNewBatchName] = useState('');
   const [newBatchCategory, setNewBatchCategory] = useState<'Pista' | 'VIP' | 'Camarote' | 'Plateia'>('Pista');
   const [newBatchPrice, setNewBatchPrice] = useState('100.00');
   const [newBatchQty, setNewBatchQty] = useState('500');
-
-  useEffect(() => {
-    if (event?.batches) {
-      setBatches(event.batches);
-    }
-  }, [event]);
-
-  if (!isOpen || !event) return null;
 
   const handleAddBatch = (e: React.FormEvent) => {
     e.preventDefault();

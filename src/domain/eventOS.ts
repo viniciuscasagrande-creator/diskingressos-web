@@ -1,4 +1,4 @@
-export const EVENT_OS_RELEASE = '26.0-event-os-master-foundation-2026-09-03'
+export const EVENT_OS_RELEASE = '26.3-customer-360-crm-2026-09-03'
 
 export type EventOSArea =
   | 'command' | 'sales' | 'inventory' | 'customers' | 'finance' | 'marketing'
