@@ -1,5 +1,5 @@
 {
-  "release": "26.x.3.3-playwright-release-certification-2026-09-03",
+  "release": "26.x.3.9-playwright-contract-registry-drift-detection-2026-09-03",
   "base": "26.x-complete-event-os-2026-09-03",
   "phases": [
     "26.0",
@@ -24,11 +24,13 @@
   "tenantBoundary": "producerId + eventId",
   "qa": {
     "lucide": "passed",
-    "zipIntegrity": "pending",
+    "zipIntegrity": "passed",
     "fullTypecheck": "not-run-node_modules-absent",
     "typecheck": "passed",
-    "deployPlaywright": "prepared-not-executed-runner-missing-in-received-node_modules"
+    "deployPlaywright": "prepared-not-executed-runner-missing-in-received-node_modules",
+    "contractRegistry": "passed-6-of-6",
+    "contractDrift": "prepared"
   },
-  "phase": "26.x.3.3",
-  "title": "Playwright Release Certification Gate"
+  "phase": "26.x.3.9",
+  "title": "Playwright Contract Registry + Drift Detection"
 }

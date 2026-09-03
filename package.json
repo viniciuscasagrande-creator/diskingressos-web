@@ -75,7 +75,7 @@
     "test:pw:release-gate": "npm run quality:gate && npm run test:pw:control-center",
     "test:pw:certificate": "node scripts/certify-playwright-release.mjs",
     "test:pw:certify": "node scripts/run-playwright-release-certification.mjs",
-    "release:certify": "npm run quality:gate && npm run visual:baseline:verify && npm run deploy:guard:http && npm run test:pw:certify",
+    "release:certify": "npm run quality:gate && npm run test:pw:contract-registry && npm run visual:baseline:verify && npm run deploy:guard:http && npm run test:pw:certify",
     "visual:baseline:verify": "node scripts/verify-visual-baseline.mjs",
     "test:pw:visual-lock": "npm run visual:baseline:verify && playwright test tests/visual/core-visual-contract.spec.ts --project=chromium",
     "test:pw:diagnose": "node scripts/diagnose-playwright-failures.mjs",
@@ -90,7 +90,10 @@
     "test:pw:smart-regression": "node scripts/run-playwright-smart-regression.mjs",
     "test:pw:smart-regression:targeted": "node scripts/run-playwright-smart-regression.mjs --targeted-only",
     "test:pw:smart-regression:dry-run": "node scripts/run-playwright-smart-regression.mjs --dry-run",
-    "test:pw:gemini-cycle": "npm run test:pw:smart-regression && npm run test:pw:diagnose-and-advise"
+    "test:pw:gemini-cycle": "npm run test:pw:contract-registry && npm run test:pw:contract-drift && npm run test:pw:smart-regression && npm run test:pw:diagnose-and-advise",
+    "test:pw:contract-registry": "node scripts/verify-playwright-contract-registry.mjs",
+    "test:pw:contract-drift": "node scripts/detect-playwright-contract-drift.mjs",
+    "test:pw:contract": "npm run test:pw:contract-registry && playwright test tests/contracts/protected-contract-registry.spec.ts --project=chromium"
   },
   "dependencies": {
     "@prisma/client": "latest",

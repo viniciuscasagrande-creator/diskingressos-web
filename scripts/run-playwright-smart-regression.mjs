@@ -8,13 +8,13 @@ const project = process.env.PLAYWRIGHT_PROJECT || 'chromium'
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx'
 
-const run = (cmd, args, force = false) => {
+const run = (cmd, args) => {
   console.log(`[smart-regression] ${cmd} ${args.join(' ')}`)
-  if (dryRun && !force) return { status: 0 }
+  if (dryRun) return { status: 0 }
   return spawnSync(cmd, args, { stdio: 'inherit', env: process.env, shell: false })
 }
 
-const analyze = run(process.execPath, ['scripts/analyze-playwright-change-impact.mjs'], true)
+const analyze = run(process.execPath, ['scripts/analyze-playwright-change-impact.mjs'])
 if ((analyze.status ?? 1) !== 0) process.exit(analyze.status ?? 1)
 const impact = JSON.parse(fs.readFileSync(reportPath, 'utf8'))
 

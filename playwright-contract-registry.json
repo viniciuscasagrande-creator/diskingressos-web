@@ -1,0 +1,129 @@
+{
+  "release": "26.x.3.9-playwright-contract-registry-drift-detection-2026-09-03",
+  "description": "Registro imutável de contratos críticos do PDT. Detecta remoção ou drift de menu, PageKey, Event OS, rotas e endpoints antes da homologação.",
+  "rules": {
+    "neverAutoUpdate": true,
+    "protectedModules": [
+      "eventos",
+      "financeiro",
+      "estornos",
+      "marketing",
+      "sac"
+    ],
+    "protectedVisual": [
+      "central-eventos-approved"
+    ],
+    "tenantBoundary": [
+      "producerId",
+      "eventId"
+    ]
+  },
+  "contracts": [
+    {
+      "id": "estornos-independent-module",
+      "severity": "BLOCKER",
+      "files": {
+        "src/components/ModuleSidebar.tsx": [
+          "{ key: 'finance-refunds', label: 'Estornos'",
+          "'finance-refunds', 'finance-disputes', 'finance-chargebacks'"
+        ],
+        "src/App.tsx": [
+          "finance-refunds"
+        ],
+        "src/pages/finance/FinanceDisputesHubPage.tsx": [],
+        "src/pages/finance/FinanceRefundsPage.tsx": []
+      }
+    },
+    {
+      "id": "central-eventos-approved-contract",
+      "severity": "BLOCKER",
+      "files": {
+        "src/pages/EventsPage.tsx": [
+          "Comparar",
+          "Horizontal",
+          "Ativos",
+          "Inativos",
+          "Todos",
+          "data-testid=\"events-page\""
+        ],
+        "src/components/EventCard.tsx": [
+          "data-testid=\"event-card\""
+        ],
+        "tests/visual-baselines/central-eventos-approved.png": []
+      }
+    },
+    {
+      "id": "event-os-navigation",
+      "severity": "BLOCKER",
+      "files": {
+        "src/components/EventContextSidebar.tsx": [
+          "Cockpit 360",
+          "Inventário",
+          "Customer 360",
+          "Live Operations",
+          "Incident Center",
+          "Revenue Intelligence",
+          "Busca Global",
+          "Disk Intelligence",
+          "Readiness / Go-Live",
+          "Forecast Center",
+          "Event Day Command",
+          "Executive Dashboard",
+          "Platform NOC"
+        ],
+        "src/components/ModuleSidebar.tsx": [
+          "event-command-center",
+          "event-inventory",
+          "event-customer-360",
+          "event-live-ops",
+          "event-incidents",
+          "event-revenue-intel",
+          "event-global-search",
+          "event-intelligence",
+          "event-readiness",
+          "event-forecast",
+          "event-day-command",
+          "event-producer-executive",
+          "event-platform-noc"
+        ]
+      }
+    },
+    {
+      "id": "event-os-api-contract",
+      "severity": "BLOCKER",
+      "files": {
+        "server/src/routes/events.ts": [
+          "activity-stream",
+          "inventory-engine",
+          "inventory-holds",
+          "customer-360",
+          "event-os/advanced",
+          "Acesso negado a evento de outra produtora."
+        ]
+      }
+    },
+    {
+      "id": "tenant-isolation",
+      "severity": "BLOCKER",
+      "files": {
+        "server/src/tenant.ts": [
+          "producerId"
+        ],
+        "server/src/routes/events.ts": [
+          "event.producerId!==req.auth!.producerId"
+        ]
+      }
+    },
+    {
+      "id": "playwright-release-safety",
+      "severity": "BLOCKER",
+      "files": {
+        "tests/master/estornos-critical.spec.ts": [],
+        "tests/master/central-eventos-contract.spec.ts": [],
+        "tests/security/tenant-isolation.spec.ts": [],
+        "scripts/certify-playwright-release.mjs": [],
+        "scripts/verify-visual-baseline.mjs": []
+      }
+    }
+  ]
+}
