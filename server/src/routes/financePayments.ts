@@ -57,7 +57,7 @@ financePaymentsRouter.post('/gateways', async (req: AuthRequest, res) => {
     await prisma.paymentGatewayConfig.updateMany({ where: { producerId }, data: { isPrimary: false } })
   }
 
-  const row = await prisma.paymentGatewayConfig.create({ data: { ...p, producerId } })
+  const row = await prisma.paymentGatewayConfig.create({ data: { ...p, producerId } as any })
   await audit(req, req.auth!.id, producerId, 'create', 'payment-gateway', String(row.id), { provider: p.provider, environment: p.environment })
   res.status(201).json(row)
 })
@@ -132,7 +132,7 @@ financePaymentsRouter.post('/acquirers', async (req: AuthRequest, res) => {
   const producerId = writeProducerId(req, p.producerId)
   if (!producerId) return res.status(400).json({ message: 'Produtora obrigatória.' })
 
-  const row = await prisma.cardAcquirer.create({ data: { ...p, producerId } })
+  const row = await prisma.cardAcquirer.create({ data: { ...p, producerId } as any })
   await audit(req, req.auth!.id, producerId, 'create', 'card-acquirer', String(row.id), p)
   res.status(201).json(row)
 })
@@ -181,7 +181,7 @@ financePaymentsRouter.post('/methods', async (req: AuthRequest, res) => {
   const producerId = writeProducerId(req, p.producerId)
   if (!producerId) return res.status(400).json({ message: 'Produtora obrigatória.' })
 
-  const row = await prisma.paymentMethodRule.create({ data: { ...p, producerId } })
+  const row = await prisma.paymentMethodRule.create({ data: { ...p, producerId } as any })
   await audit(req, req.auth!.id, producerId, 'create', 'payment-method-rule', String(row.id), p)
   res.status(201).json(row)
 })
@@ -243,7 +243,7 @@ financePaymentsRouter.post('/refunds', async (req: AuthRequest, res) => {
       producerId,
       code: `EST-${Date.now()}`,
       requestedBy: String(req.auth!.id)
-    }
+    } as any
   })
   await audit(req, req.auth!.id, producerId, 'create', 'refund-request', String(row.id), p)
   res.status(201).json(row)

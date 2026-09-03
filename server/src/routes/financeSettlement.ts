@@ -103,7 +103,7 @@ financeSettlementRouter.post('/splits', async (req: AuthRequest, res) => {
       ...p,
       code,
       producerId
-    }
+    } as any
   })
   await audit(req, req.auth!.id, producerId, 'create', 'finance-split-rule', String(row.id), { title: p.title, recipientName: p.recipientName, splitType: p.splitType })
   res.status(201).json(row)
@@ -455,7 +455,7 @@ financeSettlementRouter.post('/settlements', async (req: AuthRequest, res) => {
       code,
       differenceCents,
       producerId
-    }
+    } as any
   })
 
   await audit(req, req.auth!.id, producerId, 'create', 'finance-settlement', String(row.id), { code, expectedCents: p.expectedCents, gatewayName: p.gatewayName })

@@ -10,6 +10,7 @@ import type { Participant } from '../data/participants'
 import TrackingIntegrationsManager from '../components/TrackingIntegrationsManager'
 import UtmConversionsCenter from '../components/UtmConversionsCenter'
 import RecoveryCenterPage from './RecoveryCenterPage'
+import EventCommandCenterPage from './EventCommandCenterPage'
 import { getAutomationSummary, getRecoveryDashboard, type AutomationSummary, type RecoveryDashboard } from '../services/api'
 import type { PageKey } from '../components/ModuleSidebar'
 
@@ -17,6 +18,7 @@ type Props={event:EventItem;participants:Participant[];page:PageKey;onNavigate:(
 
 export default function EventContextPage({event,participants,page,onNavigate,notify}:Props){
  const people=participants.filter(p=>p.eventId===event.id)
+ if(page==='event-command-center') return <EventCommandCenterPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-dashboard') return <Dashboard event={event} participants={participants} onNavigate={onNavigate}/>
  if(page==='event-tickets') return <Tickets event={event} people={people} notify={notify}/>
  if(page==='event-courtesy') return <Courtesy event={event} people={people} notify={notify}/>

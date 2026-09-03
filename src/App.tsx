@@ -97,6 +97,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'lots': 'Configurar Lotes',
   'participants': 'Participantes',
   'facial': 'Status Faciais',
+  'event-command-center': 'Centro de Comando do Evento',
   'event-dashboard': 'Dashboard do Evento',
   'event-tickets': 'Consultar Ingresso',
   'event-courtesy': 'Cortesias',
@@ -348,7 +349,7 @@ export default function App() {
   }
 
   const eventContextPages = new Set<PageKey>([
-    'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
+    'event-command-center', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
     'event-pixel', 'event-utm', 'event-ga4', 'event-traffic', 'event-meta-ads', 'event-remarketing',
     'event-users', 'event-audit', 'event-permissions'
   ])
@@ -459,8 +460,8 @@ export default function App() {
   const openLots = (e: EventItem) => { setSelectedEvent(e); setPage('lots') }
   const openEventContext = (e: EventItem) => {
     setSelectedEvent(e)
-    setPage('event-dashboard')
-    window.history.pushState({ page: 'event-dashboard' }, '', `/eventos/${e.code}/dashboard`)
+    setPage('event-command-center')
+    window.history.pushState({ page: 'event-command-center' }, '', `/eventos/${e.code}/command-center`)
     window.scrollTo({ top: 0 })
   }
   const openDashboard = openEventContext

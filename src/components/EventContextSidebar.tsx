@@ -11,6 +11,7 @@ type Item={key:PageKey;label:string;icon:ComponentType<{size?:number}>}
 type Props={event:EventItem;page:PageKey;onNavigate:(page:PageKey)=>void;onBack:()=>void;canAdmin?:boolean}
 
 const eventItems:Item[]=[
+  {key:'event-command-center',label:'Centro de Comando',icon:Activity},
   {key:'event-dashboard',label:'Dashboard',icon:CircleGauge},
   {key:'event-tickets',label:'Consultar Ingresso',icon:Ticket},
   {key:'event-courtesy',label:'Cortesias',icon:Tags},

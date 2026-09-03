@@ -15,7 +15,7 @@ lotsRouter.get('/', async (req:AuthRequest,res)=>{
 lotsRouter.post('/', async (req:AuthRequest,res)=>{
   const p=input.parse(req.body), producerId=writeProducerId(req,p.producerId); if(!producerId)return res.status(400).json({message:'Produtora obrigatória.'})
   const event=await prisma.event.findUnique({where:{id:p.eventId}}); if(!event||event.producerId!==producerId)return res.status(403).json({message:'Evento fora do escopo da produtora.'})
-  const created=await prisma.lot.create({data:{...p,startsAt:p.startsAt?new Date(p.startsAt):undefined,endsAt:p.endsAt?new Date(p.endsAt):undefined,producerId}})
+  const created=await prisma.lot.create({data:{...p,startsAt:p.startsAt?new Date(p.startsAt):undefined,endsAt:p.endsAt?new Date(p.endsAt):undefined,producerId} as any})
   await audit(req,req.auth!.id,producerId,'create','lot',String(created.id)); res.status(201).json(created)
 })
 lotsRouter.put('/:id', async (req:AuthRequest,res)=>{

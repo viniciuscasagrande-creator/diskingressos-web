@@ -28,19 +28,11 @@ interface OperationRow {
   amountCents: number;
 }
 
-export const GenericFinanceSubView: React.FC<GenericFinanceSubViewProps> = ({
+const GenericFinanceTableView: React.FC<GenericFinanceSubViewProps> = ({
   moduleKey,
   onBack,
   notify,
 }) => {
-  if (moduleKey === 'simulador-spread') {
-    return <SimuladorSpreadModule onBack={onBack} notify={notify} />;
-  }
-
-  if (moduleKey === 'conciliacao-bancaria') {
-    return <FinanceReconciliationPage onBack={onBack} notify={notify} />;
-  }
-
   const meta = financeModulesList.find((m) => m.key === moduleKey) || financeModulesList[0];
   const [rows, setRows] = useState<OperationRow[]>([
     { id: '1', code: '#LAN-89102', description: 'Registro de Operação Automatizada', reference: 'Festival Curitiba 2026', date: '28/08/2026 15:30', status: 'liquidado', type: 'entrada', amountCents: 1450000 },
@@ -387,3 +379,20 @@ export const GenericFinanceSubView: React.FC<GenericFinanceSubViewProps> = ({
     </div>
   );
 };
+
+export const GenericFinanceSubView: React.FC<GenericFinanceSubViewProps> = ({
+  moduleKey,
+  onBack,
+  notify,
+}) => {
+  if (moduleKey === 'simulador-spread') {
+    return <SimuladorSpreadModule onBack={onBack} notify={notify} />;
+  }
+
+  if (moduleKey === 'conciliacao-bancaria') {
+    return <FinanceReconciliationPage onBack={onBack} notify={notify} />;
+  }
+
+  return <GenericFinanceTableView moduleKey={moduleKey} onBack={onBack} notify={notify} />;
+};
+

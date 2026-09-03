@@ -96,7 +96,7 @@ financeDisputesRouter.post('/refunds', requireAuth, async (req: AuthRequest, res
       producerId,
       status: 'solicitado',
       requestedBy: String(req.auth!.id)
-    }
+    } as any
   })
 
   await audit(req, req.auth!.id, producerId, 'create', 'refund-request', String(row.id), { code, amountCents: p.amountCents, orderCode: p.orderCode, kind: p.kind })

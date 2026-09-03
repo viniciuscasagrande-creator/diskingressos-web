@@ -21,8 +21,6 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
   selectedProducer,
   producers,
 }) => {
-  if (!isOpen) return null;
-
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [category, setCategory] = useState<EventCategory>('Show & Música');
@@ -32,7 +30,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
   const [address, setAddress] = useState('Rua João Gava, 920 - Abranches');
   const [date, setDate] = useState('2027-08-20T20:00');
   const [totalCapacity, setTotalCapacity] = useState('1500');
-  const [producerId, setProducerId] = useState(selectedProducer.id);
+  const [producerId, setProducerId] = useState(selectedProducer?.id || 1);
   const [coverType, setCoverType] = useState<'nature' | 'maiden' | 'conference' | 'festival' | 'standup' | 'electronic'>('festival');
   const [enableFacial, setEnableFacial] = useState(true);
   const [badge, setBadge] = useState('NOVO EVENTO');
@@ -40,6 +38,8 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
   // Initial Batch
   const [initialBatchPrice, setInitialBatchPrice] = useState('120.00');
   const [initialBatchQty, setInitialBatchQty] = useState('500');
+
+  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

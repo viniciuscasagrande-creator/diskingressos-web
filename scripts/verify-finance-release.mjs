@@ -23,6 +23,7 @@ function collect(dir) {
   if (!fs.existsSync(dir)) return []
   const out=[]
   for (const entry of fs.readdirSync(dir,{withFileTypes:true})) {
+    if (['node_modules', '.git', '.vercel'].includes(entry.name)) continue
     const full=path.join(dir,entry.name)
     if(entry.isDirectory()) out.push(...collect(full))
     else if (/\.(js|css|html|tsx|ts|sql|md)$/.test(entry.name)) out.push(full)

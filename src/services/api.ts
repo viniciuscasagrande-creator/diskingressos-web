@@ -526,3 +526,15 @@ export const getRefundEnterpriseOverview=(producerId?:number,eventId?:number)=>r
 export const evaluateRefund=(id:number)=>request<RefundEligibility>(`/finance/disputes/refunds/${id}/eligibility`,{method:'POST'})
 export const enterpriseApproveRefund=(id:number,notes?:string)=>request<{complete:boolean;currentLevel:number;requiredApprovals:number}>(`/finance/disputes/refunds/${id}/enterprise-approve`,{method:'POST',body:JSON.stringify({notes})})
 export const createRefundReversalPlan=(id:number)=>request<any>(`/finance/disputes/refunds/${id}/reversal-plan`,{method:'POST'})
+
+// Fase 26.0 — Event OS / Centro de Comando
+export type EventCommandCenter={
+  release:string
+  event:{id:number;code:string;title:string;producerId:number;producerName:string;status:string}
+  kpis:{revenueCents:number;paidOrders:number;tickets:number;participants:number;checkins:number;inventoryCapacity:number;inventorySold:number;inventoryAvailable:number;occupancy:number;openRecoveries:number;recoverableCents:number;recoveredCents:number;activeCampaigns:number}
+  health:{score:number}
+  readiness:Array<{key:string;label:string;status:'ok'|'warning'|'critical';detail:string}>
+  alerts:Array<{code:string;severity:'warning'|'critical';title:string;message:string}>
+}
+export const getEventCommandCenter=(eventId:number)=>request<EventCommandCenter>(`/events/${eventId}/command-center`)
+

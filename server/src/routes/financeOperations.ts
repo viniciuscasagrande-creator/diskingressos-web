@@ -138,7 +138,7 @@ financeOperationsRouter.post('/cash/bank-accounts', async (req: AuthRequest, res
   const p=z.object({bankCode:z.string().min(2),bankName:z.string().min(2),agency:z.string().min(1),accountNumber:z.string().min(2),accountType:z.string().default('corrente'),holderName:z.string().min(2),holderDocument:z.string().min(3),pixType:z.string().optional(),pixKey:z.string().optional(),isPrimary:z.boolean().optional(),producerId:z.number().int().positive().optional()}).parse(req.body)
   const producerId=writeProducerId(req,p.producerId); if(!producerId)return res.status(400).json({message:'Produtora obrigatória.'})
   const count=await prisma.financeBankAccount.count({where:{producerId}}), makePrimary=p.isPrimary===true||count===0
-  const row=await prisma.$transaction(async tx=>{if(makePrimary)await tx.financeBankAccount.updateMany({where:{producerId},data:{isPrimary:false}});return tx.financeBankAccount.create({data:{...p,producerId,isPrimary:makePrimary,verifiedAt:new Date()}})})
+  const row=await prisma.$transaction(async tx=>{if(makePrimary)await tx.financeBankAccount.updateMany({where:{producerId},data:{isPrimary:false}});return tx.financeBankAccount.create({data:{...p,producerId,isPrimary:makePrimary,verifiedAt:new Date()} as any})})
   await audit(req,req.auth!.id,producerId,'create','finance-bank-account',String(row.id),`${row.bankName} ${row.agency}/${row.accountNumber}`); res.status(201).json(row)
 })
 
