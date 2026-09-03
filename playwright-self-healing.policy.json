@@ -1,5 +1,5 @@
 {
-  "release": "26.x.3.7-playwright-self-healing-validation-2026-09-03",
+  "release": "26.x.3.8-playwright-change-impact-smart-regression-2026-09-03",
   "description": "Orquestra retestes focados após reparo e só libera certificação completa se a área afetada passar.",
   "alwaysRunAfterTargeted": [
     "npm run verify:protected-modules",

@@ -1,0 +1,21 @@
+{
+  "phase": "26.x.3.8",
+  "release": "26.x.3.8-playwright-change-impact-smart-regression-2026-09-03",
+  "name": "Playwright Change Impact + Smart Regression",
+  "base": "26.x.3.7-playwright-self-healing-validation-2026-09-03",
+  "features": [
+    "Analise automatica de arquivos alterados via git diff ou PLAYWRIGHT_CHANGED_FILES",
+    "Mapeamento arquivo -> modulo -> testes Playwright",
+    "Regressao focada antes da certificacao completa",
+    "Escalonamento automatico para release:certify em impacto critico",
+    "Protecao permanente de Estornos, Central de Eventos e multi-tenant",
+    "Modo dry-run para Gemini/VS Code"
+  ],
+  "validation": {
+    "protectedModules": "PASS",
+    "lucide": "PASS",
+    "changeImpactSynthetic": "PASS",
+    "smartRegressionDryRun": "PASS",
+    "typecheck": "NOT_EXECUTED_NO_NODE_MODULES"
+  }
+}

@@ -85,7 +85,12 @@
     "test:pw:self-healing": "node scripts/run-playwright-self-healing-validation.mjs",
     "test:pw:self-healing:targeted": "node scripts/run-playwright-self-healing-validation.mjs --targeted-only",
     "test:pw:self-healing:dry-run": "node scripts/run-playwright-self-healing-validation.mjs --dry-run",
-    "test:pw:repair-cycle": "npm run test:pw:diagnose-and-advise && npm run test:pw:self-healing"
+    "test:pw:repair-cycle": "npm run test:pw:diagnose-and-advise && npm run test:pw:self-healing",
+    "test:pw:impact": "node scripts/analyze-playwright-change-impact.mjs",
+    "test:pw:smart-regression": "node scripts/run-playwright-smart-regression.mjs",
+    "test:pw:smart-regression:targeted": "node scripts/run-playwright-smart-regression.mjs --targeted-only",
+    "test:pw:smart-regression:dry-run": "node scripts/run-playwright-smart-regression.mjs --dry-run",
+    "test:pw:gemini-cycle": "npm run test:pw:smart-regression && npm run test:pw:diagnose-and-advise"
   },
   "dependencies": {
     "@prisma/client": "latest",

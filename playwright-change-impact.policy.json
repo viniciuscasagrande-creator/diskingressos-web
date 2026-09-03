@@ -1,0 +1,56 @@
+{
+  "release": "26.x.3.8-playwright-change-impact-smart-regression-2026-09-03",
+  "description": "Mapeia arquivos alterados para módulos e executa regressão Playwright focada antes da certificação completa.",
+  "alwaysRun": [
+    "tests/regression/protected-core-modules.spec.ts",
+    "tests/quality/runtime-errors.spec.ts"
+  ],
+  "criticalFiles": [
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/components/ModuleSidebar.tsx",
+    "src/components/EventContextSidebar.tsx",
+    "server/src/tenant.ts",
+    "server/src/auth.ts",
+    "playwright.config.ts",
+    "CORE_PROTECTED_MODULES.json"
+  ],
+  "modules": {
+    "estornos": {
+      "patterns": ["src/pages/FinanceDisputesHubPage.tsx", "src/pages/FinanceRefundsPage.tsx", "server/src/**/refund*", "server/src/**/chargeback*", "server/src/**/dispute*"],
+      "tests": ["tests/master/estornos-critical.spec.ts", "tests/regression/protected-estornos.spec.ts"]
+    },
+    "central-eventos": {
+      "patterns": ["src/pages/EventsPage.tsx", "src/components/EventCard.tsx", "src/**/event-card*", "src/**/events-page*"],
+      "tests": ["tests/master/central-eventos-contract.spec.ts", "tests/events/central-eventos.spec.ts", "tests/visual/core-visual-contract.spec.ts"]
+    },
+    "event-os": {
+      "patterns": ["src/pages/Event*Page.tsx", "src/components/EventContextSidebar.tsx", "server/src/routes/events.ts", "server/src/services/**", "db/migrations/026_*", "prisma/schema*.prisma"],
+      "tests": ["tests/master/event-os-complete.spec.ts", "tests/event-os/cockpit.spec.ts", "tests/security/tenant-isolation.spec.ts"]
+    },
+    "financeiro": {
+      "patterns": ["src/pages/Finance*", "src/**/finance*", "server/src/**/finance*", "server/src/**/ledger*", "server/src/**/split*"],
+      "tests": ["tests/master/core-navigation.spec.ts", "tests/regression/protected-core-modules.spec.ts"]
+    },
+    "marketing": {
+      "patterns": ["src/pages/Marketing*", "src/**/marketing*", "server/src/**/marketing*", "server/src/**/campaign*", "server/src/**/attribution*", "server/src/**/remarketing*"],
+      "tests": ["tests/master/core-navigation.spec.ts", "tests/regression/protected-core-modules.spec.ts", "tests/quality/runtime-errors.spec.ts"]
+    },
+    "sac": {
+      "patterns": ["src/pages/Sac*", "src/pages/SAC*", "src/**/sac*", "server/src/**/sac*", "server/src/**/incident*"],
+      "tests": ["tests/master/core-navigation.spec.ts", "tests/regression/protected-core-modules.spec.ts", "tests/quality/runtime-errors.spec.ts"]
+    },
+    "auth-tenant": {
+      "patterns": ["server/src/tenant.ts", "server/src/auth.ts", "server/src/**/auth*", "src/**/auth*", "src/**/login*"],
+      "tests": ["tests/security/tenant-isolation.spec.ts", "tests/smoke/login.spec.ts"]
+    },
+    "visual": {
+      "patterns": ["src/**/*.css", "src/**/*.scss", "src/**/*.tsx", "public/**/*"],
+      "tests": ["tests/responsive/core-responsive.spec.ts"]
+    },
+    "runtime": {
+      "patterns": ["src/**/*", "server/src/**/*", "vite.config.*", "package.json", "tsconfig*.json"],
+      "tests": ["tests/quality/runtime-errors.spec.ts"]
+    }
+  }
+}
