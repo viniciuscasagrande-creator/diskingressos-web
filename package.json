@@ -53,7 +53,8 @@
     "test:e2e:security": "playwright test tests/security",
     "test:e2e:visual": "playwright test tests/visual",
     "test:e2e:update": "playwright test tests/visual --update-snapshots",
-    "test:e2e:report": "playwright show-report playwright-report"
+    "test:e2e:report": "playwright show-report playwright-report",
+    "test:e2e:deploy": "playwright test tests/homologacao-real-vercel.spec.ts --project=chromium"
   },
   "dependencies": {
     "@prisma/client": "latest",
@@ -70,6 +71,7 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/cors": "latest",
     "@types/express": "latest",
@@ -80,8 +82,7 @@
     "concurrently": "latest",
     "prisma": "latest",
     "tsx": "latest",
-    "typescript": "latest",
-    "@playwright/test": "^1.55.0"
+    "typescript": "latest"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

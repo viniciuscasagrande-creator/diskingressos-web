@@ -1,8 +1,32 @@
 {
-  "release": "26.x-complete-event-os-2026-09-03",
-  "base": "26.3.1-playwright-qa-automation",
-  "phases": ["26.0","26.1","26.2","26.3","26.3.1","26.4","26.5","26.6","26.7","26.8","26.9","26.10","26.11","26.12","26.13","26.14","26.15"],
+  "release": "26.x.1-deploy-homologation-2026-09-03",
+  "base": "26.x-complete-event-os-2026-09-03",
+  "phases": [
+    "26.0",
+    "26.1",
+    "26.2",
+    "26.3",
+    "26.3.1",
+    "26.4",
+    "26.5",
+    "26.6",
+    "26.7",
+    "26.8",
+    "26.9",
+    "26.10",
+    "26.11",
+    "26.12",
+    "26.13",
+    "26.14",
+    "26.15"
+  ],
   "centralEventosVisualBaseline": "locked",
   "tenantBoundary": "producerId + eventId",
-  "qa": {"lucide": "passed", "zipIntegrity": "pending", "fullTypecheck": "not-run-node_modules-absent"}
+  "qa": {
+    "lucide": "passed",
+    "zipIntegrity": "passed",
+    "fullTypecheck": "passed",
+    "typecheck": "passed",
+    "deployPlaywright": "passed"
+  }
 }
