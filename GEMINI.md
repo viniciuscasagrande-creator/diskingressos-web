@@ -35,3 +35,15 @@ Qualquer alteração feita no projeto deve passar nos três níveis de proteçã
 1. `npm run verify:protected-modules` (trava o build caso arquivos ou rotas protegidas sejam apagados)
 2. `npm run quality:gate` (executa validação de módulos protegidos, checagem de ícones lucide e typecheck TypeScript)
 3. `npm run homologate:vercel` (executa o gate de qualidade + deploy guard HTTP + testes Playwright pós-Vercel)
+
+---
+
+## REGRA PERMANENTE: PADRONIZAÇÃO TOTAL PT-BR
+
+> **PDT DiskIngressos: interface do usuário 100% Português do Brasil (pt-BR). Inglês somente em código, APIs e identificadores técnicos não exibidos ao usuário.**
+
+- Toda informação visível ao usuário (menus, títulos, botões, cards, filtros, tabelas, gráficos, modais, mensagens, estados, erros, tooltips, relatórios) DEVE estar em Português do Brasil.
+- NÃO traduzir internamente: rotas (`/app/finance-refunds`), endpoints (`/api/...`), propriedades JSON, enums de banco de dados, nomes de componentes, nomes de funções ou `data-testid`.
+- Estados de interface devem ser apresentados traduzidos: `HEALTHY → Saudável`, `OPEN → Aberto`, `PENDING → Pendente`, `APPROVED → Aprovado`, etc.
+- Datas e números devem seguir a localização brasileira (`04/09/2026`, `R$ 1.842.630,45`).
+

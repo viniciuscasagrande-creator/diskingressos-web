@@ -124,7 +124,10 @@
     "audit:event-os:static": "node scripts/audit-protected-modules.mjs && node scripts/audit-routes.mjs && node scripts/audit-buttons.mjs && node scripts/audit-api-contracts.mjs && node scripts/audit-mocks.mjs",
     "audit:event-os:runtime": "playwright test tests/audit --project=chromium",
     "audit:event-os:report": "node scripts/audit-event-os.mjs",
-    "test:pw:audit-gate": "npm run audit:event-os:static && npm run audit:event-os && npm run audit:event-os:runtime"
+    "test:pw:audit-gate": "npm run audit:event-os:static && npm run audit:event-os && npm run audit:event-os:runtime",
+    "audit:ptbr": "node scripts/audit-pt-br-interface.mjs",
+    "test:pw:ptbr": "playwright test tests/audit/pt-br-runtime.spec.ts --project=chromium",
+    "gate:ptbr": "npm run audit:ptbr && npm run test:pw:ptbr"
   },
   "dependencies": {
     "@prisma/client": "latest",
