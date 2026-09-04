@@ -1,0 +1,1380 @@
+{
+  "summary": {
+    "release": "26.17.1-event-os-auditoria-automatica-2026-09-04",
+    "auditedAt": "2026-09-04T17:01:54.709Z",
+    "totalModules": 18,
+    "operacionais": 8,
+    "quaseProntos": 10,
+    "parciais": 0,
+    "criticos": 0,
+    "naoOperacionais": 0,
+    "totalMocksFound": 232,
+    "totalBrokenButtonsFound": 99,
+    "totalBrokenApisFound": 3,
+    "criticalFindingsCount": 102,
+    "overallAuditResult": "COMPLETED_WITH_FINDINGS"
+  },
+  "moduleMatrix": [
+    {
+      "id": "events-central",
+      "name": "Central de Eventos",
+      "route": "/eventos",
+      "pageKey": "events",
+      "component": "EventsPage.tsx",
+      "score": 96,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 6,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 10
+      },
+      "metrics": {
+        "brokenButtons": 2,
+        "mockOccurrences": 4,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "cockpit-360",
+      "name": "Cockpit 360",
+      "route": "/eventos/:id",
+      "pageKey": "event-command-center",
+      "component": "EventCommandCenterPage.tsx",
+      "score": 78,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 8,
+        "api": 10,
+        "realData": 15,
+        "tenantRbac": 10,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 1,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "global-search",
+      "name": "Global Search",
+      "route": "/eventos/:id/search",
+      "pageKey": "event-global-search",
+      "component": "EventGlobalSearchPage.tsx",
+      "score": 80,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 10,
+        "realData": 15,
+        "tenantRbac": 10,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 12,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "inventory",
+      "name": "Inventário",
+      "route": "/eventos/:id/inventory",
+      "pageKey": "event-inventory",
+      "component": "EventInventoryPage.tsx",
+      "score": 98,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 8,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 10
+      },
+      "metrics": {
+        "brokenButtons": 1,
+        "mockOccurrences": 6,
+        "apiContractsTotal": 2,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "customer-360",
+      "name": "Customer 360",
+      "route": "/eventos/:id/customer-360",
+      "pageKey": "event-customer-360",
+      "component": "EventCustomer360Page.tsx",
+      "score": 88,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 8,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 1,
+        "mockOccurrences": 5,
+        "apiContractsTotal": 1,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "live-operations",
+      "name": "Live Operations",
+      "route": "/eventos/:id/live-ops",
+      "pageKey": "event-live-ops",
+      "component": "EventLiveOpsPage.tsx",
+      "score": 79,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 6,
+        "api": 8,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 2,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 1,
+        "apiContractsBroken": 1
+      }
+    },
+    {
+      "id": "incident-center",
+      "name": "Incident Center",
+      "route": "/eventos/:id/incidents",
+      "pageKey": "event-incidents",
+      "component": "EventIncidentsPage.tsx",
+      "score": 75,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 2,
+        "api": 8,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 4,
+        "mockOccurrences": 11,
+        "apiContractsTotal": 2,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "event-day-command",
+      "name": "Event Day Command",
+      "route": "/eventos/:id/day-command",
+      "pageKey": "event-day-command",
+      "component": "EventDayCommandPage.tsx",
+      "score": 83,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 0,
+        "api": 8,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 10
+      },
+      "metrics": {
+        "brokenButtons": 9,
+        "mockOccurrences": 1,
+        "apiContractsTotal": 1,
+        "apiContractsBroken": 1
+      }
+    },
+    {
+      "id": "revenue-pricing",
+      "name": "Revenue & Pricing",
+      "route": "/eventos/:id/revenue-intel",
+      "pageKey": "event-revenue-intel",
+      "component": "EventRevenueIntelPage.tsx",
+      "score": 84,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 4,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 3,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 1,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "readiness",
+      "name": "Readiness / Go-Live",
+      "route": "/eventos/:id/readiness",
+      "pageKey": "event-readiness",
+      "component": "EventOSAdvancedPage.tsx",
+      "score": 80,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 10,
+        "realData": 15,
+        "tenantRbac": 10,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 1,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "forecast-center",
+      "name": "Forecast Center",
+      "route": "/eventos/:id/forecast",
+      "pageKey": "event-forecast",
+      "component": "EventForecastCenterPage.tsx",
+      "score": 93,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 8,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 10
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 2,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "disk-intelligence",
+      "name": "Disk Intelligence",
+      "route": "/eventos/:id/intelligence",
+      "pageKey": "event-intelligence",
+      "component": "EventDiskIntelligencePage.tsx",
+      "score": 98,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 8,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 10
+      },
+      "metrics": {
+        "brokenButtons": 1,
+        "mockOccurrences": 1,
+        "apiContractsTotal": 2,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "executive-dashboard",
+      "name": "Executive Dashboard",
+      "route": "/eventos/:id/producer-executive",
+      "pageKey": "event-producer-executive",
+      "component": "EventProducerExecutivePage.tsx",
+      "score": 100,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 10
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 1,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "platform-noc",
+      "name": "Platform Operations / NOC",
+      "route": "/eventos/:id/platform-noc",
+      "pageKey": "event-platform-noc",
+      "component": "EventOSAdvancedPage.tsx",
+      "score": 80,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 10,
+        "realData": 15,
+        "tenantRbac": 10,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 1,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "financeiro",
+      "name": "Financeiro",
+      "route": "/app/finance-dashboard",
+      "pageKey": "finance-dashboard",
+      "component": "FinanceDashboardPage.tsx",
+      "score": 80,
+      "status": "QUASE_PRONTO",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 0,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 6,
+        "mockOccurrences": 6,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "estornos",
+      "name": "Estornos",
+      "route": "/app/finance-refunds",
+      "pageKey": "finance-refunds",
+      "component": "finance/FinanceDisputesHubPage.tsx",
+      "score": 93,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 8,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 10
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 1,
+        "apiContractsBroken": 1
+      }
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "route": "/app/marketing-dashboard",
+      "pageKey": "marketing-dashboard",
+      "component": "marketing/MarketingDashboardPage.tsx",
+      "score": 90,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    },
+    {
+      "id": "sac",
+      "name": "SAC",
+      "route": "/app/sac-hub",
+      "pageKey": "sac-hub",
+      "component": "support/SupportPage.tsx",
+      "score": 90,
+      "status": "OPERACIONAL",
+      "scores": {
+        "ui": 15,
+        "navigation": 15,
+        "buttons": 10,
+        "api": 15,
+        "realData": 15,
+        "tenantRbac": 15,
+        "errorHandling": 5,
+        "playwright": 0
+      },
+      "metrics": {
+        "brokenButtons": 0,
+        "mockOccurrences": 0,
+        "apiContractsTotal": 0,
+        "apiContractsBroken": 0
+      }
+    }
+  ],
+  "criticalFindings": [
+    {
+      "file": "src/pages/AccountingJournalPage.tsx",
+      "line": 80,
+      "component": "AccountingJournalPage.tsx",
+      "snippet": "onClick={() => (onNavigate ? onNavigate('accounting-dashboard') : window.history.back())}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"accounting-dashboard\""
+    },
+    {
+      "file": "src/pages/AccountingJournalPage.tsx",
+      "line": 326,
+      "component": "AccountingJournalPage.tsx",
+      "snippet": "<button className=\"btn primary\" onClick={() => { setShowTermModal(false); notify('Certificado SPED e",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/AccountingLedgerPage.tsx",
+      "line": 74,
+      "component": "AccountingLedgerPage.tsx",
+      "snippet": "onClick={() => (onNavigate ? onNavigate('accounting-dashboard') : window.history.back())}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"accounting-dashboard\""
+    },
+    {
+      "file": "src/pages/AuditPage.tsx",
+      "line": 13,
+      "component": "AuditPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('admin-hub'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"admin-hub\""
+    },
+    {
+      "file": "src/pages/AutomationCenterPage.tsx",
+      "line": 18,
+      "component": "AutomationCenterPage.tsx",
+      "snippet": "const isEmail=mode==='email';return <section className=\"growth-page\"><div className=\"growth-intro\"><",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/EventCommandCenterPage.tsx",
+      "line": 257,
+      "component": "EventCommandCenterPage.tsx",
+      "snippet": "onClick={() => { loadData(); notify('Cockpit 360 atualizado com sucesso!') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/EventContextPage.tsx",
+      "line": 124,
+      "component": "EventContextPage.tsx",
+      "snippet": "<button type=\"button\" className=\"btn primary\" onClick={() => { notify(`Ingresso #${selectedPerson.or",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/EventContextPage.tsx",
+      "line": 148,
+      "component": "EventContextPage.tsx",
+      "snippet": "return <div className=\"event-context-page\"><HeaderBlock eyebrow=\"CORTESIAS\" title=\"Cortesias\" descri",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/EventCustomer360Page.tsx",
+      "line": 57,
+      "component": "EventCustomer360Page.tsx",
+      "snippet": "<div className=\"crm-filters\"><select aria-label=\"Segmento\" value={segment} onChange={e=>setSegment(e",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/EventInventoryPage.tsx",
+      "line": 198,
+      "component": "EventInventoryPage.tsx",
+      "snippet": "{data.recommendations.length?data.recommendations.map((r,i)=><div key={`${r.code}-${i}`} className={",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/EventsPage.tsx",
+      "line": 32,
+      "component": "EventsPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"profile-dashboard\""
+    },
+    {
+      "file": "src/pages/EventsPage.tsx",
+      "line": 42,
+      "component": "EventsPage.tsx",
+      "snippet": "<button className=\"tool-btn events-compare-btn\"><ArrowLeftRight size={18}/><span>Comparar</span></bu",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FacialPage.tsx",
+      "line": 11,
+      "component": "FacialPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"profile-dashboard\""
+    },
+    {
+      "file": "src/pages/FacialPage.tsx",
+      "line": 20,
+      "component": "FacialPage.tsx",
+      "snippet": "<section className=\"table-card\"><div className=\"table-toolbar\"><div><h2>Base facial</h2><p>Visualiza",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FinanceBalancesPage.tsx",
+      "line": 320,
+      "component": "FinanceBalancesPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceBankAccountsPage.tsx",
+      "line": 212,
+      "component": "FinanceBankAccountsPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 54,
+      "component": "FinanceCommandCenterPage.tsx",
+      "snippet": "<header className=\"finance-command-hero\"><div><span className=\"finance-command-eyebrow\">FINANCEIRO</",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"finance-payouts\""
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 71,
+      "component": "FinanceCommandCenterPage.tsx",
+      "snippet": "<section className=\"finance-command-footer\"><div><strong>Financeiro e Contabilidade agora são separa",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"accounting-dashboard\""
+    },
+    {
+      "file": "src/pages/FinanceDashboardPage.tsx",
+      "line": 151,
+      "component": "FinanceDashboardPage.tsx",
+      "snippet": "onClick={() => { setTier('standard'); notify('Modo Standard ativado: Essencial financeiro e DRE.') }",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceDashboardPage.tsx",
+      "line": 159,
+      "component": "FinanceDashboardPage.tsx",
+      "snippet": "onClick={() => { setTier('advanced'); notify('Modo Advanced ativado: Conciliação, centros de custo e",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceDashboardPage.tsx",
+      "line": 167,
+      "component": "FinanceDashboardPage.tsx",
+      "snippet": "onClick={() => { setTier('expert'); notify('Modo Expert ativado: IA contábil, detecção de anomalias ",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceDashboardPage.tsx",
+      "line": 645,
+      "component": "FinanceDashboardPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceDashboardPage.tsx",
+      "line": 833,
+      "component": "FinanceDashboardPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceDashboardPage.tsx",
+      "line": 899,
+      "component": "FinanceDashboardPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/Financeiro.tsx",
+      "line": 204,
+      "component": "Financeiro.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/Financeiro.tsx",
+      "line": 214,
+      "component": "Financeiro.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/Financeiro.tsx",
+      "line": 245,
+      "component": "Financeiro.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinancePage.tsx",
+      "line": 119,
+      "component": "FinancePage.tsx",
+      "snippet": "<button className=\"filter-icon-btn\"><Filter size={16} /></button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FinancePayments360Page.tsx",
+      "line": 188,
+      "component": "FinancePayments360Page.tsx",
+      "snippet": "<button className=\"fa-btn primary\">Salvar Gateway</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FinancePayments360Page.tsx",
+      "line": 282,
+      "component": "FinancePayments360Page.tsx",
+      "snippet": "<button className=\"fa-btn primary\">Salvar Operadora</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FinancePayments360Page.tsx",
+      "line": 374,
+      "component": "FinancePayments360Page.tsx",
+      "snippet": "<button className=\"fa-btn primary\">Salvar Método</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FinancePayments360Page.tsx",
+      "line": 599,
+      "component": "FinancePayments360Page.tsx",
+      "snippet": "<button className=\"fa-btn primary\">Registrar Solicitação</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FinancePayoutsPage.tsx",
+      "line": 376,
+      "component": "FinancePayoutsPage.tsx",
+      "snippet": "onClick={() => { setAgendaFilter('today'); setStatusFilter('all') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinancePayoutsPage.tsx",
+      "line": 386,
+      "component": "FinancePayoutsPage.tsx",
+      "snippet": "onClick={() => { setAgendaFilter('7'); setStatusFilter('all') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinancePayoutsPage.tsx",
+      "line": 396,
+      "component": "FinancePayoutsPage.tsx",
+      "snippet": "onClick={() => { setAgendaFilter('15'); setStatusFilter('all') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinancePayoutsPage.tsx",
+      "line": 406,
+      "component": "FinancePayoutsPage.tsx",
+      "snippet": "onClick={() => { setAgendaFilter('all'); setStatusFilter('em análise') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinancePayoutsPage.tsx",
+      "line": 426,
+      "component": "FinancePayoutsPage.tsx",
+      "snippet": "onClick={() => { setAgendaFilter('all'); setStatusFilter('all') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinancePayoutsPage.tsx",
+      "line": 732,
+      "component": "FinancePayoutsPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceProducerAccountPage.tsx",
+      "line": 76,
+      "component": "FinanceProducerAccountPage.tsx",
+      "snippet": "<section className=\"pa-card producer-ledger-table\"><div className=\"pa-card-head\"><div><span>CONTA GR",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"finance-payouts\""
+    },
+    {
+      "file": "src/pages/FinanceReceivablesPage.tsx",
+      "line": 110,
+      "component": "FinanceReceivablesPage.tsx",
+      "snippet": "<LLTableFrame><table className=\"ll-table\"><thead><tr><th>ID</th><th>Venda</th><th>Evento</th><th>Cli",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/FinanceReceivablesPage.tsx",
+      "line": 113,
+      "component": "FinanceReceivablesPage.tsx",
+      "snippet": "{showAdvanceModal&&<div className=\"utm-modal-backdrop\" onClick={()=>setShowAdvanceModal(false)}><div",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceReconciliationPage.tsx",
+      "line": 159,
+      "component": "FinanceReconciliationPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/FinanceStatementPage.tsx",
+      "line": 339,
+      "component": "FinanceStatementPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/MarketingPage.tsx",
+      "line": 352,
+      "component": "MarketingPage.tsx",
+      "snippet": "<button className=\"btn primary\" onClick={() => onNavigate ? onNavigate('marketing-create') : notify(",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"marketing-create\""
+    },
+    {
+      "file": "src/pages/OperationsPage.tsx",
+      "line": 21,
+      "component": "OperationsPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"profile-dashboard\""
+    },
+    {
+      "file": "src/pages/ParticipantsPage.tsx",
+      "line": 24,
+      "component": "ParticipantsPage.tsx",
+      "snippet": "<section className=\"page-head\"><div><p className=\"eyebrow\">EVENTOS / OPERAÇÃO</p><h1>Participantes</",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/PermissionsPage.tsx",
+      "line": 12,
+      "component": "PermissionsPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('admin-hub'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"admin-hub\""
+    },
+    {
+      "file": "src/pages/POSPage.tsx",
+      "line": 45,
+      "component": "POSPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"profile-dashboard\""
+    },
+    {
+      "file": "src/pages/POSPage.tsx",
+      "line": 73,
+      "component": "POSPage.tsx",
+      "snippet": "{tab==='closing'&&<div className=\"closing-layout\"><section className=\"card-surface closing-card\"><di",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/ProducersPage.tsx",
+      "line": 13,
+      "component": "ProducersPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('admin-hub'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"admin-hub\""
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 55,
+      "component": "RemarketingPage.tsx",
+      "snippet": "onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"profile-dashboard\""
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 70,
+      "component": "RemarketingPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 71,
+      "component": "RemarketingPage.tsx",
+      "snippet": "if (onNavigate) onNavigate('remarketing-carts')",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"remarketing-carts\""
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 89,
+      "component": "RemarketingPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 126,
+      "component": "RemarketingPage.tsx",
+      "snippet": "onClick={() => (onNavigate ? onNavigate('remarketing-dashboard') : window.history.back())}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"remarketing-dashboard\""
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 143,
+      "component": "RemarketingPage.tsx",
+      "snippet": "onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"profile-dashboard\""
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 283,
+      "component": "RemarketingPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/RemarketingPage.tsx",
+      "line": 284,
+      "component": "RemarketingPage.tsx",
+      "snippet": "if (onNavigate) onNavigate('remarketing-flows')",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"remarketing-flows\""
+    },
+    {
+      "file": "src/pages/SecurityPage.tsx",
+      "line": 6,
+      "component": "SecurityPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('admin-hub'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"admin-hub\""
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 310,
+      "component": "SupportPage.tsx",
+      "snippet": "onClick={() => onNavigate ? onNavigate('profile-dashboard') : window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"profile-dashboard\""
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 643,
+      "component": "SupportPage.tsx",
+      "snippet": "<code onClick={() => { setGlobalSearchInput('123.456.789-00'); handleGlobalSearch('123.456.789-00');",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 644,
+      "component": "SupportPage.tsx",
+      "snippet": "<code onClick={() => { setGlobalSearchInput('DI-984221'); handleGlobalSearch('DI-984221'); }}>DI-984",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 645,
+      "component": "SupportPage.tsx",
+      "snippet": "<code onClick={() => { setGlobalSearchInput('João Silva'); handleGlobalSearch('João Silva'); }}>João",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 646,
+      "component": "SupportPage.tsx",
+      "snippet": "<code onClick={() => { setGlobalSearchInput('(41) 99999-8888'); handleGlobalSearch('(41) 99999-8888'",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 647,
+      "component": "SupportPage.tsx",
+      "snippet": "<code onClick={() => { setGlobalSearchInput('ING-88101'); handleGlobalSearch('ING-88101'); }}>ING-88",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1054,
+      "component": "SupportPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1134,
+      "component": "SupportPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1186,
+      "component": "SupportPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1245,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn active\">Incidentes Ativos <span className=\"badge-pill\">3</span>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1246,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn\">P1 Críticos <span className=\"badge-pill\" style={{ color: '#dc2",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1247,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn\">Histórico Resolvidos</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1387,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn active\">Problemas Conhecidos (KEDB) <span className=\"badge-pill",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1388,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn\">Em Investigação RCA</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1389,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn\">Planos Corretivos Concluídos</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1716,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn active\">Visão de Filas Ativas <span className=\"badge-pill\">3</s",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1717,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn\">Agentes & Capacidade <span className=\"badge-pill\">8 online</sp",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1723,
+      "component": "SupportPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1836,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn active\">Gatilhos Ativos <span className=\"badge-pill\">4</span></",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/SupportPage.tsx",
+      "line": 1837,
+      "component": "SupportPage.tsx",
+      "snippet": "<button className=\"ds-filter-tab-btn\">Histórico de Execuções (1.420 hoje)</button>",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/UsersPage.tsx",
+      "line": 16,
+      "component": "UsersPage.tsx",
+      "snippet": "onClick={()=>onNavigate?onNavigate('admin-hub'):window.history.back()}",
+      "issue": "NAV_TARGET_MISSING",
+      "severity": "HIGH",
+      "detail": "Navegação para PageKey desconhecida: \"admin-hub\""
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 333,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { loadData(); notify('Painel de comando sincronizado!') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 372,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('event-incidents') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 379,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('event-tickets') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 386,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('event-tickets') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 393,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('event-customer-360') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 400,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('event-live-ops') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 407,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('event-incidents') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 414,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('event-inventory') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDayCommandPage.tsx",
+      "line": 421,
+      "component": "EventDayCommandPage.tsx",
+      "snippet": "onClick={() => { setIsActionsOpen(false); onNavigate('sac-hub') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventDiskIntelligencePage.tsx",
+      "line": 436,
+      "component": "EventDiskIntelligencePage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventIncidentsPage.tsx",
+      "line": 409,
+      "component": "EventIncidentsPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventIncidentsPage.tsx",
+      "line": 422,
+      "component": "EventIncidentsPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventIncidentsPage.tsx",
+      "line": 434,
+      "component": "EventIncidentsPage.tsx",
+      "snippet": "onClick={() => { loadData(); notify('Fila de incidentes atualizada!') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventIncidentsPage.tsx",
+      "line": 959,
+      "component": "EventIncidentsPage.tsx",
+      "snippet": "<button",
+      "issue": "BUTTON_WITHOUT_ACTION",
+      "severity": "HIGH",
+      "detail": "Elemento <button> sem handler onClick nem type=\"submit\"."
+    },
+    {
+      "file": "src/pages/eventos/EventLiveOpsPage.tsx",
+      "line": 149,
+      "component": "EventLiveOpsPage.tsx",
+      "snippet": "onClick={() => { loadData(); notify('Live Operations sincronizado!') }}",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventLiveOpsPage.tsx",
+      "line": 364,
+      "component": "EventLiveOpsPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventRevenueIntelPage.tsx",
+      "line": 593,
+      "component": "EventRevenueIntelPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventRevenueIntelPage.tsx",
+      "line": 643,
+      "component": "EventRevenueIntelPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "file": "src/pages/eventos/EventRevenueIntelPage.tsx",
+      "line": 995,
+      "component": "EventRevenueIntelPage.tsx",
+      "snippet": "onClick={() => {",
+      "issue": "EMPTY_CLICK_HANDLER",
+      "severity": "HIGH",
+      "detail": "Handler onClick vazio detectado: onClick={() => {}}"
+    },
+    {
+      "module": "live-operations",
+      "issue": "API_CONTRACT_BROKEN",
+      "severity": "CRITICAL",
+      "detail": "Endpoint GET /events/:id/live-ops/overview com contrato quebrado."
+    },
+    {
+      "module": "event-day-command",
+      "issue": "API_CONTRACT_BROKEN",
+      "severity": "CRITICAL",
+      "detail": "Endpoint GET /events/:id/day-command/overview com contrato quebrado."
+    },
+    {
+      "module": "estornos",
+      "issue": "API_CONTRACT_BROKEN",
+      "severity": "CRITICAL",
+      "detail": "Endpoint GET /refunds com contrato quebrado."
+    }
+  ]
+}

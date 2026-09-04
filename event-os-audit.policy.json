@@ -1,0 +1,212 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "policyVersion": "26.17.1-2026-09-04",
+  "name": "Event OS Audit & Certification Policy",
+  "scoringWeights": {
+    "ui": 15,
+    "navigation": 15,
+    "buttons": 10,
+    "api": 15,
+    "realData": 15,
+    "tenantRbac": 15,
+    "errorHandling": 5,
+    "playwright": 10
+  },
+  "classificationThresholds": {
+    "OPERACIONAL": { "min": 90, "max": 100 },
+    "QUASE_PRONTO": { "min": 75, "max": 89 },
+    "PARCIAL": { "min": 50, "max": 74 },
+    "CRITICO": { "min": 25, "max": 49 },
+    "NAO_OPERACIONAL": { "min": 0, "max": 24 }
+  },
+  "modules": [
+    {
+      "id": "events-central",
+      "name": "Central de Eventos",
+      "route": "/eventos",
+      "pageKey": "events",
+      "component": "EventsPage.tsx",
+      "isProtectedModule": true,
+      "requiresEventContext": false
+    },
+    {
+      "id": "cockpit-360",
+      "name": "Cockpit 360",
+      "route": "/eventos/:id",
+      "pageKey": "event-command-center",
+      "component": "EventCommandCenterPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "global-search",
+      "name": "Global Search",
+      "route": "/eventos/:id/search",
+      "pageKey": "event-global-search",
+      "component": "EventGlobalSearchPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "inventory",
+      "name": "Inventário",
+      "route": "/eventos/:id/inventory",
+      "pageKey": "event-inventory",
+      "component": "EventInventoryPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "customer-360",
+      "name": "Customer 360",
+      "route": "/eventos/:id/customer-360",
+      "pageKey": "event-customer-360",
+      "component": "EventCustomer360Page.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "live-operations",
+      "name": "Live Operations",
+      "route": "/eventos/:id/live-ops",
+      "pageKey": "event-live-ops",
+      "component": "EventLiveOpsPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "incident-center",
+      "name": "Incident Center",
+      "route": "/eventos/:id/incidents",
+      "pageKey": "event-incidents",
+      "component": "EventIncidentsPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "event-day-command",
+      "name": "Event Day Command",
+      "route": "/eventos/:id/day-command",
+      "pageKey": "event-day-command",
+      "component": "EventDayCommandPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "revenue-pricing",
+      "name": "Revenue & Pricing",
+      "route": "/eventos/:id/revenue-intel",
+      "pageKey": "event-revenue-intel",
+      "component": "EventRevenueIntelPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "readiness",
+      "name": "Readiness / Go-Live",
+      "route": "/eventos/:id/readiness",
+      "pageKey": "event-readiness",
+      "component": "EventOSAdvancedPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "forecast-center",
+      "name": "Forecast Center",
+      "route": "/eventos/:id/forecast",
+      "pageKey": "event-forecast",
+      "component": "EventForecastCenterPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "disk-intelligence",
+      "name": "Disk Intelligence",
+      "route": "/eventos/:id/intelligence",
+      "pageKey": "event-intelligence",
+      "component": "EventDiskIntelligencePage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "executive-dashboard",
+      "name": "Executive Dashboard",
+      "route": "/eventos/:id/producer-executive",
+      "pageKey": "event-producer-executive",
+      "component": "EventProducerExecutivePage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true
+    },
+    {
+      "id": "platform-noc",
+      "name": "Platform Operations / NOC",
+      "route": "/eventos/:id/platform-noc",
+      "pageKey": "event-platform-noc",
+      "component": "EventOSAdvancedPage.tsx",
+      "isProtectedModule": false,
+      "requiresEventContext": true,
+      "adminOnly": true
+    },
+    {
+      "id": "financeiro",
+      "name": "Financeiro",
+      "route": "/app/finance-dashboard",
+      "pageKey": "finance-dashboard",
+      "component": "FinanceDashboardPage.tsx",
+      "isProtectedModule": true,
+      "requiresEventContext": false
+    },
+    {
+      "id": "estornos",
+      "name": "Estornos",
+      "route": "/app/finance-refunds",
+      "pageKey": "finance-refunds",
+      "component": "finance/FinanceDisputesHubPage.tsx",
+      "isProtectedModule": true,
+      "requiresEventContext": false,
+      "immutableCanonical": true
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "route": "/app/marketing-dashboard",
+      "pageKey": "marketing-dashboard",
+      "component": "marketing/MarketingDashboardPage.tsx",
+      "isProtectedModule": true,
+      "requiresEventContext": false
+    },
+    {
+      "id": "sac",
+      "name": "SAC",
+      "route": "/app/sac-hub",
+      "pageKey": "sac-hub",
+      "component": "support/SupportPage.tsx",
+      "isProtectedModule": true,
+      "requiresEventContext": false
+    }
+  ],
+  "mockPatterns": [
+    "mockData",
+    "demoData",
+    "fakeData",
+    "sampleData",
+    "Math.random",
+    "setTimeout",
+    "TODO",
+    "FIXME",
+    "placeholder",
+    "coming soon",
+    "em breve",
+    "dados simulados",
+    "dados de demonstração"
+  ],
+  "protectedContracts": {
+    "estornosCanonicalPath": "/app/finance-refunds",
+    "estornosCanonicalComponent": "FinanceDisputesHubPage.tsx",
+    "estornosProtectedModuleAttr": "estornos",
+    "eventsCanonicalPath": "/eventos",
+    "financeCanonicalPath": "/app/finance-dashboard",
+    "marketingCanonicalPath": "/app/marketing-dashboard",
+    "sacCanonicalPath": "/app/sac-hub"
+  }
+}

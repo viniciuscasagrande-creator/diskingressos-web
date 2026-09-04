@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Event OS 360º — Relatório de Auditoria Automática (26.17.1-event-os-auditoria-automatica-2026-09-04)</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b1120; color: #f8fafc; margin: 0; padding: 2rem; }
+    h1, h2, h3 { color: #ffffff; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; }
+    .OPERACIONAL { background: #065f46; color: #34d399; }
+    .QUASE_PRONTO { background: #1e3a8a; color: #93c5fd; }
+    .PARCIAL { background: #854d0e; color: #fde047; }
+    .CRITICO { background: #991b1b; color: #fca5a5; }
+    .NAO_OPERACIONAL { background: #374151; color: #9ca3af; }
+    .BLOQUEADO { background: #7f1d1d; color: #f87171; border: 1px solid red; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: #0f172a; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 12px 16px; border-bottom: 1px solid #1e293b; text-align: left; }
+    th { background: #1e293b; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase; }
+    .kpi-row { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .kpi-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 1rem 1.5rem; flex: 1; min-width: 160px; }
+    .kpi-val { font-size: 1.8rem; font-weight: bold; color: #38bdf8; }
+    .kpi-title { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <h1>DiskIngressos Event OS — Auditoria Automática 360º</h1>
+  <p>Release: <code>26.17.1-event-os-auditoria-automatica-2026-09-04</code> | Data: 04/09/2026, 14:01:54 | Status: <strong>COMPLETED_WITH_FINDINGS</strong></p>
+  
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-title">Módulos Auditados</div><div class="kpi-val">18</div></div>
+    <div class="kpi-card"><div class="kpi-title">Operacionais</div><div class="kpi-val" style="color:#34d399;">8</div></div>
+    <div class="kpi-card"><div class="kpi-title">Quase Prontos</div><div class="kpi-val" style="color:#93c5fd;">10</div></div>
+    <div class="kpi-card"><div class="kpi-title">Parciais</div><div class="kpi-val" style="color:#fde047;">0</div></div>
+    <div class="kpi-card"><div class="kpi-title">Críticos / Bloqueados</div><div class="kpi-val" style="color:#f87171;">0</div></div>
+    <div class="kpi-card"><div class="kpi-title">Botões Irregulares</div><div class="kpi-val" style="color:#fca5a5;">99</div></div>
+  </div>
+
+  <h2>Matriz dos 18 Módulos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Módulo</th>
+        <th>Score</th>
+        <th>Status</th>
+        <th>UI (15)</th>
+        <th>Navegação (15)</th>
+        <th>Botões (10)</th>
+        <th>API (15)</th>
+        <th>Dados (15)</th>
+        <th>Tenant/RBAC (15)</th>
+        <th>Erros (5)</th>
+        <th>Playwright (10)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Central de Eventos</strong><br><small style="color:#64748b">/eventos</small></td>
+        <td><strong>96/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>6</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Cockpit 360</strong><br><small style="color:#64748b">/eventos/:id</small></td>
+        <td><strong>78/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>8</td>
+        <td>10</td>
+        <td>15</td>
+        <td>10</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Global Search</strong><br><small style="color:#64748b">/eventos/:id/search</small></td>
+        <td><strong>80/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>10</td>
+        <td>15</td>
+        <td>10</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Inventário</strong><br><small style="color:#64748b">/eventos/:id/inventory</small></td>
+        <td><strong>98/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Customer 360</strong><br><small style="color:#64748b">/eventos/:id/customer-360</small></td>
+        <td><strong>88/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Live Operations</strong><br><small style="color:#64748b">/eventos/:id/live-ops</small></td>
+        <td><strong>79/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>6</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Incident Center</strong><br><small style="color:#64748b">/eventos/:id/incidents</small></td>
+        <td><strong>75/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>2</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Event Day Command</strong><br><small style="color:#64748b">/eventos/:id/day-command</small></td>
+        <td><strong>83/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>0</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Revenue & Pricing</strong><br><small style="color:#64748b">/eventos/:id/revenue-intel</small></td>
+        <td><strong>84/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>4</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Readiness / Go-Live</strong><br><small style="color:#64748b">/eventos/:id/readiness</small></td>
+        <td><strong>80/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>10</td>
+        <td>15</td>
+        <td>10</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Forecast Center</strong><br><small style="color:#64748b">/eventos/:id/forecast</small></td>
+        <td><strong>93/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Disk Intelligence</strong><br><small style="color:#64748b">/eventos/:id/intelligence</small></td>
+        <td><strong>98/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Executive Dashboard</strong><br><small style="color:#64748b">/eventos/:id/producer-executive</small></td>
+        <td><strong>100/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Platform Operations / NOC</strong><br><small style="color:#64748b">/eventos/:id/platform-noc</small></td>
+        <td><strong>80/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>10</td>
+        <td>15</td>
+        <td>10</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Financeiro</strong><br><small style="color:#64748b">/app/finance-dashboard</small></td>
+        <td><strong>80/100</strong></td>
+        <td><span class="badge QUASE_PRONTO">QUASE_PRONTO</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>0</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>Estornos</strong><br><small style="color:#64748b">/app/finance-refunds</small></td>
+        <td><strong>93/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>8</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Marketing</strong><br><small style="color:#64748b">/app/marketing-dashboard</small></td>
+        <td><strong>90/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td><strong>SAC</strong><br><small style="color:#64748b">/app/sac-hub</small></td>
+        <td><strong>90/100</strong></td>
+        <td><span class="badge OPERACIONAL">OPERACIONAL</span></td>
+        <td>15</td>
+        <td>15</td>
+        <td>10</td>
+        <td>15</td>
+        <td>15</td>
+        <td>15</td>
+        <td>5</td>
+        <td>0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Achados Críticos e Botões com Pendências (102)</h2>
+  <table>
+    <thead>
+      <tr><th>Severidade</th><th>Módulo / Componente</th><th>Problema</th><th>Detalhes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>AccountingJournalPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "accounting-dashboard"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>AccountingJournalPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>AccountingLedgerPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "accounting-dashboard"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>AuditPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "admin-hub"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>AutomationCenterPage.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>EventCommandCenterPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>EventContextPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>EventContextPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>EventCustomer360Page.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>EventInventoryPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>EventsPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "profile-dashboard"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>EventsPage.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FacialPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "profile-dashboard"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FacialPage.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceBalancesPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceBankAccountsPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceCommandCenterPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "finance-payouts"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceCommandCenterPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "accounting-dashboard"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceDashboardPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceDashboardPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceDashboardPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceDashboardPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceDashboardPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceDashboardPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>Financeiro.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>Financeiro.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>Financeiro.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePage.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayments360Page.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayments360Page.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayments360Page.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayments360Page.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayoutsPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayoutsPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayoutsPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayoutsPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayoutsPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinancePayoutsPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceProducerAccountPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "finance-payouts"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceReceivablesPage.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceReceivablesPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceReconciliationPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>FinanceStatementPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>MarketingPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "marketing-create"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>OperationsPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "profile-dashboard"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>ParticipantsPage.tsx</td>
+        <td><code>BUTTON_WITHOUT_ACTION</code></td>
+        <td>Elemento <button> sem handler onClick nem type="submit".</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>PermissionsPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "admin-hub"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>POSPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "profile-dashboard"</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>POSPage.tsx</td>
+        <td><code>EMPTY_CLICK_HANDLER</code></td>
+        <td>Handler onClick vazio detectado: onClick={() => {}}</td>
+      </tr>
+      <tr>
+        <td><span class="badge PARCIAL">HIGH</span></td>
+        <td>ProducersPage.tsx</td>
+        <td><code>NAV_TARGET_MISSING</code></td>
+        <td>Navegação para PageKey desconhecida: "admin-hub"</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

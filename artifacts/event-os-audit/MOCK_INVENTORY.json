@@ -1,0 +1,1858 @@
+[
+  {
+    "file": "src/pages/AccountingChartPage.tsx",
+    "line": 200,
+    "component": "AccountingChartPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar por código (ex: 1.1.01) ou nome...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingChartPage.tsx",
+    "line": 213,
+    "component": "AccountingChartPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os grupos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/AccountingChartPage.tsx",
+    "line": 225,
+    "component": "AccountingChartPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os tipos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/AccountingChartPage.tsx",
+    "line": 347,
+    "component": "AccountingChartPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: 1.1.02.04\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingChartPage.tsx",
+    "line": 358,
+    "component": "AccountingChartPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Contas a Receber — PicPay / Boleto\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingChartPage.tsx",
+    "line": 411,
+    "component": "AccountingChartPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"0,00\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingEntriesPage.tsx",
+    "line": 213,
+    "component": "AccountingEntriesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar código, descrição ou centro de custo...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingEntriesPage.tsx",
+    "line": 239,
+    "component": "AccountingEntriesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os status</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/AccountingEntriesPage.tsx",
+    "line": 348,
+    "component": "AccountingEntriesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Ajuste contábil de conciliação bancária...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingEntriesPage.tsx",
+    "line": 416,
+    "component": "AccountingEntriesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: DOC-AJU-0826\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingEntriesPage.tsx",
+    "line": 431,
+    "component": "AccountingEntriesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"0,00\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AccountingJournalPage.tsx",
+    "line": 188,
+    "component": "AccountingJournalPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar por lançamento, histórico ou conta...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AuditPage.tsx",
+    "line": 20,
+    "component": "AuditPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"users-toolbar\"><div><p className=\"eyebrow\">SEGURANÇA</p><h2>Logs de Auditoria</h2><p",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/AutomationCenterPage.tsx",
+    "line": 17,
+    "component": "AutomationCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "if(mode==='automations')return <section className=\"growth-page\"><div className=\"growth-intro\"><div><",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/AutomationCenterPage.tsx",
+    "line": 18,
+    "component": "AutomationCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const isEmail=mode==='email';return <section className=\"growth-page\"><div className=\"growth-intro\"><",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/CortesiasPage.tsx",
+    "line": 37,
+    "component": "CortesiasPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [selectedCategory, setSelectedCategory] = useState<string>('todos');",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/CortesiasPage.tsx",
+    "line": 89,
+    "component": "CortesiasPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const matchCat = selectedCategory === 'todos' || c.sector === selectedCategory;",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/CortesiasPage.tsx",
+    "line": 158,
+    "component": "CortesiasPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar por nome, e-mail ou código CRT...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/CortesiasPage.tsx",
+    "line": 171,
+    "component": "CortesiasPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"todos\">Todos os Setores</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/CortesiasPage.tsx",
+    "line": 258,
+    "component": "CortesiasPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Ana Clara Menezes\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/CortesiasPage.tsx",
+    "line": 270,
+    "component": "CortesiasPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: ana.clara@email.com\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/CortesiasPage.tsx",
+    "line": 282,
+    "component": "CortesiasPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"000.000.000-00\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/Dashboard.tsx",
+    "line": 90,
+    "component": "Dashboard.tsx",
+    "pattern": "TODO",
+    "snippet": "{isGlobalAdminView ? \"Ver Todos os Eventos\" : \"Ver Meus Eventos\"}",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventContextPage.tsx",
+    "line": 81,
+    "component": "EventContextPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<section className=\"growth-panel\"><div className=\"context-toolbar\"><label className=\"context-search\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventContextPage.tsx",
+    "line": 150,
+    "component": "EventContextPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<section className=\"event-context-two-col\"><div className=\"growth-panel\" id=\"cortesia-form\"><div cla",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventContextPage.tsx",
+    "line": 242,
+    "component": "EventContextPage.tsx",
+    "pattern": "TODO",
+    "snippet": "function Generic({event,page,onNavigate,notify}:{event:EventItem;page:PageKey;onNavigate:(p:PageKey)",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventContextPage.tsx",
+    "line": 244,
+    "component": "EventContextPage.tsx",
+    "pattern": "TODO",
+    "snippet": "function Dashboard({event,participants,onNavigate}:{event:EventItem;participants:Participant[];onNav",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventCustomer360Page.tsx",
+    "line": 19,
+    "component": "EventCustomer360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "const[segment,setSegment]=useState('Todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventCustomer360Page.tsx",
+    "line": 30,
+    "component": "EventCustomer360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "const segments=useMemo(()=>['Todos',...(data?.segments.map(s=>s.name)||[])],[data])",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventCustomer360Page.tsx",
+    "line": 35,
+    "component": "EventCustomer360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "if(segment!=='Todos')result=result.filter(c=>c.segment===segment)",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventCustomer360Page.tsx",
+    "line": 56,
+    "component": "EventCustomer360Page.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"customer360-toolbar operational\"><div><h3>Base unificada do evento</h3><p>Pesquise p",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventCustomer360Page.tsx",
+    "line": 57,
+    "component": "EventCustomer360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"crm-filters\"><select aria-label=\"Segmento\" value={segment} onChange={e=>setSegment(e",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventFormPage.tsx",
+    "line": 25,
+    "component": "EventFormPage.tsx",
+    "pattern": "Math.random",
+    "snippet": "onSave({...form, id: form.id || Date.now(), code: form.code || String(Math.floor(4000+Math.random()*",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventFormPage.tsx",
+    "line": 42,
+    "component": "EventFormPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label className=\"field span-2\"><span>Nome do evento *</span><input value={form.title} onChange={e=>",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventFormPage.tsx",
+    "line": 45,
+    "component": "EventFormPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label className=\"field span-2\"><span>Descrição</span><textarea rows={4} value={form.description || ",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventFormPage.tsx",
+    "line": 51,
+    "component": "EventFormPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label className=\"field\"><span>Local *</span><input value={form.venue} onChange={e=>update('venue',e",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventFormPage.tsx",
+    "line": 52,
+    "component": "EventFormPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label className=\"field\"><span>Cidade / UF</span><input value={form.city} onChange={e=>update('city'",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventFormPage.tsx",
+    "line": 53,
+    "component": "EventFormPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label className=\"field\"><span>Início *</span><div className=\"input-icon\"><CalendarDays size={16}/><",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventFormPage.tsx",
+    "line": 54,
+    "component": "EventFormPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label className=\"field\"><span>Término</span><div className=\"input-icon\"><CalendarDays size={16}/><i",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventInventoryPage.tsx",
+    "line": 34,
+    "component": "EventInventoryPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [statusFilter,setStatusFilter]=useState<'todos'|'ativo'|'pausado'|'encerrado'>('todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventInventoryPage.tsx",
+    "line": 56,
+    "component": "EventInventoryPage.tsx",
+    "pattern": "TODO",
+    "snippet": "(statusFilter==='todos'||l.status.toLowerCase()===statusFilter) &&",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventInventoryPage.tsx",
+    "line": 163,
+    "component": "EventInventoryPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"inventory-search\"><Search size={15}/><input aria-label=\"Buscar lote\" placeholder=\"Bu",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventInventoryPage.tsx",
+    "line": 165,
+    "component": "EventInventoryPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{(['todos','ativo','pausado','encerrado'] as const).map(s=><button key={s} className={statusFilter==",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventInventoryPage.tsx",
+    "line": 229,
+    "component": "EventInventoryPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label><span>Nome do lote</span><input value={lotDraft.name} onChange={e=>setLotDraft({...lotDraft,n",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventInventoryPage.tsx",
+    "line": 230,
+    "component": "EventInventoryPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<label><span>Setor</span><input value={lotDraft.sector} onChange={e=>setLotDraft({...lotDraft,sector",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/Eventos.tsx",
+    "line": 43,
+    "component": "Eventos.tsx",
+    "pattern": "TODO",
+    "snippet": "statusFilter: 'todos',",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/Eventos.tsx",
+    "line": 47,
+    "component": "Eventos.tsx",
+    "pattern": "TODO",
+    "snippet": "periodFilter: 'todos',",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/Eventos.tsx",
+    "line": 68,
+    "component": "Eventos.tsx",
+    "pattern": "TODO",
+    "snippet": "statusFilter: 'todos',",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/Eventos.tsx",
+    "line": 72,
+    "component": "Eventos.tsx",
+    "pattern": "TODO",
+    "snippet": "periodFilter: 'todos',",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/Eventos.tsx",
+    "line": 142,
+    "component": "Eventos.tsx",
+    "pattern": "TODO",
+    "snippet": "todos: events.length,",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/Eventos.tsx",
+    "line": 192,
+    "component": "Eventos.tsx",
+    "pattern": "TODO",
+    "snippet": "Limpar Todos os Filtros",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventOSAdvancedPage.tsx",
+    "line": 24,
+    "component": "EventOSAdvancedPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "export default function EventOSAdvancedPage({event,page}:Props){const m=meta[page]||meta['event-live",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/EventsPage.tsx",
+    "line": 9,
+    "component": "EventsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "status: 'ativos'|'inativos'|'todos'",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventsPage.tsx",
+    "line": 10,
+    "component": "EventsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "setStatus: (value:'ativos'|'inativos'|'todos')=>void",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventsPage.tsx",
+    "line": 23,
+    "component": "EventsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const matchesStatus = status === 'todos' || (status === 'ativos' && event.status === 'ativo') || (st",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/EventsPage.tsx",
+    "line": 50,
+    "component": "EventsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<button data-testid=\"events-filter-all\" className={status==='todos'?'active':''} onClick={()=>setSta",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FacialPage.tsx",
+    "line": 20,
+    "component": "FacialPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<section className=\"table-card\"><div className=\"table-toolbar\"><div><h2>Base facial</h2><p>Visualiza",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAccountingHubPage.tsx",
+    "line": 218,
+    "component": "FinanceAccountingHubPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"fa-header\"><div>{onBack&&<button className=\"fa-back\" onClick={onBack}>← Hub Financei",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAccountingHubPage.tsx",
+    "line": 220,
+    "component": "FinanceAccountingHubPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"fa-toolbar\"><div className=\"fa-search\"><Search size={15}/><input value={q} onChange=",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAccountingHubPage.tsx",
+    "line": 254,
+    "component": "FinanceAccountingHubPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "{mode==='signature'&&<><Field l=\"Borderô\" v={f.borderoId} on={v=>set('borderoId',v)} opts={borderos.",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAccountingHubPage.tsx",
+    "line": 258,
+    "component": "FinanceAccountingHubPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "function Field({l,v,on,type='text',opts,placeholder}:{l:string;v?:string;on:(v:string)=>void;type?:s",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 64,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<p>Central operacional de gateways, adquirentes, métodos, MDR, liquidação e custos que alimentam o S",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 79,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "['methods', 'Métodos de Pagamento', CreditCard]",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 126,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<Kpi icon={WalletCards} label=\"Métodos ativos\" value={`${activeM}`} sub={`${methods.length} configur",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 142,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<b>Método / Parcelas</b>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 254,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Nome do gateway\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 259,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Provider/código\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 360,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Nome da adquirente\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 365,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Código (ex: stone, pagarme)\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 574,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "flash('Método cadastrado com sucesso!')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 584,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "flash(`Método ${x.name || x.label || x.code} atualizado!`)",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 595,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<h2>Métodos de Pagamento</h2>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 623,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Máx. parcelas\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 631,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Parcela mínima R$\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
+    "line": 643,
+    "component": "FinanceAdvancedTaxesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<th>Método</th>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceBalancesPage.tsx",
+    "line": 106,
+    "component": "FinanceBalancesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os eventos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceBalancesPage.tsx",
+    "line": 202,
+    "component": "FinanceBalancesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar por evento ou produtora...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceBankAccountsPage.tsx",
+    "line": 294,
+    "component": "FinanceBankAccountsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: 0432\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceBankAccountsPage.tsx",
+    "line": 305,
+    "component": "FinanceBankAccountsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: 29814-5\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceBankAccountsPage.tsx",
+    "line": 331,
+    "component": "FinanceBankAccountsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: 44.821.902/0001-38\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceBankAccountsPage.tsx",
+    "line": 344,
+    "component": "FinanceBankAccountsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Disk Produções e Eventos Ltda\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceBankAccountsPage.tsx",
+    "line": 355,
+    "component": "FinanceBankAccountsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: 44.821.902/0001-38\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceCashOperationsPage.tsx",
+    "line": 107,
+    "component": "FinanceCashOperationsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{mode !== 'bank-accounts' && <div className=\"finance-select-group\"><span>Evento</span><select value=",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceCashOperationsPage.tsx",
+    "line": 173,
+    "component": "FinanceCashOperationsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"small-search\"><Search size={14}/><input value={search} onChange={e=>setSearch(e.targ",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceCashOperationsPage.tsx",
+    "line": 174,
+    "component": "FinanceCashOperationsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<select value={typeFilter} onChange={e=>setTypeFilter(e.target.value as any)} aria-label=\"Filtrar po",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceCashOperationsPage.tsx",
+    "line": 175,
+    "component": "FinanceCashOperationsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} aria-label=\"Filtrar por s",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceCommandCenterPage.tsx",
+    "line": 30,
+    "component": "FinanceCommandCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{title:'SIMULADORES, MÉTODOS & LIQUIDAÇÕES',subtitle:'Pagamentos, split, borderô e pontos de venda',",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceCommandCenterPage.tsx",
+    "line": 33,
+    "component": "FinanceCommandCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{title:'Métodos de Pagamento',desc:'PIX, crédito, débito, boleto e parcelamento.',page:'finance-meth",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceCommandCenterPage.tsx",
+    "line": 54,
+    "component": "FinanceCommandCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<header className=\"finance-command-hero\"><div><span className=\"finance-command-eyebrow\">FINANCEIRO</",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceCommandCenterPage.tsx",
+    "line": 68,
+    "component": "FinanceCommandCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<section className=\"finance-command-health\"><HealthLink page=\"finance-gateways\" onNavigate={onNaviga",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceCommandCenterPage.tsx",
+    "line": 69,
+    "component": "FinanceCommandCenterPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"finance-command-search\"><Search size={18}/><input value={q} onChange={e=>setQ(e.targ",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceDashboardPage.tsx",
+    "line": 92,
+    "component": "FinanceDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "event: selectedEvent ? selectedEvent.title : 'Todos os eventos',",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceDashboardPage.tsx",
+    "line": 110,
+    "component": "FinanceDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const headers = ['ID', 'Data', 'Descricao', 'Evento', 'Tipo', 'Metodo', 'Status', 'Valor (R$)']",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceDashboardPage.tsx",
+    "line": 195,
+    "component": "FinanceDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os eventos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceDashboardPage.tsx",
+    "line": 423,
+    "component": "FinanceDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "Ver Todos os Repasses <ChevronRight size={14} />",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceDashboardPage.tsx",
+    "line": 461,
+    "component": "FinanceDashboardPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar transação, pedido ou cliente...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceDashboardPage.tsx",
+    "line": 472,
+    "component": "FinanceDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os tipos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceExpensesPage.tsx",
+    "line": 22,
+    "component": "FinanceExpensesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [status, setStatus] = useState('Todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceExpensesPage.tsx",
+    "line": 44,
+    "component": "FinanceExpensesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const matchStatus = status === 'Todos' || x.status === status",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceExpensesPage.tsx",
+    "line": 199,
+    "component": "FinanceExpensesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar fornecedor, categoria ou evento...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceExpensesPage.tsx",
+    "line": 224,
+    "component": "FinanceExpensesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"Todos\">Todos os status</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceExpensesPage.tsx",
+    "line": 300,
+    "component": "FinanceExpensesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: AWS Brasil, Google Ads, Locadora de Palco...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceExpensesPage.tsx",
+    "line": 341,
+    "component": "FinanceExpensesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: NF-99241, FAT-1029\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceExpensesPage.tsx",
+    "line": 371,
+    "component": "FinanceExpensesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"0,00\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceHubPage.tsx",
+    "line": 41,
+    "component": "FinanceHubPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{ title: 'Métodos de Pagamento', desc: 'Tarifas MDR, prazos D+0/D+1/D+30 e share de vendas.', icon: ",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceHubPage.tsx",
+    "line": 43,
+    "component": "FinanceHubPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{ title: 'Negociações Financeiras', desc: 'Receita por método, despesas, patrocínio, advanced e DRE.",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceHubPage.tsx",
+    "line": 56,
+    "component": "FinanceHubPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{ title: 'MÉTODOS, GATEWAYS & LIQUIDAÇÕES', subtitle: 'Infraestrutura de cartões, splits, negociaçõe",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceHubPage.tsx",
+    "line": 71,
+    "component": "FinanceHubPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input value={q} onChange={e => setQ(e.target.value)} placeholder=\"Buscar módulo financeiro (ex: PDV",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/Financeiro.tsx",
+    "line": 62,
+    "component": "Financeiro.tsx",
+    "pattern": "TODO",
+    "snippet": "const [selectedEvent, setSelectedEvent] = useState('Todos os eventos');",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/Financeiro.tsx",
+    "line": 83,
+    "component": "Financeiro.tsx",
+    "pattern": "TODO",
+    "snippet": "const matchEvent = selectedEvent === 'Todos os eventos' || t.event === selectedEvent;",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/Financeiro.tsx",
+    "line": 266,
+    "component": "Financeiro.tsx",
+    "pattern": "placeholder",
+    "snippet": "searchPlaceholder=\"Buscar por pedido (#DI-XXXXX), evento ou lançamento...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/Financeiro.tsx",
+    "line": 274,
+    "component": "Financeiro.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"Todos os eventos\">Todos os eventos ({events.length})</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceiroConsolidadoPage.tsx",
+    "line": 53,
+    "component": "FinanceiroConsolidadoPage.tsx",
+    "pattern": "TODO",
+    "snippet": "Visão de encerramento da Fase 17 com todos os módulos financeiros implantados, integrados e operacio",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePage.tsx",
+    "line": 14,
+    "component": "FinancePage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [event, setEvent] = useState('Todos os eventos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePage.tsx",
+    "line": 25,
+    "component": "FinancePage.tsx",
+    "pattern": "TODO",
+    "snippet": "const matchesEvent = event === 'Todos os eventos' || t.event === event",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePage.tsx",
+    "line": 107,
+    "component": "FinancePage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input value={query} onChange={e => setQuery(e.target.value)} placeholder=\"Buscar pedido, evento ou ",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePage.tsx",
+    "line": 110,
+    "component": "FinancePage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option>Todos os eventos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePage.tsx",
+    "line": 263,
+    "component": "FinancePage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: 5000.00\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePayablesPage.tsx",
+    "line": 222,
+    "component": "FinancePayablesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar por descrição, favorecido ou evento...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePayablesPage.tsx",
+    "line": 247,
+    "component": "FinancePayablesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os status</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayablesPage.tsx",
+    "line": 331,
+    "component": "FinancePayablesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Equipe de som e iluminação Lote 1\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePayablesPage.tsx",
+    "line": 342,
+    "component": "FinancePayablesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Áudio Master Produções Ltda\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePayablesPage.tsx",
+    "line": 411,
+    "component": "FinancePayablesPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"0,00\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 85,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<K title=\"Métodos configurados\" value={String(summary?.methods || 0)} icon={CreditCard} />",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 94,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "['methods', 'Métodos de Pagamento'],",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 339,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<h3>Métodos de Pagamento Ativos</h3>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 343,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<Plus size={16} /> Novo Método",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 352,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "flash('Método configurado.')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 360,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<Field label=\"Método\">",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 374,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<button className=\"fa-btn primary\">Salvar Método</button>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 407,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "flash(`Método ${m.active ? 'desativado' : 'ativado'}.`)",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 483,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "{ id: 3, title: 'Spread de Parcelamento 12x Repassado', partner: 'Gateway Stone', rate: '1,29% a.m. ",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 578,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input required value={f.orderCode} onChange={e => setF({ ...f, orderCode: e.target.value })} placeh",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 589,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<Field label=\"Método Original\">",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayments360Page.tsx",
+    "line": 610,
+    "component": "FinancePayments360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<th>Método</th>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayoutsPage.tsx",
+    "line": 477,
+    "component": "FinancePayoutsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar por evento, produtora ou conta...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinancePayoutsPage.tsx",
+    "line": 489,
+    "component": "FinancePayoutsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os status</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinancePayoutsPage.tsx",
+    "line": 717,
+    "component": "FinancePayoutsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<span>Método de Transferência</span>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceProducerAccountPage.tsx",
+    "line": 46,
+    "component": "FinanceProducerAccountPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"hero-context\"><span>Evento</span><select value={eventId} onChange={e=>setEventId(e.t",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceReceivablesPage.tsx",
+    "line": 109,
+    "component": "FinanceReceivablesPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<LLCard><LLCardHeader title=\"Recebíveis detalhados\" subtitle={`${filtered.length} registro(s) no fil",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceReconciliationPage.tsx",
+    "line": 92,
+    "component": "FinanceReconciliationPage.tsx",
+    "pattern": "TODO",
+    "snippet": "notify?.('Todos os 3 lançamentos divergentes foram conciliados com sucesso no Santander!')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceSpread360Page.tsx",
+    "line": 267,
+    "component": "FinanceSpread360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "Método",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceSpread360Page.tsx",
+    "line": 546,
+    "component": "FinanceSpread360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "const header = ['data', 'bruto', 'metodo', 'parcelas', 'mdr', 'antecipacao', 'receita', 'margem']",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceSpread360Page.tsx",
+    "line": 582,
+    "component": "FinanceSpread360Page.tsx",
+    "pattern": "TODO",
+    "snippet": "<th>Método</th>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/FinanceStatementPage.tsx",
+    "line": 179,
+    "component": "FinanceStatementPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar por descrição, pedido, cliente...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/FinanceStatementPage.tsx",
+    "line": 192,
+    "component": "FinanceStatementPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os tipos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/GenericModulePage.tsx",
+    "line": 147,
+    "component": "GenericModulePage.tsx",
+    "pattern": "TODO",
+    "snippet": "Voltar para Todos os Eventos",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/GlobalDashboardPage.tsx",
+    "line": 11,
+    "component": "GlobalDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<section className=\"page-head global-admin-head\"><div><p className=\"eyebrow\">ADMINISTRAÇÃO GLOBAL</p",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/GlobalDashboardPage.tsx",
+    "line": 15,
+    "component": "GlobalDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"admin-kpi\"><span className=\"kpi-icon\"><Users size={21}/></span><div><small>Usuários<",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/LotsPage.tsx",
+    "line": 45,
+    "component": "LotsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "{showForm && <div className=\"inline-lot-form\"><div className=\"inline-lot-title\"><strong>Novo lote</s",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/LotsPage.tsx",
+    "line": 48,
+    "component": "LotsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"table-toolbar\"><div><h2>Lotes cadastrados</h2><p>Controle comercial do evento seleci",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 176,
+    "component": "MarketingPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const eventName = useMemo(() => eventId === 'all' ? 'Todos os eventos' : events.find(e => String(e.i",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 603,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder={`Ex: ${event.title} — Stories Lançamento`}",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 782,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder=\"Ex: ingressos show marcos e belutti curitiba\" value={newKw}",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 898,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder={`Ex: ${event.title} — Viral Teaser`} value={adName} onChang",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 902,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"Ex: https://tiktok.com/@criador/video/7391823901\" value={videoCode} ",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1034,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder=\"Ex: Curitiba Comedy Show\" value={name} onChange={e => setNa",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1038,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"Ex: @curitibacomedy\" value={handle} onChange={e => setHandle(e.targe",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1183,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder=\"Ex: Compradores VIP Setor Premium\" value={newName} onChange",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1272,
+    "component": "MarketingPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<thead><tr><th>Regra</th><th>Método de Pagamento</th><th>% Cashback</th><th>Validade</th><th>Status<",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1300,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder=\"Ex: Cashback 5% Lote Especial\" value={ruleName} onChange={e",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1308,
+    "component": "MarketingPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"Todos os Métodos\">Todos os Métodos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1422,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder=\"Ex: Camiseta Exclusiva do Show\" value={rewardName} onChange",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1525,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder=\"Ex: Marque 3 amigos no Instagram Oficial\" value={title} onC",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1529,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<textarea rows={3} placeholder=\"Descreva o que o fã precisa fazer...\" value={desc} onChange={e => se",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1533,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"Ex: 500 Coins + 10% de Desconto no Bar\" value={reward} onChange={e =",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1719,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" required placeholder=\"Ex: Promoter Curitiba VIP\" value={affiliateName} onChange={",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1723,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"Ex: PROMOTER_VIP\" value={affiliateCode} onChange={e => setAffiliateC",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1896,
+    "component": "MarketingPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"Ex: VOLTA5 (5% OFF)\" value={couponCode} onChange={e => setCouponCode",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/MarketingPage.tsx",
+    "line": 1999,
+    "component": "MarketingPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os eventos ({events.length})</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/ModulePlaceholder.tsx",
+    "line": 2,
+    "component": "ModulePlaceholder.tsx",
+    "pattern": "placeholder",
+    "snippet": "export default function ModulePlaceholder({title,description,onBack}:{title:string;description:strin",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/ParticipantsPage.tsx",
+    "line": 8,
+    "component": "ParticipantsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [query,setQuery]=useState(''); const [eventId,setEventId]=useState('todos'); const [checkin,se",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/ParticipantsPage.tsx",
+    "line": 11,
+    "component": "ParticipantsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "return q&&(eventId==='todos'||p.eventId===Number(eventId))&&(checkin==='todos'||p.checkin===checkin)",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/ParticipantsPage.tsx",
+    "line": 27,
+    "component": "ParticipantsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"participant-filters\"><div className=\"small-search wide\"><Search size={16}/><input va",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/POSPage.tsx",
+    "line": 32,
+    "component": "POSPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [eventFilter,setEventFilter]=useState('Todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/POSPage.tsx",
+    "line": 38,
+    "component": "POSPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const filteredSales=sales.filter(s=>(eventFilter==='Todos'||s.event===eventFilter)&&(`${s.id} ${s.te",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/POSPage.tsx",
+    "line": 52,
+    "component": "POSPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"page-head pos-head\"><div><p className=\"eyebrow\">OPERAÇÃO PRESENCIAL</p><h1>Terminais",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/POSPage.tsx",
+    "line": 63,
+    "component": "POSPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<section className=\"card-surface pos-panel\"><div className=\"card-heading\"><div><h2>Terminais em oper",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/POSPage.tsx",
+    "line": 71,
+    "component": "POSPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{tab==='sales'&&<><div className=\"card-surface pos-filterbar\"><div className=\"search-box\"><Search si",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/ProducersPage.tsx",
+    "line": 20,
+    "component": "ProducersPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"users-toolbar\"><div><p className=\"eyebrow\">ADMINISTRAÇÃO</p><h2>Produtoras</h2><p>Co",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/ProfileDashboardPage.tsx",
+    "line": 58,
+    "component": "ProfileDashboardPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"profile-section-head\"><div><span className=\"eyebrow\">EVENTOS</span><h3>Últimos event",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/RecoveryCenterPage.tsx",
+    "line": 138,
+    "component": "RecoveryCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "// Carrinho abandonado exige seleção explícita do evento. Nunca carrega dados de todos os eventos.",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/RecoveryCenterPage.tsx",
+    "line": 224,
+    "component": "RecoveryCenterPage.tsx",
+    "pattern": "setTimeout",
+    "snippet": "setTimeout(() => setCopiedId(null), 2000)",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/RecoveryCenterPage.tsx",
+    "line": 353,
+    "component": "RecoveryCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os eventos ({events.length})</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/RecoveryCenterPage.tsx",
+    "line": 366,
+    "component": "RecoveryCenterPage.tsx",
+    "pattern": "TODO",
+    "snippet": "['all', 'Todos'],",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/RemarketingPage.tsx",
+    "line": 168,
+    "component": "RemarketingPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"all\">Todos os eventos ({events.length})</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/SecurityPage.tsx",
+    "line": 13,
+    "component": "SecurityPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<div className=\"users-toolbar\"><div><p className=\"eyebrow\">PROTEÇÃO DA PLATAFORMA</p><h2>Configuraçõ",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/StatusFaciais.tsx",
+    "line": 19,
+    "component": "StatusFaciais.tsx",
+    "pattern": "TODO",
+    "snippet": "const [statusFilter, setStatusFilter] = useState<string>('todos');",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/StatusFaciais.tsx",
+    "line": 25,
+    "component": "StatusFaciais.tsx",
+    "pattern": "TODO",
+    "snippet": "if (statusFilter !== 'todos' && p.facial !== statusFilter) return false;",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/StatusFaciais.tsx",
+    "line": 81,
+    "component": "StatusFaciais.tsx",
+    "pattern": "placeholder",
+    "snippet": "searchPlaceholder=\"Buscar participante por nome, e-mail ou documento...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/StatusFaciais.tsx",
+    "line": 86,
+    "component": "StatusFaciais.tsx",
+    "pattern": "TODO",
+    "snippet": "{ id: 'todos', label: 'Todos', count: participants.length },",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 217,
+    "component": "SupportPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [ticketFilter, setTicketFilter] = useState<'TODOS' | 'P1' | 'ABERTOS' | 'ATRASADOS' | 'RESOLVI",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 255,
+    "component": "SupportPage.tsx",
+    "pattern": "setTimeout",
+    "snippet": "setTimeout(() => {",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 327,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar CPF, pedido, nome, fone, e-mail...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 629,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar CPF, pedido, nome, telefone, e-mail ou ingresso...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 900,
+    "component": "SupportPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<span style={{ fontSize: '11px', color: '#2563eb', cursor: 'pointer', fontWeight: 700 }}>Ver todos</",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 973,
+    "component": "SupportPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<button className={`ds-filter-tab-btn ${ticketFilter === 'TODOS' ? 'active' : ''}`} onClick={() => s",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 974,
+    "component": "SupportPage.tsx",
+    "pattern": "TODO",
+    "snippet": "Todos <span className=\"badge-pill\">5</span>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 1096,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Filtrar conversas...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 1174,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Digite a resposta ou use modelos rápidos...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 1604,
+    "component": "SupportPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<button onClick={() => notify('Recomendação do Copilot aplicada para todos os 4 chamados em lote!')}",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 1901,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"Nome completo\" required style={{ width: '100%', background: '#ffffff",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 1905,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"joao@email.com ou (41) 99999-8888\" required style={{ width: '100%', ",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 1940,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<input type=\"text\" placeholder=\"Ex: Dificuldade no recebimento de QR Code Pix\" required style={{ wid",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 1945,
+    "component": "SupportPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<textarea placeholder=\"Relate as informações fornecidas pelo cliente...\" rows={4} required style={{ ",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/SupportPage.tsx",
+    "line": 2032,
+    "component": "SupportPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<span>Método de Pagamento</span>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/UsersPage.tsx",
+    "line": 23,
+    "component": "UsersPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "<div className=\"users-toolbar\"><div><p className=\"eyebrow\">ADMINISTRAÇÃO</p><h2>Usuários e acessos</",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventDayCommandPage.tsx",
+    "line": 773,
+    "component": "EventDayCommandPage.tsx",
+    "pattern": "TODO",
+    "snippet": "Ver todos ({data?.incidents?.length ?? 0}) <ArrowUpRight size={12} />",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventDiskIntelligencePage.tsx",
+    "line": 404,
+    "component": "EventDiskIntelligencePage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Pergunte sobre este evento... (ex: Por que as vendas caíram hoje?)\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 42,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [filterStatus, setFilterStatus] = useState<string>('todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 43,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [filterPayment, setFilterPayment] = useState<string>('todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 56,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "status: filterStatus === 'todos' ? undefined : filterStatus,",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 57,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "paymentMethod: filterPayment === 'todos' ? undefined : filterPayment",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 75,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "setTimeout",
+    "snippet": "const timer = setTimeout(() => {",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 92,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "setFilterStatus('todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 93,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "setFilterPayment('todos')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 208,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Buscar pedido, CPF, ingresso, nome, telefone, e-mail ou transação...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 233,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "Todos <span className=\"egs-tab-badge\">{totalCount}</span>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 300,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"todos\">Status: Todos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 311,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "<option value=\"todos\">Pagamento: Todos</option>",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
+    "line": 316,
+    "component": "EventGlobalSearchPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{(query || filterStatus !== 'todos' || filterPayment !== 'todos' || activeType !== 'all') && (",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 51,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "const [statusFilter, setStatusFilter] = useState('TODOS')",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 337,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "Math.random",
+    "snippet": "const fallbackCode = `INC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 493,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Pesquisar por código (INC-...), título, descrição, operador...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 521,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "TODO",
+    "snippet": "{ key: 'TODOS', label: `Todos (${incidents.length})` },",
+    "severity": "LOW"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 809,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Adicionar nota ou parecer operacional...\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 862,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Falha de leitura de QR code no Portão A\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 904,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Portão A\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 913,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: Scanner A-04\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 925,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: TK-928341\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 934,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Ex: João da Silva\"",
+    "severity": "MEDIUM"
+  },
+  {
+    "file": "src/pages/eventos/EventIncidentsPage.tsx",
+    "line": 944,
+    "component": "EventIncidentsPage.tsx",
+    "pattern": "placeholder",
+    "snippet": "placeholder=\"Relate o ocorrido, testes realizados e ações tomadas até o momento...\"",
+    "severity": "MEDIUM"
+  }
+]

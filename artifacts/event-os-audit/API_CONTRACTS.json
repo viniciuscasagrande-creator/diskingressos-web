@@ -1,0 +1,230 @@
+[
+  {
+    "id": "inventory-lots",
+    "path": "/events/:id/inventory-lots",
+    "method": "POST",
+    "frontendFunc": "createInventoryLot",
+    "category": "inventory",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "inventory-lot-update",
+    "path": "/events/:id/inventory-lots/:lotId",
+    "method": "PATCH",
+    "frontendFunc": "updateInventoryLot",
+    "category": "inventory",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "customer360-profile",
+    "path": "/events/:id/customer-360/profile",
+    "method": "GET",
+    "frontendFunc": "getEventCustomer360Profile",
+    "category": "customer-360",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "liveops-overview",
+    "path": "/events/:id/live-ops/overview",
+    "method": "GET",
+    "frontendFunc": "getEventLiveOpsOverview",
+    "category": "live-operations",
+    "frontendExists": false,
+    "backendRouteExists": false,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "BROKEN",
+    "issues": [
+      {
+        "issue": "FRONTEND_FUNCTION_MISSING",
+        "severity": "HIGH",
+        "detail": "Função getEventLiveOpsOverview não encontrada em src/services/api.ts"
+      },
+      {
+        "issue": "API_CONTRACT_BROKEN",
+        "severity": "CRITICAL",
+        "detail": "Rota GET /events/:id/live-ops/overview não encontrada no backend correspondente"
+      }
+    ]
+  },
+  {
+    "id": "incidents-list",
+    "path": "/events/:id/incidents",
+    "method": "GET",
+    "frontendFunc": "getEventIncidents",
+    "category": "incident-center",
+    "frontendExists": false,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "WARNING",
+    "issues": [
+      {
+        "issue": "FRONTEND_FUNCTION_MISSING",
+        "severity": "HIGH",
+        "detail": "Função getEventIncidents não encontrada em src/services/api.ts"
+      }
+    ]
+  },
+  {
+    "id": "incidents-create",
+    "path": "/events/:id/incidents",
+    "method": "POST",
+    "frontendFunc": "createEventIncident",
+    "category": "incident-center",
+    "frontendExists": false,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "WARNING",
+    "issues": [
+      {
+        "issue": "FRONTEND_FUNCTION_MISSING",
+        "severity": "HIGH",
+        "detail": "Função createEventIncident não encontrada em src/services/api.ts"
+      }
+    ]
+  },
+  {
+    "id": "day-command-overview",
+    "path": "/events/:id/day-command/overview",
+    "method": "GET",
+    "frontendFunc": "getEventDayCommandOverview",
+    "category": "event-day-command",
+    "frontendExists": false,
+    "backendRouteExists": false,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "BROKEN",
+    "issues": [
+      {
+        "issue": "FRONTEND_FUNCTION_MISSING",
+        "severity": "HIGH",
+        "detail": "Função getEventDayCommandOverview não encontrada em src/services/api.ts"
+      },
+      {
+        "issue": "API_CONTRACT_BROKEN",
+        "severity": "CRITICAL",
+        "detail": "Rota GET /events/:id/day-command/overview não encontrada no backend correspondente"
+      }
+    ]
+  },
+  {
+    "id": "revenue-intelligence",
+    "path": "/events/:id/revenue-intelligence",
+    "method": "GET",
+    "frontendFunc": "getRevenueIntelligence",
+    "category": "revenue-pricing",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "forecast-summary",
+    "path": "/events/:id/forecast",
+    "method": "GET",
+    "frontendFunc": "getForecastSummary",
+    "category": "forecast-center",
+    "frontendExists": false,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "WARNING",
+    "issues": [
+      {
+        "issue": "FRONTEND_FUNCTION_MISSING",
+        "severity": "HIGH",
+        "detail": "Função getForecastSummary não encontrada em src/services/api.ts"
+      }
+    ]
+  },
+  {
+    "id": "forecast-simulate",
+    "path": "/events/:id/forecast/simulate",
+    "method": "POST",
+    "frontendFunc": "simulateForecastScenario",
+    "category": "forecast-center",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "disk-intelligence",
+    "path": "/events/:id/intelligence",
+    "method": "GET",
+    "frontendFunc": "getDiskIntelligence",
+    "category": "disk-intelligence",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "disk-intelligence-ask",
+    "path": "/events/:id/intelligence/ask",
+    "method": "POST",
+    "frontendFunc": "askDiskIntelligence",
+    "category": "disk-intelligence",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "executive-dashboard",
+    "path": "/events/:id/executive-dashboard",
+    "method": "GET",
+    "frontendFunc": "getExecutiveDashboard",
+    "category": "executive-dashboard",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "TENANT_VALIDATED",
+    "rbacSecurity": "RBAC_VALIDATED",
+    "status": "OK",
+    "issues": []
+  },
+  {
+    "id": "finance-refunds-list",
+    "path": "/refunds",
+    "method": "GET",
+    "frontendFunc": "getRefundRequests",
+    "category": "estornos",
+    "frontendExists": true,
+    "backendRouteExists": true,
+    "tenantSecurity": "UNPROTECTED",
+    "rbacSecurity": "NONE",
+    "status": "BROKEN",
+    "issues": [
+      {
+        "issue": "TENANT_FILTER_INCOMPLETE",
+        "severity": "CRITICAL",
+        "detail": "Endpoint /refunds não possui validação explícita de tenant do produtor."
+      }
+    ]
+  }
+]
