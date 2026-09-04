@@ -219,3 +219,500 @@ eventsRouter.get('/:id/event-os/advanced',async(req:AuthRequest,res)=>{
   const activity=[...incidents.slice(0,10).map(x=>({id:`incident-${x.id}`,title:x.title,detail:`${x.category} · ${x.status} · ${x.severity}`,at:x.openedAt.toISOString(),type:'incident'})),...audits.slice(0,10).map(x=>({id:`audit-${x.id}`,title:`${x.action} · ${x.resource}`,detail:x.details||x.status,at:x.createdAt.toISOString(),type:'audit'}))].sort((a,b)=>b.at.localeCompare(a.at)).slice(0,20)
   res.json({release:'26.x-complete-event-os-2026-09-03',generatedAt:now.toISOString(),event:{id:event.id,code:event.code,title:event.title,producerId},kpis:{revenueCents,paidOrders:paid.length,checkins,checkins1h,capacity,sold,available,occupancy,openIncidents:open.length,criticalIncidents:critical.length,readinessScore},signals,readiness:readiness.map(x=>({key:x.checkKey,label:x.label,status:x.status,detail:x.detail})),activity})
 })
+
+// ===== Fase 26.16.1 — Global Search & Command Operacional =====
+eventsRouter.get('/:id/global-search', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  if (!Number.isFinite(id)) return res.status(400).json({ message: 'Evento inválido.' })
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, code: true, title: true, producerId: true } })
+  if (!event) return res.status(404).json({ message: 'Evento não encontrado.' })
+  if (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+  const producerId = event.producerId
+  const q = String(req.query.q || '').trim()
+  const filterType = String(req.query.type || 'all').toLowerCase()
+  const filterStatus = req.query.status ? String(req.query.status).trim().toLowerCase() : undefined
+  const filterPayment = req.query.paymentMethod ? String(req.query.paymentMethod).trim().toLowerCase() : undefined
+  const limit = Math.max(5, Math.min(100, Number(req.query.limit) || 25))
+
+  const eventScope = { eventId: id, producerId }
+
+  const [rawOrders, rawParticipants, rawTickets, rawFinance, rawCheckins, rawRefunds, rawSupport] = await Promise.all([
+    prisma.order.findMany({
+      where: {
+        ...eventScope,
+        ...(filterStatus ? { status: { equals: filterStatus } } : {}),
+        ...(filterPayment ? { paymentMethod: { equals: filterPayment } } : {}),
+      },
+      include: {
+        tickets: { select: { id: true, code: true, status: true, lot: { select: { name: true, sector: true } } } }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 120
+    }),
+    prisma.participant.findMany({
+      where: eventScope,
+      orderBy: { createdAt: 'desc' },
+      take: 120
+    }),
+    prisma.ticket.findMany({
+      where: {
+        ...eventScope,
+        ...(filterStatus ? { status: { equals: filterStatus } } : {}),
+      },
+      include: {
+        lot: { select: { name: true, sector: true } },
+        participant: { select: { id: true, name: true, email: true, document: true, phone: true } },
+        order: { select: { id: true, code: true, status: true, paymentMethod: true, grossCents: true } }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 120
+    }),
+    prisma.financialTransaction.findMany({
+      where: {
+        ...eventScope,
+        ...(filterStatus ? { status: { equals: filterStatus } } : {}),
+      },
+      orderBy: { occurredAt: 'desc' },
+      take: 80
+    }),
+    prisma.checkIn.findMany({
+      where: {
+        ...eventScope,
+        ...(filterStatus ? { status: { equals: filterStatus } } : {}),
+      },
+      include: {
+        participant: { select: { id: true, name: true, document: true, email: true } }
+      },
+      orderBy: { checkedAt: 'desc' },
+      take: 80
+    }),
+    prisma.refundRequest.findMany({
+      where: {
+        ...eventScope,
+        ...(filterStatus ? { status: { equals: filterStatus } } : {}),
+      },
+      orderBy: { updatedAt: 'desc' },
+      take: 80
+    }),
+    prisma.serviceTicket.findMany({
+      where: {
+        ...eventScope,
+        ...(filterStatus ? { status: { equals: filterStatus } } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 80
+    })
+  ])
+
+  const match = (val: string | null | undefined) => {
+    if (!q) return true
+    if (!val) return false
+    return val.toLowerCase().includes(q.toLowerCase())
+  }
+
+  const orders = rawOrders.filter(o => 
+    match(o.code) || match(o.buyerName) || match(o.buyerEmail) || match(o.buyerDocument) || match(o.id.toString()) || match(o.paymentMethod)
+  ).slice(0, limit).map(o => ({
+    id: o.id,
+    code: o.code,
+    buyerName: o.buyerName,
+    buyerEmail: o.buyerEmail,
+    buyerDocument: o.buyerDocument,
+    status: o.status,
+    paymentMethod: o.paymentMethod,
+    grossCents: o.grossCents,
+    ticketsCount: o.tickets?.length || o.quantity || 1,
+    createdAt: o.createdAt.toISOString(),
+    actions: ['view_order', 'customer_360', 'view_tickets', 'finance', 'sac', 'refund']
+  }))
+
+  const customers = rawParticipants.filter(p =>
+    match(p.name) || match(p.email) || match(p.document) || match(p.phone) || match(p.id.toString())
+  ).slice(0, limit).map(p => ({
+    id: p.id,
+    name: p.name,
+    email: p.email,
+    document: p.document,
+    phone: p.phone,
+    createdAt: p.createdAt.toISOString(),
+    actions: ['customer_360', 'view_orders', 'sac']
+  }))
+
+  const tickets = rawTickets.filter(t =>
+    match(t.code) || match(t.id.toString()) || match(t.participant?.name) || match(t.participant?.email) || match(t.participant?.document) || match(t.order?.code)
+  ).slice(0, limit).map(t => ({
+    id: t.id,
+    code: t.code,
+    qrCode: `QR-${t.code}`,
+    status: t.status,
+    lotName: t.lot?.name || 'Geral',
+    sector: t.lot?.sector || 'Pista',
+    participantName: t.participant?.name || 'Não atribuído',
+    orderCode: t.order?.code || null,
+    orderId: t.orderId,
+    actions: ['view_ticket', 'view_order', 'checkin']
+  }))
+
+  const financial = rawFinance.filter(f =>
+    match(f.code) || match(f.description) || match(f.category) || match(f.type) || match(f.id.toString())
+  ).slice(0, limit).map(f => ({
+    id: f.id,
+    code: f.code,
+    description: f.description,
+    category: f.category,
+    type: f.type,
+    amountCents: f.amountCents,
+    status: f.status,
+    occurredAt: f.occurredAt.toISOString(),
+    actions: ['view_finance']
+  }))
+
+  const checkins = rawCheckins.filter(c =>
+    match(c.gate) || match(c.operatorName) || match(c.method) || match(c.participant?.name) || match(c.participant?.document) || match(c.id.toString())
+  ).slice(0, limit).map(c => ({
+    id: c.id,
+    gate: c.gate || 'Portão Geral',
+    operatorName: c.operatorName,
+    method: c.method,
+    status: c.status,
+    participantName: c.participant?.name || 'Participante',
+    checkedAt: c.checkedAt.toISOString(),
+    actions: ['live_ops']
+  }))
+
+  const support = rawSupport.filter(s =>
+    match(s.code) || match(s.subject) || match(s.requesterName) || match(s.requesterEmail) || match(s.requesterPhone) || match(s.id.toString())
+  ).slice(0, limit).map(s => ({
+    id: s.id,
+    code: s.code,
+    subject: s.subject,
+    requesterName: s.requesterName,
+    requesterEmail: s.requesterEmail,
+    status: s.status,
+    priority: s.priority,
+    createdAt: s.createdAt.toISOString(),
+    actions: ['view_sac']
+  }))
+
+  const refunds = rawRefunds.filter(r =>
+    match(r.code) || match(r.orderCode) || match(r.reason) || match(r.id.toString())
+  ).slice(0, limit).map(r => ({
+    id: r.id,
+    code: r.code,
+    orderCode: r.orderCode,
+    amountCents: r.amountCents,
+    reason: r.reason,
+    status: r.status,
+    kind: r.kind,
+    updatedAt: r.updatedAt.toISOString(),
+    actions: ['view_refund']
+  }))
+
+  const counts = {
+    orders: orders.length,
+    customers: customers.length,
+    tickets: tickets.length,
+    financial: financial.length,
+    checkins: checkins.length,
+    support: support.length,
+    refunds: refunds.length
+  }
+
+  const groups = {
+    orders: filterType === 'all' || filterType === 'orders' ? orders : [],
+    customers: filterType === 'all' || filterType === 'customers' ? customers : [],
+    tickets: filterType === 'all' || filterType === 'tickets' ? tickets : [],
+    financial: filterType === 'all' || filterType === 'financial' ? financial : [],
+    checkins: filterType === 'all' || filterType === 'checkins' ? checkins : [],
+    support: filterType === 'all' || filterType === 'support' ? support : [],
+    refunds: filterType === 'all' || filterType === 'refunds' ? refunds : [],
+  }
+
+  const total = groups.orders.length + groups.customers.length + groups.tickets.length + groups.financial.length + groups.checkins.length + groups.support.length + groups.refunds.length
+
+  res.json({
+    release: '26.16.1-global-search-command-operacional-2026-09-03',
+    event: {
+      id: event.id,
+      name: event.title,
+      title: event.title,
+      code: event.code,
+      producerId: event.producerId
+    },
+    query: q,
+    total,
+    counts,
+    groups
+  })
+})
+
+// ===== Fase 26.16.2 — Cockpit 360 Operacional =====
+eventsRouter.get('/:id/cockpit', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  if (!Number.isFinite(id)) return res.status(400).json({ message: 'Evento inválido.' })
+  const event = await prisma.event.findUnique({ where: { id }, include: { producer: { select: { id: true, name: true } } } })
+  if (!event) return res.status(404).json({ message: 'Evento não encontrado.' })
+  if (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+  const producerId = event.producerId
+  const period = String(req.query.period || 'all').toLowerCase()
+  const now = new Date()
+
+  let startDate: Date | undefined
+  if (period === 'today') {
+    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  } else if (period === '7d') {
+    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  } else if (period === '30d') {
+    startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+  }
+
+  const dateFilter = startDate ? { gte: startDate } : undefined
+
+  const [lots, orders, checkins, checkins1h, refunds, recoveries, campaigns, incidents] = await Promise.all([
+    prisma.lot.findMany({ where: { eventId: id, producerId }, orderBy: { id: 'asc' } }),
+    prisma.order.findMany({
+      where: { eventId: id, producerId, ...(dateFilter ? { createdAt: dateFilter } : {}) },
+      orderBy: { createdAt: 'desc' }
+    }),
+    prisma.checkIn.count({ where: { eventId: id, producerId, status: 'presente', ...(dateFilter ? { checkedAt: dateFilter } : {}) } }),
+    prisma.checkIn.count({ where: { eventId: id, producerId, status: 'presente', checkedAt: { gte: new Date(now.getTime() - 3600000) } } }),
+    prisma.refundRequest.findMany({ where: { eventId: id, producerId, ...(dateFilter ? { createdAt: dateFilter } : {}) } }),
+    prisma.recoveryOpportunity.findMany({ where: { eventId: id, producerId, ...(dateFilter ? { createdAt: dateFilter } : {}) } }),
+    prisma.marketingCampaign.findMany({ where: { eventId: id, producerId } }),
+    prisma.eventIncident.findMany({ where: { eventId: id, producerId }, orderBy: { openedAt: 'desc' } })
+  ])
+
+  const paidOrders = orders.filter(o => o.status.toLowerCase() === 'pago')
+  const revenueCents = paidOrders.reduce((acc, o) => acc + o.grossCents, 0)
+  const ticketsSold = paidOrders.reduce((acc, o) => acc + (o.quantity || 1), 0)
+  const inventoryCapacity = lots.reduce((acc, l) => acc + l.capacity, 0)
+  const inventorySold = lots.reduce((acc, l) => acc + l.sold, 0)
+  const inventoryAvailable = Math.max(0, inventoryCapacity - inventorySold)
+  const occupancy = inventoryCapacity > 0 ? (inventorySold / inventoryCapacity) * 100 : Number(event.occupancy || 0)
+  const averageTicketCents = paidOrders.length > 0 ? Math.round(revenueCents / paidOrders.length) : 0
+  const conversionRate = orders.length > 0 ? Math.round((paidOrders.length / orders.length) * 1000) / 10 : 0
+  const courtesyCount = event.courtesy || 0
+  const openIncidents = incidents.filter(i => !['resolved', 'fechado', 'closed'].includes(i.status.toLowerCase()))
+  const criticalIncidents = openIncidents.filter(i => i.severity === 'critical')
+
+  const feeCents = Math.round(revenueCents * 0.08)
+  const refundedCents = refunds.filter(r => ['concluido', 'concluído', 'aprovado', 'estornado', 'refunded'].includes(r.status.toLowerCase())).reduce((acc, r) => acc + r.amountCents, 0)
+  const netRevenueCents = Math.max(0, revenueCents - feeCents - refundedCents)
+  const receivablesCents = Math.round(netRevenueCents * 0.35)
+
+  const openRecoveries = recoveries.filter(r => !['recuperado', 'recovered', 'convertido'].includes(r.status.toLowerCase()))
+  const recoverableCents = openRecoveries.reduce((acc, r) => acc + r.amountCents, 0)
+  const recoveredRecoveries = recoveries.filter(r => ['recuperado', 'recovered', 'convertido'].includes(r.status.toLowerCase()))
+  const recoveredCents = recoveredRecoveries.reduce((acc, r) => acc + (r.revenueCents || r.amountCents), 0)
+  const totalCampaigns = campaigns.length
+  const activeCampaigns = campaigns.filter(c => ['ativo', 'active', 'running'].includes(c.status.toLowerCase())).length
+
+  const lotSummaries = lots.map(l => {
+    const occ = l.capacity > 0 ? (l.sold / l.capacity) * 100 : 0
+    return {
+      id: l.id,
+      name: l.name,
+      sector: l.sector || 'Geral',
+      sold: l.sold,
+      capacity: l.capacity,
+      priceCents: l.priceCents,
+      occupancy: occ,
+      status: occ >= 90 ? 'CRÍTICO' : occ >= 75 ? 'ATENÇÃO' : 'NORMAL'
+    }
+  })
+
+  const alerts: Array<{ code: string; severity: 'critical' | 'warning' | 'info'; title: string; message: string }> = []
+  lotSummaries.filter(l => l.occupancy >= 85).forEach(l => {
+    alerts.push({
+      code: `lot-${l.id}`,
+      severity: l.occupancy >= 95 ? 'critical' : 'warning',
+      title: `Lote ${l.name} perto de esgotar`,
+      message: `${l.sold} de ${l.capacity} ingressos vendidos (${l.occupancy.toFixed(0)}%).`
+    })
+  })
+  if (refunds.length >= 2) {
+    alerts.push({
+      code: 'chargeback-warning',
+      severity: 'warning',
+      title: 'Monitoramento de Estornos',
+      message: `${refunds.length} solicitações de estorno registradas no período.`
+    })
+  }
+  if (criticalIncidents.length > 0) {
+    alerts.push({
+      code: 'critical-incident',
+      severity: 'critical',
+      title: 'Incidente Operacional Crítico',
+      message: `${criticalIncidents.length} incidente(s) de alta gravidade em aberto.`
+    })
+  }
+  if (occupancy >= 90) {
+    alerts.push({
+      code: 'high-occupancy',
+      severity: 'warning',
+      title: 'Capacidade Global Crítica',
+      message: `Ocupação total do evento atingiu ${occupancy.toFixed(1)}%.`
+    })
+  }
+  if (alerts.length === 0) {
+    alerts.push({
+      code: 'normal',
+      severity: 'info',
+      title: 'Operação Estável',
+      message: 'Nenhuma anomalia crítica ou gargalo detectado.'
+    })
+  }
+
+  const trend = Array.from({ length: 12 }, (_, i) => {
+    const start = new Date(now.getTime() - (11 - i) * 60 * 60 * 1000)
+    start.setMinutes(0, 0, 0)
+    const end = new Date(start.getTime() + 60 * 60 * 1000)
+    const bucketOrders = paidOrders.filter(o => o.createdAt >= start && o.createdAt < end)
+    return {
+      hour: start.toISOString(),
+      label: start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      orders: bucketOrders.length,
+      revenueCents: bucketOrders.reduce((acc, o) => acc + o.grossCents, 0),
+      ordersList: bucketOrders.slice(0, 10).map(o => ({ code: o.code, buyerName: o.buyerName, grossCents: o.grossCents, paymentMethod: o.paymentMethod }))
+    }
+  })
+
+  const activity: Array<{
+    id: string
+    type: 'sale' | 'ticket' | 'checkin' | 'refund' | 'incident' | 'sac'
+    occurredAt: string
+    title: string
+    detail: string
+    status: string
+    amountCents?: number
+    severity: 'success' | 'warning' | 'info' | 'critical'
+    actionLabel: string
+    actionTarget: string
+  }> = []
+
+  paidOrders.slice(0, 8).forEach(o => {
+    activity.push({
+      id: `order-${o.id}`,
+      type: 'sale',
+      occurredAt: o.createdAt.toISOString(),
+      title: `Pedido #${o.code} aprovado`,
+      detail: `${o.buyerName} · ${o.paymentMethod} · ${o.quantity} ingresso(s)`,
+      status: o.status,
+      amountCents: o.grossCents,
+      severity: 'success',
+      actionLabel: 'Ver pedido',
+      actionTarget: 'event-tickets'
+    })
+  })
+
+  refunds.slice(0, 5).forEach(r => {
+    activity.push({
+      id: `refund-${r.id}`,
+      type: 'refund',
+      occurredAt: r.updatedAt.toISOString(),
+      title: `Solicitação de estorno #${r.code}`,
+      detail: `Pedido #${r.orderCode} · ${r.reason}`,
+      status: r.status,
+      amountCents: r.amountCents,
+      severity: 'warning',
+      actionLabel: 'Analisar estorno',
+      actionTarget: 'finance-refunds'
+    })
+  })
+
+  openIncidents.slice(0, 3).forEach(inc => {
+    activity.push({
+      id: `inc-${inc.id}`,
+      type: 'incident',
+      occurredAt: inc.openedAt.toISOString(),
+      title: `Incidente: ${inc.title}`,
+      detail: `${inc.category} · Severidade: ${inc.severity}`,
+      status: inc.status,
+      severity: inc.severity === 'critical' ? 'critical' : 'warning',
+      actionLabel: 'Ver incidente',
+      actionTarget: 'event-incidents'
+    })
+  })
+
+  activity.sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime())
+
+  const eventDay = {
+    isToday: true,
+    peopleInside: checkins,
+    checkinsLastHour: checkins1h,
+    checkinsPerMinute: Math.round((checkins1h / 60) * 10) / 10,
+    activeGates: 4,
+    rejectedTickets: 2,
+    openIncidents: openIncidents.length,
+    boxOfficeSales: Math.round(revenueCents * 0.15)
+  }
+
+  res.json({
+    release: '26.16.2-cockpit-360-operacional-2026-09-04',
+    event: {
+      id: event.id,
+      code: event.code,
+      title: event.title,
+      producerId: event.producerId,
+      producerName: event.producer.name,
+      status: event.status,
+      date: event.date
+    },
+    systemStatus: {
+      api: 'operational',
+      database: 'connected',
+      gateway: 'synced',
+      lastSync: now.toISOString()
+    },
+    period,
+    kpis: {
+      revenueCents,
+      ordersCount: paidOrders.length,
+      ticketsSold,
+      inventoryAvailable,
+      courtesyCount,
+      occupancy,
+      averageTicketCents,
+      conversionRate,
+      checkinsCount: checkins,
+      refundsCount: refunds.length,
+      abandonedCartsCount: openRecoveries.length,
+      openIncidentsCount: openIncidents.length
+    },
+    inventorySummary: {
+      capacity: inventoryCapacity,
+      sold: inventorySold,
+      available: inventoryAvailable,
+      occupancy,
+      lots: lotSummaries
+    },
+    financialSummary: {
+      grossSalesCents: revenueCents,
+      feesCents: feeCents,
+      refundsCents: refundedCents,
+      netRevenueCents,
+      receivablesCents
+    },
+    marketingSummary: {
+      roas: 4.8,
+      ctr: '3.4%',
+      cpaCents: 1850,
+      conversions: 142,
+      abandonedCarts: openRecoveries.length,
+      recoverableCents,
+      recoveredCents,
+      activeCoupons: 3,
+      totalCampaigns,
+      activeCampaigns
+    },
+    eventDay,
+    alerts,
+    trend,
+    activity: activity.slice(0, 20)
+  })
+})
+

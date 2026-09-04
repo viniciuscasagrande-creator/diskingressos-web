@@ -13,6 +13,7 @@ import RecoveryCenterPage from './RecoveryCenterPage'
 import EventCommandCenterPage from './EventCommandCenterPage'
 import EventInventoryPage from './EventInventoryPage'
 import EventCustomer360Page from './EventCustomer360Page'
+import EventGlobalSearchPage from './eventos/EventGlobalSearchPage'
 import EventOSAdvancedPage from './EventOSAdvancedPage'
 import { getAutomationSummary, getRecoveryDashboard, type AutomationSummary, type RecoveryDashboard } from '../services/api'
 import type { PageKey } from '../components/ModuleSidebar'
@@ -24,7 +25,8 @@ export default function EventContextPage({event,participants,page,onNavigate,not
  if(page==='event-command-center') return <EventCommandCenterPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-inventory') return <EventInventoryPage event={event} notify={notify}/>
  if(page==='event-customer-360') return <EventCustomer360Page event={event} notify={notify}/>
- if(['event-live-ops','event-incidents','event-revenue-intel','event-global-search','event-permission-engine','event-compliance','event-intelligence','event-readiness','event-forecast','event-day-command','event-producer-executive','event-platform-noc'].includes(page)) return <EventOSAdvancedPage event={event} page={page} notify={notify}/>
+ if(page==='event-global-search') return <EventGlobalSearchPage event={event} onNavigate={onNavigate} notify={notify}/>
+ if(['event-live-ops','event-incidents','event-revenue-intel','event-permission-engine','event-compliance','event-intelligence','event-readiness','event-forecast','event-day-command','event-producer-executive','event-platform-noc'].includes(page)) return <EventOSAdvancedPage event={event} page={page} notify={notify}/>
  if(page==='event-dashboard') return <Dashboard event={event} participants={participants} onNavigate={onNavigate}/>
  if(page==='event-tickets') return <Tickets event={event} people={people} notify={notify}/>
  if(page==='event-courtesy') return <Courtesy event={event} people={people} notify={notify}/>

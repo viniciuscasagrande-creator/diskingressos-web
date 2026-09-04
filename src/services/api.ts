@@ -573,3 +573,74 @@ export const getEventCustomer360=(eventId:number,search='')=>request<EventCustom
 // ===== Fase 26.x completa — 26.4 a 26.15 =====
 export type EventOSAdvanced={release:string;generatedAt:string;event:{id:number;code:string;title:string;producerId:number};kpis:{revenueCents:number;paidOrders:number;checkins:number;checkins1h:number;capacity:number;sold:number;available:number;occupancy:number;openIncidents:number;criticalIncidents:number;readinessScore:number};signals:Array<{code:string;severity:string;title:string;message:string}>;readiness:Array<{key:string;label:string;status:string;detail:string|null}>;activity:Array<{id:string;title:string;detail:string;at:string;type:string}>}
 export const getEventOSAdvanced=(eventId:number)=>request<EventOSAdvanced>(`/events/${eventId}/event-os/advanced`)
+
+// ===== Fase 26.16.1 — Global Search & Command Operacional =====
+export type GlobalSearchResultItem = {
+  id: number
+  code?: string
+  name?: string
+  buyerName?: string
+  buyerEmail?: string
+  buyerDocument?: string
+  document?: string
+  email?: string
+  phone?: string
+  status?: string
+  paymentMethod?: string
+  grossCents?: number
+  amountCents?: number
+  ticketsCount?: number
+  lotName?: string
+  sector?: string
+  participantName?: string
+  orderCode?: string | null
+  orderId?: number
+  description?: string
+  category?: string
+  type?: string
+  gate?: string
+  operatorName?: string | null
+  method?: string
+  subject?: string
+  requesterName?: string
+  requesterEmail?: string | null
+  priority?: string
+  reason?: string
+  kind?: string
+  createdAt?: string
+  occurredAt?: string
+  checkedAt?: string
+  updatedAt?: string
+  actions: string[]
+}
+
+export type GlobalSearchResponse = {
+  release: string
+  event: { id: number; name: string; title: string; code: string; producerId: number }
+  query: string
+  total: number
+  counts: {
+    orders: number
+    customers: number
+    tickets: number
+    financial: number
+    checkins: number
+    support: number
+    refunds: number
+  }
+  groups: {
+    orders: GlobalSearchResultItem[]
+    customers: GlobalSearchResultItem[]
+    tickets: GlobalSearchResultItem[]
+    financial: GlobalSearchResultItem[]
+    checkins: GlobalSearchResultItem[]
+    support: GlobalSearchResultItem[]
+    refunds: GlobalSearchResultItem[]
+  }
+}
+
+export const searchEventGlobal = (
+  eventId: number,
+  params: { q?: string; type?: string; status?: string; paymentMethod?: string; limit?: number } = {}
+) => request<GlobalSearchResponse>(`/events/${eventId}/global-search${qs(params)}`)
+
