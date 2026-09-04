@@ -5,7 +5,8 @@ import { prisma } from './prisma.js'
 import { authRouter } from './routes/auth.js'
 import { producersRouter } from './routes/producers.js'
 import { usersRouter } from './routes/users.js'
-import { eventsRouter } from './routes/events.js'
+import { eventsRouter, handleAdminGlobalSearch } from './routes/events.js'
+import { requireAuth } from './middleware/auth.js'
 import { auditRouter } from './routes/audit.js'
 import { lotsRouter } from './routes/lots.js'
 import { ordersRouter } from './routes/orders.js'
@@ -101,6 +102,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/scope', scopeRouter)
 app.use('/api/producers', producersRouter)
 app.use('/api/users', usersRouter)
+app.get('/api/admin/global-search', requireAuth, handleAdminGlobalSearch)
 app.use('/api/events', eventsRouter)
 app.use('/api/lots', lotsRouter)
 app.use('/api/orders', ordersRouter)

@@ -144,7 +144,15 @@
     "audit:activity-stream": "node scripts/audit-activity-stream.mjs",
     "verify:activity-stream": "node scripts/verify-activity-stream.mjs",
     "test:pw:activity-stream": "playwright test tests/activity-stream --project=chromium",
-    "gate:activity-stream": "npm run audit:activity-stream && npm run verify:activity-stream && npm run test:pw:activity-stream"
+    "gate:activity-stream": "npm run audit:activity-stream && npm run verify:activity-stream && npm run test:pw:activity-stream",
+    "audit:global-search": "node scripts/audit-global-search-360.mjs",
+    "verify:global-search": "node scripts/verify-global-search-360.mjs",
+    "test:pw:global-search": "playwright test tests/global-search/global-search-360.spec.ts --project=chromium",
+    "gate:global-search": "npm run verify:global-search && npm run test:pw:global-search",
+    "audit:order-journey": "node scripts/audit-order-360-journey.mjs",
+    "verify:order-journey": "node scripts/verify-order-360-journey.mjs",
+    "test:pw:order-journey": "playwright test tests/order-journey/order-360-journey.spec.ts --project=chromium",
+    "gate:order-journey": "npm run audit:order-journey && npm run verify:order-journey && npm run test:pw:order-journey"
   },
   "dependencies": {
     "@prisma/client": "latest",

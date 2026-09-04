@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   Search,
   RefreshCw,
@@ -15,7 +15,8 @@ import {
   ArrowRight,
   CreditCard,
   AlertTriangle,
-  FileText
+  FileText,
+  Clock
 } from 'lucide-react'
 import type { EventItem } from '../../data/events'
 import {
@@ -23,6 +24,7 @@ import {
   type GlobalSearchResponse,
   type GlobalSearchResultItem
 } from '../../services/api'
+import EventOrderInvestigationPage from './EventOrderInvestigationPage'
 import './event-global-search.css'
 
 interface Props {
@@ -36,6 +38,66 @@ const formatMoney = (cents?: number) => {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100)
 }
 
+export function classifySearchQuery(term: string): { tipoProvavel: string; labelTipoProvavel: string } {
+  const q = term.trim()
+  if (!q) {
+    return { tipoProvavel: 'geral', labelTipoProvavel: 'Busca Geral' }
+  }
+  const digitsOnly = q.replace(/\D/g, '')
+
+  // CPF: exactly 11 digits or pattern \d{3}\.?\d{3}\.?\d{3}-?\d{2}
+  if (/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/.test(q) || (digitsOnly.length === 11 && !q.startsWith('00') && !/[a-zA-Z]/.test(q))) {
+    return { tipoProvavel: 'cpf', labelTipoProvavel: 'CPF' }
+  }
+
+  // E-mail
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(q) || (q.includes('@') && q.includes('.'))) {
+    return { tipoProvavel: 'email', labelTipoProvavel: 'E-mail' }
+  }
+
+  // Telefone
+  if (/^\+?(55)?\s?\(?\d{2}\)?\s?9?\d{4}-?\d{4}$/.test(q) || (digitsOnly.length >= 10 && digitsOnly.length <= 11 && (q.includes('(') || q.includes('-')))) {
+    return { tipoProvavel: 'telefone', labelTipoProvavel: 'Telefone' }
+  }
+
+  // Ingresso: starts with TK-, TKT-, ING-, TICKET-
+  if (/^(tk|tkt|ing|ticket)[\-_#]?/i.test(q)) {
+    return { tipoProvavel: 'ingresso', labelTipoProvavel: 'Código do Ingresso' }
+  }
+
+  // Incidente: starts with INC-, INCIDENT-
+  if (/^(inc|incident)[\-_#]?/i.test(q)) {
+    return { tipoProvavel: 'incidente', labelTipoProvavel: 'Incidente Operacional' }
+  }
+
+  // Transacao / NSU: starts with TRX-, NSU-, PIX-, TX-
+  if (/^(trx|nsu|pix|tx)[\-_#]?/i.test(q)) {
+    return { tipoProvavel: 'transacao', labelTipoProvavel: 'Transação / NSU' }
+  }
+
+  // SAC: starts with SAC-, CHAM-, ATEND-
+  if (/^(sac|cham|atend)[\-_#]?/i.test(q)) {
+    return { tipoProvavel: 'sac', labelTipoProvavel: 'Chamado SAC' }
+  }
+
+  // Estorno: starts with REF-, EST-, or contains estorno
+  if (/^(ref|est)[\-_#]?/i.test(q) || /estorno/i.test(q)) {
+    return { tipoProvavel: 'estorno', labelTipoProvavel: 'Estorno / Devolução' }
+  }
+
+  // Pedido: starts with PED-, #, or is numeric order number like 154821 (4-8 digits)
+  if (/^(ped|order)[\-_#]?/i.test(q) || /^#\d+/.test(q) || /^\d{4,8}$/.test(q)) {
+    return { tipoProvavel: 'pedido', labelTipoProvavel: 'Número do Pedido' }
+  }
+
+  // Nome / texto
+  if (/[a-zA-ZÀ-ÿ]/.test(q)) {
+    return { tipoProvavel: 'nome', labelTipoProvavel: 'Nome do Comprador / Participante' }
+  }
+
+  return { tipoProvavel: 'geral', labelTipoProvavel: 'Busca Geral' }
+}
+
 export default function EventGlobalSearchPage({ event, onNavigate, notify }: Props) {
   const [query, setQuery] = useState('')
   const [activeType, setActiveType] = useState<string>('all')
@@ -45,6 +107,24 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [data, setData] = useState<GlobalSearchResponse | null>(null)
+  const [investigatingOrderCode, setInvestigatingOrderCode] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const clientClassified = useMemo(() => classifySearchQuery(query), [query])
+  const activeDetectedLabel = query.trim() ? clientClassified.labelTipoProvavel : (data?.labelTipoDetectado || '')
+
+  // Atalho global Ctrl+K / Cmd+K com foco automático
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        inputRef.current?.focus()
+        inputRef.current?.select()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const executeSearch = useCallback(async (qStr: string) => {
     setLoading(true)
@@ -123,6 +203,9 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
     data.groups.refunds.forEach(r => {
       rows.push(`"Estorno","${r.code}","Pedido: ${r.orderCode}","${r.reason}","${r.status}","${formatMoney(r.amountCents)}"`)
     })
+    data.groups.incidents?.forEach(i => {
+      rows.push(`"Incidente","${i.code}","${i.title}","${i.category} - ${i.severity}","${i.status}",""`)
+    })
 
     const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -134,26 +217,39 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
     notify?.('Resultado exportado em CSV com sucesso!')
   }
 
-  const counts = data?.counts || {
-    orders: 0,
-    customers: 0,
-    tickets: 0,
-    financial: 0,
-    checkins: 0,
-    support: 0,
-    refunds: 0
+  const counts = {
+    orders: data?.counts?.orders || 0,
+    customers: data?.counts?.customers || 0,
+    tickets: data?.counts?.tickets || 0,
+    financial: data?.counts?.financial || 0,
+    checkins: data?.counts?.checkins || 0,
+    support: data?.counts?.support || 0,
+    refunds: data?.counts?.refunds || 0,
+    incidents: data?.counts?.incidents || 0
   }
 
   const totalCount = data?.total || 0
+
+  if (investigatingOrderCode) {
+    return (
+      <EventOrderInvestigationPage
+        event={event}
+        orderIdOrCode={investigatingOrderCode}
+        onBack={() => setInvestigatingOrderCode(null)}
+        onNavigate={onNavigate}
+        notify={notify}
+      />
+    )
+  }
 
   return (
     <div className="egs-page" data-testid="global-search-container">
       {/* Header */}
       <header className="egs-header">
         <div className="egs-header-title">
-          <span>EVENT OS · FASE 26.16.1</span>
-          <h1>Global Search & Command</h1>
-          <p>Busca operacional unificada por pedido, ingresso, cliente, transação, check-in, SAC e estornos.</p>
+          <span>EVENT OS · FASE 26.17.6</span>
+          <h1>Pesquisa Global 360°</h1>
+          <p>Busca operacional unificada por pedido, ingresso, cliente, transação, check-in, SAC, incidentes e estornos.</p>
         </div>
         <div className="egs-header-actions">
           <button
@@ -197,18 +293,27 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
 
       {/* Main Command Bar */}
       <div className="egs-command-bar">
+        {activeDetectedLabel && query.trim() && (
+          <div className="egs-smart-type-badge" data-testid="global-search-detected-type">
+            <Search size={13} />
+            <span>Tipo detectado: <strong>{activeDetectedLabel}</strong></span>
+          </div>
+        )}
+
         <div className="egs-search-input-wrap">
           <Search size={18} className="egs-search-icon" />
           <input
+            ref={inputRef}
             type="text"
             className="egs-search-input"
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') executeSearch(query) }}
-            placeholder="Buscar pedido, CPF, ingresso, nome, telefone, e-mail ou transação..."
+            placeholder="Buscar por CPF, pedido, ingresso, nome, telefone, e-mail, transação, chamado ou incidente..."
             data-testid="global-search-input"
             autoFocus
           />
+          <span className="egs-shortcut-hint">Ctrl + K</span>
           {query && (
             <button
               type="button"
@@ -287,6 +392,14 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
               data-testid="tab-refunds"
             >
               Estornos <span className="egs-tab-badge">{counts.refunds}</span>
+            </button>
+            <button
+              type="button"
+              className={`egs-tab ${activeType === 'incidents' ? 'active' : ''}`}
+              onClick={() => setActiveType('incidents')}
+              data-testid="tab-incidents"
+            >
+              Incidentes <span className="egs-tab-badge">{counts.incidents}</span>
             </button>
           </div>
 
@@ -400,7 +513,7 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
                       <button
                         type="button"
                         className="egs-action-btn"
-                        onClick={() => notify?.(`Visualizando pedido ${o.code}`)}
+                        onClick={() => setInvestigatingOrderCode(o.code)}
                         data-testid={`action-order-view-${o.code}`}
                       >
                         <FileText size={12} /> Ver Pedido
@@ -420,6 +533,14 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
                         data-testid={`action-order-tickets-${o.code}`}
                       >
                         <Ticket size={12} /> Ingressos
+                      </button>
+                      <button
+                        type="button"
+                        className="egs-action-btn"
+                        onClick={() => onNavigate?.('event-audit')}
+                        data-testid={`action-order-history-${o.code}`}
+                      >
+                        <Clock size={12} /> Histórico
                       </button>
                       <button
                         type="button"
@@ -685,6 +806,51 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
                         onClick={() => onNavigate?.('finance-refunds')}
                       >
                         <Undo2 size={12} /> Centro de Controle de Estornos
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Incidents */}
+          {((data.groups.incidents?.length) || 0) > 0 && (
+            <section className="egs-group-section" data-testid="group-incidents">
+              <div className="egs-group-header">
+                <AlertTriangle size={18} className="text-amber-600" />
+                <span>Incidentes Operacionais ({data.groups.incidents!.length})</span>
+              </div>
+              <div className="egs-group-grid">
+                {data.groups.incidents!.map(i => (
+                  <div className="egs-card" key={`inc-${i.id}`} data-testid={`card-incident-${i.code}`}>
+                    <div className="egs-card-top">
+                      <span className="egs-card-id">{i.code}</span>
+                      <span className="egs-badge egs-badge-warning">{i.status}</span>
+                    </div>
+                    <div className="egs-card-body">
+                      <div className="egs-card-title">{i.title}</div>
+                      <div className="egs-card-meta">
+                        <span>Categoria: <b>{i.category}</b></span>
+                        <span>Severidade: {i.severity?.toUpperCase()}</span>
+                        <span>{new Date(i.openedAt!).toLocaleString('pt-BR')}</span>
+                      </div>
+                    </div>
+                    <div className="egs-card-actions">
+                      <button
+                        type="button"
+                        className="egs-action-btn"
+                        onClick={() => onNavigate?.('event-incidents')}
+                        data-testid={`action-incident-view-${i.code}`}
+                      >
+                        <AlertTriangle size={12} /> Ver Incidente
+                      </button>
+                      <button
+                        type="button"
+                        className="egs-action-btn"
+                        onClick={() => onNavigate?.('event-audit')}
+                      >
+                        <Clock size={12} /> Histórico relacionado
                       </button>
                     </div>
                   </div>

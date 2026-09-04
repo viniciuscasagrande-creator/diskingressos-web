@@ -1,0 +1,56 @@
+{
+  "release": "26.17.6-pesquisa-global-360-operacional-ptbr-2026-09-04",
+  "auditedAt": "2026-09-04T18:45:15.516Z",
+  "status": "PASSED",
+  "checklist": [
+    {
+      "name": "Endpoint de busca contextual (/api/events/:id/global-search)",
+      "ok": true
+    },
+    {
+      "name": "Endpoint de busca administrativa (/api/admin/global-search)",
+      "ok": true
+    },
+    {
+      "name": "Classificador inteligente de tipo (CPF, Pedido, Ingresso, etc.)",
+      "ok": true
+    },
+    {
+      "name": "Proteção e mascaramento LGPD (CPF, E-mail, Telefone)",
+      "ok": true
+    },
+    {
+      "name": "Isolamento estrito entre produtoras (Tenant Isolation)",
+      "ok": true
+    },
+    {
+      "name": "Busca integrada com Incidentes Operacionais",
+      "ok": true
+    },
+    {
+      "name": "Cliente TypeScript searchEventGlobal e searchAdminGlobal",
+      "ok": true
+    },
+    {
+      "name": "Test IDs estruturais presentes",
+      "ok": true
+    },
+    {
+      "name": "Atalho de teclado global (Ctrl+K / Cmd+K com autofoco)",
+      "ok": true
+    },
+    {
+      "name": "Navegação canônica para Estornos (/app/finance-refunds)",
+      "ok": true
+    },
+    {
+      "name": "Estados operacionais padronizados (Carregando, Vazio, Erro)",
+      "ok": true
+    },
+    {
+      "name": "Padronização Total PT-BR (Zero inglês visível na UI)",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

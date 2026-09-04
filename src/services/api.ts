@@ -674,9 +674,12 @@ export type GlobalSearchResultItem = {
   description?: string
   category?: string
   type?: string
+  title?: string
+  severity?: string
   gate?: string
   operatorName?: string | null
   method?: string
+  device?: string
   subject?: string
   requesterName?: string
   requesterEmail?: string | null
@@ -687,13 +690,18 @@ export type GlobalSearchResultItem = {
   occurredAt?: string
   checkedAt?: string
   updatedAt?: string
+  openedAt?: string
   actions: string[]
 }
 
 export type GlobalSearchResponse = {
   release: string
-  event: { id: number; name: string; title: string; code: string; producerId: number }
+  event?: { id: number; name: string; title: string; code: string; producerId: number }
+  scope?: string
+  producerId?: number
   query: string
+  tipoDetectado?: string
+  labelTipoDetectado?: string
   total: number
   counts: {
     orders: number
@@ -703,6 +711,7 @@ export type GlobalSearchResponse = {
     checkins: number
     support: number
     refunds: number
+    incidents?: number
   }
   groups: {
     orders: GlobalSearchResultItem[]
@@ -712,6 +721,7 @@ export type GlobalSearchResponse = {
     checkins: GlobalSearchResultItem[]
     support: GlobalSearchResultItem[]
     refunds: GlobalSearchResultItem[]
+    incidents?: GlobalSearchResultItem[]
   }
 }
 
@@ -719,6 +729,157 @@ export const searchEventGlobal = (
   eventId: number,
   params: { q?: string; type?: string; status?: string; paymentMethod?: string; limit?: number } = {}
 ) => request<GlobalSearchResponse>(`/events/${eventId}/global-search${qs(params)}`)
+
+export const searchAdminGlobal = (
+  params: { q?: string; type?: string; producerId?: number; limit?: number } = {}
+) => request<GlobalSearchResponse>(`/admin/global-search${qs(params)}`)
+
+// ===== Fase 26.17.7 — Jornada Operacional 360° do Pedido =====
+export type ContextoOperacional = {
+  eventId: number
+  eventTitle: string
+  eventCode: string
+  producerId: number
+  orderId: number | string
+  orderCode: string
+  customerKey: string
+  customerName: string
+  returnTo?: string
+}
+
+export type Order360Item = {
+  id: number | string
+  code: string
+  buyerName: string
+  buyerEmail: string
+  rawEmail?: string
+  buyerDocument: string
+  rawDocument?: string
+  buyerPhone: string
+  status: string
+  paymentMethod: string
+  grossCents: number
+  ticketsCount: number
+  createdAt: string
+  channel: string
+}
+
+export type Order360Customer = {
+  id: number
+  name: string
+  email: string
+  rawEmail?: string
+  document: string
+  rawDocument?: string
+  phone: string
+  score: number
+  segment: string
+  ordersCount: number
+  ticketsCount: number
+  totalSpentCents: number
+  firstPurchaseAt: string
+  lastPurchaseAt: string
+}
+
+export type Order360Ticket = {
+  id: number
+  code: string
+  qrCode: string
+  status: string
+  type: string
+  lotName: string
+  sector: string
+  priceCents: number
+  participantName: string
+  facialStatus: string
+}
+
+export type Order360CheckIn = {
+  id: number
+  ticketCode: string
+  participantName: string
+  gate: string
+  method: string
+  operatorName: string
+  status: string
+  checkedAt: string
+  rejectionReason: string | null
+  attemptedAt: string | null
+  lastAuthorizedAt: string | null
+  device?: string
+}
+
+export type Order360Financial = {
+  id: number
+  code: string
+  nsu: string
+  description: string
+  category: string
+  type: string
+  amountCents: number
+  status: string
+  occurredAt: string
+}
+
+export type Order360Support = {
+  id: number
+  code: string
+  subject: string
+  requesterName: string
+  requesterEmail: string
+  status: string
+  priority: string
+  createdAt: string
+  resolvedAt?: string
+}
+
+export type Order360Refund = {
+  id: number
+  code: string
+  orderCode: string
+  amountCents: number
+  reason: string
+  status: string
+  kind: string
+  updatedAt: string
+}
+
+export type Order360Incident = {
+  id: number
+  code: string
+  title: string
+  category: string
+  severity: string
+  status: string
+  openedAt: string
+  description?: string
+}
+
+export type Order360TimelineItem = {
+  id: string
+  title: string
+  detail: string
+  at: string
+  tipo: string
+  origem: string
+}
+
+export type OrderOperational360Response = {
+  release: string
+  contextoOperacional: ContextoOperacional
+  order: Order360Item
+  customer: Order360Customer
+  tickets: Order360Ticket[]
+  checkins: Order360CheckIn[]
+  financial: Order360Financial
+  support: Order360Support[]
+  refunds: Order360Refund[]
+  incidents: Order360Incident[]
+  timeline: Order360TimelineItem[]
+}
+
+export const getOrderOperational360 = (eventId: number, orderId: number | string) =>
+  request<OrderOperational360Response>(`/events/${eventId}/orders/${orderId}/operational-360`)
 
 // ===== Fase 26.16.8 — Revenue & Pricing Intelligence Operacional =====
 export type RevenueIntelLot = {

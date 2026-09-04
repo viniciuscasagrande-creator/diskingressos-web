@@ -1,0 +1,47 @@
+{
+  "release": "26.17.7-jornada-operacional-360-pedido-cliente-ingresso-ptbr-2026-09-04",
+  "auditedAt": "2026-09-04T18:46:32.024Z",
+  "status": "PASSED",
+  "checklist": [
+    {
+      "name": "Endpoint operacional 360 do pedido (/api/events/:id/orders/:orderId/operational-360)",
+      "ok": true
+    },
+    {
+      "name": "Contexto operacional com preservação de estado e breadcrumbs",
+      "ok": true
+    },
+    {
+      "name": "Investigação profunda de check-in recusado com motivo e histórico",
+      "ok": true
+    },
+    {
+      "name": "Timeline cronológica unificada de eventos do pedido",
+      "ok": true
+    },
+    {
+      "name": "Isolamento rigoroso de produtora (Tenant Isolation)",
+      "ok": true
+    },
+    {
+      "name": "Cliente TypeScript getOrderOperational360 e tipos",
+      "ok": true
+    },
+    {
+      "name": "Test IDs obrigatórios da Central de Investigação do Pedido",
+      "ok": true
+    },
+    {
+      "name": "Conexão integrada na Pesquisa Global (abertura in-place sem reload)",
+      "ok": true
+    },
+    {
+      "name": "Navegação canônica independente para Estornos (/app/finance-refunds)",
+      "ok": true
+    },
+    {
+      "name": "Padronização Total PT-BR em todos os cards da jornada",
+      "ok": true
+    }
+  ]
+}
