@@ -152,7 +152,11 @@
     "audit:order-journey": "node scripts/audit-order-360-journey.mjs",
     "verify:order-journey": "node scripts/verify-order-360-journey.mjs",
     "test:pw:order-journey": "playwright test tests/order-journey/order-360-journey.spec.ts --project=chromium",
-    "gate:order-journey": "npm run audit:order-journey && npm run verify:order-journey && npm run test:pw:order-journey"
+    "gate:order-journey": "npm run audit:order-journey && npm run verify:order-journey && npm run test:pw:order-journey",
+    "audit:event-commercial": "node scripts/audit-event-commercial.mjs",
+    "verify:event-commercial": "node scripts/verify-event-commercial.mjs",
+    "test:pw:event-commercial": "playwright test tests/commercial/event-commercial-dashboard.spec.ts --project=chromium",
+    "gate:event-commercial": "npm run audit:event-commercial && npm run verify:event-commercial && npm run test:pw:event-commercial"
   },
   "dependencies": {
     "@prisma/client": "latest",

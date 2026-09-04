@@ -1538,7 +1538,20 @@ export const getEventDayCommandOverview = getEventDayCommand
 
 export const getForecastSummary = getEventForecast
 
+// ===== Fase 26.17.7.1 — Painel Comercial do Evento =====
+export type {
+  CommercialDashboardResponse,
+  CommercialKpiSummary,
+  SalesEvolutionPoint,
+  SalesVelocityStats,
+  PaymentMethodItem,
+  TicketTypePerformanceItem,
+  OccupancyBreakdown,
+  RecentTransactionItem,
+  WeekdayDistributionItem
+} from '../types/event-commercial'
 
-
-
-
+export const getEventCommercialDashboard = (
+  eventId: number,
+  params: { period?: string; paymentMethod?: string } = {}
+) => request<import('../types/event-commercial').CommercialDashboardResponse>(`/events/${eventId}/commercial-dashboard${qs(params)}`)

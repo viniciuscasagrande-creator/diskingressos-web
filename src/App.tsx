@@ -479,7 +479,12 @@ export default function App() {
     window.history.pushState({ page: 'event-command-center' }, '', `/eventos/${e.code}/command-center`)
     window.scrollTo({ top: 0 })
   }
-  const openDashboard = openEventContext
+  const openDashboard = (e: EventItem) => {
+    setSelectedEvent(e)
+    setPage('event-dashboard')
+    window.history.pushState({ page: 'event-dashboard' }, '', `/eventos/${e.code}/dashboard`)
+    window.scrollTo({ top: 0 })
+  }
 
   const saveEvent = (event: EventItem) => {
     const producerId = isGlobalAdmin(user) ? (scopedProducerId || producers[0].id) : (user.producerId || 1)
@@ -502,8 +507,6 @@ export default function App() {
     setPage(next)
     if (selectedEvent && eventContextPages.has(next)) {
       window.history.pushState({ page: next }, '', `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`)
-    } else if (next === 'events') {
-      window.history.pushState({ page: next }, '', '/eventos')
     } else {
       window.history.pushState({ page: next }, '', `/app/${next}`)
     }

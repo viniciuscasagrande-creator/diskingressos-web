@@ -1,0 +1,67 @@
+{
+  "release": "26.17.7.1-painel-comercial-moderno-ptbr-2026-09-04",
+  "timestamp": "2026-09-04T20:24:29.811Z",
+  "status": "PASS",
+  "checklist": [
+    {
+      "name": "Endpoint /api/events/:id/commercial-dashboard implementado no backend",
+      "ok": true
+    },
+    {
+      "name": "Isolamento de produtora (Tenant Isolation) no endpoint comercial",
+      "ok": true
+    },
+    {
+      "name": "Agregação comercial de KPIs, evolução, pagamentos e ocupação",
+      "ok": true
+    },
+    {
+      "name": "Cliente getEventCommercialDashboard e tipos TypeScript",
+      "ok": true
+    },
+    {
+      "name": "Central de Eventos: Alternador Horizontal vs Vertical",
+      "ok": true
+    },
+    {
+      "name": "Central de Eventos: Seletor de 2, 3, 4, 5 e 6 colunas por linha",
+      "ok": true
+    },
+    {
+      "name": "Central de Eventos: Filtros funcionais Ativos / Inativos / Todos",
+      "ok": true
+    },
+    {
+      "name": "Central de Eventos: Persistência de visualização em localStorage",
+      "ok": true
+    },
+    {
+      "name": "Central de Eventos: Modo de comparação com seleção múltipla e banner",
+      "ok": true
+    },
+    {
+      "name": "EventCard: Suporte a checkbox e modo de seleção para comparação",
+      "ok": true
+    },
+    {
+      "name": "Modal do Comparador Comercial lado a lado com métricas reais",
+      "ok": true
+    },
+    {
+      "name": "Test IDs obrigatórios do Painel Comercial do Evento",
+      "ok": true
+    },
+    {
+      "name": "Gráficos SVG modernos sem bibliotecas externas pesadas",
+      "ok": true
+    },
+    {
+      "name": "Drill-down de investigação 360° a partir das Últimas Transações",
+      "ok": true
+    },
+    {
+      "name": "Padronização Total PT-BR no Painel Comercial",
+      "ok": true
+    }
+  ]
+}

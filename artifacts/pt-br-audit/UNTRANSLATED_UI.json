@@ -120,16 +120,8 @@
     "snippet": "title={isGlobalAdminView ? \"Dashboard Administrativo Master\" : `Dashboard — ${selectedProducer?.name}`}"
   },
   {
-    "file": "src/pages/EventCommandCenterPage.tsx",
-    "line": 514,
-    "component": "EventCommandCenterPage.tsx",
-    "found": "Activity Stream",
-    "suggestion": "Histórico de Atividades",
-    "snippet": "<h3>Activity Stream Operacional</h3>"
-  },
-  {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 35,
+    "line": 38,
     "component": "EventContextPage.tsx",
     "found": "Search",
     "suggestion": "Pesquisar",
@@ -137,7 +129,7 @@
   },
   {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 43,
+    "line": 46,
     "component": "EventContextPage.tsx",
     "found": "Readiness",
     "suggestion": "Preparação do Evento",
@@ -145,15 +137,15 @@
   },
   {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 44,
+    "line": 47,
     "component": "EventContextPage.tsx",
     "found": "Dashboard",
     "suggestion": "Painel",
-    "snippet": "if(page==='event-dashboard') return <Dashboard event={event} participants={participants} onNavigate={onNavigate}/>"
+    "snippet": "if(page==='event-dashboard') return <EventCommercialDashboardPage event={event} onNavigate={onNavigate} notify={notify}/"
   },
   {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 48,
+    "line": 51,
     "component": "EventContextPage.tsx",
     "found": "Details",
     "suggestion": "Detalhes",
@@ -161,7 +153,7 @@
   },
   {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 168,
+    "line": 171,
     "component": "EventContextPage.tsx",
     "found": "Search",
     "suggestion": "Pesquisar",
@@ -169,7 +161,7 @@
   },
   {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 242,
+    "line": 245,
     "component": "EventContextPage.tsx",
     "found": "Dashboard",
     "suggestion": "Painel",
@@ -177,7 +169,7 @@
   },
   {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 244,
+    "line": 247,
     "component": "EventContextPage.tsx",
     "found": "Details",
     "suggestion": "Detalhes",
@@ -185,7 +177,7 @@
   },
   {
     "file": "src/pages/EventContextPage.tsx",
-    "line": 250,
+    "line": 253,
     "component": "EventContextPage.tsx",
     "found": "Details",
     "suggestion": "Detalhes",
@@ -254,6 +246,46 @@
     "found": "Save",
     "suggestion": "Salvar",
     "snippet": "<div className=\"inventory-modal-actions\"><button className=\"btn secondary\" onClick={()=>setShowLot(false)} disabled={sav"
+  },
+  {
+    "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
+    "line": 170,
+    "component": "EventCommercialDashboardPage.tsx",
+    "found": "Edit",
+    "suggestion": "Editar",
+    "snippet": "onClick={() => onNavigate?.('edit-event')}"
+  },
+  {
+    "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
+    "line": 215,
+    "component": "EventCommercialDashboardPage.tsx",
+    "found": "Dashboard",
+    "suggestion": "Painel",
+    "snippet": "onClick={() => onNavigate?.('finance-dashboard')}"
+  },
+  {
+    "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
+    "line": 229,
+    "component": "EventCommercialDashboardPage.tsx",
+    "found": "Dashboard",
+    "suggestion": "Painel",
+    "snippet": "onClick={() => onNavigate?.('marketing-dashboard')}"
+  },
+  {
+    "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
+    "line": 236,
+    "component": "EventCommercialDashboardPage.tsx",
+    "found": "Details",
+    "suggestion": "Detalhes",
+    "snippet": "onClick={() => onNavigate?.('event-details')}"
+  },
+  {
+    "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
+    "line": 516,
+    "component": "EventCommercialDashboardPage.tsx",
+    "found": "Search",
+    "suggestion": "Pesquisar",
+    "snippet": "onClick={() => onNavigate?.('event-global-search')}"
   },
   {
     "file": "src/pages/eventos/EventDayCommandPage.tsx",
@@ -433,15 +465,7 @@
   },
   {
     "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
-    "line": 155,
-    "component": "EventGlobalSearchPage.tsx",
-    "found": "Global Search",
-    "suggestion": "Pesquisa Global",
-    "snippet": "<h1>Global Search & Command</h1>"
-  },
-  {
-    "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
-    "line": 427,
+    "line": 548,
     "component": "EventGlobalSearchPage.tsx",
     "found": "Dashboard",
     "suggestion": "Painel",
@@ -449,7 +473,7 @@
   },
   {
     "file": "src/pages/eventos/EventGlobalSearchPage.tsx",
-    "line": 577,
+    "line": 698,
     "component": "EventGlobalSearchPage.tsx",
     "found": "Dashboard",
     "suggestion": "Painel",
@@ -566,6 +590,14 @@
     "found": "Live Operations",
     "suggestion": "Operação ao Vivo",
     "snippet": "onClick={() => { loadData(); notify('Live Operations sincronizado!') }}"
+  },
+  {
+    "file": "src/pages/eventos/EventOrderInvestigationPage.tsx",
+    "line": 464,
+    "component": "EventOrderInvestigationPage.tsx",
+    "found": "Dashboard",
+    "suggestion": "Painel",
+    "snippet": "onClick={() => onNavigate?.('finance-dashboard')}"
   },
   {
     "file": "src/pages/eventos/EventProducerExecutivePage.tsx",
@@ -721,15 +753,15 @@
   },
   {
     "file": "src/pages/EventsPage.tsx",
-    "line": 32,
+    "line": 123,
     "component": "EventsPage.tsx",
     "found": "Dashboard",
     "suggestion": "Painel",
-    "snippet": "onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}"
+    "snippet": "onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}"
   },
   {
     "file": "src/pages/EventsPage.tsx",
-    "line": 36,
+    "line": 127,
     "component": "EventsPage.tsx",
     "found": "Dashboard",
     "suggestion": "Painel",

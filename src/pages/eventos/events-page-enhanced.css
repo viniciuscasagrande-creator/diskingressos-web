@@ -1,0 +1,366 @@
+/* ===== CENTRAL DE EVENTOS: CONTROLES MODERNOS E COMPARADOR (FASE 26.17.7.1) ===== */
+
+/* Toolbar switches */
+.events-toolbar-enhanced {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.events-view-modes {
+  display: inline-flex;
+  background: #F1F5F9;
+  padding: 2px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  align-items: center;
+}
+
+.events-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.events-mode-btn:hover {
+  color: #0F172A;
+}
+
+.events-mode-btn.active {
+  background: #0F172A;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* Seletor de Colunas (2, 3, 4, 5, 6) */
+.events-col-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #FFFFFF;
+  padding: 2px 4px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  margin-left: 4px;
+}
+
+.events-col-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  padding: 0 4px;
+}
+
+.events-col-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s ease;
+}
+
+.events-col-btn:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+}
+
+.events-col-btn.active {
+  background: #0284C7;
+  color: #FFFFFF;
+}
+
+/* Barra de Ação de Comparação Ativa */
+.events-compare-banner {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.events-compare-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #1E40AF;
+  font-weight: 600;
+}
+
+.events-compare-badge {
+  background: #2563EB;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.events-compare-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.events-btn-cancel-compare {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.events-btn-execute-compare {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #2563EB;
+  background: #2563EB;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+}
+
+.events-btn-execute-compare:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Card Selecionável no modo Comparar */
+.event-card.is-comparing {
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.event-card.selected-for-compare {
+  border-color: #0284C7;
+  box-shadow: 0 0 0 2px #0284C7, 0 8px 20px rgba(2, 132, 199, 0.15);
+}
+
+.event-compare-checkbox-wrap {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.85);
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.event-compare-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #0284C7;
+}
+
+/* Grid dinâmico de colunas */
+.event-grid.view-horizontal {
+  grid-template-columns: 1fr !important;
+}
+
+.event-grid.view-horizontal .event-card {
+  grid-template-columns: 280px 1fr;
+}
+
+.event-grid.view-vertical {
+  display: grid;
+  gap: 20px;
+}
+
+.event-grid.view-vertical .event-card {
+  display: flex;
+  flex-direction: column;
+  min-height: auto;
+}
+
+.event-grid.view-vertical .event-cover {
+  height: 160px;
+  min-height: 160px;
+}
+
+.event-grid.view-vertical.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.event-grid.view-vertical.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.event-grid.view-vertical.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.event-grid.view-vertical.cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+.event-grid.view-vertical.cols-6 {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 1400px) {
+  .event-grid.view-vertical.cols-5,
+  .event-grid.view-vertical.cols-6 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .event-grid.view-vertical.cols-4,
+  .event-grid.view-vertical.cols-5,
+  .event-grid.view-vertical.cols-6 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .event-grid.view-vertical.cols-2,
+  .event-grid.view-vertical.cols-3,
+  .event-grid.view-vertical.cols-4,
+  .event-grid.view-vertical.cols-5,
+  .event-grid.view-vertical.cols-6 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Modal do Comparador de Eventos */
+.ecc-comparator-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.ecc-comparator-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  width: min(1200px, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.ecc-comparator-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F8FAFC;
+}
+
+.ecc-comparator-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0F172A;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ecc-comparator-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ecc-comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ecc-comp-table th {
+  background: #F1F5F9;
+  padding: 12px 14px;
+  text-align: left;
+  border: 1px solid #E2E8F0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.ecc-comp-table td {
+  padding: 12px 14px;
+  border: 1px solid #E2E8F0;
+  color: #1E293B;
+  vertical-align: middle;
+}
+
+.ecc-comp-metric-label {
+  font-weight: 700;
+  color: #334155;
+  background: #F8FAFC;
+  width: 190px;
+}
+
+.ecc-comp-highlight {
+  font-weight: 800;
+  color: #0284C7;
+}
+
+.ecc-comp-occupancy-bar {
+  background: #E2E8F0;
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.ecc-comp-occupancy-fill {
+  background: #10B981;
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.ecc-comparator-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

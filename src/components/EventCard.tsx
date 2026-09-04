@@ -7,13 +7,67 @@ type Props = {
   onLots: (event: EventItem) => void
   onDashboard: (event: EventItem) => void
   onOpen: (event: EventItem) => void
+  isComparing?: boolean
+  isSelectedForCompare?: boolean
+  onToggleCompare?: (event: EventItem) => void
 }
 
-export default function EventCard({event, onEdit, onLots, onDashboard, onOpen}: Props) {
+export default function EventCard({
+  event,
+  onEdit,
+  onLots,
+  onDashboard,
+  onOpen,
+  isComparing = false,
+  isSelectedForCompare = false,
+  onToggleCompare
+}: Props) {
   const occupancyNum = parseFloat(event.occupancy)
   const high = occupancyNum > 50
+
+  const handleClick = () => {
+    if (isComparing) {
+      onToggleCompare?.(event)
+    } else {
+      onOpen(event)
+    }
+  }
+
   return (
-    <article className="event-card event-card-clickable" data-testid="event-card" data-event-id={event.id} data-event-code={event.code} data-producer-id={event.producerId} role="button" tabIndex={0} onClick={()=>onOpen(event)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onOpen(event)}}}>
+    <article
+      className={`event-card event-card-clickable ${isComparing ? 'is-comparing' : ''} ${isSelectedForCompare ? 'selected-for-compare' : ''}`}
+      data-testid="event-card"
+      data-event-id={event.id}
+      data-event-code={event.code}
+      data-producer-id={event.producerId}
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
+    >
+      {isComparing && (
+        <div
+          className="event-compare-checkbox-wrap"
+          onClick={e => {
+            e.stopPropagation()
+            onToggleCompare?.(event)
+          }}
+          title="Selecionar para comparar"
+          data-testid={`checkbox-compare-${event.id}`}
+        >
+          <input
+            type="checkbox"
+            className="event-compare-checkbox"
+            checked={isSelectedForCompare}
+            readOnly
+          />
+        </div>
+      )}
       <div className={`event-cover ${event.cover}`}>
         {event.badge && <span className="cover-badge">{event.badge}</span>}
         <div className="cover-overlay">
