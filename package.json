@@ -97,7 +97,10 @@
     "test:pw:functional-contract": "node scripts/verify-runtime-functionality-contract.mjs",
     "test:pw:functional-runtime": "playwright test tests/runtime/functionality-contract.spec.ts --project=chromium",
     "test:pw:functional-gate": "npm run test:pw:functional-contract && npm run test:pw:functional-runtime",
-    "test:pw:stability": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract"
+    "test:pw:stability": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract",
+    "test:pw:inventory-operational": "playwright test tests/master/event-inventory-operational.spec.ts --project=chromium",
+    "test:pw:inventory-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:inventory-operational && npm run test:pw:inventory-operational",
+    "verify:inventory-operational": "node scripts/verify-inventory-operational-contract.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

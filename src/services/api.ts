@@ -562,6 +562,10 @@ export type EventInventoryEngine={
   lots:InventoryLot[];sectors:InventorySector[];holds:InventoryHold[];recommendations:InventoryRecommendation[]
 }
 export const getEventInventoryEngine=(eventId:number)=>request<EventInventoryEngine>(`/events/${eventId}/inventory-engine`)
+export type InventoryLotMutation={name:string;sector?:string|null;priceCents:number;capacity:number;status?:string;startsAt?:string|null;endsAt?:string|null}
+export const createInventoryLot=(eventId:number,body:InventoryLotMutation)=>request<InventoryLot>(`/events/${eventId}/inventory-lots`,{method:'POST',body:JSON.stringify(body)})
+export const updateInventoryLot=(eventId:number,lotId:number,body:Partial<InventoryLotMutation>)=>request<InventoryLot>(`/events/${eventId}/inventory-lots/${lotId}`,{method:'PATCH',body:JSON.stringify(body)})
+export const updateInventoryLotStatus=(eventId:number,lotId:number,status:'ativo'|'pausado'|'encerrado')=>request<InventoryLot>(`/events/${eventId}/inventory-lots/${lotId}/status`,{method:'PATCH',body:JSON.stringify({status})})
 export const createInventoryHold=(eventId:number,body:{lotId:number;quantity:number;minutes:number;reason:string;source?:string})=>request<InventoryHold>(`/events/${eventId}/inventory-holds`,{method:'POST',body:JSON.stringify(body)})
 export const releaseInventoryHold=(eventId:number,holdId:number)=>request<InventoryHold>(`/events/${eventId}/inventory-holds/${holdId}/release`,{method:'PATCH'})
 

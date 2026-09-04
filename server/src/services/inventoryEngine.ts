@@ -1,4 +1,4 @@
-export const INVENTORY_ENGINE_RELEASE = '26.2-inventory-engine-2026-09-03'
+export const INVENTORY_ENGINE_RELEASE = '26.16.3-inventario-operacional-2026-09-04'
 
 export type InventoryLotInput = {
   id:number

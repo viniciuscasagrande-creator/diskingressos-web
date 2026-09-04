@@ -132,6 +132,78 @@ eventsRouter.get('/:id/inventory-engine',async(req:AuthRequest,res)=>{
   })
 })
 
+const inventoryLotMutation=z.object({
+  name:z.string().trim().min(2).max(120),
+  sector:z.string().trim().max(120).nullable().optional(),
+  priceCents:z.number().int().nonnegative(),
+  capacity:z.number().int().positive(),
+  status:z.enum(['ativo','pausado','encerrado']).default('ativo'),
+  startsAt:z.string().datetime().nullable().optional(),
+  endsAt:z.string().datetime().nullable().optional(),
+})
+const inventoryLotPatch=inventoryLotMutation.partial()
+
+eventsRouter.post('/:id/inventory-lots',async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id)
+  if(!Number.isFinite(id))return res.status(400).json({message:'Evento inválido.'})
+  const body=inventoryLotMutation.parse(req.body)
+  const event=await prisma.event.findUnique({where:{id},select:{id:true,producerId:true}})
+  if(!event)return res.status(404).json({message:'Evento não encontrado.'})
+  if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'})
+  if(body.startsAt&&body.endsAt&&new Date(body.endsAt)<=new Date(body.startsAt))return res.status(400).json({message:'Fim da venda deve ser posterior ao início.'})
+  const lot=await prisma.lot.create({data:{
+    name:body.name,sector:body.sector||null,priceCents:body.priceCents,capacity:body.capacity,status:body.status,
+    startsAt:body.startsAt?new Date(body.startsAt):null,endsAt:body.endsAt?new Date(body.endsAt):null,
+    sold:0,producerId:event.producerId,eventId:id,
+  }})
+  await audit(req,req.auth!.id,event.producerId,'create','inventory_lot',String(lot.id))
+  res.status(201).json(lot)
+})
+
+eventsRouter.patch('/:id/inventory-lots/:lotId',async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id),lotId=Number(req.params.lotId)
+  if(!Number.isFinite(id)||!Number.isFinite(lotId))return res.status(400).json({message:'Evento ou lote inválido.'})
+  const body=inventoryLotPatch.parse(req.body)
+  const event=await prisma.event.findUnique({where:{id},select:{producerId:true}})
+  if(!event)return res.status(404).json({message:'Evento não encontrado.'})
+  if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'})
+  const lot=await prisma.lot.findFirst({where:{id:lotId,eventId:id,producerId:event.producerId}})
+  if(!lot)return res.status(404).json({message:'Lote não pertence ao evento.'})
+  const now=new Date()
+  const holdAgg=await prisma.inventoryHold.aggregate({where:{eventId:id,producerId:event.producerId,lotId,status:'active',expiresAt:{gt:now}},_sum:{quantity:true}})
+  const committed=lot.sold+(holdAgg._sum.quantity||0)
+  const nextCapacity=body.capacity??lot.capacity
+  if(nextCapacity<committed)return res.status(409).json({message:`Capacidade não pode ser menor que ${committed} ingresso(s) já comprometidos entre vendas e holds.`})
+  const nextStarts=body.startsAt===undefined?lot.startsAt:(body.startsAt?new Date(body.startsAt):null)
+  const nextEnds=body.endsAt===undefined?lot.endsAt:(body.endsAt?new Date(body.endsAt):null)
+  if(nextStarts&&nextEnds&&nextEnds<=nextStarts)return res.status(400).json({message:'Fim da venda deve ser posterior ao início.'})
+  const updated=await prisma.lot.update({where:{id:lotId},data:{
+    ...(body.name!==undefined?{name:body.name}:{}),
+    ...(body.sector!==undefined?{sector:body.sector||null}:{}),
+    ...(body.priceCents!==undefined?{priceCents:body.priceCents}:{}),
+    ...(body.capacity!==undefined?{capacity:body.capacity}:{}),
+    ...(body.status!==undefined?{status:body.status}:{}),
+    ...(body.startsAt!==undefined?{startsAt:nextStarts}:{}),
+    ...(body.endsAt!==undefined?{endsAt:nextEnds}:{}),
+  }})
+  await audit(req,req.auth!.id,event.producerId,'update','inventory_lot',String(lotId))
+  res.json(updated)
+})
+
+eventsRouter.patch('/:id/inventory-lots/:lotId/status',async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id),lotId=Number(req.params.lotId)
+  if(!Number.isFinite(id)||!Number.isFinite(lotId))return res.status(400).json({message:'Evento ou lote inválido.'})
+  const body=z.object({status:z.enum(['ativo','pausado','encerrado'])}).parse(req.body)
+  const event=await prisma.event.findUnique({where:{id},select:{producerId:true}})
+  if(!event)return res.status(404).json({message:'Evento não encontrado.'})
+  if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'})
+  const lot=await prisma.lot.findFirst({where:{id:lotId,eventId:id,producerId:event.producerId}})
+  if(!lot)return res.status(404).json({message:'Lote não pertence ao evento.'})
+  const updated=await prisma.lot.update({where:{id:lotId},data:{status:body.status}})
+  await audit(req,req.auth!.id,event.producerId,'status','inventory_lot',`${lotId}:${body.status}`)
+  res.json(updated)
+})
+
 eventsRouter.post('/:id/inventory-holds',async(req:AuthRequest,res)=>{
   const id=Number(req.params.id)
   const body=z.object({lotId:z.number().int().positive(),quantity:z.number().int().positive(),minutes:z.number().int().min(1).max(1440).default(15),reason:z.string().min(2).max(160),source:z.string().max(40).default('manual')}).parse(req.body)
@@ -140,6 +212,7 @@ eventsRouter.post('/:id/inventory-holds',async(req:AuthRequest,res)=>{
   if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'})
   const lot=await prisma.lot.findFirst({where:{id:body.lotId,eventId:id,producerId:event.producerId}})
   if(!lot)return res.status(404).json({message:'Lote não pertence ao evento.'})
+  if(lot.status!=='ativo')return res.status(409).json({message:'Hold temporário só pode ser criado em lotes ativos.'})
   const now=new Date()
   const active=await prisma.inventoryHold.aggregate({where:{eventId:id,producerId:event.producerId,lotId:lot.id,status:'active',expiresAt:{gt:now}},_sum:{quantity:true}})
   const available=Math.max(0,lot.capacity-lot.sold-(active._sum.quantity||0))
