@@ -1,0 +1,378 @@
+/* Fase 26.16.5 — Live Operations Operacional */
+.elo-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+
+.elo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 14px;
+  border: 1px solid #334155;
+}
+
+.elo-header h1 {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 4px 0 2px;
+  color: #ffffff;
+}
+
+.elo-header p {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.elo-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #064e3b;
+  color: #34d399;
+}
+
+.elo-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.elo-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.elo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background: #1e293b;
+  color: #f8fafc;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.elo-btn:hover {
+  background: #334155;
+  border-color: #64748b;
+}
+
+.elo-btn.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+/* 10+ KPIs */
+.elo-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .elo-kpis-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .elo-kpis-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.elo-kpi-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.elo-kpi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.elo-kpi-card strong {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 6px;
+}
+
+.elo-kpi-card small {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Flow Chart Section */
+.elo-flow-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.elo-flow-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.elo-flow-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.elo-flow-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+}
+
+.elo-flow-stats b {
+  color: #0284c7;
+}
+
+.elo-flow-bars {
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.elo-flow-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.elo-flow-fill {
+  width: 100%;
+  max-width: 32px;
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+  border-radius: 4px 4px 1px 1px;
+  transition: height 0.3s;
+}
+
+.elo-flow-time {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Gates & Devices Grid */
+.elo-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .elo-grid-2 { grid-template-columns: 1fr; }
+}
+
+.elo-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+.elo-panel-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.elo-panel-title h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.elo-gate-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.elo-gate-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.elo-gate-metrics {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.elo-gate-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.elo-action-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.elo-action-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+/* Devices Table */
+.elo-devices-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.elo-devices-table th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.elo-devices-table td {
+  padding: 10px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+}
+
+/* Rejections Section */
+.elo-rejections-section {
+  background: #ffffff;
+  border: 1px solid #fee2e2;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.elo-rejection-card {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+}
+
+.elo-rejection-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+.elo-rejection-reason {
+  margin-top: 4px;
+  font-weight: 800;
+  font-size: 12px;
+  color: #b91c1c;
+}
+
+.elo-rejection-meta {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #7f1d1d;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.elo-rejection-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.elo-rejection-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid #fca5a5;
+  background: #ffffff;
+  color: #b91c1c;
+}
+
+.elo-rejection-actions button:hover {
+  background: #b91c1c;
+  color: #ffffff;
+}
+
+.elo-rejection-actions button.primary {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}

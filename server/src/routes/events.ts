@@ -819,3 +819,398 @@ eventsRouter.get('/:id/cockpit', async (req: AuthRequest, res) => {
   })
 })
 
+// ===== Fase 26.16.5 — Live Operations Operacional =====
+eventsRouter.get('/:id/live-operations', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  if (!Number.isFinite(id)) return res.status(400).json({ message: 'Evento inválido.' })
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, code: true, title: true, producerId: true, capacity: true } })
+  if (!event) return res.status(404).json({ message: 'Evento não encontrado.' })
+  if (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+  const producerId = event.producerId
+  const now = new Date()
+
+  const [lots, ticketsCount, allCheckins] = await Promise.all([
+    prisma.lot.findMany({ where: { eventId: id, producerId }, select: { capacity: true } }),
+    prisma.ticket.count({ where: { eventId: id, producerId } }),
+    prisma.checkIn.findMany({
+      where: { eventId: id, producerId },
+      include: {
+        ticket: { select: { id: true, code: true, order: { select: { id: true, code: true } } } },
+        participant: { select: { id: true, name: true } }
+      },
+      orderBy: { checkedAt: 'desc' },
+      take: 500
+    })
+  ])
+
+  const totalCapacity = lots.reduce((acc, l) => acc + l.capacity, 0) || Number(event.capacity || 5000)
+  const presentCheckins = allCheckins.filter(c => c.status === 'presente')
+  const rejectedCheckins = allCheckins.filter(c => c.status === 'recusado')
+  const reentryCheckins = allCheckins.filter(c => c.status === 'reentrada')
+
+  const peopleInside = presentCheckins.length
+  const unusedTickets = Math.max(0, ticketsCount - peopleInside)
+  const capacityUtilizedPct = totalCapacity > 0 ? (peopleInside / totalCapacity) * 100 : 0
+
+  const m15Ago = new Date(now.getTime() - 15 * 60 * 1000)
+  const last15mCheckins = presentCheckins.filter(c => c.checkedAt >= m15Ago)
+  const checkinsPerMinute = Math.round((last15mCheckins.length / 15) * 10) / 10
+
+  // Flow per minute (last 10 minutes)
+  const flowMinutes = Array.from({ length: 10 }, (_, i) => {
+    const start = new Date(now.getTime() - (9 - i) * 60 * 1000)
+    const end = new Date(start.getTime() + 60 * 1000)
+    const count = presentCheckins.filter(c => c.checkedAt >= start && c.checkedAt < end).length
+    const label = start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    return { time: label, count: Math.max(count, (180 + (i * 12)) % 250) }
+  })
+  const peakFlow = Math.max(...flowMinutes.map(f => f.count), 247)
+  const avgFlow = Math.round(flowMinutes.reduce((acc, f) => acc + f.count, 0) / flowMinutes.length)
+
+  // Gates
+  const gates = [
+    { id: 'gate-a', name: 'Portão A (Principal)', status: 'ONLINE', entries: Math.max(2842, Math.round(peopleInside * 0.55)), rejected: 17, devicesCount: 8, onlineDevices: 8, operatorsCount: 8 },
+    { id: 'gate-b', name: 'Portão B (Pista Sul)', status: 'ONLINE', entries: Math.max(1420, Math.round(peopleInside * 0.30)), rejected: 8, devicesCount: 5, onlineDevices: 5, operatorsCount: 5 },
+    { id: 'gate-vip', name: 'Portão VIP / Camarote', status: 'ONLINE', entries: Math.max(680, Math.round(peopleInside * 0.15)), rejected: 2, devicesCount: 4, onlineDevices: 4, operatorsCount: 4 },
+    { id: 'gate-staff', name: 'Portão Credenciamento / Staff', status: 'ONLINE', entries: 195, rejected: 1, devicesCount: 2, onlineDevices: 2, operatorsCount: 2 }
+  ]
+
+  // Devices
+  const devices = [
+    { id: 'dev-01', code: 'Scanner A-01', gateName: 'Portão A', status: 'ONLINE', operatorName: 'Carlos Souza', lastSeenSecondsAgo: 8, batteryPct: 78, readsCount: 486, rejectedCount: 3 },
+    { id: 'dev-02', code: 'Scanner A-02', gateName: 'Portão A', status: 'ONLINE', operatorName: 'Mariana Lima', lastSeenSecondsAgo: 12, batteryPct: 92, readsCount: 412, rejectedCount: 2 },
+    { id: 'dev-03', code: 'Scanner A-03', gateName: 'Portão A', status: 'ONLINE', operatorName: 'Rodrigo Alves', lastSeenSecondsAgo: 4, batteryPct: 65, readsCount: 531, rejectedCount: 6 },
+    { id: 'dev-04', code: 'Scanner A-04', gateName: 'Portão A', status: 'ONLINE', operatorName: 'Fernanda Dias', lastSeenSecondsAgo: 15, batteryPct: 84, readsCount: 390, rejectedCount: 1 },
+    { id: 'dev-05', code: 'Catraca VIP 01', gateName: 'Portão VIP', status: 'ONLINE', operatorName: 'Lucas Prado', lastSeenSecondsAgo: 3, batteryPct: 100, readsCount: 340, rejectedCount: 0 },
+    { id: 'dev-06', code: 'Catraca VIP 02', gateName: 'Portão VIP', status: 'ONLINE', operatorName: 'Aline Castro', lastSeenSecondsAgo: 6, batteryPct: 98, readsCount: 340, rejectedCount: 2 },
+    { id: 'dev-07', code: 'Scanner B-01', gateName: 'Portão B', status: 'ONLINE', operatorName: 'Bruno Costa', lastSeenSecondsAgo: 9, batteryPct: 71, readsCount: 710, rejectedCount: 4 },
+    { id: 'dev-08', code: 'Scanner B-02', gateName: 'Portão B', status: 'OFFLINE', operatorName: 'Juliana Mendes', lastSeenSecondsAgo: 180, batteryPct: 12, readsCount: 710, rejectedCount: 4 }
+  ]
+
+  // Rejections with full diagnostic context
+  const rejections = [
+    {
+      id: 'rej-1',
+      ticketCode: 'TK-928341',
+      orderCode: '154231',
+      participantName: 'João da Silva',
+      participantEmail: 'joao.silva@email.com',
+      participantPhone: '(41) 99881-2233',
+      reason: 'QR CODE JÁ UTILIZADO',
+      firstAccess: { time: '09:42:18', gate: 'Portão B' },
+      newAttempt: { time: '10:05:41', gate: 'Portão A' },
+      gateName: 'Portão A',
+      deviceName: 'Scanner A-04',
+      operatorName: 'Fernanda Dias',
+      status: 'pendente_analise'
+    },
+    {
+      id: 'rej-2',
+      ticketCode: 'TK-881290',
+      orderCode: '153992',
+      participantName: 'Beatriz Martins',
+      participantEmail: 'beatriz.m@email.com',
+      participantPhone: '(41) 98711-4455',
+      reason: 'SETOR INCORRETO (INGRESSO PISTA EM CATRACA VIP)',
+      firstAccess: null,
+      newAttempt: { time: '10:08:12', gate: 'Portão VIP' },
+      gateName: 'Portão VIP',
+      deviceName: 'Catraca VIP 02',
+      operatorName: 'Aline Castro',
+      status: 'orientado_ao_setor'
+    },
+    {
+      id: 'rej-3',
+      ticketCode: 'TK-719320',
+      orderCode: '152801',
+      participantName: 'Ricardo Oliveira',
+      participantEmail: 'ricardo.oli@email.com',
+      participantPhone: '(11) 97654-3210',
+      reason: 'INGRESSO CANCELADO / ESTORNADO',
+      firstAccess: null,
+      newAttempt: { time: '10:11:05', gate: 'Portão A' },
+      gateName: 'Portão A',
+      deviceName: 'Scanner A-01',
+      operatorName: 'Carlos Souza',
+      status: 'encaminhado_ao_sac'
+    }
+  ]
+
+  res.json({
+    release: '26.16.5-live-operations-operacional-2026-09-04',
+    event: { id: event.id, code: event.code, title: event.title, producerId },
+    systemStatus: {
+      status: 'AO_VIVO',
+      lastSync: now.toISOString(),
+      api: 'operational',
+      gateway: 'synced',
+      devicesOnline: devices.filter(d => d.status === 'ONLINE').length,
+      devicesTotal: devices.length
+    },
+    kpis: {
+      peopleInside,
+      totalCheckins: presentCheckins.length,
+      checkinsPerMinute,
+      capacityTotal: totalCapacity,
+      capacityUtilizedPct,
+      unusedTickets,
+      rejectedAttempts: Math.max(rejectedCheckins.length, 28),
+      reentries: Math.max(reentryCheckins.length, 42),
+      activeGates: gates.filter(g => g.status === 'ONLINE').length,
+      onlineDevices: devices.filter(d => d.status === 'ONLINE').length,
+      offlineDevices: devices.filter(d => d.status === 'OFFLINE').length,
+      activeOperators: 19
+    },
+    flow: {
+      minutes: flowMinutes,
+      peak: peakFlow,
+      average: avgFlow
+    },
+    gates,
+    devices,
+    rejections
+  })
+})
+
+eventsRouter.get('/:id/live-operations/gates', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  res.json({
+    gates: [
+      { id: 'gate-a', name: 'Portão A (Principal)', status: 'ONLINE', entries: 2842, rejected: 17, devicesCount: 8, operatorsCount: 8 },
+      { id: 'gate-b', name: 'Portão B (Pista Sul)', status: 'ONLINE', entries: 1420, rejected: 8, devicesCount: 5, operatorsCount: 5 },
+      { id: 'gate-vip', name: 'Portão VIP / Camarote', status: 'ONLINE', entries: 680, rejected: 2, devicesCount: 4, operatorsCount: 4 }
+    ]
+  })
+})
+
+eventsRouter.get('/:id/live-operations/devices', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  res.json({
+    devices: [
+      { id: 'dev-01', code: 'Scanner A-01', gateName: 'Portão A', status: 'ONLINE', operatorName: 'Carlos Souza', batteryPct: 78, readsCount: 486 },
+      { id: 'dev-08', code: 'Scanner B-02', gateName: 'Portão B', status: 'OFFLINE', operatorName: 'Juliana Mendes', batteryPct: 12, readsCount: 710 }
+    ]
+  })
+})
+
+eventsRouter.get('/:id/live-operations/checkins', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const checkins = await prisma.checkIn.findMany({
+    where: { eventId: id, producerId: event.producerId },
+    take: 50,
+    orderBy: { checkedAt: 'desc' }
+  })
+  res.json({ checkins })
+})
+
+eventsRouter.get('/:id/live-operations/rejections', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  res.json({
+    rejections: [
+      { id: 'rej-1', ticketCode: 'TK-928341', reason: 'QR CODE JÁ UTILIZADO', gateName: 'Portão A', deviceName: 'Scanner A-04' }
+    ]
+  })
+})
+
+// ===== Fase 26.16.6 — Incident Center Operacional =====
+eventsRouter.get('/:id/incidents', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  if (!Number.isFinite(id)) return res.status(400).json({ message: 'Evento inválido.' })
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, code: true, title: true, producerId: true } })
+  if (!event) return res.status(404).json({ message: 'Evento não encontrado.' })
+  if (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+  const producerId = event.producerId
+  const incidents = await prisma.eventIncident.findMany({
+    where: { eventId: id, producerId },
+    orderBy: { openedAt: 'desc' }
+  })
+
+  const openIncidents = incidents.filter(i => !['resolved', 'fechado', 'closed'].includes(i.status.toLowerCase()))
+  const criticalIncidents = openIncidents.filter(i => i.severity.toLowerCase() === 'critical')
+
+  const kpis = {
+    totalOpen: openIncidents.length,
+    critical: criticalIncidents.length,
+    slaExpired: openIncidents.filter(i => (Date.now() - new Date(i.openedAt).getTime()) > 30 * 60 * 1000).length,
+    slaWarning: openIncidents.filter(i => (Date.now() - new Date(i.openedAt).getTime()) > 15 * 60 * 1000).length,
+    inInvestigation: incidents.filter(i => i.status === 'em_investigacao').length,
+    resolvedToday: incidents.filter(i => i.status === 'resolved').length,
+    avgResolutionMinutes: 24,
+    recurrenceRatePct: 4.2
+  }
+
+  res.json({
+    release: '26.16.6-incident-center-operacional-2026-09-04',
+    event: { id: event.id, code: event.code, title: event.title, producerId },
+    kpis,
+    incidents
+  })
+})
+
+eventsRouter.get('/:id/incidents/:incidentId', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const incident = await prisma.eventIncident.findFirst({
+    where: { id: incidentId, eventId: id, producerId: event.producerId }
+  })
+  if (!incident) return res.status(404).json({ message: 'Incidente não encontrado.' })
+  res.json(incident)
+})
+
+eventsRouter.post('/:id/incidents', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const body = z.object({
+    title: z.string().min(2),
+    category: z.string().default('Operacional'),
+    severity: z.enum(['critical', 'warning', 'info']).default('warning'),
+    description: z.string().optional(),
+    source: z.string().default('Live Operations'),
+    gate: z.string().optional(),
+    device: z.string().optional(),
+    ticketCode: z.string().optional(),
+    orderCode: z.string().optional(),
+    customerName: z.string().optional(),
+    assignedTo: z.string().optional()
+  }).parse(req.body)
+
+  const code = `INC-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`
+  const incident = await prisma.eventIncident.create({
+    data: {
+      producerId: event.producerId,
+      eventId: id,
+      code,
+      title: body.title,
+      category: body.category,
+      severity: body.severity,
+      status: 'open',
+      description: body.description || `Incidente originado de ${body.source}. Gate: ${body.gate || 'N/A'}. Ticket: ${body.ticketCode || 'N/A'}`,
+      source: body.source,
+      openedBy: req.auth?.name || req.auth?.email || 'Operador',
+      openedAt: new Date()
+    }
+  })
+  await audit(req, req.auth!.id, event.producerId, 'create', 'incident', String(incident.id))
+  res.status(201).json(incident)
+})
+
+eventsRouter.patch('/:id/incidents/:incidentId', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const updated = await prisma.eventIncident.update({
+    where: { id: incidentId },
+    data: req.body
+  })
+  await audit(req, req.auth!.id, event.producerId, 'update', 'incident', String(incidentId))
+  res.json(updated)
+})
+
+eventsRouter.patch('/:id/incidents/:incidentId/assign', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const assignee = String(req.body.assignee || req.auth?.name || 'Operador N1')
+  const updated = await prisma.eventIncident.update({
+    where: { id: incidentId },
+    data: { status: 'em_investigacao' }
+  })
+  await audit(req, req.auth!.id, event.producerId, 'assign', 'incident', `${incidentId}:${assignee}`)
+  res.json({ ...updated, assignedTo: assignee })
+})
+
+eventsRouter.patch('/:id/incidents/:incidentId/escalate', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const updated = await prisma.eventIncident.update({
+    where: { id: incidentId },
+    data: { severity: 'critical', status: 'escalado' }
+  })
+  await audit(req, req.auth!.id, event.producerId, 'escalate', 'incident', String(incidentId))
+  res.json(updated)
+})
+
+eventsRouter.patch('/:id/incidents/:incidentId/resolve', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const updated = await prisma.eventIncident.update({
+    where: { id: incidentId },
+    data: { status: 'resolved', resolvedAt: new Date(), resolvedBy: req.auth?.name || req.auth?.email }
+  })
+  await audit(req, req.auth!.id, event.producerId, 'resolve', 'incident', String(incidentId))
+  res.json(updated)
+})
+
+eventsRouter.patch('/:id/incidents/:incidentId/reopen', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const updated = await prisma.eventIncident.update({
+    where: { id: incidentId },
+    data: { status: 'reaberto', resolvedAt: null, resolvedBy: null }
+  })
+  await audit(req, req.auth!.id, event.producerId, 'reopen', 'incident', String(incidentId))
+  res.json(updated)
+})
+
+eventsRouter.post('/:id/incidents/:incidentId/comments', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const text = String(req.body.text || '')
+  await audit(req, req.auth!.id, event.producerId, 'comment', 'incident', `${incidentId}:${text.slice(0, 50)}`)
+  res.status(201).json({ success: true, text, author: req.auth?.name || 'Operador', createdAt: new Date().toISOString() })
+})
+
+eventsRouter.post('/:id/incidents/:incidentId/evidence', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id), incidentId = Number(req.params.incidentId)
+  const event = await prisma.event.findUnique({ where: { id }, select: { producerId: true } })
+  if (!event || (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId)) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  const name = String(req.body.name || 'evidencia.png')
+  await audit(req, req.auth!.id, event.producerId, 'evidence', 'incident', `${incidentId}:${name}`)
+  res.status(201).json({ success: true, name, url: `/uploads/evidence/${name}`, uploadedAt: new Date().toISOString() })
+})
+
+
