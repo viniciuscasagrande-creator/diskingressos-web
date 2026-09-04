@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import type { PageKey } from '../components/ModuleSidebar'
+import EventActivityStreamPage from './eventos/EventActivityStreamPage'
 import './event-command-center.css'
 
 interface Props {
@@ -128,6 +129,7 @@ export default function EventCommandCenterPage({ event, onNavigate, notify }: Pr
   const [error, setError] = useState('')
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [period, setPeriod] = useState<Period>('all')
+  const [viewMode, setViewMode] = useState<'cockpit' | 'timeline'>('cockpit')
   const [drilldownHour, setDrilldownHour] = useState<CockpitData['trend'][0] | null>(null)
 
   const loadData = useCallback(async (silent = false) => {
@@ -211,6 +213,26 @@ export default function EventCommandCenterPage({ event, onNavigate, notify }: Pr
           Evento: <strong>{event.code} · {event.title}</strong> (Produtora #{event.producerId})
         </div>
         <div className="event-os-toolbar-actions">
+          {/* View Mode Tabs */}
+          <div className="cockpit-period-tabs" data-testid="cockpit-view-tabs" style={{ marginRight: '6px' }}>
+            <button
+              type="button"
+              className={`cockpit-period-btn ${viewMode === 'cockpit' ? 'active' : ''}`}
+              onClick={() => setViewMode('cockpit')}
+              data-testid="tab-cockpit-overview"
+            >
+              Visão Geral
+            </button>
+            <button
+              type="button"
+              className={`cockpit-period-btn ${viewMode === 'timeline' ? 'active' : ''}`}
+              onClick={() => setViewMode('timeline')}
+              data-testid="tab-activity-stream"
+            >
+              Histórico de Atividades
+            </button>
+          </div>
+
           {/* Period Filter Tabs */}
           <div className="cockpit-period-tabs" data-testid="cockpit-period-tabs">
             <button
@@ -291,7 +313,15 @@ export default function EventCommandCenterPage({ event, onNavigate, notify }: Pr
         <button className="cockpit-shortcut-btn text-rose-700 bg-rose-50 border-rose-200" onClick={() => onNavigate('finance-refunds')} data-testid="shortcut-refunds">
           <Undo2 size={14} /> Estornos
         </button>
+        <button className="cockpit-shortcut-btn text-sky-700 bg-sky-50 border-sky-200" onClick={() => setViewMode('timeline')} data-testid="shortcut-activity-stream">
+          <Clock3 size={14} /> Histórico de Atividades
+        </button>
       </section>
+
+      {viewMode === 'timeline' ? (
+        <EventActivityStreamPage event={event} onNavigate={onNavigate} notify={notify} />
+      ) : (
+        <>
 
       {/* Event Day Mode Banner */}
       {ed && (
@@ -511,10 +541,20 @@ export default function EventCommandCenterPage({ event, onNavigate, notify }: Pr
       <section className="event-os-panel" data-testid="cockpit-activity-stream">
         <header className="event-os-activity-header">
           <div>
-            <h3>Activity Stream Operacional</h3>
+            <h3>Histórico de Atividades</h3>
             <p>Ações e ocorrências em tempo real com links diretos para cada módulo.</p>
           </div>
-          <span className="text-xs text-slate-500 font-medium">Últimas operações</span>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              className="cockpit-stream-action-btn"
+              onClick={() => setViewMode('timeline')}
+              data-testid="nav-activity-stream"
+            >
+              Histórico de Atividades <ArrowUpRight size={10} />
+            </button>
+            <span className="text-xs text-slate-500 font-medium">Últimas operações</span>
+          </div>
         </header>
         <div className="event-os-stream">
           {(data?.activity || []).map(item => (
@@ -552,6 +592,8 @@ export default function EventCommandCenterPage({ event, onNavigate, notify }: Pr
           )}
         </div>
       </section>
+        </>
+      )}
 
       {/* Drill-down Modal de Vendas por Hora */}
       {drilldownHour && (

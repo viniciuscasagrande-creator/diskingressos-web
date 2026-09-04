@@ -21,6 +21,7 @@ import EventRevenueIntelPage from './eventos/EventRevenueIntelPage'
 import EventForecastCenterPage from './eventos/EventForecastCenterPage'
 import EventDiskIntelligencePage from './eventos/EventDiskIntelligencePage'
 import EventProducerExecutivePage from './eventos/EventProducerExecutivePage'
+import EventActivityStreamPage from './eventos/EventActivityStreamPage'
 import EventOSAdvancedPage from './EventOSAdvancedPage'
 import { getAutomationSummary, getRecoveryDashboard, type AutomationSummary, type RecoveryDashboard } from '../services/api'
 import type { PageKey } from '../components/ModuleSidebar'
@@ -30,6 +31,7 @@ type Props={event:EventItem;participants:Participant[];page:PageKey;onNavigate:(
 export default function EventContextPage({event,participants,page,onNavigate,notify}:Props){
  const people=participants.filter(p=>p.eventId===event.id)
  if(page==='event-command-center') return <EventCommandCenterPage event={event} onNavigate={onNavigate} notify={notify}/>
+ if(page==='event-audit') return <EventActivityStreamPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-inventory') return <EventInventoryPage event={event} notify={notify}/>
  if(page==='event-customer-360') return <EventCustomer360Page event={event} notify={notify} onNavigate={onNavigate}/>
  if(page==='event-global-search') return <EventGlobalSearchPage event={event} onNavigate={onNavigate} notify={notify}/>

@@ -1,0 +1,387 @@
+/* ==========================================================================
+   ESTILOS DA TIMELINE OPERACIONAL UNIFICADA — EVENT OS (FASE 26.17.5)
+   Padrão DiskIngressos: 100% PT-BR, Design System Escuro / Slate Moderno
+   ========================================================================== */
+
+.activity-stream-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  background-color: #0b132b;
+  color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header & Barra de Contexto */
+.activity-stream-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.activity-stream-title-area h2 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activity-stream-subtitle {
+  font-size: 14px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-stream-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activity-action-btn.secondary {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f1f5f9;
+}
+
+.activity-action-btn.secondary:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.activity-action-btn.primary {
+  background: #2563eb;
+  border: 1px solid #3b82f6;
+  color: #ffffff;
+}
+
+.activity-action-btn.primary:hover {
+  background: #1d4ed8;
+}
+
+/* Strip de KPIs */
+.activity-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.activity-kpi-card {
+  background: #131e3a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-kpi-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+}
+
+.activity-kpi-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+/* Barra de Filtros Operacionais */
+.activity-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  background: #131e3a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.activity-search-box {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #f8fafc;
+}
+
+.activity-search-box input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+
+.activity-search-box input::placeholder {
+  color: #64748b;
+}
+
+.activity-filter-select {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.activity-filter-select:focus {
+  border-color: #3b82f6;
+}
+
+/* Container da Linha do Tempo */
+.activity-timeline-container {
+  background: #131e3a;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.activity-day-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-day-heading {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #38bdf8;
+  letter-spacing: 0.08em;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Item de Atividade */
+.activity-item-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-left: 4px solid #3b82f6;
+  border-radius: 10px;
+  padding: 14px 18px;
+  transition: all 0.2s ease;
+}
+
+.activity-item-card:hover {
+  border-color: #334155;
+  background: #141f38;
+}
+
+.activity-item-card.severidade-critica {
+  border-left-color: #ef4444;
+}
+
+.activity-item-card.severidade-atencao {
+  border-left-color: #f59e0b;
+}
+
+.activity-item-card.severidade-informativa {
+  border-left-color: #10b981;
+}
+
+.activity-item-main {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.activity-time-pill {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  background: #1e293b;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.activity-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.activity-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.activity-origin-pill {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #1e293b;
+  color: #38bdf8;
+}
+
+.activity-origin-pill.origem-pedido { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.activity-origin-pill.origem-checkin { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.activity-origin-pill.origem-incidente { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.activity-origin-pill.origem-estorno { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.activity-origin-pill.origem-financeiro { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+.activity-origin-pill.origem-inventario { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+.activity-origin-pill.origem-sac { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+.activity-origin-pill.origem-marketing { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+
+.activity-item-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.activity-item-desc {
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.activity-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.activity-drilldown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #38bdf8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.activity-drilldown-btn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+/* Paginação por cursor */
+.activity-load-more-area {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0 8px 0;
+}
+
+.activity-load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f1f5f9;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.activity-load-more-btn:hover:not(:disabled) {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.activity-load-more-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Skeletons */
+.activity-skeleton-row {
+  height: 68px;
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  animation: activity-pulse 1.5s infinite;
+  border-radius: 10px;
+}
+
+@keyframes activity-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Empty & Error States */
+.activity-empty-state, .activity-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 12px;
+}
+
+.activity-empty-state strong, .activity-error-state strong {
+  font-size: 16px;
+  color: #f8fafc;
+}
+
+.activity-empty-state p, .activity-error-state p {
+  font-size: 13px;
+  color: #94a3b8;
+  max-width: 420px;
+}

@@ -542,14 +542,84 @@ export const getEventCommandCenter=(eventId:number)=>request<EventCommandCenter>
 // ===== Fase 26.1 — Event Cockpit 360 + Activity Stream =====
 export type EventActivityType='sale'|'checkin'|'recovery'|'refund'|'finance'|'marketing'|'incident'
 export type EventActivityItem={id:string;type:EventActivityType;occurredAt:string;title:string;detail:string;status:string;amountCents?:number;severity:'success'|'info'|'warning'|'critical'|string}
-export type EventActivityStream={
-  release:string;generatedAt:string;refreshRecommendedSeconds:number;
-  event:{id:number;code:string;title:string;producerId:number;status:string};
-  pulse:{orders15m:number;revenue15mCents:number;orders1h:number;revenue1hCents:number;checkins15m:number;checkins1h:number;recovered12h:number;recoveredRevenue12hCents:number;openRefunds:number;openIncidents:number};
-  trend:Array<{hour:string;orders:number;revenueCents:number;checkins:number}>;
-  activity:EventActivityItem[]
+export type AtividadeEvento = {
+  id: string
+  eventId: string
+  producerId: string
+  origem:
+    | 'pedido'
+    | 'pagamento'
+    | 'ingresso'
+    | 'checkin'
+    | 'inventario'
+    | 'cliente'
+    | 'incidente'
+    | 'sac'
+    | 'marketing'
+    | 'financeiro'
+    | 'estorno'
+    | 'preparacao'
+    | 'sistema'
+  acao: string
+  titulo: string
+  descricao: string
+  entidadeTipo: string
+  entidadeId: string
+  usuarioId?: string
+  usuarioNome?: string
+  dataHora: string
+  severidade: 'informativa' | 'atencao' | 'critica'
+  valorCentavos?: number
+  linkEntidade: {
+    modulo: string
+    targetKey: string
+    id: string | number
+    label: string
+    href?: string
+  }
 }
-export const getEventActivityStream=(eventId:number,limit=40)=>request<EventActivityStream>(`/events/${eventId}/activity-stream${qs({limit})}`)
+
+export interface ActivityStreamFilters {
+  origem?: string
+  severidade?: string
+  busca?: string
+  periodo?: string
+  limit?: number
+  cursor?: string
+}
+
+export type EventActivityStream = {
+  release: string
+  generatedAt: string
+  refreshRecommendedSeconds?: number
+  event: { id: number; code: string; title: string; producerId: number; status: string }
+  data: AtividadeEvento[]
+  activity: EventActivityItem[]
+  meta: {
+    eventId: string
+    total: number
+    hasMore: boolean
+    cursor: string | null
+    updatedAt: string
+    sourcesAvailable?: string[]
+  }
+  pulse?: {
+    orders15m: number
+    revenue15mCents: number
+    orders1h: number
+    revenue1hCents: number
+    checkins15m: number
+    checkins1h: number
+  }
+  trend?: Array<{ hour: string; orders: number; revenueCents: number; checkins: number }>
+}
+
+export const getEventActivityStream = (eventId: number, filters?: ActivityStreamFilters | number) => {
+  if (typeof filters === 'number') {
+    return request<EventActivityStream>(`/events/${eventId}/activity-stream${qs({ limit: filters })}`)
+  }
+  return request<EventActivityStream>(`/events/${eventId}/activity-stream${qs((filters as any) || {})}`)
+}
 
 // ===== Fase 26.2 — Inventory Engine =====
 export type InventoryHold={id:number;producerId:number;eventId:number;lotId:number|null;code:string;quantity:number;status:string;reason:string;source:string;expiresAt:string;createdBy:string|null;releasedAt:string|null;createdAt:string}

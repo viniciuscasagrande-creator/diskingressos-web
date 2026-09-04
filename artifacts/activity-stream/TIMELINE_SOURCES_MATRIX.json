@@ -1,0 +1,56 @@
+[
+  {
+    "origem": "pedido",
+    "entidade": "Order",
+    "status": "MAPPED",
+    "drilldown": "event-tickets"
+  },
+  {
+    "origem": "checkin",
+    "entidade": "CheckIn",
+    "status": "MAPPED",
+    "drilldown": "event-live-ops"
+  },
+  {
+    "origem": "incidente",
+    "entidade": "EventIncident",
+    "status": "MAPPED",
+    "drilldown": "event-incidents"
+  },
+  {
+    "origem": "estorno",
+    "entidade": "RefundRequest",
+    "status": "MAPPED",
+    "drilldown": "finance-refunds"
+  },
+  {
+    "origem": "financeiro",
+    "entidade": "FinancialTransaction",
+    "status": "MAPPED",
+    "drilldown": "finance-statement"
+  },
+  {
+    "origem": "inventario",
+    "entidade": "Lot",
+    "status": "MAPPED",
+    "drilldown": "event-inventory"
+  },
+  {
+    "origem": "sac",
+    "entidade": "ServiceTicket",
+    "status": "MAPPED",
+    "drilldown": "sac-tickets"
+  },
+  {
+    "origem": "marketing",
+    "entidade": "MarketingCampaign",
+    "status": "MAPPED",
+    "drilldown": "event-meta-ads"
+  },
+  {
+    "origem": "preparacao",
+    "entidade": "EventReadinessCheck",
+    "status": "MAPPED",
+    "drilldown": "event-readiness"
+  }
+]

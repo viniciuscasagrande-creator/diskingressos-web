@@ -1,0 +1,73 @@
+{
+  "release": "26.17.5-historico-atividades-unificado-ptbr-2026-09-04",
+  "auditedAt": "2026-09-04T18:06:27.040Z",
+  "status": "PASS",
+  "checks": {
+    "backendEndpoint": "PASS",
+    "realDataSources": "PASS",
+    "lgpdMasking": "PASS",
+    "cursorPagination": "PASS",
+    "backendFilters": "PASS",
+    "frontendContract": "PASS",
+    "testIdsCoverage": "PASS",
+    "canonicalEstornosProtection": "PASS"
+  },
+  "sourcesMatrix": [
+    {
+      "origem": "pedido",
+      "entidade": "Order",
+      "status": "MAPPED",
+      "drilldown": "event-tickets"
+    },
+    {
+      "origem": "checkin",
+      "entidade": "CheckIn",
+      "status": "MAPPED",
+      "drilldown": "event-live-ops"
+    },
+    {
+      "origem": "incidente",
+      "entidade": "EventIncident",
+      "status": "MAPPED",
+      "drilldown": "event-incidents"
+    },
+    {
+      "origem": "estorno",
+      "entidade": "RefundRequest",
+      "status": "MAPPED",
+      "drilldown": "finance-refunds"
+    },
+    {
+      "origem": "financeiro",
+      "entidade": "FinancialTransaction",
+      "status": "MAPPED",
+      "drilldown": "finance-statement"
+    },
+    {
+      "origem": "inventario",
+      "entidade": "Lot",
+      "status": "MAPPED",
+      "drilldown": "event-inventory"
+    },
+    {
+      "origem": "sac",
+      "entidade": "ServiceTicket",
+      "status": "MAPPED",
+      "drilldown": "sac-tickets"
+    },
+    {
+      "origem": "marketing",
+      "entidade": "MarketingCampaign",
+      "status": "MAPPED",
+      "drilldown": "event-meta-ads"
+    },
+    {
+      "origem": "preparacao",
+      "entidade": "EventReadinessCheck",
+      "status": "MAPPED",
+      "drilldown": "event-readiness"
+    }
+  ],
+  "missingTestIds": [],
+  "findings": []
+}

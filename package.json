@@ -140,7 +140,11 @@
     "test:pw:api-contracts": "playwright test tests/api-contracts/event-os-api-contracts.spec.ts --project=chromium",
     "test:pw:api-tenant": "playwright test tests/api-contracts/tenant-isolation.spec.ts --project=chromium",
     "test:pw:api-resilience": "playwright test tests/api-contracts/partial-failure.spec.ts tests/api-contracts/error-handling.spec.ts --project=chromium",
-    "gate:api-contracts": "npm run audit:api-security && npm run audit:real-data && npm run audit:api-contracts && npm run test:pw:api-contracts && npm run test:pw:api-tenant && npm run test:pw:api-resilience"
+    "gate:api-contracts": "npm run audit:api-security && npm run audit:real-data && npm run audit:api-contracts && npm run test:pw:api-contracts && npm run test:pw:api-tenant && npm run test:pw:api-resilience",
+    "audit:activity-stream": "node scripts/audit-activity-stream.mjs",
+    "verify:activity-stream": "node scripts/verify-activity-stream.mjs",
+    "test:pw:activity-stream": "playwright test tests/activity-stream --project=chromium",
+    "gate:activity-stream": "npm run audit:activity-stream && npm run verify:activity-stream && npm run test:pw:activity-stream"
   },
   "dependencies": {
     "@prisma/client": "latest",
