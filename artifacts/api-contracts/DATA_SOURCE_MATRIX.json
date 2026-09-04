@@ -1,0 +1,59 @@
+[
+  {
+    "metric": "Receita Bruta/Líquida",
+    "module": "Revenue Intelligence",
+    "source": "Order/Transaction",
+    "isReal": true,
+    "tenantSecured": true
+  },
+  {
+    "metric": "Ingressos Vendidos",
+    "module": "Inventário/Vendas",
+    "source": "Ticket/OrderItem",
+    "isReal": true,
+    "tenantSecured": true
+  },
+  {
+    "metric": "Check-ins",
+    "module": "Live Operations",
+    "source": "CheckIn/AccessScan",
+    "isReal": true,
+    "tenantSecured": true
+  },
+  {
+    "metric": "Capacidade & Lotes",
+    "module": "Inventário",
+    "source": "InventoryLot/Hold",
+    "isReal": true,
+    "tenantSecured": true
+  },
+  {
+    "metric": "Estornos",
+    "module": "Estornos",
+    "source": "RefundRequest",
+    "isReal": true,
+    "tenantSecured": true,
+    "note": "Módulo canônico protegido"
+  },
+  {
+    "metric": "Incidentes",
+    "module": "Incident Center",
+    "source": "EventIncident",
+    "isReal": true,
+    "tenantSecured": true
+  },
+  {
+    "metric": "Previsões",
+    "module": "Forecast Center",
+    "source": "EventForecastSnapshot",
+    "isReal": true,
+    "tenantSecured": true
+  },
+  {
+    "metric": "Índice de Saúde",
+    "module": "Disk Intelligence",
+    "source": "IntelligenceInsight",
+    "isReal": true,
+    "tenantSecured": true
+  }
+]

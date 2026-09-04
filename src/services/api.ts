@@ -1289,6 +1289,25 @@ export type ExecutiveDashboardData = {
 export const getExecutiveDashboard = (eventId: number) =>
   request<ExecutiveDashboardData>(`/events/${eventId}/executive-dashboard`)
 
+// ===== Fase 26.17.3 — API Contract & Real Data Integration =====
+export const getEventCockpit = (eventId: number, period?: string) =>
+  request<any>(`/events/${eventId}/cockpit${qs({ period })}`)
+export const getEventCockpitData = getEventCockpit
+
+export const getEventLiveOperations = (eventId: number) =>
+  request<any>(`/events/${eventId}/live-operations`)
+export const getEventLiveOpsOverview = getEventLiveOperations
+
+export const getEventIncidents = (eventId: number) =>
+  request<any>(`/events/${eventId}/incidents`)
+
+export const getEventDayCommand = (eventId: number) =>
+  request<any>(`/events/${eventId}/event-day-command`)
+export const getEventDayCommandOverview = getEventDayCommand
+
+export const getForecastSummary = getEventForecast
+
+
 
 
 

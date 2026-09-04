@@ -1,0 +1,122 @@
+{
+  "release": "26.17.3-api-contract-real-data-integration-2026-09-04",
+  "auditedAt": "2026-09-04T17:26:16.637Z",
+  "totalAnalyzed": 10,
+  "contractsPassed": 10,
+  "contractsBroken": 0,
+  "tenantIsolationStatus": "PASS",
+  "status": "PASS",
+  "contracts": [
+    {
+      "id": "cockpit-overview",
+      "path": "/api/events/:id/cockpit",
+      "method": "GET",
+      "func": "getEventCockpitData",
+      "module": "cockpit",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "inventory-lots",
+      "path": "/api/events/:id/inventory-lots",
+      "method": "POST",
+      "func": "createInventoryLot",
+      "module": "inventory",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "customer360-profile",
+      "path": "/api/events/:id/customer-360/profile",
+      "method": "GET",
+      "func": "getEventCustomer360Profile",
+      "module": "customer360",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "liveops-overview",
+      "path": "/api/events/:id/live-operations",
+      "method": "GET",
+      "func": "getEventLiveOpsOverview",
+      "module": "liveops",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "incidents-list",
+      "path": "/api/events/:id/incidents",
+      "method": "GET",
+      "func": "getEventIncidents",
+      "module": "incidents",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "revenue-intelligence",
+      "path": "/api/events/:id/revenue-intelligence",
+      "method": "GET",
+      "func": "getRevenueIntelligence",
+      "module": "revenue",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "forecast-summary",
+      "path": "/api/events/:id/forecast",
+      "method": "GET",
+      "func": "getForecastSummary",
+      "module": "forecast",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "disk-intelligence",
+      "path": "/api/events/:id/intelligence",
+      "method": "GET",
+      "func": "getDiskIntelligence",
+      "module": "intelligence",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "executive-dashboard",
+      "path": "/api/events/:id/executive-dashboard",
+      "method": "GET",
+      "func": "getExecutiveDashboard",
+      "module": "executive",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    },
+    {
+      "id": "refunds-list",
+      "path": "/api/refunds",
+      "method": "GET",
+      "func": "getRefundRequests",
+      "module": "estornos",
+      "frontendExists": true,
+      "backendExists": true,
+      "tenantSecured": true,
+      "status": "PASS"
+    }
+  ],
+  "brokenContracts": []
+}

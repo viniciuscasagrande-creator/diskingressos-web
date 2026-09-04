@@ -133,7 +133,14 @@
     "test:pw:buttons": "playwright test tests/navigation/event-os-buttons.spec.ts --project=chromium",
     "test:pw:navigation": "playwright test tests/navigation/event-os-navigation.spec.ts tests/navigation/refunds-navigation.spec.ts tests/navigation/event-context-navigation.spec.ts --project=chromium",
     "verify:protected-navigation": "node scripts/verify-protected-navigation.mjs",
-    "gate:navigation": "npm run audit:buttons && npm run audit:navigation && npm run verify:protected-navigation && npm run test:pw:buttons && npm run test:pw:navigation"
+    "gate:navigation": "npm run audit:buttons && npm run audit:navigation && npm run verify:protected-navigation && npm run test:pw:buttons && npm run test:pw:navigation",
+    "audit:api-contracts": "node scripts/verify-event-os-api-contracts.mjs",
+    "audit:api-security": "node scripts/audit-api-security.mjs",
+    "audit:real-data": "node scripts/audit-real-data.mjs",
+    "test:pw:api-contracts": "playwright test tests/api-contracts/event-os-api-contracts.spec.ts --project=chromium",
+    "test:pw:api-tenant": "playwright test tests/api-contracts/tenant-isolation.spec.ts --project=chromium",
+    "test:pw:api-resilience": "playwright test tests/api-contracts/partial-failure.spec.ts tests/api-contracts/error-handling.spec.ts --project=chromium",
+    "gate:api-contracts": "npm run audit:api-security && npm run audit:real-data && npm run audit:api-contracts && npm run test:pw:api-contracts && npm run test:pw:api-tenant && npm run test:pw:api-resilience"
   },
   "dependencies": {
     "@prisma/client": "latest",

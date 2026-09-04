@@ -1,0 +1,10 @@
+{
+  "release": "26.17.3-api-contract-real-data-integration-2026-09-04",
+  "auditedAt": "2026-09-04T17:26:16.630Z",
+  "routesChecked": 18,
+  "tenantIsolationEnforced": true,
+  "rbacGuardsEnforced": true,
+  "findingsCount": 0,
+  "status": "PASS",
+  "findings": []
+}

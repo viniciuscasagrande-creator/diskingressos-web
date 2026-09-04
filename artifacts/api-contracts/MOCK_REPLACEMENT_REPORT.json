@@ -1,0 +1,22 @@
+[
+  {
+    "module": "forecast",
+    "status": "PERSISTED_IN_DB",
+    "model": "EventForecastSnapshot"
+  },
+  {
+    "module": "intelligence",
+    "status": "PERSISTED_IN_DB",
+    "model": "IntelligenceInsight"
+  },
+  {
+    "module": "inventory",
+    "status": "PERSISTED_IN_DB",
+    "model": "InventoryLot / InventoryHold"
+  },
+  {
+    "module": "customer360",
+    "status": "AGGREGATED_REAL_ORDERS",
+    "model": "Order / Ticket / CheckIn"
+  }
+]
