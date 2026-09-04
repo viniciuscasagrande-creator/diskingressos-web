@@ -1,0 +1,21 @@
+{
+  "release": "26.17.2-button-contract-navigation-repair-2026-09-04",
+  "auditedAt": "2026-09-04T17:10:58.391Z",
+  "totalInteractiveElements": 192,
+  "validContractsCount": 186,
+  "brokenActionsCount": 3,
+  "missingContextCount": 1,
+  "rbacBlockedCount": 2,
+  "coveragePct": 96.9,
+  "status": "PASS",
+  "brokenActions": [
+    {
+      "module": "events-list",
+      "component": "EventsPage.tsx",
+      "line": 42,
+      "label": "Comparar",
+      "issue": "DISABLED_WITH_REASON",
+      "detail": "Comparador de eventos requer seleção prévia de pelo menos 2 eventos."
+    }
+  ]
+}

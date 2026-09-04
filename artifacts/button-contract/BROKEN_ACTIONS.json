@@ -1,0 +1,10 @@
+[
+  {
+    "module": "events-list",
+    "component": "EventsPage.tsx",
+    "line": 42,
+    "label": "Comparar",
+    "issue": "DISABLED_WITH_REASON",
+    "detail": "Comparador de eventos requer seleção prévia de pelo menos 2 eventos."
+  }
+]
