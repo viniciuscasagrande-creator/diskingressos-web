@@ -1007,5 +1007,130 @@ export const runEventForecast = (eventId: number) =>
     method: 'POST'
   })
 
+// ===== Fase 26.16.11 — Disk Intelligence Operacional =====
+export type IntelligenceEvidence = {
+  source: string
+  metric: string
+  value: string | number
+  label: string
+}
+
+export type IntelligenceAction = {
+  label: string
+  targetModule: string
+}
+
+export type IntelligenceWhyExplanation = {
+  indicator: string
+  current: string
+  baseline: string
+  variation: string
+  window: string
+  sources: string[]
+  confidenceScore: number
+}
+
+export type IntelligenceInsightItem = {
+  id: number
+  producerId: number
+  eventId: number
+  type: 'opportunity' | 'attention' | 'critical' | 'info'
+  severity: 'high' | 'medium' | 'low'
+  title: string
+  description: string
+  estimatedImpactCents: number | null
+  confidence: number
+  evidence: IntelligenceEvidence[]
+  recommendedActions: IntelligenceAction[]
+  whyExplanation: IntelligenceWhyExplanation
+  sourceModules: string
+  detectedAt: string
+  acknowledgedAt: string | null
+  userFeedback: 'useful' | 'irrelevant' | null
+}
+
+export type IntelligenceFeedItem = {
+  id: string
+  time: string
+  title: string
+  targetModule: string
+  type: 'positive' | 'warning' | 'critical' | 'info'
+}
+
+export type IntelligenceHealthDimension = {
+  name: string
+  score: number
+  status: string
+}
+
+export type DiskIntelligenceData = {
+  success: boolean
+  release: string
+  eventId: number
+  producerId: number
+  eventTitle: string
+  eventCode: string
+  healthScore: number
+  healthStatus: string
+  kpis: {
+    predictedRevenueCents: number
+    predictedOccupancy: number
+    soldoutProbability: number
+    criticalIncidents: number
+    operationalRisk: string
+    readinessPct: number
+    lastAnalysisAt: string
+  }
+  insights: IntelligenceInsightItem[]
+  feed: IntelligenceFeedItem[]
+}
+
+export type AskDiskResponse = {
+  success: boolean
+  release: string
+  hasSufficientData: boolean
+  answer: string
+  confidence?: number
+  missingData?: string[]
+  keySignals?: string[]
+  evidence?: IntelligenceEvidence[]
+  analyzedModules?: string[]
+  actions: IntelligenceAction[]
+}
+
+export const getDiskIntelligence = (eventId: number) =>
+  request<DiskIntelligenceData>(`/events/${eventId}/intelligence`)
+
+export const getIntelligenceInsights = (eventId: number) =>
+  request<{ success: boolean; release: string; insights: IntelligenceInsightItem[] }>(`/events/${eventId}/intelligence/insights`)
+
+export const getIntelligenceFeed = (eventId: number) =>
+  request<{ success: boolean; release: string; feed: IntelligenceFeedItem[] }>(`/events/${eventId}/intelligence/feed`)
+
+export const getIntelligenceHealth = (eventId: number) =>
+  request<{ success: boolean; release: string; overallScore: number; status: string; dimensions: IntelligenceHealthDimension[] }>(`/events/${eventId}/intelligence/health`)
+
+export const analyzeDiskIntelligence = (eventId: number) =>
+  request<{ success: boolean; release: string; message: string; analyzedAt: string; healthScore: number; insightsCount: number }>(`/events/${eventId}/intelligence/analyze`, {
+    method: 'POST'
+  })
+
+export const askDiskIntelligence = (eventId: number, query: string) =>
+  request<AskDiskResponse>(`/events/${eventId}/intelligence/ask`, {
+    method: 'POST',
+    body: JSON.stringify({ query })
+  })
+
+export const acknowledgeIntelligenceInsight = (eventId: number, insightId: number) =>
+  request<{ success: boolean; release: string; insightId: number; acknowledgedAt: string; message: string }>(`/events/${eventId}/intelligence/insights/${insightId}/acknowledge`, {
+    method: 'POST'
+  })
+
+export const submitInsightFeedback = (eventId: number, insightId: number, feedback: 'useful' | 'irrelevant') =>
+  request<{ success: boolean; release: string; insightId: number; feedback: string; message: string }>(`/events/${eventId}/intelligence/insights/${insightId}/feedback`, {
+    method: 'POST',
+    body: JSON.stringify({ feedback })
+  })
+
 
 

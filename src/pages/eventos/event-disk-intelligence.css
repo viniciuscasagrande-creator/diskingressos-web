@@ -1,0 +1,783 @@
+/* ==========================================================================
+   Fase 26.16.11 — Disk Intelligence Operacional Stylesheet
+   DiskIngressos Event OS - Design System
+   ========================================================================== */
+
+.edi-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background-color: #0b1120;
+  color: #f1f5f9;
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   Header & Controls
+   -------------------------------------------------------------------------- */
+.edi-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  border: 1px solid #3730a3;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.edi-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.edi-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.edi-title {
+  font-size: 1.625rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.edi-badge-engine {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.edi-subtitle {
+  font-size: 0.925rem;
+  color: #a5b4fc;
+  margin: 0;
+}
+
+.edi-header-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.edi-sync-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+  color: #818cf8;
+}
+
+.edi-sync-highlight {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.edi-btn-analyze {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: #ffffff;
+  border: 1px solid #818cf8;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.edi-btn-analyze:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+  border-color: #a5b4fc;
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
+  transform: translateY(-1px);
+}
+
+.edi-btn-analyze:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Health Score & Event OS Underlying Signals
+   -------------------------------------------------------------------------- */
+.edi-health-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid #334155;
+  border-left: 5px solid #10b981;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.edi-health-gauge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.edi-gauge-circle {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, #064e3b 0%, #022c22 100%);
+  border: 3px solid #10b981;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+}
+
+.edi-gauge-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #10b981;
+  line-height: 1;
+}
+
+.edi-gauge-max {
+  font-size: 0.65rem;
+  color: #6ee7b7;
+  font-weight: 700;
+}
+
+.edi-health-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.edi-health-title {
+  font-size: 0.775rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.edi-health-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+/* Underlying Signals Grid */
+.edi-signals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 0.85rem;
+  flex: 1;
+  max-width: 800px;
+}
+
+.edi-signal-box {
+  background-color: #0b1120;
+  border: 1px solid #1e293b;
+  border-radius: 0.625rem;
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.edi-signal-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+}
+
+.edi-signal-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Ask Disk (Operational Query Center)
+   -------------------------------------------------------------------------- */
+.edi-ask-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  border: 1px solid #4338ca;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.edi-ask-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edi-ask-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edi-ask-input-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.edi-ask-input {
+  flex: 1;
+  background-color: #0b1120;
+  border: 1px solid #3730a3;
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  font-size: 0.925rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.edi-ask-input:focus {
+  border-color: #818cf8;
+}
+
+.edi-ask-input::placeholder {
+  color: #64748b;
+}
+
+.edi-btn-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #6366f1;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.edi-btn-ask:hover:not(:disabled) {
+  background-color: #4f46e5;
+}
+
+.edi-btn-ask:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Quick Query Preset Buttons */
+.edi-quick-queries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.edi-quick-btn {
+  background-color: #1e1b4b;
+  color: #c7d2fe;
+  border: 1px solid #3730a3;
+  padding: 0.35rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.edi-quick-btn:hover {
+  background-color: #312e81;
+  color: #ffffff;
+  border-color: #6366f1;
+}
+
+/* Query Answer Box */
+.edi-answer-card {
+  background-color: #0b1120;
+  border: 1px solid #3730a3;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.edi-answer-lead {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.edi-signals-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.edi-signals-item {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edi-evidence-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.edi-evidence-pill {
+  background-color: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.375rem;
+  font-size: 0.725rem;
+  font-weight: 600;
+}
+
+.edi-modules-analyzed {
+  font-size: 0.75rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.edi-answer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #1e293b;
+}
+
+.edi-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: #1e293b;
+  color: #38bdf8;
+  border: 1px solid #334155;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.5rem;
+  font-size: 0.775rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.edi-action-btn:hover {
+  background-color: #38bdf8;
+  color: #0b1120;
+  border-color: #38bdf8;
+}
+
+/* Insufficient Data Card (Anti-hallucination) */
+.edi-insufficient-data-box {
+  background-color: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   Insights Grid (Opportunity / Attention / Critical)
+   -------------------------------------------------------------------------- */
+.edi-section-card {
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.edi-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 1rem;
+}
+
+.edi-section-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edi-insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.edi-insight-card {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 0.875rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: border-color 0.15s, transform 0.15s;
+  position: relative;
+}
+
+.edi-insight-card:hover {
+  border-color: #374151;
+}
+
+.edi-insight-card.opportunity {
+  border-left: 4px solid #f97316;
+}
+
+.edi-insight-card.attention {
+  border-left: 4px solid #f59e0b;
+}
+
+.edi-insight-card.critical {
+  border-left: 4px solid #ef4444;
+}
+
+.edi-insight-card.info {
+  border-left: 4px solid #3b82f6;
+}
+
+.edi-insight-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edi-type-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.35rem;
+}
+
+.edi-type-badge.opportunity {
+  background: rgba(249, 115, 22, 0.15);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.edi-type-badge.attention {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.edi-type-badge.critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.edi-insight-conf {
+  font-size: 0.725rem;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.edi-insight-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.edi-insight-desc {
+  font-size: 0.825rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.edi-evidence-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background-color: #0b1120;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.edi-ev-item {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edi-ev-val {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+/* Insight Actions & Feedback */
+.edi-insight-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #1e293b;
+}
+
+.edi-feedback-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.edi-btn-feedback {
+  background: transparent;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.edi-btn-feedback:hover {
+  color: #ffffff;
+  border-color: #64748b;
+}
+
+.edi-btn-feedback.active {
+  background-color: #1e293b;
+  color: #10b981;
+  border-color: #10b981;
+}
+
+/* --------------------------------------------------------------------------
+   Intelligence Feed
+   -------------------------------------------------------------------------- */
+.edi-feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.edi-feed-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.15s;
+}
+
+.edi-feed-item:hover {
+  border-color: #374151;
+}
+
+.edi-feed-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.edi-feed-time {
+  font-size: 0.775rem;
+  font-weight: 800;
+  color: #818cf8;
+  min-width: 3.5rem;
+}
+
+.edi-feed-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+/* --------------------------------------------------------------------------
+   Explainability Modal ("Por que este alerta foi gerado?")
+   -------------------------------------------------------------------------- */
+.edi-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+}
+
+.edi-modal {
+  background-color: #0f172a;
+  border: 1px solid #4338ca;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.edi-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.edi-modal-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edi-modal-close {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.375rem;
+  transition: color 0.15s;
+}
+
+.edi-modal-close:hover {
+  color: #ffffff;
+}
+
+.edi-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edi-explain-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.edi-explain-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.edi-explain-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.edi-explain-val {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.edi-explain-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+
+.edi-source-pill {
+  background-color: #1e293b;
+  color: #cbd5e1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.35rem;
+  font-size: 0.725rem;
+  font-weight: 600;
+  border: 1px solid #334155;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

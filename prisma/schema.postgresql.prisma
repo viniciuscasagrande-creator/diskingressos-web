@@ -1500,3 +1500,26 @@ model EventForecastSnapshot {
 
   @@index([producerId, eventId, generatedAt])
 }
+
+// ===== Fase 26.16.11 — Disk Intelligence Operacional =====
+model IntelligenceInsight {
+  id                     Int       @id @default(autoincrement())
+  producerId             Int
+  eventId                Int
+  type                   String    // "opportunity" | "attention" | "critical" | "info"
+  severity               String    // "high" | "medium" | "low"
+  title                  String
+  description            String
+  estimatedImpactCents   Int?
+  confidence             Float     @default(85.0)
+  evidenceJson           String?   // JSON array of evidence points
+  recommendedActionsJson String?  // JSON array of action links
+  sourceModules          String    // e.g. "revenue,forecast,inventory,marketing"
+  modelVersion           String    @default("v1.0-disk-intel")
+  detectedAt             DateTime  @default(now())
+  acknowledgedAt         DateTime?
+  resolvedAt             DateTime?
+  userFeedback           String?   // "useful" | "irrelevant"
+
+  @@index([producerId, eventId, detectedAt])
+}

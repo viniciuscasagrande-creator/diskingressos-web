@@ -19,6 +19,7 @@ import EventIncidentsPage from './eventos/EventIncidentsPage'
 import EventDayCommandPage from './eventos/EventDayCommandPage'
 import EventRevenueIntelPage from './eventos/EventRevenueIntelPage'
 import EventForecastCenterPage from './eventos/EventForecastCenterPage'
+import EventDiskIntelligencePage from './eventos/EventDiskIntelligencePage'
 import EventOSAdvancedPage from './EventOSAdvancedPage'
 import { getAutomationSummary, getRecoveryDashboard, type AutomationSummary, type RecoveryDashboard } from '../services/api'
 import type { PageKey } from '../components/ModuleSidebar'
@@ -36,7 +37,8 @@ export default function EventContextPage({event,participants,page,onNavigate,not
  if(page==='event-day-command') return <EventDayCommandPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-revenue-intel') return <EventRevenueIntelPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-forecast') return <EventForecastCenterPage event={event} onNavigate={onNavigate} notify={notify}/>
- if(['event-permission-engine','event-compliance','event-intelligence','event-readiness','event-producer-executive','event-platform-noc'].includes(page)) return <EventOSAdvancedPage event={event} page={page} notify={notify}/>
+ if(page==='event-intelligence') return <EventDiskIntelligencePage event={event} onNavigate={onNavigate} notify={notify}/>
+ if(['event-permission-engine','event-compliance','event-readiness','event-producer-executive','event-platform-noc'].includes(page)) return <EventOSAdvancedPage event={event} page={page} notify={notify}/>
  if(page==='event-dashboard') return <Dashboard event={event} participants={participants} onNavigate={onNavigate}/>
  if(page==='event-tickets') return <Tickets event={event} people={people} notify={notify}/>
  if(page==='event-courtesy') return <Courtesy event={event} people={people} notify={notify}/>
