@@ -650,3 +650,190 @@ export const searchEventGlobal = (
   params: { q?: string; type?: string; status?: string; paymentMethod?: string; limit?: number } = {}
 ) => request<GlobalSearchResponse>(`/events/${eventId}/global-search${qs(params)}`)
 
+// ===== Fase 26.16.8 — Revenue & Pricing Intelligence Operacional =====
+export type RevenueIntelLot = {
+  id: number
+  name: string
+  sector: string
+  capacity: number
+  sold: number
+  available: number
+  priceCents: number
+  revenueCents: number
+  absorptionPct: number
+  burnRateHourly: number
+  runoutHours: number
+  urgencyStatus: 'CRÍTICO' | 'ACELERADO' | 'ESTÁVEL' | 'ESGOTADO' | 'PAUSADO'
+  priceElasticity: 'Inelástica' | 'Moderada' | 'Elástica'
+  suggestedPriceCents: number
+  status: string
+}
+
+export type PricingRecommendation = {
+  id: string
+  lotId: number
+  lotName: string
+  sector: string
+  type: string
+  title: string
+  description: string
+  currentPriceCents: number
+  suggestedPriceCents: number
+  priceChangePct: number
+  estimatedRevenueUpsideCents: number
+  confidenceScore: number
+  urgency: 'ALTA' | 'MÉDIA' | 'BAIXA'
+  status: 'PENDING' | 'APPLIED' | 'DISMISSED'
+  reason: string
+}
+
+export type SalesVelocityInterval = {
+  hour: string
+  ticketsSold: number
+  revenueCents: number
+  velocityPerHour: number
+  speedLevel: 'NORMAL' | 'ACELERADO' | 'PICO'
+}
+
+export type ForecastScenario = {
+  revenueCents: number
+  ticketsSold: number
+  probabilityPct: number
+  deltaTargetCents: number
+  description: string
+}
+
+export type PricingAuditEntry = {
+  id: number
+  adjustedAt: string
+  lotName: string
+  oldPriceCents: number
+  newPriceCents: number
+  adjustedBy: string
+  reason: string
+}
+
+export type RevenueIntelligenceResponse = {
+  release: string
+  event: {
+    id: number
+    code: string
+    title: string
+    producerId: number
+    capacity: number
+    date: string
+    venue: string
+  }
+  period: string
+  kpis: {
+    grossRevenueCents: number
+    targetRevenueCents: number
+    targetAchievedPct: number
+    salesVelocityHourly: number
+    salesVelocityTrend: number
+    runoutHoursGlobal: number
+    avgTicketCents: number
+    absorptionPct: number
+    projectedRevenueCents: number
+    dynamicUpsideCents: number
+    activeRecommendationsCount: number
+    totalSold: number
+    availableTickets: number
+  }
+  scenarios: {
+    conservative: ForecastScenario
+    moderate: ForecastScenario
+    optimistic: ForecastScenario
+  }
+  lots: RevenueIntelLot[]
+  recommendations: PricingRecommendation[]
+  salesVelocityTimeline: SalesVelocityInterval[]
+  pricingAuditLog: PricingAuditEntry[]
+}
+
+export const getRevenueIntelligence = (eventId: number, period?: string) =>
+  request<RevenueIntelligenceResponse>(`/events/${eventId}/revenue-intelligence${qs({ period })}`)
+
+export const updateLotPrice = (
+  eventId: number,
+  lotId: number,
+  newPriceCents: number,
+  reason?: string,
+  forceConfirmed?: boolean
+) =>
+  request<{ success: boolean; lot: any; oldPriceCents: number; newPriceCents: number; message: string }>(
+    `/events/${eventId}/lots/${lotId}/price`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({ newPriceCents, reason, forceConfirmed })
+    }
+  )
+
+export const applyPricingRecommendation = (
+  eventId: number,
+  recommendationId: string,
+  lotId: number,
+  newPriceCents: number,
+  reason?: string
+) =>
+  request<{ success: boolean; recommendationId: string; message: string }>(
+    `/events/${eventId}/pricing-rules/recommendations/apply`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ recommendationId, lotId, newPriceCents, reason })
+    }
+  )
+
+export const simulatePricingScenario = (
+  eventId: number,
+  lotId: number,
+  targetPriceCents: number
+) =>
+  request<{
+    success: boolean
+    lotId: number
+    currentPriceCents: number
+    targetPriceCents: number
+    availableTickets: number
+    simulatedTicketsSold: number
+    simulatedRevenueCents: number
+    deltaRevenueCents: number
+    elasticityImpactPct: number
+    confidenceScore: number
+  }>(`/events/${eventId}/revenue-intelligence/simulate`, {
+    method: 'POST',
+    body: JSON.stringify({ lotId, targetPriceCents })
+  })
+
+export const getRevenueTimeline = (eventId: number, period?: string) =>
+  request<any>(`/events/${eventId}/revenue-intelligence/timeline${qs({ period })}`)
+
+export const getRevenueLots = (eventId: number) =>
+  request<any>(`/events/${eventId}/revenue-intelligence/lots`)
+
+export const getRevenueForecast = (eventId: number) =>
+  request<any>(`/events/${eventId}/revenue-intelligence/forecast`)
+
+export const getRevenueRecommendations = (eventId: number) =>
+  request<any>(`/events/${eventId}/revenue-intelligence/recommendations`)
+
+export const simulateRevenuePricing = (eventId: number, lotId: number, targetPriceCents: number) =>
+  request<any>(`/events/${eventId}/revenue-intelligence/simulate`, {
+    method: 'POST',
+    body: JSON.stringify({ lotId, targetPriceCents })
+  })
+
+export const requestPricingChange = (
+  eventId: number,
+  body: { lotId: number; newPriceCents: number; reason: string; recommendationOrigin?: string; confirmed: boolean }
+) =>
+  request<{ success: boolean; release: string; lotId: number; oldPriceCents: number; newPriceCents: number; message: string }>(
+    `/events/${eventId}/pricing/change-request`,
+    {
+      method: 'POST',
+      body: JSON.stringify(body)
+    }
+  )
+
+
+

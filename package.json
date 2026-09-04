@@ -108,7 +108,10 @@
     "verify:liveops-incidents-operational": "node scripts/verify-liveops-incidents-operational.mjs",
     "test:pw:event-day-command-operational": "playwright test tests/event-os/event-day-command-operational.spec.ts --project=chromium",
     "test:pw:event-day-command-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:event-day-command-operational && npm run test:pw:event-day-command-operational",
-    "verify:event-day-command-operational": "node scripts/verify-event-day-command-operational.mjs"
+    "verify:event-day-command-operational": "node scripts/verify-event-day-command-operational.mjs",
+    "test:pw:revenue-intel-operational": "playwright test tests/event-os/revenue-intel-operational.spec.ts --project=chromium",
+    "test:pw:revenue-intel-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:revenue-intel-operational && npm run test:pw:revenue-intel-operational",
+    "verify:revenue-intel-operational": "node scripts/verify-revenue-intel-operational.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

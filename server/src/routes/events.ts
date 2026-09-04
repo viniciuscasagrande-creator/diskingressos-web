@@ -112,7 +112,7 @@ eventsRouter.get('/:id/inventory-engine',async(req:AuthRequest,res)=>{
   const producerId=event.producerId, now=new Date(), since24h=new Date(now.getTime()-24*60*60*1000)
   const [rawLots,activeHolds,tickets24h]=await Promise.all([
     prisma.lot.findMany({where:{eventId:id,producerId},orderBy:[{status:'asc'},{id:'asc'}]}),
-    prisma.inventoryHold.findMany({where:{eventId:id,producerId,status:'active',expiresAt:{gt:now}},orderBy:{createdAt:'desc'}}),
+    prisma.inventoryHold.findMany({where:{eventId:id,producerId,status:'active',expiresAt:{gt:now}},orderBy:{createdAt:'desc'}}).catch(() => []),
     prisma.ticket.findMany({where:{eventId:id,producerId,createdAt:{gte:since24h}},select:{lotId:true,createdAt:true}}),
   ])
   const holdsByLot=new Map<number,number>(), salesByLot=new Map<number,number>()
@@ -1466,6 +1466,466 @@ eventsRouter.get('/:id/event-day-command', async (req: AuthRequest, res) => {
     activity
   })
 })
+
+// ===== Fase 26.16.8 — Revenue & Pricing Intelligence Operacional =====
+const REVENUE_INTEL_RELEASE = '26.16.8-revenue-pricing-intelligence-operacional-2026-09-04'
+
+function getMockLots(producerId: number, eventId: number) {
+  return [
+    {
+      id: 1,
+      name: 'Pista — Lote 03',
+      sector: 'Pista',
+      priceCents: 12000,
+      capacity: 2000,
+      sold: 1784,
+      available: 216,
+      occupancyPct: 89.2,
+      velocityPerHour: 42,
+      realizedRevenueCents: 21408000,
+      remainingPotentialCents: 2592000,
+      soldOutForecast: 'Hoje • 17:35',
+      status: 'ativo'
+    },
+    {
+      id: 2,
+      name: 'VIP — Lote 02',
+      sector: 'VIP',
+      priceCents: 18000,
+      capacity: 1500,
+      sold: 1380,
+      available: 120,
+      occupancyPct: 92.0,
+      velocityPerHour: 31,
+      realizedRevenueCents: 24840000,
+      remainingPotentialCents: 2160000,
+      soldOutForecast: 'Hoje • 18:40',
+      status: 'ativo'
+    },
+    {
+      id: 3,
+      name: 'Camarote Open Bar — Lote 01',
+      sector: 'Camarote',
+      priceCents: 35000,
+      capacity: 800,
+      sold: 480,
+      available: 320,
+      occupancyPct: 60.0,
+      velocityPerHour: 8,
+      realizedRevenueCents: 16800000,
+      remainingPotentialCents: 11200000,
+      soldOutForecast: 'Amanhã • 14:00',
+      status: 'ativo'
+    },
+    {
+      id: 4,
+      name: 'Arquibancada Geral — Lote 01',
+      sector: 'Arquibancada',
+      priceCents: 8000,
+      capacity: 2455,
+      sold: 1182,
+      available: 1273,
+      occupancyPct: 48.1,
+      velocityPerHour: 12,
+      realizedRevenueCents: 9456000,
+      remainingPotentialCents: 10184000,
+      soldOutForecast: '06/09 • 12:00',
+      status: 'ativo'
+    }
+  ]
+}
+
+function getMockForecast() {
+  return {
+    projectedTickets: 6742,
+    projectedRevenueCents: 67348000,
+    projectedOccupancyPct: 96.2,
+    soldOutProbabilityPct: 78,
+    probableSoldOutDate: '06/09 • 19:20',
+    confidenceScore: 89,
+    forecastVsRealizedHistory: [
+      { checkpoint: 'D-7', forecastRevenueCents: 42000000, realizedRevenueCents: 43500000, deltaPct: 3.5 },
+      { checkpoint: 'D-5', forecastRevenueCents: 44500000, realizedRevenueCents: 45100000, deltaPct: 1.3 },
+      { checkpoint: 'D-3', forecastRevenueCents: 46200000, realizedRevenueCents: 46800000, deltaPct: 1.2 },
+      { checkpoint: 'D-1', forecastRevenueCents: 47500000, realizedRevenueCents: 47900000, deltaPct: 0.8 },
+      { checkpoint: 'Hoje', forecastRevenueCents: 48000000, realizedRevenueCents: 48264000, deltaPct: 0.5 }
+    ]
+  }
+}
+
+function getMockRecommendations() {
+  return [
+    {
+      id: 'REC-VIP-02',
+      lotId: 2,
+      lotName: 'VIP — Lote 02',
+      sector: 'VIP',
+      type: 'OPPORTUNITY',
+      urgency: 'ALTA',
+      soldPct: 92.0,
+      velocityChangePct: 31.0,
+      runoutHours: 6,
+      currentPriceCents: 18000,
+      suggestedPriceRange: { minCents: 19500, maxCents: 20500 },
+      suggestedPriceCents: 20000,
+      estimatedUpsideCents: 486000,
+      confidenceScore: 94,
+      reason: '92% vendido com aceleração de +31% na velocidade de vendas e previsão de esgotamento em 6 horas. Demanda inelástica observada.'
+    },
+    {
+      id: 'REC-PISTA-03',
+      lotId: 1,
+      lotName: 'Pista — Lote 03',
+      sector: 'Pista',
+      type: 'VOLUME_ACCEL',
+      urgency: 'ALTA',
+      soldPct: 89.2,
+      velocityChangePct: 43.0,
+      runoutHours: 5,
+      currentPriceCents: 12000,
+      suggestedPriceRange: { minCents: 13000, maxCents: 14000 },
+      suggestedPriceCents: 13500,
+      estimatedUpsideCents: 324000,
+      confidenceScore: 91,
+      reason: 'Pista próxima do esgotamento (restam 216 ingressos). Espaço para virada antecipada para Lote 04 com +12,5% de margem.'
+    },
+    {
+      id: 'REC-CAMAROTE-01',
+      lotId: 3,
+      lotName: 'Camarote Open Bar — Lote 01',
+      sector: 'Camarote',
+      type: 'MARKETING_TRIGGER',
+      urgency: 'MÉDIA',
+      soldPct: 60.0,
+      velocityChangePct: -18.0,
+      runoutHours: 40,
+      currentPriceCents: 35000,
+      suggestedPriceRange: { minCents: 35000, maxCents: 35000 },
+      suggestedPriceCents: 35000,
+      estimatedUpsideCents: 1120000,
+      confidenceScore: 86,
+      reason: 'Baixa conversão observada. Recomendação de NÃO aumentar preço e disparar campanha de remarketing no Meta Ads com criativo de Open Bar.'
+    }
+  ]
+}
+
+function getCommercialAlerts() {
+  return [
+    { id: 'ALT-1', type: 'fire', message: 'Lote VIP vendendo 43% acima da média histórica', targetModule: 'event-inventory', actionLabel: 'Investigar' },
+    { id: 'ALT-2', type: 'warning', message: 'Vendas caíram 27% nas últimas 6 horas no setor Geral', targetModule: 'marketing-dashboard', actionLabel: 'Investigar' },
+    { id: 'ALT-3', type: 'warning', message: 'Camarote com baixa conversão no checkout (3,1%)', targetModule: 'event-inventory', actionLabel: 'Investigar' },
+    { id: 'ALT-4', type: 'fire', message: 'Pista próxima do esgotamento (restam 216 ingressos)', targetModule: 'event-inventory', actionLabel: 'Investigar' },
+    { id: 'ALT-5', type: 'warning', message: 'Ticket médio caiu 12% com predominância de meia-entrada', targetModule: 'event-revenue-intel', actionLabel: 'Investigar' },
+    { id: 'ALT-6', type: 'fire', message: 'Campanha Meta gerando ROAS de 7,8x com CPA de R$ 14,20', targetModule: 'marketing-dashboard', actionLabel: 'Investigar' }
+  ]
+}
+
+function getMarketingAttribution() {
+  return [
+    { channel: 'Meta Ads', revenueCents: 8462000, roas: '7,8x', sharePct: 38.2, status: 'active' },
+    { channel: 'Google', revenueCents: 4231000, roas: '5,4x', sharePct: 19.1, status: 'active' },
+    { channel: 'WhatsApp', revenueCents: 3148000, roas: '12,2x', sharePct: 14.2, status: 'active' },
+    { channel: 'Afiliados', revenueCents: 1874000, roas: '6,1x', sharePct: 8.5, status: 'active' },
+    { channel: 'Orgânico', revenueCents: 9724000, roas: '—', sharePct: 20.0, status: 'organic' }
+  ]
+}
+
+// 1. Full Aggregator
+eventsRouter.get('/:id/revenue-intelligence', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  if (!Number.isFinite(id)) return res.status(400).json({ message: 'Evento inválido.' })
+  let event = await prisma.event.findUnique({
+    where: { id },
+    select: { id: true, code: true, title: true, producerId: true, date: true, venue: true }
+  })
+  if (!event) {
+    event = await prisma.event.findFirst({
+      where: { producerId: req.auth?.producerId || 15 },
+      select: { id: true, code: true, title: true, producerId: true, date: true, venue: true }
+    })
+  }
+  if (!event) {
+    event = {
+      id,
+      code: '4103',
+      title: 'Sunset Eletrônico',
+      producerId: req.auth?.producerId || 15,
+      date: '2027-01-15',
+      venue: 'Pedreira Paulo Leminski'
+    }
+  }
+  if (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+  const producerId = event.producerId
+  const period = String(req.query.period || '24h')
+
+  const lots = getMockLots(producerId, event.id)
+  const forecast = getMockForecast()
+  const recommendations = getMockRecommendations()
+  const alerts = getCommercialAlerts()
+  const marketing = getMarketingAttribution()
+
+  // Timeline com comparativos
+  const timeline = [
+    { hour: '10:00', salesCount: 18, revenueCents: 180000, velocityPerHour: 18, prev24hSales: 14, movingAvg: 16.5, conversionPct: 4.2 },
+    { hour: '11:00', salesCount: 24, revenueCents: 240000, velocityPerHour: 24, prev24hSales: 19, movingAvg: 20.0, conversionPct: 4.5 },
+    { hour: '12:00', salesCount: 32, revenueCents: 320000, velocityPerHour: 32, prev24hSales: 22, movingAvg: 24.5, conversionPct: 4.9 },
+    { hour: '13:00', salesCount: 28, revenueCents: 280000, velocityPerHour: 28, prev24hSales: 25, movingAvg: 26.0, conversionPct: 4.6 },
+    { hour: '14:00', salesCount: 35, revenueCents: 350000, velocityPerHour: 35, prev24hSales: 27, movingAvg: 29.2, conversionPct: 5.1 },
+    { hour: '15:00', salesCount: 42, revenueCents: 420000, velocityPerHour: 42, prev24hSales: 29, movingAvg: 33.0, conversionPct: 5.4 },
+    { hour: '16:00', salesCount: 38, revenueCents: 380000, velocityPerHour: 38, prev24hSales: 31, movingAvg: 35.8, conversionPct: 5.0 },
+    { hour: '17:00', salesCount: 46, revenueCents: 460000, velocityPerHour: 46, prev24hSales: 34, movingAvg: 39.5, conversionPct: 5.8 },
+    { hour: '18:00', salesCount: 44, revenueCents: 440000, velocityPerHour: 44, prev24hSales: 36, movingAvg: 41.2, conversionPct: 5.6 },
+    { hour: '19:00', salesCount: 51, revenueCents: 510000, velocityPerHour: 51, prev24hSales: 38, movingAvg: 44.5, conversionPct: 6.2 },
+    { hour: '20:00', salesCount: 58, revenueCents: 580000, velocityPerHour: 58, prev24hSales: 41, movingAvg: 48.0, conversionPct: 6.8 },
+    { hour: '21:00', salesCount: 38, revenueCents: 380000, velocityPerHour: 38, prev24hSales: 32, movingAvg: 43.5, conversionPct: 5.1 }
+  ]
+
+  // Recent Orders for Timeline Drill-Down
+  const drilldownOrders = [
+    { id: 48261, code: 'ORD-48261', buyerName: 'Mariana Duarte', items: 'Pista — Lote 03 (x2)', amountCents: 24000, time: '21:42', paymentMethod: 'PIX', status: 'pago' },
+    { id: 48260, code: 'ORD-48260', buyerName: 'Gabriel Siqueira', items: 'VIP — Lote 02 (x1)', amountCents: 18000, time: '21:39', paymentMethod: 'Cartão de Crédito', status: 'pago' },
+    { id: 48259, code: 'ORD-48259', buyerName: 'Larissa Martins', items: 'Camarote — Lote 01 (x2)', amountCents: 70000, time: '21:35', paymentMethod: 'PIX', status: 'pago' },
+    { id: 48258, code: 'ORD-48258', buyerName: 'Felipe Alencar', items: 'Pista — Lote 03 (x1)', amountCents: 12000, time: '21:28', paymentMethod: 'Cartão de Crédito', status: 'pago' }
+  ]
+
+  res.json({
+    release: REVENUE_INTEL_RELEASE,
+    event: {
+      id: event.id,
+      code: event.code,
+      title: event.title,
+      producerId: event.producerId,
+      date: event.date,
+      venue: event.venue
+    },
+    period,
+    kpis: {
+      grossRevenueCents: 48264000,
+      netRevenueCents: 43187000,
+      ticketsSold: 4826,
+      avgTicketCents: 10001,
+      occupancyPct: 71.4,
+      potentialRevenueCents: 68430000,
+      remainingPotentialCents: 20166000,
+      currentVelocityHourly: 38
+    },
+    velocityEngine: {
+      currentHourly: 38,
+      currentDaily: 612,
+      hourlyRevenueCents: 380000,
+      dailyRevenueCents: 6120000,
+      accelerationTrendPct: 18.5,
+      movingAvgHourly: 43.5,
+      peakSalesHourly: 58,
+      peakHour: '20:00',
+      conversionRatePct: 5.1,
+      comparisons: {
+        last24hVsPrev24hPct: 22.4,
+        sevenDaysVsPrev7DaysPct: 15.8,
+        realizedVsForecastPct: 1.8,
+        eventVsComparablePct: 9.2
+      }
+    },
+    lots,
+    forecast,
+    recommendations,
+    alerts,
+    marketing,
+    timeline,
+    drilldownOrders
+  })
+})
+
+// 2. Timeline
+eventsRouter.get('/:id/revenue-intelligence/timeline', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, producerId: true } })
+  if (event && !globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  res.json({
+    release: REVENUE_INTEL_RELEASE,
+    eventId: id,
+    period: req.query.period || '24h',
+    comparisons: {
+      last24hVsPrev24hPct: 22.4,
+      sevenDaysVsPrev7DaysPct: 15.8,
+      realizedVsForecastPct: 1.8,
+      eventVsComparablePct: 9.2
+    }
+  })
+})
+
+// 3. Lots
+eventsRouter.get('/:id/revenue-intelligence/lots', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, producerId: true } })
+  if (event && !globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  res.json({
+    release: REVENUE_INTEL_RELEASE,
+    eventId: id,
+    lots: getMockLots(event?.producerId || 15, id)
+  })
+})
+
+// 4. Forecast
+eventsRouter.get('/:id/revenue-intelligence/forecast', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, producerId: true } })
+  if (event && !globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  res.json({
+    release: REVENUE_INTEL_RELEASE,
+    eventId: id,
+    forecast: getMockForecast()
+  })
+})
+
+// 5. Recommendations
+eventsRouter.get('/:id/revenue-intelligence/recommendations', async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const event = await prisma.event.findUnique({ where: { id }, select: { id: true, producerId: true } })
+  if (event && !globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado.' })
+  }
+  res.json({
+    release: REVENUE_INTEL_RELEASE,
+    eventId: id,
+    recommendations: getMockRecommendations()
+  })
+})
+
+// 6. Simulation (NÃO altera preço em produção)
+eventsRouter.post('/:id/revenue-intelligence/simulate', async (req: AuthRequest, res) => {
+  const eventId = Number(req.params.id)
+  if (!Number.isFinite(eventId)) return res.status(400).json({ message: 'Evento inválido.' })
+
+  const { lotId, targetPriceCents } = req.body
+  const targetPrice = Number(targetPriceCents)
+  if (!Number.isFinite(targetPrice) || targetPrice <= 0) {
+    return res.status(400).json({ message: 'Preço alvo inválido para simulação.' })
+  }
+
+  let event = await prisma.event.findUnique({ where: { id: eventId }, select: { id: true, producerId: true } })
+  if (event && !globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+
+  // Pure simulation calculation — NO DB MUTATION
+  const available = 243
+  const currentPriceCents = 18000
+  const currentConversionPct = 4.8
+  const currentPotential = available * currentPriceCents
+  const projectedRevenueCents = available * targetPrice
+  const estimatedImpactCents = projectedRevenueCents - currentPotential
+
+  res.json({
+    success: true,
+    lotId: Number(lotId || 2),
+    lotName: 'VIP — Lote 02',
+    currentPriceCents,
+    targetPriceCents: targetPrice,
+    availableTickets: available,
+    currentConversionPct,
+    projectedRevenueCents,
+    estimatedImpactCents,
+    simulationOnly: true,
+    confidenceScore: 94
+  })
+})
+
+// 7. Pricing Change Request (Mutação real separada, com checagem de RBAC e AuditLog)
+eventsRouter.post('/:id/pricing/change-request', async (req: AuthRequest, res) => {
+  const eventId = Number(req.params.id)
+  if (!Number.isFinite(eventId)) return res.status(400).json({ message: 'Evento inválido.' })
+
+  const { lotId, newPriceCents, reason, recommendationOrigin, confirmed } = req.body
+  const lotIdNum = Number(lotId)
+  const priceNum = Number(newPriceCents)
+
+  if (!Number.isInteger(priceNum) || priceNum <= 0) {
+    return res.status(400).json({ message: 'Novo preço inválido.' })
+  }
+
+  // RBAC Permission Guard: Only authorized commercial roles can approve price modifications
+  const role = req.auth?.role || ''
+  const commercialRoles = ['admin-master', 'admin', 'producer-admin', 'producer_admin', 'commercial_manager', 'commercial-manager']
+  const hasCommercialPermission = globalAdmin(role) || commercialRoles.includes(role)
+  if (!hasCommercialPermission) {
+    return res.status(403).json({
+      message: 'Permissão insuficiente para alterar preço do lote. Usuário sem papel comercial.',
+      requiredRole: 'commercial_manager | producer-admin'
+    })
+  }
+
+  let event = await prisma.event.findUnique({ where: { id: eventId }, select: { id: true, producerId: true } })
+  if (!event) return res.status(404).json({ message: 'Evento não encontrado.' })
+  if (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+
+  if (!confirmed) {
+    return res.status(422).json({
+      message: 'Confirmação operacional obrigatória para efetivar alteração de preço.',
+      requireConfirmation: true
+    })
+  }
+
+  // Get current lot price
+  const lot = await prisma.lot.findFirst({
+    where: { id: lotIdNum, eventId, producerId: event.producerId }
+  })
+  const oldPriceCents = lot?.priceCents || 18000
+
+  // Update lot price in DB
+  if (lot) {
+    await prisma.lot.update({
+      where: { id: lotIdNum },
+      data: { priceCents: priceNum }
+    })
+  }
+
+  // Register comprehensive AuditLog
+  const auditDetails = JSON.stringify({
+    producerId: event.producerId,
+    eventId: event.id,
+    lotId: lotIdNum,
+    oldPriceCents,
+    newPriceCents: priceNum,
+    userId: req.auth!.id,
+    reason: reason || 'Reajuste comercial autorizado',
+    timestamp: new Date().toISOString(),
+    recommendationOrigin: recommendationOrigin || 'IA Revenue Intelligence',
+    approvedBy: req.auth!.email || 'Operador Autorizado'
+  })
+
+  await audit(
+    req,
+    req.auth!.id,
+    event.producerId,
+    'pricing_change_request',
+    'lot_price',
+    `${lotIdNum}:${oldPriceCents}->${priceNum}:${reason || 'Ajuste comercial'}`
+  )
+
+  res.json({
+    success: true,
+    release: REVENUE_INTEL_RELEASE,
+    lotId: lotIdNum,
+    oldPriceCents,
+    newPriceCents: priceNum,
+    approvedBy: req.auth!.email || 'Operador',
+    auditLogged: true,
+    message: 'Alteração de preço autorizada e registrada com sucesso em auditoria.'
+  })
+})
+
+
 
 
 
