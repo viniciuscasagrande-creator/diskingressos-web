@@ -111,7 +111,10 @@
     "verify:event-day-command-operational": "node scripts/verify-event-day-command-operational.mjs",
     "test:pw:revenue-intel-operational": "playwright test tests/event-os/revenue-intel-operational.spec.ts --project=chromium",
     "test:pw:revenue-intel-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:revenue-intel-operational && npm run test:pw:revenue-intel-operational",
-    "verify:revenue-intel-operational": "node scripts/verify-revenue-intel-operational.mjs"
+    "verify:revenue-intel-operational": "node scripts/verify-revenue-intel-operational.mjs",
+    "test:pw:forecast-center-operational": "playwright test tests/event-os/forecast-center-operational.spec.ts --project=chromium",
+    "test:pw:forecast-center-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:forecast-center-operational && npm run test:pw:forecast-center-operational",
+    "verify:forecast-center-operational": "node scripts/verify-forecast-center-operational.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

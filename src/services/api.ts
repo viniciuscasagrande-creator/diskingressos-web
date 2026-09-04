@@ -835,5 +835,177 @@ export const requestPricingChange = (
     }
   )
 
+// ===== Fase 26.16.10 — Forecast Center Operacional =====
+export type ForecastKpis = {
+  predictedTickets: number
+  predictedRevenueCents: number
+  predictedOccupancy: number
+  predictedSelloutAt: string
+  selloutProbability: number
+  predictedAverageTicketCents: number
+  confidence: number
+  lowerBoundRevenueCents: number
+  upperBoundRevenueCents: number
+  modelVersion: string
+  lastUpdatedAt: string
+  nextUpdateAt: string
+  snapshotId?: number
+}
+
+export type ForecastDeviationAlert = {
+  id: number
+  type: 'warning' | 'fire'
+  text: string
+  targetModule: string
+  actionLabel: string
+}
+
+export type ForecastData = {
+  success: boolean
+  release: string
+  eventId: number
+  producerId: number
+  eventTitle: string
+  eventCode: string
+  kpis: ForecastKpis
+  deviationAlerts: ForecastDeviationAlert[]
+}
+
+export type ForecastTimelineData = {
+  success: boolean
+  release: string
+  comparison: {
+    revenue: { predictedCents: number; realizedCents: number; deviationPct: number }
+    tickets: { predicted: number; realized: number; deviationPct: number }
+    occupancy: { predictedPct: number; realizedPct: number; deviationPp: number }
+    averageTicket: { predictedCents: number; realizedCents: number; deviationPct: number }
+  }
+  series: Array<{
+    label: string
+    realizedRevenue: number | null
+    forecastRevenue: number
+    targetRevenue: number
+    realizedTickets: number | null
+    forecastTickets: number
+    targetTickets: number
+    realizedOccupancy: number | null
+    forecastOccupancy: number
+    targetOccupancy: number
+    realizedAvgTicket: number | null
+    forecastAvgTicket: number
+    targetAvgTicket: number
+  }>
+}
+
+export type ForecastLot = {
+  lotId: number
+  name: string
+  sector: string
+  sold: number
+  available: number
+  currentVelocityPerHour: number
+  finalForecastTickets: number
+  predictedOccupancyPct: number
+  probableSoldOutAt: string
+  confidencePct: number
+  capacity: number
+  priceCents: number
+  realizedRevenueCents: number
+  remainingPotentialCents: number
+  targetInventoryModule: string
+}
+
+export type ForecastAccuracyData = {
+  success: boolean
+  release: string
+  predictedRevenueCents: number
+  realizedRevenueCents: number
+  revenueErrorPct: number
+  predictedTickets: number
+  realizedTickets: number
+  ticketsErrorPct: number
+  overallMapePct: number
+  modelConfidenceScore: number
+  evaluationStatus: string
+  notes: string
+}
+
+export type ForecastScenariosData = {
+  success: boolean
+  release: string
+  scenarios: {
+    conservador: { name: string; revenueCents: number; occupancyPct: number; tickets: number; velocityPerHour: number; conversionPct: number; avgTicketCents: number; description: string }
+    base: { name: string; revenueCents: number; occupancyPct: number; tickets: number; velocityPerHour: number; conversionPct: number; avgTicketCents: number; description: string }
+    otimista: { name: string; revenueCents: number; occupancyPct: number; tickets: number; velocityPerHour: number; conversionPct: number; avgTicketCents: number; description: string }
+  }
+  history: Array<{
+    id: number
+    date: string
+    predictedRevenueCents: number
+    predictedTickets: number
+    occupancyPct: number
+    confidence: number
+  }>
+}
+
+export type ForecastSimulationResult = {
+  success: boolean
+  release: string
+  isSimulation: boolean
+  simulationOnly: boolean
+  simulatedTickets: number
+  simulatedRevenueCents: number
+  simulatedOccupancyPct: number
+  deltaRevenueCents: number
+  deltaTickets: number
+  parameters: {
+    velocityDeltaPct: number
+    conversionDeltaPct: number
+    ticketMediumCents: number
+    marketingInvestmentCents: number
+  }
+  notice: string
+}
+
+export const getEventForecast = (eventId: number) =>
+  request<ForecastData>(`/events/${eventId}/forecast`)
+
+export const getForecastTimeline = (eventId: number) =>
+  request<ForecastTimelineData>(`/events/${eventId}/forecast/timeline`)
+
+export const getForecastLots = (eventId: number) =>
+  request<{ success: boolean; release: string; lots: ForecastLot[] }>(`/events/${eventId}/forecast/lots`)
+
+export const getForecastAccuracy = (eventId: number) =>
+  request<ForecastAccuracyData>(`/events/${eventId}/forecast/accuracy`)
+
+export const getForecastScenarios = (eventId: number) =>
+  request<ForecastScenariosData>(`/events/${eventId}/forecast/scenarios`)
+
+export const simulateForecastScenario = (
+  eventId: number,
+  params: {
+    velocityDeltaPct?: number
+    conversionDeltaPct?: number
+    ticketMediumCents?: number
+    marketingInvestmentCents?: number
+  }
+) =>
+  request<ForecastSimulationResult>(`/events/${eventId}/forecast/simulate`, {
+    method: 'POST',
+    body: JSON.stringify(params)
+  })
+
+export const runEventForecast = (eventId: number) =>
+  request<{
+    success: boolean
+    release: string
+    message: string
+    snapshot: any
+    previousSnapshotsRetained: number
+  }>(`/events/${eventId}/forecast/run`, {
+    method: 'POST'
+  })
+
 
 

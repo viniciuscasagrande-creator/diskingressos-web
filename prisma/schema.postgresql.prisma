@@ -1479,3 +1479,24 @@ model InventorySnapshot {
   @@index([producerId,eventId,capturedAt])
   @@index([lotId,capturedAt])
 }
+
+// ===== Fase 26.16.10 — Forecast Center Operacional =====
+model EventForecastSnapshot {
+  id                          Int       @id @default(autoincrement())
+  producerId                  Int
+  eventId                     Int
+  predictedTickets            Int
+  predictedRevenueCents       Int
+  predictedOccupancy          Float
+  predictedAverageTicketCents Int
+  selloutProbability          Float
+  predictedSelloutAt          DateTime?
+  confidence                  Float
+  lowerBoundRevenueCents      Int
+  upperBoundRevenueCents      Int
+  modelVersion                String    @default("v1.0-deterministic")
+  inputSnapshotJson           String?
+  generatedAt                 DateTime  @default(now())
+
+  @@index([producerId, eventId, generatedAt])
+}
