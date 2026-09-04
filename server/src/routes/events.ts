@@ -266,6 +266,36 @@ eventsRouter.get('/:id/customer-360',async(req:AuthRequest,res)=>{
   res.json({release:CUSTOMER_360_RELEASE,generatedAt:new Date().toISOString(),event,summary:{customers:customers.length,buyers:buyers.length,participants:participants.length,repeatCustomers:customers.filter(c=>c.orders>1).length,vipCustomers:customers.filter(c=>c.segment==='VIP'||c.segment==='Alto valor').length,atRiskCustomers:customers.filter(c=>c.segment==='Em risco').length,grossCents,averageTicketCents:buyers.length?Math.round(grossCents/buyers.length):0,identifiedRate:customers.length?Math.round(identified/customers.length*1000)/10:0},segments:Array.from(segmentMap.values()).sort((a,b)=>b.grossCents-a.grossCents),customers})
 })
 
+// Fase 26.16.4 — perfil operacional Customer 360 com jornada real do cliente.
+eventsRouter.get('/:id/customer-360/profile',async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id), key=String(req.query.key||'').trim()
+  if(!Number.isFinite(id))return res.status(400).json({message:'Evento inválido.'})
+  if(!key)return res.status(400).json({message:'Identificador do cliente é obrigatório.'})
+  const event=await prisma.event.findUnique({where:{id},select:{id:true,code:true,title:true,producerId:true}})
+  if(!event)return res.status(404).json({message:'Evento não encontrado.'})
+  if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'})
+  const producerId=event.producerId
+  const participants=await prisma.participant.findMany({where:{eventId:id,producerId},select:{id:true,name:true,email:true,phone:true,document:true}})
+  const participantKeys=new Map<number,string>(); for(const p of participants)participantKeys.set(p.id,customerKey(p))
+  const participantIds=participants.filter(p=>customerKey(p)===key).map(p=>p.id)
+  const candidateOrders=await prisma.order.findMany({where:{eventId:id,producerId},include:{tickets:{include:{lot:{select:{name:true,sector:true}}}}},orderBy:{createdAt:'desc'}})
+  const orders=candidateOrders.filter(o=>{
+    const direct=customerKey({document:o.buyerDocument,email:o.buyerEmail,name:o.buyerName})===key
+    const linked=o.tickets.some(t=>t.participantId!=null&&participantKeys.get(t.participantId)===key)
+    return direct||linked
+  })
+  const ticketRows=orders.flatMap(o=>o.tickets.map(t=>({...t,orderCode:o.code}))).filter(t=>t.participantId==null||participantIds.length===0||participantIds.includes(t.participantId)||participantKeys.get(t.participantId)===key)
+  const ticketIds=ticketRows.map(t=>t.id)
+  const checkins=await prisma.checkIn.findMany({where:{eventId:id,producerId,OR:[...(participantIds.length?[{participantId:{in:participantIds}}]:[]),...(ticketIds.length?[{ticketId:{in:ticketIds}}]:[])]},include:{ticket:{select:{code:true}}},orderBy:{checkedAt:'desc'}})
+  const base=participants.find(p=>customerKey(p)===key)
+  const paid=orders.filter(o=>o.status==='pago'), grossCents=paid.reduce((n,o)=>n+o.grossCents,0), dates=paid.map(o=>o.createdAt).sort((a,b)=>a.getTime()-b.getTime()), last=dates.at(-1)||null
+  const recency=last?Math.floor((Date.now()-last.getTime())/86400000):null, cls=classifyCustomer(recency,paid.length,grossCents)
+  const fallback=orders[0]
+  if(!base&&!fallback)return res.status(404).json({message:'Cliente não encontrado neste evento.'})
+  const customer={key,name:base?.name||fallback?.buyerName||'Cliente',email:base?.email||fallback?.buyerEmail||null,phone:base?.phone||null,document:base?.document||fallback?.buyerDocument||null,orders:paid.length,tickets:ticketRows.length,checkins:checkins.filter(c=>c.status==='presente').length,grossCents,firstPurchaseAt:dates[0]?.toISOString()||null,lastPurchaseAt:last?.toISOString()||null,recencyDays:recency,frequency:paid.length,monetaryCents:grossCents,segment:cls.segment,score:cls.score}
+  res.json({release:'26.16.4-customer-360-operacional-2026-09-04',generatedAt:new Date().toISOString(),event,customer,orders:orders.map(o=>({id:o.id,code:o.code,status:o.status,paymentMethod:o.paymentMethod,quantity:o.quantity,grossCents:o.grossCents,createdAt:o.createdAt.toISOString()})),tickets:ticketRows.map(t=>({id:t.id,code:t.code,status:t.status,type:t.type,priceCents:t.priceCents,lot:t.lot?.name||null,sector:t.lot?.sector||null,orderCode:t.orderCode,createdAt:t.createdAt.toISOString()})),checkins:checkins.map(c=>({id:c.id,status:c.status,gate:c.gate,method:c.method,operatorName:c.operatorName,checkedAt:c.checkedAt.toISOString(),ticketCode:c.ticket?.code||null}))})
+})
+
 // ===== Fase 26.x completa — 26.4 Live Ops até 26.15 Platform NOC =====
 eventsRouter.get('/:id/event-os/advanced',async(req:AuthRequest,res)=>{
   const id=Number(req.params.id); const event=await prisma.event.findUnique({where:{id}})

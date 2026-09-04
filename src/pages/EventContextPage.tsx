@@ -24,7 +24,7 @@ export default function EventContextPage({event,participants,page,onNavigate,not
  const people=participants.filter(p=>p.eventId===event.id)
  if(page==='event-command-center') return <EventCommandCenterPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-inventory') return <EventInventoryPage event={event} notify={notify}/>
- if(page==='event-customer-360') return <EventCustomer360Page event={event} notify={notify}/>
+ if(page==='event-customer-360') return <EventCustomer360Page event={event} notify={notify} onNavigate={onNavigate}/>
  if(page==='event-global-search') return <EventGlobalSearchPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(['event-live-ops','event-incidents','event-revenue-intel','event-permission-engine','event-compliance','event-intelligence','event-readiness','event-forecast','event-day-command','event-producer-executive','event-platform-noc'].includes(page)) return <EventOSAdvancedPage event={event} page={page} notify={notify}/>
  if(page==='event-dashboard') return <Dashboard event={event} participants={participants} onNavigate={onNavigate}/>

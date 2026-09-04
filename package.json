@@ -100,7 +100,10 @@
     "test:pw:stability": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract",
     "test:pw:inventory-operational": "playwright test tests/master/event-inventory-operational.spec.ts --project=chromium",
     "test:pw:inventory-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:inventory-operational && npm run test:pw:inventory-operational",
-    "verify:inventory-operational": "node scripts/verify-inventory-operational-contract.mjs"
+    "verify:inventory-operational": "node scripts/verify-inventory-operational-contract.mjs",
+    "test:pw:customer360-operational": "playwright test tests/event-os/customer360-operational.spec.ts --project=chromium",
+    "test:pw:customer360-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:customer360-operational && npm run test:pw:customer360-operational",
+    "verify:customer360-operational": "node scripts/verify-customer360-operational.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",
