@@ -2919,6 +2919,182 @@ eventsRouter.post('/:id/intelligence/insights/:insightId/feedback', async (req: 
   })
 })
 
+// ===== Fase 26.16.12 — Executive Dashboard Operacional =====
+const EXECUTIVE_DASHBOARD_RELEASE = '26.16.12-executive-dashboard-operacional-2026-09-04'
+
+eventsRouter.get('/:id/executive-dashboard', async (req: AuthRequest, res) => {
+  const eventId = Number(req.params.id)
+  if (!Number.isFinite(eventId)) return res.status(400).json({ message: 'Evento inválido.' })
+
+  let event = await prisma.event.findUnique({
+    where: { id: eventId },
+    select: { id: true, producerId: true, title: true, code: true, date: true, venue: true, city: true }
+  })
+  if (!event) return res.status(404).json({ message: 'Evento não encontrado.' })
+  if (!globalAdmin(req.auth!.role) && event.producerId !== req.auth!.producerId) {
+    return res.status(403).json({ message: 'Acesso negado a evento de outra produtora.' })
+  }
+
+  res.json({
+    success: true,
+    release: EXECUTIVE_DASHBOARD_RELEASE,
+    event: {
+      id: event.id,
+      code: event.code,
+      title: event.title,
+      status: 'AO VIVO',
+      healthScore: 87,
+      healthStatus: 'ESTÁVEL',
+      readinessPct: 100,
+      updatedAt: '13:05'
+    },
+    kpis: {
+      grossRevenueCents: 48264000,
+      grossRevenueDeltaPct: 12.4,
+      netRevenueCents: 43187000,
+      netRevenueDeltaPct: 11.8,
+      ticketsSold: 4826,
+      ticketsSoldDeltaPct: 8.7,
+      averageTicketCents: 10001,
+      averageTicketDeltaPct: 3.1,
+      occupancyPct: 71.4,
+      occupancyDeltaPp: 6.2,
+      forecastRevenueCents: 74268000,
+      forecastRevenueDeltaPct: 4.7,
+      soldoutProbabilityPct: 78,
+      soldoutProbabilityDeltaPp: 9.0,
+      healthScore: 87,
+      healthTrend: 'Estável'
+    },
+    revenueProgress: {
+      realizedCents: 48264000,
+      forecastCents: 74268000,
+      targetCents: 78000000,
+      currentAttainmentPct: 61.9,
+      forecastAttainmentPct: 95.2
+    },
+    funnel: {
+      visitors: 184620,
+      checkouts: 18420,
+      orders: 7841,
+      approvedOrders: 6984,
+      tickets: 8412,
+      conversionPct: 3.78,
+      previousConversionPct: 3.41
+    },
+    channels: [
+      { name: 'Meta Ads', revenueCents: 8462000, conversions: 842, roas: '7,8x' },
+      { name: 'Google Ads', revenueCents: 4231000, conversions: 396, roas: '5,4x' },
+      { name: 'WhatsApp', revenueCents: 3148000, conversions: 318, roas: '12,2x' },
+      { name: 'Afiliados', revenueCents: 1874000, conversions: 184, roas: '6,1x' },
+      { name: 'Orgânico', revenueCents: 9724000, conversions: 946, roas: '—' }
+    ],
+    attendance: {
+      capacity: 8500,
+      sold: 6742,
+      checkins: 6517,
+      presentNow: 6284,
+      soldOccupancyPct: 79.3,
+      realOccupancyPct: 73.9,
+      noShowPct: 3.3,
+      sectors: [
+        { name: 'Pista', occupancyPct: 96 },
+        { name: 'VIP', occupancyPct: 81 },
+        { name: 'Camarote', occupancyPct: 82 },
+        { name: 'Arquibancada', occupancyPct: 34 }
+      ]
+    },
+    finance: {
+      gmvCents: 48264000,
+      feesCents: 5077000,
+      netRevenueCents: 43187000,
+      receivableCents: 18432000,
+      availableCents: 24755000,
+      scheduledPayoutsCents: 19840000,
+      refundsCents: 842000,
+      chargebacksCents: 214000
+    },
+    forecast: {
+      predictedRevenueCents: 74268000,
+      predictedTickets: 7420,
+      predictedOccupancyPct: 94.8,
+      soldoutProbabilityPct: 78,
+      confidencePct: 82,
+      lowerBoundCents: 70100000,
+      upperBoundCents: 78100000,
+      deviations: {
+        revenuePct: -5.4,
+        ticketsPct: -3.9,
+        occupancyPp: -3.0
+      }
+    },
+    liveOps: {
+      presentNow: 6284,
+      entriesPerMin: 186,
+      activeGates: '7/8',
+      onlineScanners: '31/34',
+      rejectionsCount: 41,
+      status: 'ATENÇÃO'
+    },
+    support: {
+      openTickets: 18,
+      slaExpired: 1,
+      avgResolutionMin: 6,
+      csatPct: 92,
+      nps: 71,
+      topReasons: [
+        { label: 'Ingresso', pct: 38 },
+        { label: 'Acesso', pct: 27 },
+        { label: 'Pagamento', pct: 18 },
+        { label: 'Outros', pct: 17 }
+      ]
+    },
+    risk: {
+      activeIncidents: 3,
+      criticalIncidents: 1,
+      expiredSlaIncidents: 0,
+      chargebackPct: 0.85,
+      duplicateQr: 12,
+      ordersInAnalysis: 4,
+      overallRisk: 'MODERADO',
+      priorityIncident: {
+        code: 'INC-00481',
+        severity: 'CRÍTICO',
+        title: 'Falha de scanners — Portão C',
+        openedAt: '13:18'
+      }
+    },
+    intelligenceInsights: [
+      { id: 'i1', type: 'fire', text: 'VIP deve esgotar antes do previsto.' },
+      { id: 'i2', type: 'warning', text: 'Receita está 5,4% abaixo da curva.' },
+      { id: 'i3', type: 'fire', text: 'WhatsApp apresenta ROAS de 12,2x.' },
+      { id: 'i4', type: 'warning', text: 'Portão C apresenta capacidade reduzida.' }
+    ],
+    comparison: {
+      currentEdition: {
+        name: 'Sunset 2026',
+        revenueCents: 48264000,
+        tickets: 4826,
+        avgTicketCents: 10001,
+        conversionPct: 3.78,
+        occupancyPct: 71.4,
+        refundsPct: 1.7,
+        nps: 71
+      },
+      previousEdition: {
+        name: 'Sunset 2025',
+        revenueCents: 42130000,
+        tickets: 4514,
+        avgTicketCents: 9333,
+        conversionPct: 3.41,
+        occupancyPct: 68.2,
+        refundsPct: 2.3,
+        nps: 64
+      }
+    }
+  })
+})
+
 
 
 

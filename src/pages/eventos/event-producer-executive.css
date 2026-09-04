@@ -1,0 +1,680 @@
+/* ==========================================================================
+   Fase 26.16.12 — Executive Dashboard Operacional Stylesheet
+   DiskIngressos Event OS - Design System
+   ========================================================================== */
+
+.epe-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background-color: #0b1120;
+  color: #f1f5f9;
+  min-height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* Presentation Mode */
+.epe-container.is-presentation {
+  padding: 2rem 3rem;
+  background-color: #030712;
+  font-size: 1.05rem;
+}
+
+.epe-container.is-presentation .epe-header {
+  border-color: #3b82f6;
+  box-shadow: 0 0 35px rgba(59, 130, 246, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.epe-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+.epe-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.epe-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.epe-title {
+  font-size: 1.625rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.epe-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.epe-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ef4444;
+  animation: epe-pulse 1.8s infinite;
+}
+
+@keyframes epe-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.epe-badge-health {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+}
+
+.epe-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  flex-wrap: wrap;
+}
+
+.epe-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.epe-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.epe-period-group {
+  display: inline-flex;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 0.5rem;
+  padding: 2px;
+}
+
+.epe-period-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.epe-period-btn:hover {
+  color: #ffffff;
+}
+
+.epe-period-btn.active {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.epe-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.825rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  border: 1px solid #334155;
+  background-color: #1e293b;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.epe-btn:hover {
+  background-color: #334155;
+  border-color: #475569;
+}
+
+.epe-btn-primary {
+  background-color: #2563eb;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.epe-btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #60a5fa;
+}
+
+.epe-btn-presentation {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  border-color: #8b5cf6;
+  color: #ffffff;
+}
+
+.epe-btn-presentation:hover {
+  opacity: 0.95;
+}
+
+/* --------------------------------------------------------------------------
+   First-Line KPI Grid (8 cards)
+   -------------------------------------------------------------------------- */
+.epe-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.epe-kpi-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.epe-kpi-card:hover {
+  border-color: #334155;
+  transform: translateY(-2px);
+}
+
+.epe-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #94a3b8;
+  font-size: 0.775rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.epe-kpi-icon {
+  width: 16px;
+  height: 16px;
+  color: #60a5fa;
+}
+
+.epe-kpi-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.epe-kpi-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.epe-delta-up {
+  color: #34d399;
+}
+
+.epe-delta-down {
+  color: #f87171;
+}
+
+.epe-delta-neutral {
+  color: #94a3b8;
+}
+
+/* --------------------------------------------------------------------------
+   Main Grid Layout
+   -------------------------------------------------------------------------- */
+.epe-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1.25rem;
+}
+
+.epe-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.85rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.epe-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 0.75rem;
+}
+
+.epe-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.epe-card-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  background-color: #1e293b;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Revenue Progress Component
+   -------------------------------------------------------------------------- */
+.epe-revenue-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.epe-progress-bar-wrap {
+  position: relative;
+  height: 22px;
+  background-color: #1e293b;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid #334155;
+}
+
+.epe-progress-fill-realized {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+  z-index: 2;
+}
+
+.epe-progress-fill-forecast {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(99, 102, 241, 0.45);
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+  z-index: 1;
+}
+
+.epe-progress-markers {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.epe-progress-legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.epe-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.epe-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* --------------------------------------------------------------------------
+   Funnel Component
+   -------------------------------------------------------------------------- */
+.epe-funnel-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.epe-funnel-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  background-color: #1e293b;
+  border-radius: 0.5rem;
+  font-size: 0.825rem;
+}
+
+.epe-funnel-step-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.epe-funnel-step-val {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.epe-conversion-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 0.5rem;
+  color: #60a5fa;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Channels Table
+   -------------------------------------------------------------------------- */
+.epe-table-wrap {
+  overflow-x: auto;
+}
+
+.epe-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.825rem;
+  text-align: left;
+}
+
+.epe-table th {
+  padding: 0.6rem 0.75rem;
+  color: #94a3b8;
+  font-weight: 600;
+  border-bottom: 1px solid #1e293b;
+}
+
+.epe-table td {
+  padding: 0.65rem 0.75rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid #1e293b;
+}
+
+.epe-table tr:last-child td {
+  border-bottom: none;
+}
+
+.epe-roas-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Sectors Occupancy Bars
+   -------------------------------------------------------------------------- */
+.epe-sectors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.epe-sector-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.epe-sector-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.epe-sector-bar {
+  height: 8px;
+  background-color: #1e293b;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.epe-sector-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: #3b82f6;
+  transition: width 0.4s ease;
+}
+
+.epe-sector-bar-fill.danger {
+  background-color: #ef4444;
+}
+
+.epe-sector-bar-fill.warn {
+  background-color: #f59e0b;
+}
+
+/* --------------------------------------------------------------------------
+   Financial Breakdown (Read-Only)
+   -------------------------------------------------------------------------- */
+.epe-finance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.epe-finance-item {
+  background-color: #1e293b;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.epe-finance-label {
+  font-size: 0.725rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.epe-finance-val {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+/* --------------------------------------------------------------------------
+   Live Ops & SAC status
+   -------------------------------------------------------------------------- */
+.epe-mini-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.epe-mini-card {
+  background-color: #1e293b;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.epe-mini-card span:first-child {
+  font-size: 0.725rem;
+  color: #94a3b8;
+}
+
+.epe-mini-card span:last-child {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Priority Incident & Insights
+   -------------------------------------------------------------------------- */
+.epe-priority-incident {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 0.65rem;
+  padding: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.epe-incident-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.epe-incident-badge {
+  background-color: #ef4444;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+  width: fit-content;
+}
+
+.epe-insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.epe-insight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  background-color: #1e293b;
+  border-radius: 0.5rem;
+  font-size: 0.825rem;
+  color: #e2e8f0;
+}
+
+/* --------------------------------------------------------------------------
+   Modal Comparison
+   -------------------------------------------------------------------------- */
+.epe-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1.5rem;
+}
+
+.epe-modal {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  max-width: 680px;
+  width: 100%;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.epe-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.epe-modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.epe-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.epe-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #1e293b;
+  background-color: #0b1120;
+}

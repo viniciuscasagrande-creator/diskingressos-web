@@ -116,7 +116,10 @@
     "verify:forecast-center-operational": "node scripts/verify-forecast-center-operational.mjs",
     "test:pw:disk-intelligence-operational": "playwright test tests/event-os/disk-intelligence-operational.spec.ts --project=chromium",
     "test:pw:disk-intelligence-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:disk-intelligence-operational && npm run test:pw:disk-intelligence-operational",
-    "verify:disk-intelligence-operational": "node scripts/verify-disk-intelligence-operational.mjs"
+    "verify:disk-intelligence-operational": "node scripts/verify-disk-intelligence-operational.mjs",
+    "test:pw:executive-dashboard-operational": "playwright test tests/event-os/executive-dashboard-operational.spec.ts --project=chromium",
+    "test:pw:executive-dashboard-gate": "npm run verify:protected-modules && npm run test:pw:contract-registry && npm run test:pw:functional-contract && npm run verify:executive-dashboard-operational && npm run test:pw:executive-dashboard-operational",
+    "verify:executive-dashboard-operational": "node scripts/verify-executive-dashboard-operational.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

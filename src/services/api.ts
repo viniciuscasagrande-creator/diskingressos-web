@@ -1132,5 +1132,163 @@ export const submitInsightFeedback = (eventId: number, insightId: number, feedba
     body: JSON.stringify({ feedback })
   })
 
+// ===== Fase 26.16.12 — Executive Dashboard Operacional =====
+export type ExecutiveDashboardData = {
+  success: boolean
+  release: string
+  event: {
+    id: number
+    code: string
+    title: string
+    status: string
+    healthScore: number
+    healthStatus: string
+    readinessPct: number
+    updatedAt: string
+  }
+  kpis: {
+    grossRevenueCents: number
+    grossRevenueDeltaPct: number
+    netRevenueCents: number
+    netRevenueDeltaPct: number
+    ticketsSold: number
+    ticketsSoldDeltaPct: number
+    averageTicketCents: number
+    averageTicketDeltaPct: number
+    occupancyPct: number
+    occupancyDeltaPp: number
+    forecastRevenueCents: number
+    forecastRevenueDeltaPct: number
+    soldoutProbabilityPct: number
+    soldoutProbabilityDeltaPp: number
+    healthScore: number
+    healthTrend: string
+  }
+  revenueProgress: {
+    realizedCents: number
+    forecastCents: number
+    targetCents: number
+    currentAttainmentPct: number
+    forecastAttainmentPct: number
+  }
+  funnel: {
+    visitors: number
+    checkouts: number
+    orders: number
+    approvedOrders: number
+    tickets: number
+    conversionPct: number
+    previousConversionPct: number
+  }
+  channels: Array<{
+    name: string
+    revenueCents: number
+    conversions: number
+    roas: string
+  }>
+  attendance: {
+    capacity: number
+    sold: number
+    checkins: number
+    presentNow: number
+    soldOccupancyPct: number
+    realOccupancyPct: number
+    noShowPct: number
+    sectors: Array<{
+      name: string
+      occupancyPct: number
+    }>
+  }
+  finance: {
+    gmvCents: number
+    feesCents: number
+    netRevenueCents: number
+    receivableCents: number
+    availableCents: number
+    scheduledPayoutsCents: number
+    refundsCents: number
+    chargebacksCents: number
+  }
+  forecast: {
+    predictedRevenueCents: number
+    predictedTickets: number
+    predictedOccupancyPct: number
+    soldoutProbabilityPct: number
+    confidencePct: number
+    lowerBoundCents: number
+    upperBoundCents: number
+    deviations: {
+      revenuePct: number
+      ticketsPct: number
+      occupancyPp: number
+    }
+  }
+  liveOps: {
+    presentNow: number
+    entriesPerMin: number
+    activeGates: string
+    onlineScanners: string
+    rejectionsCount: number
+    status: string
+  }
+  support: {
+    openTickets: number
+    slaExpired: number
+    avgResolutionMin: number
+    csatPct: number
+    nps: number
+    topReasons: Array<{
+      label: string
+      pct: number
+    }>
+  }
+  risk: {
+    activeIncidents: number
+    criticalIncidents: number
+    expiredSlaIncidents: number
+    chargebackPct: number
+    duplicateQr: number
+    ordersInAnalysis: number
+    overallRisk: string
+    priorityIncident: {
+      code: string
+      severity: string
+      title: string
+      openedAt: string
+    }
+  }
+  intelligenceInsights: Array<{
+    id: string
+    type: string
+    text: string
+  }>
+  comparison: {
+    currentEdition: {
+      name: string
+      revenueCents: number
+      tickets: number
+      avgTicketCents: number
+      conversionPct: number
+      occupancyPct: number
+      refundsPct: number
+      nps: number
+    }
+    previousEdition: {
+      name: string
+      revenueCents: number
+      tickets: number
+      avgTicketCents: number
+      conversionPct: number
+      occupancyPct: number
+      refundsPct: number
+      nps: number
+    }
+  }
+}
+
+export const getExecutiveDashboard = (eventId: number) =>
+  request<ExecutiveDashboardData>(`/events/${eventId}/executive-dashboard`)
+
+
 
 
