@@ -17,6 +17,8 @@ export const qaUsers = {
   },
 }
 
+export const producerA = qaUsers.producerA
+
 export async function login(page: Page, email = qaUsers.producerA.email, password = qaUsers.producerA.password) {
   await page.goto('/login')
   const emailInput = page.locator('input[type="email"]')
