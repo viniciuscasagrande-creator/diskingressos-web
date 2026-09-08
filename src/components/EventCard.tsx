@@ -70,31 +70,27 @@ export default function EventCard({
       )}
       <div className={`event-cover ${event.cover}`}>
         {event.badge && <span className="cover-badge">{event.badge}</span>}
-        <div className="cover-overlay">
-          <strong>{event.title.split('•')[0].trim()}</strong>
-          <span>{event.badge || event.category || event.city}</span>
-        </div>
         <span className="event-id" data-testid="event-code">{event.code}</span>
       </div>
       <div className="event-body">
         <div>
           <div className="title-with-status"><h3 data-testid="event-title">{event.title}</h3><span className={`status-pill ${event.status}`}>{event.status}</span></div>
-          <p className="venue"><MapPin size={17}/>{event.venue}</p>
+          <p className="venue"><MapPin size={15}/>{event.venue}</p>
         </div>
         <div className="metrics event-card-metrics" data-testid="event-metrics">
           <Metric label="Total (R$)" value={event.total} accent="green" />
           <Metric label="Vendas" value={String(event.sales)} accent="blue" />
           <Metric label="Disponível" value={String(event.available)} accent="cyan" />
           <Metric label="Cortesia" value={String(event.courtesy)} accent="slate" />
-          <Metric label="Ocupação" value={event.occupancy} accent={high ? 'orange' : 'blue'} />
+          <Metric label="Ocupação" value={event.occupancy} accent={high ? 'orange' : 'blue'} isHigh={high} />
         </div>
         <div className="card-footer event-card-footer">
-          <span><CalendarDays size={17}/>{event.date}</span>
+          <span><CalendarDays size={15}/>{event.date}</span>
           <div className="actions event-card-actions">
-            <button title="Painel do evento" onClick={e=>{e.stopPropagation();onDashboard(event)}}><Settings2 size={17}/></button>
-            <button title="Editar evento" onClick={e=>{e.stopPropagation();onEdit(event)}}><Pencil size={17}/></button>
-            <button title="Lotes" onClick={e=>{e.stopPropagation();onLots(event)}}><Layers3 size={18}/></button>
-            <button title="Mais opções" onClick={e=>e.stopPropagation()}><MoreHorizontal size={18}/></button>
+            <button title="Painel do evento" onClick={e=>{e.stopPropagation();onDashboard(event)}}><Settings2 size={16}/></button>
+            <button title="Editar evento" onClick={e=>{e.stopPropagation();onEdit(event)}}><Pencil size={16}/></button>
+            <button title="Lotes" onClick={e=>{e.stopPropagation();onLots(event)}}><Layers3 size={16}/></button>
+            <button title="Mais opções" onClick={e=>e.stopPropagation()}><MoreHorizontal size={16}/></button>
           </div>
         </div>
       </div>
@@ -102,6 +98,6 @@ export default function EventCard({
   )
 }
 
-function Metric({label, value, accent}:{label:string;value:string;accent:string}) {
-  return <div className="metric"><span>{label}</span><strong>{value}</strong><i className={`metric-line ${accent}`}/></div>
+function Metric({label, value, accent, isHigh}:{label:string;value:string;accent:string;isHigh?:boolean}) {
+  return <div className="metric"><span>{label}</span><strong className={isHigh ? 'metric-high' : ''}>{value}</strong><i className={`metric-line ${accent}`}/></div>
 }
