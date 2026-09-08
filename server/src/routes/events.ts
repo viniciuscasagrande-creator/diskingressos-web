@@ -1900,19 +1900,33 @@ eventsRouter.get('/:id/commercial-dashboard', async (req: AuthRequest, res) => {
     { weekdayIndex: 0, weekdayShort: 'Dom', weekdayName: 'Domingo', count: 15, amountCents: 93750 }
   ]
 
+  const eventPayload = {
+    id: event.id,
+    code: event.code,
+    title: event.title,
+    venue: event.venue,
+    city: event.city,
+    date: event.date,
+    status: event.status,
+    producerId: event.producerId,
+    producerName: event.producer?.name
+  }
+
   res.json({
     release: '26.17.7.1-painel-comercial-moderno-ptbr-2026-09-04',
-    event: {
-      id: event.id,
-      code: event.code,
-      title: event.title,
-      venue: event.venue,
-      city: event.city,
-      date: event.date,
-      status: event.status,
-      producerId: event.producerId,
-      producerName: event.producer?.name
-    },
+    // Chaves canônicas da Fase 26.17.7.1
+    evento: eventPayload,
+    indicadores: summary,
+    ritmo: salesVelocity,
+    evolucao: salesEvolutionPoints,
+    pagamentos: paymentMethods,
+    ocupacao: occupancy,
+    tiposIngresso: ticketTypes,
+    transacoes: recentTransactions,
+    distribuicaoSemanal: weekdayDistribution,
+
+    // Compatibilidade técnica retroativa
+    event: eventPayload,
     summary,
     salesEvolution: {
       period,

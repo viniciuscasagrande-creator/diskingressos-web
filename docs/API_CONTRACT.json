@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "API Contract - Fase 26.17.7.1 Painel Comercial Moderno PT-BR",
+  "endpoint": "GET /api/events/:eventId/commercial-dashboard",
+  "headers": {
+    "Authorization": "Bearer <token>"
+  },
+  "queryParams": {
+    "period": {
+      "type": "string",
+      "enum": ["today", "7d", "30d", "all"],
+      "default": "30d",
+      "description": "Período temporal para consolidação dos indicadores de vendas"
+    },
+    "paymentMethod": {
+      "type": "string",
+      "description": "Filtro opcional por forma de pagamento (PIX, CREDITO, DEBITO, DINHEIRO, OUTROS)"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "release": "26.17.7.1-painel-comercial-moderno-ptbr-2026-09-04",
+      "evento": {
+        "id": 4112,
+        "code": "4112",
+        "title": "Arena Gamer Curitiba",
+        "venue": "Expo Barigui",
+        "city": "Curitiba - PR",
+        "date": "07/08/2027 10:00",
+        "status": "ativo",
+        "producerId": 17,
+        "producerName": "DiskIngressos Produções"
+      },
+      "indicadores": {
+        "grossRevenueCents": 675000,
+        "grossRevenueFormatted": "R$ 6.750,00",
+        "revenueVariationPercent": 12.5,
+        "ticketsSold": 108,
+        "ticketsSoldVariationPercent": 8.0,
+        "availableTickets": 3882,
+        "availableVariationPercent": -5.2,
+        "courtesyTickets": 10,
+        "courtesyVariationPercent": 0.0,
+        "occupancyPercent": 2.9,
+        "occupancyVariationPercent": 3.1,
+        "totalCapacity": 4000
+      },
+      "ritmo": {
+        "averageTicketCents": 6250,
+        "averageTicketVariationPercent": 6.3,
+        "breakEvenCents": 0,
+        "salesTargetCents": 0,
+        "projectedFinalCents": 1215286,
+        "projectedVariationPercent": 18.4,
+        "realizedHistory": [
+          { "date": "2026-07-05", "formattedDate": "05/07", "amountCents": 210000 },
+          { "date": "2026-08-09", "formattedDate": "09/08", "amountCents": 675000 }
+        ],
+        "projectedHistory": [
+          { "date": "2026-08-09", "formattedDate": "09/08", "amountCents": 675000 },
+          { "date": "2026-08-30", "formattedDate": "30/08", "amountCents": 1215286 }
+        ]
+      },
+      "evolucao": [
+        { "date": "2026-07-05", "formattedDate": "05/07", "revenueCents": 98000, "ticketsCount": 16 },
+        { "date": "2026-08-09", "formattedDate": "09/08", "revenueCents": 675000, "ticketsCount": 108 }
+      ],
+      "pagamentos": [
+        { "id": "pix", "name": "PIX", "count": 64, "amountCents": 400000, "percentage": 59.3, "color": "#0EA5E9" },
+        { "id": "credito", "name": "Crédito", "count": 35, "amountCents": 221000, "percentage": 32.4, "color": "#3B82F6" },
+        { "id": "debito", "name": "Débito", "count": 0, "amountCents": 0, "percentage": 0.0, "color": "#F59E0B" },
+        { "id": "dinheiro", "name": "Dinheiro", "count": 0, "amountCents": 0, "percentage": 0.0, "color": "#EF4444" },
+        { "id": "outros", "name": "Outros", "count": 9, "amountCents": 54000, "percentage": 8.3, "color": "#A855F7" }
+      ],
+      "ocupacao": {
+        "sold": 108,
+        "available": 3882,
+        "courtesy": 10,
+        "blocked": 0,
+        "totalCapacity": 4000,
+        "occupancyPercent": 2.9
+      },
+      "tiposIngresso": [
+        { "id": 1, "name": "Profissionais da Saúde", "sector": "Especial", "soldCount": 15, "capacity": 50, "revenueCents": 90000, "percentage": 12.7 },
+        { "id": 2, "name": "Ingresso Solidário 1kg", "sector": "Pista", "soldCount": 11, "capacity": 100, "revenueCents": 110000, "percentage": 9.3 }
+      ],
+      "transacoes": [
+        {
+          "id": 1,
+          "orderCode": "154821",
+          "buyerName": "RAFAEL PIALARISSI",
+          "dateFormatted": "13/08/2026",
+          "timeFormatted": "11:54",
+          "paymentMethod": "PIX",
+          "amountCents": 10000,
+          "status": "Finalizado"
+        }
+      ],
+      "distribuicaoSemanal": [
+        { "weekdayIndex": 1, "weekdayShort": "Seg", "weekdayName": "Segunda-feira", "count": 12, "amountCents": 75000 },
+        { "weekdayIndex": 2, "weekdayShort": "Ter", "weekdayName": "Terça-feira", "count": 18, "amountCents": 112500 },
+        { "weekdayIndex": 3, "weekdayShort": "Qua", "weekdayName": "Quarta-feira", "count": 25, "amountCents": 156250 },
+        { "weekdayIndex": 4, "weekdayShort": "Qui", "weekdayName": "Quinta-feira", "count": 20, "amountCents": 125000 },
+        { "weekdayIndex": 5, "weekdayShort": "Sex", "weekdayName": "Sexta-feira", "count": 28, "amountCents": 175000 },
+        { "weekdayIndex": 6, "weekdayShort": "Sáb", "weekdayName": "Sábado", "count": 28, "amountCents": 175000 },
+        { "weekdayIndex": 0, "weekdayShort": "Dom", "weekdayName": "Domingo", "count": 15, "amountCents": 93750 }
+      ]
+    }
+  }
+}

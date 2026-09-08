@@ -103,4 +103,25 @@ export interface CommercialDashboardResponse {
   recentTransactions: RecentTransactionItem[]
   weekdayDistribution: WeekdayDistributionItem[]
   updatedAtFormatted: string
+
+  // Chaves canônicas da Fase 26.17.7.1
+  evento?: {
+    id: number
+    code: string
+    title: string
+    venue: string
+    city: string
+    date: string
+    status: string
+    producerId: number
+    producerName?: string
+  }
+  indicadores?: CommercialKpiSummary
+  ritmo?: SalesVelocityStats
+  evolucao?: SalesEvolutionPoint[]
+  pagamentos?: PaymentMethodItem[]
+  ocupacao?: OccupancyBreakdown
+  tiposIngresso?: TicketTypePerformanceItem[]
+  transacoes?: RecentTransactionItem[]
+  distribuicaoSemanal?: WeekdayDistributionItem[]
 }
