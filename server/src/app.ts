@@ -14,6 +14,7 @@ import { participantsRouter } from './routes/participants.js'
 import { checkinsRouter } from './routes/checkins.js'
 import { posRouter } from './routes/pos.js'
 import { financeOperationsRouter } from './routes/financeOperations.js'
+import { financeTransfersRouter } from './routes/financeTransfers.js'
 import { financeAccountingRouter } from './routes/financeAccounting.js'
 import { financePaymentsRouter } from './routes/financePayments.js'
 import { financeSettlementRouter } from './routes/financeSettlement.js'
@@ -110,6 +111,7 @@ app.use('/api/tickets', ticketsRouter)
 app.use('/api/participants', participantsRouter)
 app.use('/api/checkins', checkinsRouter)
 app.use('/api/pos', posRouter)
+app.use('/api/finance', financeTransfersRouter)
 app.use('/api/finance', financeOperationsRouter)
 app.use('/api/finance/accounting', financeAccountingRouter)
 app.use('/api/finance/payments', financePaymentsRouter)
