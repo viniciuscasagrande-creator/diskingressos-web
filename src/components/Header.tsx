@@ -20,9 +20,12 @@ export default function Header({ query, onQuery, user, producers = [], selectedP
   return (
     <header className="topbar global-topbar">
       <button className="mobile-menu-button" onClick={onToggleMenu} aria-label="Abrir navegação"><Menu size={22} /></button>
-      <div className="brand global-brand">
-        <span className="brand-mark">Di</span>
-        <span>DiskIngressos</span>
+      <div className="brand global-brand" title="DiskIngressos">
+        <img
+          src="/logo-diskingressos.png"
+          alt="DiskIngressos"
+          className="navbar-logo"
+        />
       </div>
       <div className="search-wrap global-search">
         <Search size={21} />

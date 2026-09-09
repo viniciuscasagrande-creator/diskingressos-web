@@ -62,6 +62,8 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
 }
 .phase6-shell .global-brand{padding:0 18px;gap:14px;font-size:20px;font-weight:800}
 .phase6-shell .global-brand .brand-mark{font-size:27px;color:#fff}
+.navbar-logo{height:28px;width:auto;max-height:28px;max-width:160px;object-fit:contain;display:block;flex-shrink:0}
+@media(max-width:850px){.navbar-logo{height:24px;max-height:24px}}
 .phase6-shell .global-search{width:min(588px,48vw);height:47px;background:#252e3b;border:1px solid #47515f;border-radius:25px;padding:0 17px;justify-self:center}
 .phase6-shell .global-search input{font-size:16px}
 .phase6-shell .global-profile{padding-right:26px;gap:11px;white-space:nowrap}
