@@ -24,6 +24,7 @@ import FinancePayoutsPage from './pages/FinancePayoutsPage'
 import FinanceCashFlowPage from './pages/FinanceCashFlowPage'
 import FinanceReceivablesPage from './pages/FinanceReceivablesPage'
 import FinancePayablesPage from './pages/FinancePayablesPage'
+import EventCostCentersBudgetPage from './pages/finance/EventCostCentersBudgetPage'
 import FinanceReconciliationPage from './pages/FinanceReconciliationPage'
 import FinanceBankAccountsPage from './pages/FinanceBankAccountsPage'
 import FinanceAdvancePage from './pages/FinanceAdvancePage'
@@ -767,8 +768,13 @@ export default function App() {
           <FinanceiroConsolidadoPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
+        {/* FASE 26.17.9.4.2: CENTRO DE CUSTOS, ORÇAMENTO E DRE DO EVENTO */}
+        {page === 'finance-cost-centers' && (
+          <EventCostCentersBudgetPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+
         {/* FASE 18.4: ERP FINANCEIRO, CONTÁBIL, BORDERÔS E ASSINATURA DIGITAL */}
-        {['finance-accounting', 'finance-cost-centers', 'finance-chart-accounts', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page) && (
+        {['finance-accounting', 'finance-chart-accounts', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page) && (
           <FinanceAccountingHubPage
             events={visibleEvents}
             producerId={scopedProducerId}

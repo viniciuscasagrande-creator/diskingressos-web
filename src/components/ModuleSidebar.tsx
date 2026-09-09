@@ -9,7 +9,7 @@ import {
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
   FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2,
-  PanelLeftClose, PanelLeftOpen, Activity, Play
+  PanelLeftClose, PanelLeftOpen, Activity, Play, ArrowLeftRight, ArrowDownLeft, ArrowUpRight, CircleDollarSign, Calendar, CheckCircle2
 } from 'lucide-react'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
@@ -69,8 +69,45 @@ const mainItems: Item[] = [
   { key: 'admin-hub', label: 'Administração', icon: Building2 },
 ]
 
-// 2. FINANCEIRO: MÓDULOS DE GESTÃO E CAIXA
+// 2. FINANCEIRO: ESTRUTURA ERP COMPLETA (FASE 26.17.9.4.2)
 const independentRefundItem: Item = { key: 'finance-refunds', label: 'Estornos', icon: Undo2, badge: 'ERP' }
+
+const mainFinanceDashboardItem: Item = { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards }
+
+// CONTA FINANCEIRA
+const financeAccountGroup: Item[] = [
+  { key: 'finance-producer-account', label: 'Conta do Produtor', icon: Landmark },
+  { key: 'finance-hub', label: 'Saldo por Evento', icon: WalletCards },
+  { key: 'finance-statement', label: 'Extrato', icon: ReceiptText },
+  { key: 'finance-producer-account', label: 'Transferências entre Eventos', icon: ArrowLeftRight },
+]
+
+// GESTÃO
+const financeManagementGroup: Item[] = [
+  { key: 'finance-receivables', label: 'Contas a Receber', icon: ArrowDownLeft },
+  { key: 'finance-payables', label: 'Contas a Pagar', icon: ArrowUpRight },
+  { key: 'finance-cost-centers', label: 'Centro de Custos', icon: Boxes },
+  { key: 'finance-dre', label: 'Orçamentos', icon: Scale },
+  { key: 'finance-expenses', label: 'Fornecedores', icon: Users },
+]
+
+// RECEBIMENTOS
+const financeReceivablesGroup: Item[] = [
+  { key: 'finance-receivables', label: 'Recebíveis', icon: CircleDollarSign },
+  { key: 'finance-cashflow', label: 'Agenda Financeira', icon: Calendar },
+  { key: 'finance-payouts', label: 'Repasses', icon: HandCoins },
+  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
+  { key: 'finance-reconciliation', label: 'Conciliação', icon: CheckCircle2 },
+]
+
+// ANÁLISE
+const financeAnalysisGroup: Item[] = [
+  { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
+  { key: 'finance-cost-centers', label: 'Resultado por Evento', icon: BarChart3 },
+  { key: 'finance-split', label: 'Divisão de Receitas', icon: Split },
+  { key: 'finance-methods', label: 'Pagamentos & Taxas', icon: CreditCard },
+  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
+]
 
 const cashFinanceItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards },
@@ -196,7 +233,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           )
         })}
 
-        {/* Section: Financeiro (5 Pilares Principais) */}
+        {/* Section: Financeiro (ERP Estruturado - Fase 26.17.9.4.2) */}
         <CollapsibleSection
           label="Financeiro"
           icon={WalletCards}
@@ -204,25 +241,69 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           onToggle={() => setOpenFinance(!openFinance)}
           onClose={() => setOpenFinance(false)}
         >
-          {cashFinanceItems.map((it, index) => {
-            const isActive =
-              (it.key === 'finance-dashboard' && ['finance', 'finance-dashboard', 'finance-hub', 'finance-producer-account', 'finance-statement', 'finance-payouts', 'finance-cashflow', 'finance-bank-accounts', 'finance-expenses', 'finance-payables', 'finance-receivables', 'finance-reconciliation'].includes(page)) ||
-              (it.key === 'finance-advance' && ['finance-advance', 'finance-spread', 'finance-spread-simulator'].includes(page)) ||
-              (it.key === 'finance-split' && ['finance-split', 'finance-settlement', 'finance-settlements', 'finance-negotiations'].includes(page)) ||
-              (it.key === 'finance-methods' && ['finance-methods', 'finance-custom', 'finance-operators', 'finance-gateways', 'finance-intelligence', 'finance-rates'].includes(page)) ||
-              (it.key === 'finance-reports' && ['finance-reports', 'finance-bordero', 'finance-advanced', 'finance-consolidated'].includes(page)) ||
-              page === it.key
+          {/* Dashboard Financeiro Principal Preservado */}
+          <NavItem
+            item={mainFinanceDashboardItem}
+            active={page === 'finance-dashboard' || page === 'finance'}
+            onNavigate={onNavigate}
+            indent
+          />
 
-            return (
-              <NavItem
-                key={`cash-${it.key}-${index}`}
-                item={it}
-                active={isActive}
-                onNavigate={onNavigate}
-                indent
-              />
-            )
-          })}
+          {/* Grupo 1: CONTA FINANCEIRA */}
+          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
+            CONTA FINANCEIRA
+          </div>
+          {financeAccountGroup.map((it, idx) => (
+            <NavItem
+              key={`acc-${it.key}-${it.label}-${idx}`}
+              item={it}
+              active={page === it.key && (it.label !== 'Extrato' || page === 'finance-statement')}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+
+          {/* Grupo 2: GESTÃO */}
+          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
+            GESTÃO
+          </div>
+          {financeManagementGroup.map((it, idx) => (
+            <NavItem
+              key={`mgt-${it.key}-${it.label}-${idx}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+
+          {/* Grupo 3: RECEBIMENTOS */}
+          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
+            RECEBIMENTOS
+          </div>
+          {financeReceivablesGroup.map((it, idx) => (
+            <NavItem
+              key={`rec-${it.key}-${it.label}-${idx}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+
+          {/* Grupo 4: ANÁLISE */}
+          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
+            ANÁLISE
+          </div>
+          {financeAnalysisGroup.map((it, idx) => (
+            <NavItem
+              key={`ana-${it.key}-${it.label}-${idx}`}
+              item={it}
+              active={page === it.key}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
         </CollapsibleSection>
 
         {/* Fase 24.9 — Estornos é módulo independente */}

@@ -15,6 +15,7 @@ import { checkinsRouter } from './routes/checkins.js'
 import { posRouter } from './routes/pos.js'
 import { financeOperationsRouter } from './routes/financeOperations.js'
 import { financeTransfersRouter } from './routes/financeTransfers.js'
+import { financeErpRouter } from './routes/financeErp.js'
 import { financeAccountingRouter } from './routes/financeAccounting.js'
 import { financePaymentsRouter } from './routes/financePayments.js'
 import { financeSettlementRouter } from './routes/financeSettlement.js'
@@ -104,6 +105,7 @@ app.use('/api/scope', scopeRouter)
 app.use('/api/producers', producersRouter)
 app.use('/api/users', usersRouter)
 app.get('/api/admin/global-search', requireAuth, handleAdminGlobalSearch)
+app.use('/api', financeErpRouter)
 app.use('/api/events', eventsRouter)
 app.use('/api/lots', lotsRouter)
 app.use('/api/orders', ordersRouter)
@@ -111,6 +113,7 @@ app.use('/api/tickets', ticketsRouter)
 app.use('/api/participants', participantsRouter)
 app.use('/api/checkins', checkinsRouter)
 app.use('/api/pos', posRouter)
+app.use('/api/finance', financeErpRouter)
 app.use('/api/finance', financeTransfersRouter)
 app.use('/api/finance', financeOperationsRouter)
 app.use('/api/finance/accounting', financeAccountingRouter)
