@@ -14,7 +14,7 @@ export async function getCommercialDashboard(
   eventId: number | string,
   params?: CommercialDashboardParams
 ): Promise<CommercialDashboardResponse> {
-  return getEventCommercialDashboard(Number(eventId), params)
+  return (await getEventCommercialDashboard(Number(eventId), params)) as unknown as CommercialDashboardResponse
 }
 
 export * from '../types/event-commercial'

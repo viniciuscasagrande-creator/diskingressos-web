@@ -1,0 +1,7 @@
+{
+  "release": "26.17.7.1-painel-comercial-moderno-ptbr-2026-09-09",
+  "protected": ["central-eventos", "finance-dashboard", "finance-refunds"],
+  "api": ["GET /api/events/:id/commercial-dashboard"],
+  "entry": "/eventos/:code/dashboard",
+  "language": "pt-BR"
+}

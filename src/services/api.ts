@@ -1551,7 +1551,27 @@ export type {
   WeekdayDistributionItem
 } from '../types/event-commercial'
 
+export type CommercialPeriod = 'tudo' | 'hoje' | '7d' | '30d' | 'custom'
+export type EventCommercialDashboardData = {
+  release: string
+  period: string
+  event: { id: number; code: string; title: string; venue: string; city: string; date: string; status: string; producerId: number; producerName: string }
+  kpis: { receitaCents: number; vendidos: number; cortesias: number; disponiveis: number; capacidade: number; ocupacao: number; pedidosPagos: number; ticketMedioCents: number }
+  ritmo: { ticketMedioCents: number; pontoEquilibrioCents: number | null; metaVendas: number | null; projecaoFinal: number | null; metodoProjecao: string }
+  evolucao: { chave: string; rotulo: string; receitaCents: number; quantidade: number }[]
+  metodosPagamento: { metodo: string; pedidos: number; valorCents: number; quantidade: number }[]
+  tiposIngresso: { tipo: string; quantidade: number; receitaCents: number }[]
+  transacoes: { id: number; codigo: string; cliente: string; pagamento: string; quantidade: number; valorCents: number; status: string; criadoEm: string }[]
+  vendasDiaSemana: { dia: string; quantidade: number; receitaCents: number }[]
+}
+
 export const getEventCommercialDashboard = (
   eventId: number,
-  params: { period?: string; paymentMethod?: string } = {}
-) => request<import('../types/event-commercial').CommercialDashboardResponse>(`/events/${eventId}/commercial-dashboard${qs(params)}`)
+  periodOrParams: CommercialPeriod | { period?: string; paymentMethod?: string } = 'tudo',
+  from?: string,
+  to?: string
+) => {
+  const query = typeof periodOrParams === 'object' ? periodOrParams : { period: periodOrParams, from, to }
+  return request<EventCommercialDashboardData>(`/events/${eventId}/commercial-dashboard${qs(query)}`)
+}
+

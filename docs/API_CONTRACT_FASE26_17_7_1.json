@@ -1,0 +1,54 @@
+{
+  "release": "26.17.7.1-painel-comercial-moderno-ptbr-2026-09-09",
+  "method": "GET",
+  "path": "/api/events/:id/commercial-dashboard",
+  "query": {
+    "period": [
+      "tudo",
+      "hoje",
+      "7d",
+      "30d",
+      "custom"
+    ],
+    "from": "YYYY-MM-DD (quando custom)",
+    "to": "YYYY-MM-DD (quando custom)"
+  },
+  "auth": "Bearer token obrigatório; tenant validado por producerId do evento",
+  "response": {
+    "event": [
+      "id",
+      "code",
+      "title",
+      "venue",
+      "city",
+      "date",
+      "status",
+      "producerId",
+      "producerName"
+    ],
+    "kpis": [
+      "receitaCents",
+      "vendidos",
+      "cortesias",
+      "disponiveis",
+      "capacidade",
+      "ocupacao",
+      "pedidosPagos",
+      "ticketMedioCents"
+    ],
+    "ritmo": [
+      "ticketMedioCents",
+      "pontoEquilibrioCents",
+      "metaVendas",
+      "projecaoFinal",
+      "metodoProjecao"
+    ],
+    "collections": [
+      "evolucao",
+      "metodosPagamento",
+      "tiposIngresso",
+      "transacoes",
+      "vendasDiaSemana"
+    ]
+  }
+}

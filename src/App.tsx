@@ -475,16 +475,11 @@ export default function App() {
   const openLots = (e: EventItem) => { setSelectedEvent(e); setPage('lots') }
   const openEventContext = (e: EventItem) => {
     setSelectedEvent(e)
-    setPage('event-command-center')
-    window.history.pushState({ page: 'event-command-center' }, '', `/eventos/${e.code}/command-center`)
-    window.scrollTo({ top: 0 })
-  }
-  const openDashboard = (e: EventItem) => {
-    setSelectedEvent(e)
     setPage('event-dashboard')
     window.history.pushState({ page: 'event-dashboard' }, '', `/eventos/${e.code}/dashboard`)
     window.scrollTo({ top: 0 })
   }
+  const openDashboard = openEventContext
 
   const saveEvent = (event: EventItem) => {
     const producerId = isGlobalAdmin(user) ? (scopedProducerId || producers[0].id) : (user.producerId || 1)

@@ -33,10 +33,18 @@ test('Ativos, Inativos e Todos funcionam sem quebrar a grade', async ({ page }) 
   }
 })
 
-test('abrir evento leva ao Event Cockpit 360', async ({ page }) => {
+test('abrir evento leva ao Painel Comercial e mantém acesso ao Event OS', async ({ page }) => {
   const first = page.getByTestId('event-card').first()
   const code = await first.getAttribute('data-event-code')
   await first.click()
-  await expect(page).toHaveURL(new RegExp(`/eventos/${code}/command-center`))
-  await expect(page.getByText(/Event Cockpit 360|Centro de Comando/i).first()).toBeVisible()
+  await expect(page).toHaveURL(new RegExp(`/eventos/${code}/dashboard`))
+  await expect(page.getByTestId('event-commercial-dashboard')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Acessar Event OS/i })).toBeVisible()
+})
+
+test('layout vertical e modo comparar estão disponíveis', async ({ page }) => {
+  await page.getByRole('button', { name: /Vertical/i }).click()
+  await expect(page.getByTestId('event-grid')).toHaveClass(/vertical/)
+  await page.getByRole('button', { name: /Comparar/i }).click()
+  await expect(page.getByText(/Modo de comparação/i)).toBeVisible()
 })
