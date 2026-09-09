@@ -48,7 +48,7 @@ export default function EventsPage({
       const saved = localStorage.getItem(STORAGE_KEY_VIEW_MODE)
       if (saved === 'horizontal' || saved === 'vertical') return saved
     }
-    return 'vertical'
+    return 'horizontal'
   })
 
   // 2. Preferência persistente de Colunas no modo vertical (2, 3, 4, 5 ou 6 colunas)
@@ -117,25 +117,10 @@ export default function EventsPage({
 
   return (
     <div data-testid="events-page">
-      {/* Botão de retorno */}
-      <div className="flex items-center gap-2 mb-3">
-        <button
-          onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
-        >
-          <ArrowLeft size={14} className="text-[#06B6D4]" />
-          <span>Voltar ao Dashboard</span>
-        </button>
-      </div>
-
       {/* Cabeçalho da Página */}
       <section className="page-head events-page-head">
         <div>
-          <p className="eyebrow">GESTÃO DE EVENTOS</p>
           <h1>Eventos</h1>
-          <p className="head-subtitle">
-            Acompanhe vendas, ocupação, disponibilidade, configurações e comparativos comerciais.
-          </p>
         </div>
 
         <div className="toolbar events-toolbar events-toolbar-enhanced">
@@ -263,40 +248,6 @@ export default function EventsPage({
           </div>
         </div>
       )}
-
-      {/* Faixa de Indicadores de Resumo */}
-      <section className="summary-strip events-summary-strip">
-        <div>
-          <span>Eventos encontrados</span>
-          <strong>{filtered.length}</strong>
-        </div>
-        <div>
-          <span>Ingressos disponíveis</span>
-          <strong>
-            {filtered.reduce((a, b) => a + b.available, 0).toLocaleString('pt-BR')}
-          </strong>
-        </div>
-        <div>
-          <span>Vendas</span>
-          <strong>
-            {filtered.reduce((a, b) => a + b.sales, 0).toLocaleString('pt-BR')}
-          </strong>
-        </div>
-        <div>
-          <span>Receita</span>
-          <strong className="events-revenue-full">
-            {revenue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </strong>
-          <strong className="events-revenue-compact">
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-              notation: 'compact',
-              maximumFractionDigits: 2
-            }).format(revenue)}
-          </strong>
-        </div>
-      </section>
 
       {/* Grid de Cards com suporte a Horizontal e Vertical (2–6 Colunas) */}
       <section

@@ -8,24 +8,53 @@
   flex-wrap: wrap;
 }
 
+.events-compare-btn {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: #0F172A;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.events-compare-btn:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.events-compare-btn.active {
+  background: #EFF6FF;
+  border-color: #2563EB;
+  color: #2563EB;
+}
+
 .events-view-modes {
   display: inline-flex;
-  background: #F1F5F9;
+  background: #FFFFFF;
   padding: 2px;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #E2E8F0;
   align-items: center;
+  height: 38px;
 }
 
 .events-mode-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border-radius: 6px;
+  gap: 6px;
+  padding: 0 12px;
+  height: 32px;
+  border-radius: 5px;
   border: none;
   background: transparent;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #64748B;
   cursor: pointer;
@@ -37,9 +66,45 @@
 }
 
 .events-mode-btn.active {
-  background: #0F172A;
-  color: #FFFFFF;
+  background: #F1F5F9;
+  color: #0F172A;
   font-weight: 700;
+}
+
+.events-status-tabs {
+  display: inline-flex;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 38px;
+}
+
+.events-status-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 100%;
+  border: none;
+  border-right: 1px solid #E2E8F0;
+  background: #FFFFFF;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0F172A;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.events-status-tabs button:last-child {
+  border-right: none;
+}
+
+.events-status-tabs button.active {
+  background: #EFF6FF;
+  color: #2563EB;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1px #3B82F6;
 }
 
 /* Seletor de Colunas (2, 3, 4, 5, 6) */
@@ -203,14 +268,15 @@
 
 .event-grid.view-horizontal .event-card {
   display: grid !important;
-  grid-template-columns: 210px 1fr !important;
-  min-height: 190px !important;
+  grid-template-columns: 165px 1fr !important;
+  min-height: 195px !important;
+  height: 195px !important;
 }
 
 .event-grid.view-horizontal .event-cover {
-  width: 210px !important;
+  width: 165px !important;
   height: 100% !important;
-  min-height: 190px !important;
+  min-height: 195px !important;
 }
 
 .event-grid.view-vertical {
@@ -251,10 +317,29 @@
 }
 
 /* ===== PADRONIZAÇÃO VISUAL OFICIAL DOS CARDS (MATCHING REFERENCE) ===== */
+.events-page-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin-bottom: 20px !important;
+  padding: 4px 0 16px !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  flex-wrap: wrap !important;
+}
+
+.events-page-head h1 {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #0F172A !important;
+  margin: 0 !important;
+  letter-spacing: -0.02em !important;
+}
+
 .event-card {
   background: #FFFFFF !important;
   border: 1px solid #E2E8F0 !important;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
   overflow: hidden !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease !important;
@@ -271,13 +356,12 @@
   position: relative !important;
   background-size: cover !important;
   background-position: center !important;
+  background-repeat: no-repeat !important;
   overflow: hidden !important;
+  background-color: #0F172A !important;
 }
 
-.event-card .event-cover .cover-overlay {
-  display: none !important;
-}
-
+.event-card .event-cover .cover-overlay,
 .event-card .event-cover .cover-badge {
   display: none !important;
 }
@@ -293,27 +377,27 @@
   font-size: 11px !important;
   font-weight: 700 !important;
   z-index: 3 !important;
-  font-family: 'JetBrains Mono', monospace !important;
 }
 
 .event-card .event-body {
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
-  padding: 14px 16px 12px !important;
+  padding: 12px 14px 10px 14px !important;
   min-width: 0 !important;
   flex: 1 !important;
+  background: #FFFFFF !important;
 }
 
-.event-card .title-with-status {
+.event-card .event-info {
   display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
-  margin-bottom: 2px !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid #E2E8F0 !important;
 }
 
-.event-card .title-with-status h3 {
+.event-card .event-info h3 {
   font-size: 14px !important;
   font-weight: 700 !important;
   color: #0F172A !important;
@@ -325,22 +409,13 @@
   overflow: hidden !important;
 }
 
-.event-card .status-pill {
-  font-size: 9px !important;
-  font-weight: 700 !important;
-  padding: 2px 6px !important;
-  border-radius: 4px !important;
-  text-transform: uppercase !important;
-  flex-shrink: 0 !important;
-}
-
 .event-card .venue {
   display: flex !important;
   align-items: center !important;
   gap: 4px !important;
-  font-size: 11px !important;
+  font-size: 11.5px !important;
   color: #64748B !important;
-  margin: 4px 0 0 0 !important;
+  margin: 0 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -354,9 +429,9 @@
 .event-card .metrics {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  gap: 6px !important;
-  margin-top: 14px !important;
-  margin-bottom: 10px !important;
+  gap: 2px !important;
+  margin-top: 10px !important;
+  margin-bottom: 6px !important;
   padding: 0 !important;
 }
 
@@ -365,22 +440,25 @@
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
+  overflow: hidden !important;
 }
 
 .event-card .metric span {
   display: block !important;
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 500 !important;
   color: #64748B !important;
   margin-bottom: 3px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  letter-spacing: -0.01em !important;
+  max-width: 100% !important;
 }
 
 .event-card .metric strong {
   display: block !important;
-  font-size: 14px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
   color: #0F172A !important;
   white-space: nowrap !important;
@@ -394,7 +472,7 @@
 .event-card .metric-line,
 .event-card i.metric-line {
   display: block !important;
-  width: 30px !important;
+  width: 32px !important;
   height: 2px !important;
   min-height: 2px !important;
   max-height: 2px !important;
@@ -404,8 +482,8 @@
   box-shadow: none !important;
 }
 
-.event-card .metric-line.green { background: #10B981 !important; }
-.event-card .metric-line.blue { background: #2563EB !important; }
+.event-card .metric-line.green { background: #0D9488 !important; }
+.event-card .metric-line.blue { background: #0284C7 !important; }
 .event-card .metric-line.cyan { background: #06B6D4 !important; }
 .event-card .metric-line.slate { background: #94A3B8 !important; }
 .event-card .metric-line.orange { background: #DC2626 !important; }
@@ -413,19 +491,20 @@
 .event-card .card-footer {
   margin-top: auto !important;
   padding-top: 8px !important;
-  border-top: 1px solid #F1F5F9 !important;
+  border-top: 1px solid #E2E8F0 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  min-height: 34px !important;
+  min-height: 30px !important;
 }
 
 .event-card .card-footer > span {
   display: flex !important;
   align-items: center !important;
-  gap: 5px !important;
+  gap: 4px !important;
   color: #64748B !important;
   font-size: 11px !important;
+  white-space: nowrap !important;
 }
 
 .event-card .card-footer > span svg {
@@ -439,10 +518,10 @@
 }
 
 .event-card .actions button {
-  width: 26px !important;
-  height: 26px !important;
-  border-radius: 5px !important;
-  border: 1px solid transparent !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 4px !important;
+  border: none !important;
   background: transparent !important;
   color: #64748B !important;
   display: grid !important;
@@ -455,7 +534,6 @@
 .event-card .actions button:hover {
   background: #F1F5F9 !important;
   color: #0F172A !important;
-  border-color: #E2E8F0 !important;
 }
 
 @media (max-width: 1400px) {
