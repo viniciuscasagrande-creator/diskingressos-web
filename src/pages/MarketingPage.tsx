@@ -28,6 +28,25 @@ import {
   type MarketingCampaign, type ResolvedTracking, type TrackingConfig
 } from '../services/api'
 
+const defaultFallbackEvent: EventItem = {
+  id: 0,
+  code: 'GERAL',
+  title: 'Todos os Eventos / Geral',
+  venue: 'Geral',
+  city: 'Brasil',
+  date: '11/09/2026',
+  total: 'R$ 0,00',
+  sales: 0,
+  available: 0,
+  courtesy: 0,
+  occupancy: '0%',
+  cover: 'nature',
+  status: 'ativo',
+  producer: 'Produtora',
+  visibility: 'publico',
+  producerId: 1
+}
+
 export type Mode =
   | 'hub'
   | 'dashboard'
@@ -176,7 +195,12 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
   useEffect(() => {
     sessionStorage.setItem(contextKey, JSON.stringify({ eventId, period }))
   }, [contextKey, eventId, period])
-  const selectedEvent = events.find(e => String(e.id) === eventId) || events[0]
+  const fallbackEvent: EventItem = useMemo(() => ({
+    ...defaultFallbackEvent,
+    producer: producerName || 'Produtora',
+    producerId: producerId || 1
+  }), [producerName, producerId])
+  const selectedEvent: EventItem = events.find(e => String(e.id) === eventId) || events[0] || fallbackEvent
   const eventName = useMemo(() => eventId === 'all' ? 'Todos os eventos' : events.find(e => String(e.id) === eventId)?.title || 'Evento', [eventId, events])
 
   /* -------------------------------------------------------------------------
@@ -438,12 +462,14 @@ function Dashboard({ producerName, events, eventId, setEventId, period, setPerio
 }
 
 // 2. Meta Ads Manager
-function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function MetaAdsManager({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [metaCampaigns, setMetaCampaigns] = useState([
-    { id: 1, name: `${event.title} — Stories Lançamento 1º Lote`, format: 'Instagram Stories', budget: 1500, spent: 1240, ctr: '3,8%', cpa: 'R$ 16,40', sales: 75, roas: '4,8x', status: 'ativa' },
-    { id: 2, name: `${event.title} — Reels Vídeo Teaser & Lineup`, format: 'Instagram Reels', budget: 2000, spent: 1850, ctr: '4,2%', cpa: 'R$ 18,20', sales: 101, roas: '5,1x', status: 'ativa' },
-    { id: 3, name: `${event.title} — Remarketing Checkout Abandonado`, format: 'Facebook Feed', budget: 800, spent: 620, ctr: '5,6%', cpa: 'R$ 11,50', sales: 54, roas: '8,2x', status: 'ativa' }
+    { id: 1, name: `${eventTitle} — Stories Lançamento 1º Lote`, format: 'Instagram Stories', budget: 1500, spent: 1240, ctr: '3,8%', cpa: 'R$ 16,40', sales: 75, roas: '4,8x', status: 'ativa' },
+    { id: 2, name: `${eventTitle} — Reels Vídeo Teaser & Lineup`, format: 'Instagram Reels', budget: 2000, spent: 1850, ctr: '4,2%', cpa: 'R$ 18,20', sales: 101, roas: '5,1x', status: 'ativa' },
+    { id: 3, name: `${eventTitle} — Remarketing Checkout Abandonado`, format: 'Facebook Feed', budget: 800, spent: 620, ctr: '5,6%', cpa: 'R$ 11,50', sales: 54, roas: '8,2x', status: 'ativa' }
   ])
 
   // Form states
@@ -458,7 +484,7 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
 
   const handleCreateAd = (e: React.FormEvent) => {
     e.preventDefault()
-    const nameToUse = adName || `${event.title} — ${adFormat}`
+    const nameToUse = adName || `${eventTitle} — ${adFormat}`
     const newAd = {
       id: Date.now(),
       name: nameToUse,
@@ -493,7 +519,7 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>META BUSINESS MANAGER & ADS CAPI</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Meta Ads — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Meta Ads — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Gerencie anúncios no Facebook e Instagram com sincronização em tempo real via Conversions API (CAPI).</p>
         </div>
         <div className="page-actions" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -601,7 +627,7 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
                   Criar Anúncio Meta Ads
                 </h3>
                 <p style={{ margin: '3px 0 0', fontSize: '12px', color: '#64748B' }}>
-                  O anúncio será configurado para o evento <strong>{event.title}</strong> com UTM automática.
+                  O anúncio será configurado para o evento <strong>{eventTitle}</strong> com UTM automática.
                 </p>
               </div>
               <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}>
@@ -617,7 +643,7 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
                 <input
                   type="text"
                   required
-                  placeholder={`Ex: ${event.title} — Stories Lançamento`}
+                  placeholder={`Ex: ${eventTitle} — Stories Lançamento`}
                   value={adName}
                   onChange={e => setAdName(e.target.value)}
                   style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }}
@@ -678,7 +704,7 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
                   PARÂMETROS UTM & CONVERSION API
                 </span>
                 <code style={{ fontSize: '10px', color: '#2563EB', wordBreak: 'break-all', display: 'block' }}>
-                  https://www.diskingressos.com.br/evento/{event.id}?utm_source=instagram&utm_medium=stories_ads&utm_campaign=meta_{event.code.toLowerCase()}
+                  https://www.diskingressos.com.br/evento/{safeEvent.id}?utm_source=instagram&utm_medium=stories_ads&utm_campaign=meta_{(safeEvent.code || 'gbl').toLowerCase()}
                 </code>
               </div>
 
@@ -699,12 +725,15 @@ function MetaAdsManager({ events, event, notify }: { events: EventItem[]; event:
 }
 
 // 3. Google Ads Manager
-function GoogleAdsManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function GoogleAdsManager({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
+  const eventKeyword = eventTitle.toLowerCase()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [keywords, setKeywords] = useState([
-    { kw: `ingressos ${event.title.toLowerCase()}`, cpc: 'R$ 0,65', clicks: 4210, conv: 142, roas: '6,2x' },
-    { kw: `show ${event.title.toLowerCase()} curitiba`, cpc: 'R$ 0,82', clicks: 2890, conv: 98, roas: '5,8x' },
-    { kw: `comprar ingresso ${event.title.toLowerCase()}`, cpc: 'R$ 0,95', clicks: 1750, conv: 84, roas: '7,4x' }
+    { kw: `ingressos ${eventKeyword}`, cpc: 'R$ 0,65', clicks: 4210, conv: 142, roas: '6,2x' },
+    { kw: `show ${eventKeyword} curitiba`, cpc: 'R$ 0,82', clicks: 2890, conv: 98, roas: '5,8x' },
+    { kw: `comprar ingresso ${eventKeyword}`, cpc: 'R$ 0,95', clicks: 1750, conv: 84, roas: '7,4x' }
   ])
 
   const [newKw, setNewKw] = useState('')
@@ -731,7 +760,7 @@ function GoogleAdsManager({ events, event, notify }: { events: EventItem[]; even
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>GOOGLE ADS & SEARCH ENGINE</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Google Ads — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Google Ads — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Campanhas de intenção direta de compra na Rede de Pesquisa e YouTube Ads.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
@@ -815,11 +844,13 @@ function GoogleAdsManager({ events, event, notify }: { events: EventItem[]; even
 }
 
 // 4. TikTok Ads Manager
-function TikTokAdsManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function TikTokAdsManager({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [sparkAds, setSparkAds] = useState([
-    { id: 1, name: `${event.title} — Viral TikTok Teaser`, videoId: '@diskingressos/video/739182', spent: 1450, views: '112.400', cpm: 'R$ 12,90', sales: 58, status: 'ativa' },
-    { id: 2, name: `${event.title} — Bastidores & Lineup`, videoId: '@diskingressos/video/739194', spent: 1000, views: '71.800', cpm: 'R$ 13,92', sales: 36, status: 'ativa' }
+    { id: 1, name: `${eventTitle} — Viral TikTok Teaser`, videoId: '@diskingressos/video/739182', spent: 1450, views: '112.400', cpm: 'R$ 12,90', sales: 58, status: 'ativa' },
+    { id: 2, name: `${eventTitle} — Bastidores & Lineup`, videoId: '@diskingressos/video/739194', spent: 1000, views: '71.800', cpm: 'R$ 13,92', sales: 36, status: 'ativa' }
   ])
 
   const [adName, setAdName] = useState('')
@@ -830,7 +861,7 @@ function TikTokAdsManager({ events, event, notify }: { events: EventItem[]; even
     e.preventDefault()
     const row = {
       id: Date.now(),
-      name: adName || `${event.title} — TikTok Spark Ad`,
+      name: adName || `${eventTitle} — TikTok Spark Ad`,
       videoId: videoCode || '@diskingressos/spark/new',
       spent: 0,
       views: '0',
@@ -850,7 +881,7 @@ function TikTokAdsManager({ events, event, notify }: { events: EventItem[]; even
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>TIKTOK ADS & SPARK ADS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>TikTok Ads — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>TikTok Ads — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Campanhas virais em vídeo com rastreamento via TikTok Pixel & Event API.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#0F172A', borderColor: '#0F172A', fontSize: '12px' }}>
@@ -912,7 +943,7 @@ function TikTokAdsManager({ events, event, notify }: { events: EventItem[]; even
             <form onSubmit={handleCreateSparkAd} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Nome da Campanha *</label>
-                <input type="text" required placeholder={`Ex: ${event.title} — Viral Teaser`} value={adName} onChange={e => setAdName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
+                <input type="text" required placeholder={`Ex: ${eventTitle} — Viral Teaser`} value={adName} onChange={e => setAdName(e.target.value)} style={{ width: '100%', height: '38px', borderRadius: '6px', border: '1px solid #CBD5E1', padding: '0 10px', fontSize: '13px' }} />
               </div>
               <div>
                 <label style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', marginBottom: '4px' }}>Código de Autorização Spark Ad / URL do Vídeo</label>
@@ -935,12 +966,15 @@ function TikTokAdsManager({ events, event, notify }: { events: EventItem[]; even
 }
 
 // 5. Influenciadores & Promoters
-function InfluencerManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function InfluencerManager({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventIdToUse = safeEvent.id || 0
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [influencers, setInfluencers] = useState([
-    { id: 1, name: 'Curitiba Cult', handle: '@curitibacult', link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=curitibacult`, commission: '10%', sales: 142, revenue: 24140, status: 'ativo' },
-    { id: 2, name: 'Lucas Baladas PR', handle: '@lucasbaladas', link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=lucasbaladas`, commission: 'R$ 15/ing', sales: 98, revenue: 16660, status: 'ativo' },
-    { id: 3, name: 'Gabi Entretenimento', handle: '@gabishows', link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=gabishows`, commission: '10%', sales: 64, revenue: 10880, status: 'ativo' }
+    { id: 1, name: 'Curitiba Cult', handle: '@curitibacult', link: `https://diskingressos.com.br/evento/${eventIdToUse}?utm_source=influencer&utm_medium=curitibacult`, commission: '10%', sales: 142, revenue: 24140, status: 'ativo' },
+    { id: 2, name: 'Lucas Baladas PR', handle: '@lucasbaladas', link: `https://diskingressos.com.br/evento/${eventIdToUse}?utm_source=influencer&utm_medium=lucasbaladas`, commission: 'R$ 15/ing', sales: 98, revenue: 16660, status: 'ativo' },
+    { id: 3, name: 'Gabi Entretenimento', handle: '@gabishows', link: `https://diskingressos.com.br/evento/${eventIdToUse}?utm_source=influencer&utm_medium=gabishows`, commission: '10%', sales: 64, revenue: 10880, status: 'ativo' }
   ])
 
   const [name, setName] = useState('')
@@ -956,7 +990,7 @@ function InfluencerManager({ events, event, notify }: { events: EventItem[]; eve
       id: Date.now(),
       name,
       handle: cleanHandle,
-      link: `https://diskingressos.com.br/evento/${event.id}?utm_source=influencer&utm_medium=${slug}`,
+      link: `https://diskingressos.com.br/evento/${eventIdToUse}?utm_source=influencer&utm_medium=${slug}`,
       commission,
       sales: 0,
       revenue: 0,
@@ -979,7 +1013,7 @@ function InfluencerManager({ events, event, notify }: { events: EventItem[]; eve
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>REDE DE INFLUENCIADORES & PARCERIAS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Influenciadores & Promoters — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Influenciadores & Promoters — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Acompanhe as vendas individuais de criadores de conteúdo com links UTM exclusivos.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#7C3AED', borderColor: '#7C3AED', fontSize: '12px' }}>
@@ -1076,7 +1110,9 @@ function InfluencerManager({ events, event, notify }: { events: EventItem[]; eve
 }
 
 // 6. CRM de Marketing
-function MarketingCrmPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function MarketingCrmPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const leads = [
     { id: 1, name: 'Rodrigo Medeiros', email: 'rodrigo@email.com', phone: '(41) 99881-2233', stage: 'VIP (Comprador > R$ 500)', utm: 'instagram / stories', orders: 3, totalSpent: 780 },
     { id: 2, name: 'Juliana Castro', email: 'juliana@email.com', phone: '(41) 98712-4411', stage: 'Checkout Iniciado (2h atrás)', utm: 'whatsapp / base_vip', orders: 0, totalSpent: 0 },
@@ -1088,7 +1124,7 @@ function MarketingCrmPage({ events, event, notify }: { events: EventItem[]; even
       <div className="growth-intro growth-actions">
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>CRM DE MARKETING & LEADS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>CRM de Relacionamento — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>CRM de Relacionamento — {eventTitle}</h2>
           <p style={{ color: '#64748B' }}>Histórico completo, tags e ações 1-a-1 por WhatsApp e E-mail.</p>
         </div>
         <button className="btn primary" onClick={() => notify('Exportando base de leads para CSV...')}>
@@ -1122,7 +1158,9 @@ function MarketingCrmPage({ events, event, notify }: { events: EventItem[]; even
 }
 
 // 7. Públicos & Segmentação
-function AudiencesPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function AudiencesPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [audiences, setAudiences] = useState([
     { name: 'Compradores VIP (Ticket Médio > R$ 300)', size: '1.240 contatos', capi: 'Sincronizado', color: '#16A34A' },
@@ -1153,7 +1191,7 @@ function AudiencesPage({ events, event, notify }: { events: EventItem[]; event: 
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>AUDIÊNCIAS & SEGMENTAÇÃO</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Públicos Personalizados — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Públicos Personalizados — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Crie listas para remarketing e sincronize com Meta Custom Audiences e Google Ads.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
@@ -1221,7 +1259,9 @@ function AudiencesPage({ events, event, notify }: { events: EventItem[]; event: 
 }
 
 // 8. Cashback Promocional
-function CashbackPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function CashbackPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [rules, setRules] = useState([
     { id: 1, name: 'Cashback 5% no Pix', paymentMethod: 'PIX', percentage: '5%', validity: '45 dias', status: 'ativo' },
@@ -1254,7 +1294,7 @@ function CashbackPage({ events, event, notify }: { events: EventItem[]; event: E
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>MOTOR DE CASHBACK & RECOMPENSAS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Cashback Promocional — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Cashback Promocional — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Conceda saldo promocional de volta na carteira do cliente para compras futuras.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#D97706', borderColor: '#D97706', fontSize: '12px' }}>
@@ -1343,7 +1383,9 @@ function CashbackPage({ events, event, notify }: { events: EventItem[]; event: E
 }
 
 // 9. Coins / Pontos de Fidelidade
-function DiskCoinsPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function DiskCoinsPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [rewards, setRewards] = useState([
     { id: 1, name: 'Copo Oficial do Evento', cost: '300 coins', category: 'Brinde Oficial', stock: 150 },
@@ -1376,7 +1418,7 @@ function DiskCoinsPage({ events, event, notify }: { events: EventItem[]; event: 
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>PROGRAMA DE PONTOS DISKCOINS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>DiskCoins Fidelidade — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>DiskCoins Fidelidade — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Acúmulo automático de pontos por real gasto em ingressos.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#0D9488', borderColor: '#0D9488', fontSize: '12px' }}>
@@ -1466,7 +1508,9 @@ function DiskCoinsPage({ events, event, notify }: { events: EventItem[]; event: 
 }
 
 // 10. Gamificação de Eventos
-function GamificationPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function GamificationPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [missions, setMissions] = useState([
     { title: 'Compre no 1º Lote', desc: 'Garanta seu ingresso nas primeiras 48h', reward: '500 Coins + Badge Fã VIP', progress: '1.240 completaram' },
@@ -1500,7 +1544,7 @@ function GamificationPage({ events, event, notify }: { events: EventItem[]; even
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>MISSÕES & GAMIFICAÇÃO</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Gamificação do Evento — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Gamificação do Evento — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Engaje o público com desafios e libere benefícios exclusivos.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#D97706', borderColor: '#D97706', fontSize: '12px' }}>
@@ -1562,7 +1606,9 @@ function GamificationPage({ events, event, notify }: { events: EventItem[]; even
 }
 
 // 11. Indique e Ganhe
-function ReferralProgramPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function ReferralProgramPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [bonusPercent, setBonusPercent] = useState('10')
   const [friendDiscount, setFriendDiscount] = useState('5')
@@ -1578,7 +1624,7 @@ function ReferralProgramPage({ events, event, notify }: { events: EventItem[]; e
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>PROGRAMA DE INDICAÇÃO</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Indique e Ganhe — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Indique e Ganhe — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Transforme seus clientes em promotores ativos do evento.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
@@ -1637,7 +1683,9 @@ function ReferralProgramPage({ events, event, notify }: { events: EventItem[]; e
 }
 
 // 12. Afiliados & Parceiros
-function AffiliatesManager({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function AffiliatesManager({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [affiliates, setAffiliates] = useState([
     { id: 1, name: 'Curitiba Shows PR', code: 'PROMOTER_CURITIBA', commission: '8%', sales: 342, revenue: 54720, status: 'ativo' },
@@ -1672,7 +1720,7 @@ function AffiliatesManager({ events, event, notify }: { events: EventItem[]; eve
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>REDE DE AFILIADOS OFICIAIS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Afiliados e Promoters — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Afiliados e Promoters — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Gestão de comissionamento automático para promotores parceiros.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
@@ -1760,7 +1808,9 @@ function AffiliatesManager({ events, event, notify }: { events: EventItem[]; eve
 }
 
 // 13. Central de Conversões (Jornada Multi-Touch)
-function ConversionJourneyPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function ConversionJourneyPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const touchpoints = [
     { step: '1. Clique no Anúncio', channel: 'Instagram Stories (UTM: lancamento_2026)', count: '14.850 cliques', rate: '100%' },
     { step: '2. Sessão no Site', channel: 'Landing Page Oficial DiskIngressos', count: '11.880 sessões', rate: '80,0%' },
@@ -1774,7 +1824,7 @@ function ConversionJourneyPage({ events, event, notify }: { events: EventItem[];
       <div className="growth-intro growth-actions">
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>JORNADA DE ATRIBUIÇÃO MULTI-TOUCH</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Central de Conversões — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px' }}>Central de Conversões — {eventTitle}</h2>
           <p style={{ color: '#64748B' }}>Mapeamento ponta a ponta desde o primeiro ponto de contato até a emissão do ingresso.</p>
         </div>
         <button className="btn secondary" onClick={() => notify('Exportando fluxo de conversão...')}>
@@ -1802,7 +1852,9 @@ function ConversionJourneyPage({ events, event, notify }: { events: EventItem[];
 }
 
 // 14. Recuperação de Vendas & Remarketing
-function RecoverySalesPage({ events, event, notify }: { events: EventItem[]; event: EventItem; notify: (m: string) => void }) {
+function RecoverySalesPage({ events, event = defaultFallbackEvent, notify }: { events: EventItem[]; event?: EventItem; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [abandonedList, setAbandonedList] = useState([
     { id: 1, name: 'Marcos Vinicius', email: 'marcos.v@email.com', phone: '(41) 99771-4433', items: '2x Pista Premium', value: 360, time: '35 min atrás', channel: 'WhatsApp', status: 'pendente' },
@@ -1829,7 +1881,7 @@ function RecoverySalesPage({ events, event, notify }: { events: EventItem[]; eve
       <div className="growth-intro growth-actions" style={{ borderBottom: '1px solid #E2E8F0', paddingBottom: '14px' }}>
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>RECUPERAÇÃO OPERACIONAL DE VENDAS</p>
-          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Recuperação de Vendas — {event.title}</h2>
+          <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Recuperação de Vendas — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Resgate carrinhos e checkouts abandonados com disparos automáticos de WhatsApp e e-mail.</p>
         </div>
         <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#2563EB', borderColor: '#2563EB', fontSize: '12px' }}>
@@ -1925,7 +1977,9 @@ function RecoverySalesPage({ events, event, notify }: { events: EventItem[]; eve
 }
 
 // 15. Performance por Canal, Ranking & Insights
-function ChannelPerformancePage({ events, event, subMode, notify }: { events: EventItem[]; event: EventItem; subMode: Mode; notify: (m: string) => void }) {
+function ChannelPerformancePage({ events, event = defaultFallbackEvent, subMode, notify }: { events: EventItem[]; event?: EventItem; subMode: Mode; notify: (m: string) => void }) {
+  const safeEvent = event || defaultFallbackEvent
+  const eventTitle = safeEvent.title || 'Todos os Eventos'
   const channelData = [
     { channel: 'Instagram Ads', spent: 4500, sales: 245, revenue: 39200, roi: '771%', cpa: 'R$ 18,36', rank: '🥇 1º' },
     { channel: 'Google Search Ads', spent: 3200, sales: 154, revenue: 26180, roi: '718%', cpa: 'R$ 20,77', rank: '🥈 2º' },
@@ -1940,7 +1994,7 @@ function ChannelPerformancePage({ events, event, subMode, notify }: { events: Ev
         <div>
           <p className="eyebrow" style={{ color: '#2563EB', fontWeight: 800 }}>INTELIGÊNCIA DE PERFORMANCE & CANAIS</p>
           <h2 style={{ color: '#0F172A', fontSize: '22px' }}>
-            {subMode === 'campaign-ranking' ? 'Ranking de Campanhas' : subMode === 'funnel-insights' ? 'Diagnóstico do Funil & Insights' : 'Performance por Canal'} — {event.title}
+            {subMode === 'campaign-ranking' ? 'Ranking de Campanhas' : subMode === 'funnel-insights' ? 'Diagnóstico do Funil & Insights' : 'Performance por Canal'} — {eventTitle}
           </h2>
           <p style={{ color: '#64748B' }}>Comparação de ROI, ROAS, CPA e eficiência econômica de cada canal.</p>
         </div>

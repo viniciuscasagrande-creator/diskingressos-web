@@ -106,4 +106,22 @@ test.describe('Fase 28.1.1 — Submenu Spotify Ads no Menu Marketing', () => {
     await expect(page).toHaveURL(/\/app\/marketing\/spotify/)
     await expect(page.getByRole('heading', { name: /Central de Mídia Spotify Ads & Conversões CAPI/i })).toBeVisible()
   })
+
+  test('4. Spotify Ads aparece dentro do Marketing (Teste Direto)', async ({ page }) => {
+    await page.goto('/app/events')
+
+    const sidebar = page.locator('.module-sidebar')
+    const marketingSectionBtn = sidebar.getByTestId('collapsible-marketing')
+    await marketingSectionBtn.click()
+
+    await expect(
+      sidebar.getByText('Spotify Ads')
+    ).toBeVisible()
+
+    await sidebar.getByText('Spotify Ads').click()
+
+    await expect(page).toHaveURL(
+      /\/app\/marketing\/spotify/
+    )
+  })
 })

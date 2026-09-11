@@ -343,6 +343,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const isMarketingActive = [
     'marketing', 'mkt-hub', 'mkt-dashboard', 'mkt-campaigns', 'mkt-new-campaign', 
+    'marketing-spotify', 'marketing-spotify-ads', 'mkt-spotify',
     'mkt-automations', 'mkt-whatsapp', 'mkt-email', 'mkt-coupons', 
     'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-comm-integrations', 'mkt-reports', 'campanhas', 
     'pixel-meta', 'google-analytics', 'cupons'
@@ -775,6 +776,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
                   <span>Campanhas</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('marketing-spotify')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'marketing-spotify' || currentPage === 'marketing-spotify-ads' || currentPage === 'mkt-spotify'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
+                  <span>Spotify Ads</span>
                 </button>
 
                 <button
