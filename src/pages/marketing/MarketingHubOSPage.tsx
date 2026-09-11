@@ -410,7 +410,7 @@ export default function MarketingHubOSPage(p: Props) {
               <small>Meta CAPI, GA4, GTM e TikTok conforme configuração.</small>
             </div>
           </div>
-          <button onClick={() => nav(onNavigate, notify, 'marketing-tracking', 'Pixel & Analytics')}>Ver dados e tracking</button>
+          <button onClick={() => nav(onNavigate, notify, 'marketing-tracking', 'Pixels e Conversões')}>Ver dados e tracking</button>
         </div>
 
         {/* Live Operational Activity */}
@@ -641,7 +641,7 @@ export default function MarketingHubOSPage(p: Props) {
               items={[
                 ['Central UTM', 'marketing-utm-central'],
                 ['Conversões', 'marketing-conversions'],
-                ['Pixel & Analytics', 'marketing-tracking'],
+                ['Pixels e Conversões', 'marketing-tracking'],
                 ['Relatórios & ROI', 'marketing-reports']
               ]}
               onNavigate={onNavigate}

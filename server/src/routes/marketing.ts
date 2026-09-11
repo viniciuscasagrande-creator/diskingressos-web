@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import crypto from 'node:crypto'
 import { prisma } from '../prisma.js'
+import { encryptTrackingToken, decryptTrackingToken, maskToken } from '../services/trackingCrypto.js'
 import { requireAuth, requireRoles, type AuthRequest } from '../middleware/auth.js'
 import { globalAdmin } from '../auth.js'
 import { requestedProducerId, writeProducerId, ownsProducer } from '../tenant.js'
@@ -122,14 +123,34 @@ const integrationSchema=z.object({
   pixelId:z.string().min(3),
   apiToken:z.string().min(8).optional().nullable(),
   status:z.enum(['ativo','inativo']).default('ativo'),
-  applyToAllEvents:z.boolean().default(true),
+  applyToAllEvents:z.boolean().default(false),
   eventIds:z.array(z.number().int().positive()).default([]),
   enabledEvents:z.array(z.string()).default(['PageView','ViewContent','AddToCart','InitiateCheckout','Purchase']),
   producerId:z.number().int().positive().optional()
 })
 
 function serializeIntegration(row:any){
-  return {...row,apiTokenMasked:row.tokenLast4?`••••••••••••${row.tokenLast4}`:'Não configurado',tokenCiphertext:undefined,tokenIv:undefined,tokenTag:undefined,enabledEvents:JSON.parse(row.enabledEventsJson||'[]')}
+  return {
+    ...row,
+    apiTokenMasked:maskToken(row.tokenLast4),
+    tokenCiphertext:undefined,
+    tokenIv:undefined,
+    tokenTag:undefined,
+    enabledEvents:JSON.parse(row.enabledEventsJson||'[]'),
+    events:row.events?.map((ev:any)=>({
+      id:ev.id,
+      integrationId:ev.integrationId,
+      eventId:ev.eventId,
+      enabled:ev.enabled,
+      isPrimary:ev.isPrimary,
+      trackingMode:ev.trackingMode,
+      configurationJson:ev.configurationJson,
+      createdAt:ev.createdAt,
+      updatedAt:ev.updatedAt,
+      event:ev.event,
+      rules:ev.rules||[]
+    }))
+  }
 }
 
 marketingRouter.get('/integrations',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
@@ -138,7 +159,7 @@ marketingRouter.get('/integrations',requireRoles(...marketingReadRoles),async(re
   const eventId=req.query.eventId?Number(req.query.eventId):undefined
   const rows=await prisma.trackingIntegration.findMany({
     where:{...(producerId?{producerId}:{}),...(eventId?{OR:[{applyToAllEvents:true},{events:{some:{eventId}}}]}:{})},
-    include:{events:{include:{event:{select:{id:true,title:true,code:true}}}},_count:{select:{deliveryLogs:true}}},orderBy:{createdAt:'desc'}
+    include:{events:{include:{event:{select:{id:true,title:true,code:true}},rules:{orderBy:{eventName:'asc'}}}},_count:{select:{deliveryLogs:true}}},orderBy:{createdAt:'desc'}
   })
   res.json(rows.map(serializeIntegration))
 })
@@ -148,7 +169,37 @@ marketingRouter.post('/integrations',requireRoles(...marketingWriteRoles),async(
   const body=parsed.data;const producerId=writeProducerId(req,body.producerId);if(!producerId)return res.status(400).json({message:'Produtora obrigatória.'})
   if(body.eventIds.length){const count=await prisma.event.count({where:{id:{in:body.eventIds},producerId}});if(count!==body.eventIds.length)return res.status(400).json({message:'Um ou mais eventos não pertencem à produtora selecionada.'})}
   const secret=body.apiToken?encryptTrackingToken(body.apiToken):null
-  const row=await prisma.trackingIntegration.create({data:{name:body.name,provider:body.provider,integrationType:body.integrationType,pixelId:body.pixelId,status:body.status,applyToAllEvents:body.applyToAllEvents,enabledEventsJson:JSON.stringify(body.enabledEvents),producerId,...(secret?{tokenCiphertext:secret.ciphertext,tokenIv:secret.iv,tokenTag:secret.tag,tokenLast4:secret.last4}:{}),events:!body.applyToAllEvents&&body.eventIds.length?{create:body.eventIds.map(eventId=>({eventId}))}:undefined},include:{events:{include:{event:{select:{id:true,title:true,code:true}}}},_count:{select:{deliveryLogs:true}}}})
+  const eventsCreate=!body.applyToAllEvents&&body.eventIds.length?{
+    create:body.eventIds.map((eventId,idx)=>({
+      eventId,
+      enabled:true,
+      isPrimary:idx===0,
+      trackingMode:'HYBRID',
+      rules:{
+        create:body.enabledEvents.map(evtName=>({
+          eventName:evtName,
+          enabled:true,
+          browserEnabled:true,
+          serverEnabled:true
+        }))
+      }
+    }))
+  }:undefined
+  const row=await prisma.trackingIntegration.create({
+    data:{
+      name:body.name,
+      provider:body.provider,
+      integrationType:body.integrationType,
+      pixelId:body.pixelId,
+      status:body.status,
+      applyToAllEvents:body.applyToAllEvents,
+      enabledEventsJson:JSON.stringify(body.enabledEvents),
+      producerId,
+      ...(secret?{tokenCiphertext:secret.ciphertext,tokenIv:secret.iv,tokenTag:secret.tag,tokenLast4:secret.last4}:{}),
+      events:eventsCreate
+    },
+    include:{events:{include:{event:{select:{id:true,title:true,code:true}},rules:{orderBy:{eventName:'asc'}}}},_count:{select:{deliveryLogs:true}}}
+  })
   await audit(req,'marketing.integration.create','TrackingIntegration',String(row.id),{name:row.name,pixelId:row.pixelId,eventIds:body.eventIds})
   res.status(201).json(serializeIntegration(row))
 })
@@ -159,9 +210,41 @@ marketingRouter.patch('/integrations/:id',requireRoles(...marketingWriteRoles),a
   const body=parsed.data;const eventIds=body.eventIds
   if(eventIds){const count=await prisma.event.count({where:{id:{in:eventIds},producerId:current.producerId}});if(count!==eventIds.length)return res.status(400).json({message:'Evento fora da produtora.'})}
   const secret=body.apiToken?encryptTrackingToken(body.apiToken):null
+  const targetEvents=(body.enabledEvents||JSON.parse(current.enabledEventsJson||'[]')) as string[]
   const row=await prisma.$transaction(async tx=>{
     if(eventIds!==undefined||body.applyToAllEvents===true){await tx.trackingIntegrationEvent.deleteMany({where:{integrationId:id}})}
-    const updated=await tx.trackingIntegration.update({where:{id},data:{...(body.name!==undefined?{name:body.name}:{}),...(body.provider!==undefined?{provider:body.provider}:{}),...(body.integrationType!==undefined?{integrationType:body.integrationType}:{}),...(body.pixelId!==undefined?{pixelId:body.pixelId}:{}),...(body.status!==undefined?{status:body.status}:{}),...(body.applyToAllEvents!==undefined?{applyToAllEvents:body.applyToAllEvents}:{}),...(body.enabledEvents!==undefined?{enabledEventsJson:JSON.stringify(body.enabledEvents)}:{}),...(secret?{tokenCiphertext:secret.ciphertext,tokenIv:secret.iv,tokenTag:secret.tag,tokenLast4:secret.last4}:{}),...((eventIds&&body.applyToAllEvents!==true)?{events:{create:eventIds.map(eventId=>({eventId}))}}:{})},include:{events:{include:{event:{select:{id:true,title:true,code:true}}}},_count:{select:{deliveryLogs:true}}}})
+    const updated=await tx.trackingIntegration.update({
+      where:{id},
+      data:{
+        ...(body.name!==undefined?{name:body.name}:{}),
+        ...(body.provider!==undefined?{provider:body.provider}:{}),
+        ...(body.integrationType!==undefined?{integrationType:body.integrationType}:{}),
+        ...(body.pixelId!==undefined?{pixelId:body.pixelId}:{}),
+        ...(body.status!==undefined?{status:body.status}:{}),
+        ...(body.applyToAllEvents!==undefined?{applyToAllEvents:body.applyToAllEvents}:{}),
+        ...(body.enabledEvents!==undefined?{enabledEventsJson:JSON.stringify(body.enabledEvents)}:{}),
+        ...(secret?{tokenCiphertext:secret.ciphertext,tokenIv:secret.iv,tokenTag:secret.tag,tokenLast4:secret.last4}:{}),
+        ...((eventIds&&body.applyToAllEvents!==true)?{
+          events:{
+            create:eventIds.map((eventId,idx)=>({
+              eventId,
+              enabled:true,
+              isPrimary:idx===0,
+              trackingMode:'HYBRID',
+              rules:{
+                create:targetEvents.map(evtName=>({
+                  eventName:evtName,
+                  enabled:true,
+                  browserEnabled:true,
+                  serverEnabled:true
+                }))
+              }
+            }))
+          }
+        }:{})
+      },
+      include:{events:{include:{event:{select:{id:true,title:true,code:true}},rules:{orderBy:{eventName:'asc'}}}},_count:{select:{deliveryLogs:true}}}
+    })
     return updated
   })
   await audit(req,'marketing.integration.update','TrackingIntegration',String(id),{name:row.name,status:row.status,tokenReplaced:!!secret})
@@ -170,12 +253,29 @@ marketingRouter.patch('/integrations/:id',requireRoles(...marketingWriteRoles),a
 
 marketingRouter.delete('/integrations/:id',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
   const id=Number(req.params.id);const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
-  await prisma.trackingIntegration.delete({where:{id}});await audit(req,'marketing.integration.delete','TrackingIntegration',String(id),{name:current.name});res.status(204).end()
+  const logsCount=await prisma.trackingDeliveryLog.count({where:{integrationId:id}})
+  const dispatchesCount=await prisma.marketingConversionDispatch.count({where:{integrationId:id}})
+  const force=req.query.force==='true'
+  if(force&&logsCount===0&&dispatchesCount===0){
+    await prisma.trackingIntegration.delete({where:{id}})
+    await audit(req,'marketing.integration.delete','TrackingIntegration',String(id),{name:current.name,mode:'hard_delete'})
+  } else {
+    // Soft delete preservando histórico e integridade dos registros de auditoria e conversão
+    await prisma.trackingIntegration.update({where:{id},data:{status:'inativo'}})
+    await audit(req,'marketing.integration.deactivate','TrackingIntegration',String(id),{name:current.name,mode:'soft_delete'})
+  }
+  res.status(204).end()
 })
 
 marketingRouter.post('/integrations/:id/test',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
   const id=Number(req.params.id);const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
-  const ok=Boolean(current.pixelId&&current.tokenCiphertext&&current.status==='ativo');const now=new Date();const message=ok?`Configuração local de ${current.provider} válida. Credencial criptografada e integração pronta para uso pelo conector do provedor.`:'Identificador, credencial ou status da integração precisam ser revisados.'
+  let decryptedToken:string|null=null
+  if(current.tokenCiphertext&&current.tokenIv&&current.tokenTag){
+    decryptedToken=decryptTrackingToken(current.tokenCiphertext,current.tokenIv,current.tokenTag)
+  }
+  const ok=Boolean(current.pixelId&&(decryptedToken||current.tokenLast4)&&current.status==='ativo')
+  const now=new Date()
+  const message=ok?`Configuração local de ${current.provider} válida. Credencial AES-256 decifrada com sucesso e integração pronta para uso.`:'Identificador, credencial ou status da integração precisam ser revisados.'
   const updated=await prisma.trackingIntegration.update({where:{id},data:{lastTestAt:now,lastTestStatus:ok?'ok':'erro',lastError:ok?null:message}})
   await prisma.trackingDeliveryLog.create({data:{integrationId:id,producerId:current.producerId,eventName:'ConnectionTest',status:ok?'ok':'erro',responseCode:ok?200:400,message}})
   await audit(req,'marketing.integration.test','TrackingIntegration',String(id),{ok})
@@ -187,9 +287,140 @@ marketingRouter.get('/integrations/:id/logs',requireRoles(...marketingReadRoles)
   res.json(await prisma.trackingDeliveryLog.findMany({where:{integrationId:id},include:{event:{select:{id:true,title:true}}},orderBy:{createdAt:'desc'},take:50}))
 })
 
-function encryptTrackingToken(token:string){
-  const secret=process.env.TRACKING_TOKEN_SECRET||process.env.JWT_SECRET||'dev-only-change-me';const key=crypto.createHash('sha256').update(secret).digest();const iv=crypto.randomBytes(12);const cipher=crypto.createCipheriv('aes-256-gcm',key,iv);const ciphertext=Buffer.concat([cipher.update(token,'utf8'),cipher.final()]);const tag=cipher.getAuthTag();return {ciphertext:ciphertext.toString('base64'),iv:iv.toString('base64'),tag:tag.toString('base64'),last4:token.slice(-4)}
-}
+// Fase 28.14.2 — Multi-Pixel e Regras Granulares por Evento
+const assignmentUpdateSchema=z.object({
+  enabled:z.boolean().optional(),
+  isPrimary:z.boolean().optional(),
+  trackingMode:z.enum(['HYBRID','BROWSER','SERVER']).optional(),
+  configurationJson:z.string().optional(),
+  rules:z.array(z.object({
+    eventName:z.string(),
+    enabled:z.boolean().default(true),
+    browserEnabled:z.boolean().default(true),
+    serverEnabled:z.boolean().default(true)
+  })).optional()
+})
+
+marketingRouter.get('/events/:eventId/tracking-assignments',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
+  const eventId=Number(req.params.eventId)
+  if(!eventId)return res.status(400).json({message:'Identificador de evento inválido.'})
+  const event=await prisma.event.findUnique({where:{id:eventId},select:{id:true,title:true,code:true,producerId:true}})
+  if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'})
+
+  const [directAssignments,globalIntegrations]=await Promise.all([
+    prisma.trackingIntegrationEvent.findMany({
+      where:{eventId},
+      include:{integration:true,rules:{orderBy:{eventName:'asc'}}},
+      orderBy:[{isPrimary:'desc'},{createdAt:'asc'}]
+    }),
+    prisma.trackingIntegration.findMany({
+      where:{producerId:event.producerId,status:'ativo',applyToAllEvents:true},
+      include:{_count:{select:{deliveryLogs:true}}},
+      orderBy:{name:'asc'}
+    })
+  ])
+
+  res.json({
+    event:{id:event.id,title:event.title,code:event.code,producerId:event.producerId},
+    assignments:directAssignments.map(a=>({
+      id:a.id,
+      integrationId:a.integrationId,
+      eventId:a.eventId,
+      enabled:a.enabled,
+      isPrimary:a.isPrimary,
+      trackingMode:a.trackingMode,
+      configurationJson:a.configurationJson,
+      createdAt:a.createdAt,
+      updatedAt:a.updatedAt,
+      rules:a.rules,
+      integration:serializeIntegration(a.integration)
+    })),
+    globalIntegrations:globalIntegrations.map(serializeIntegration)
+  })
+})
+
+marketingRouter.put('/events/:eventId/tracking-assignments/:integrationId',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const eventId=Number(req.params.eventId);const integrationId=Number(req.params.integrationId)
+  if(!eventId||!integrationId)return res.status(400).json({message:'Parâmetros inválidos.'})
+  const event=await prisma.event.findUnique({where:{id:eventId}});if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'})
+  const integration=await prisma.trackingIntegration.findUnique({where:{id:integrationId}});if(!integration||!ownsProducer(req,integration.producerId))return res.status(404).json({message:'Integração não encontrada.'})
+  if(integration.producerId!==event.producerId)return res.status(400).json({message:'Integração e evento pertencem a produtoras distintas.'})
+
+  const parsed=assignmentUpdateSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({message:'Dados de associação inválidos.',issues:parsed.error.issues})
+  const body=parsed.data
+
+  const updatedAssignment=await prisma.$transaction(async tx=>{
+    if(body.isPrimary===true){
+      const sameProviderAssignments=await tx.trackingIntegrationEvent.findMany({where:{eventId,integration:{provider:integration.provider}},select:{id:true}})
+      if(sameProviderAssignments.length>0){
+        await tx.trackingIntegrationEvent.updateMany({where:{id:{in:sameProviderAssignments.map(s=>s.id)}},data:{isPrimary:false}})
+      }
+    }
+    const assignment=await tx.trackingIntegrationEvent.upsert({
+      where:{integrationId_eventId:{integrationId,eventId}},
+      create:{integrationId,eventId,enabled:body.enabled??true,isPrimary:body.isPrimary??false,trackingMode:body.trackingMode??'HYBRID',configurationJson:body.configurationJson??'{}'},
+      update:{...(body.enabled!==undefined?{enabled:body.enabled}:{}),...(body.isPrimary!==undefined?{isPrimary:body.isPrimary}:{}),...(body.trackingMode!==undefined?{trackingMode:body.trackingMode}:{}),...(body.configurationJson!==undefined?{configurationJson:body.configurationJson}:{})}
+    })
+
+    if(body.rules){
+      await tx.trackingEventRule.deleteMany({where:{assignmentId:assignment.id}})
+      if(body.rules.length>0){
+        await tx.trackingEventRule.createMany({data:body.rules.map(r=>({assignmentId:assignment.id,eventName:r.eventName,enabled:r.enabled,browserEnabled:r.browserEnabled,serverEnabled:r.serverEnabled}))})
+      }
+    } else {
+      const existingRulesCount=await tx.trackingEventRule.count({where:{assignmentId:assignment.id}})
+      if(existingRulesCount===0){
+        const enabledList=JSON.parse(integration.enabledEventsJson||'[]') as string[]
+        if(enabledList.length>0){
+          await tx.trackingEventRule.createMany({data:enabledList.map(evtName=>({assignmentId:assignment.id,eventName:evtName,enabled:true,browserEnabled:true,serverEnabled:true}))})
+        }
+      }
+    }
+
+    return await tx.trackingIntegrationEvent.findUnique({
+      where:{id:assignment.id},
+      include:{integration:true,rules:{orderBy:{eventName:'asc'}},event:{select:{id:true,title:true,code:true}}}
+    })
+  })
+
+  await audit(req,'marketing.tracking_assignment.save','TrackingIntegrationEvent',String(updatedAssignment?.id),{
+    eventId,
+    integrationId,
+    trackingMode:updatedAssignment?.trackingMode,
+    isPrimary:updatedAssignment?.isPrimary,
+    enabled:updatedAssignment?.enabled
+  })
+
+  res.json({
+    ...updatedAssignment,
+    integration:updatedAssignment?.integration?serializeIntegration(updatedAssignment.integration):null
+  })
+})
+
+marketingRouter.delete('/events/:eventId/tracking-assignments/:integrationId',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const eventId=Number(req.params.eventId);const integrationId=Number(req.params.integrationId)
+  if(!eventId||!integrationId)return res.status(400).json({message:'Parâmetros inválidos.'})
+  const event=await prisma.event.findUnique({where:{id:eventId}});if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'})
+
+  const existing=await prisma.trackingIntegrationEvent.findUnique({where:{integrationId_eventId:{integrationId,eventId}}})
+  if(!existing)return res.status(404).json({message:'Associação não encontrada.'})
+
+  await prisma.trackingIntegrationEvent.delete({where:{id:existing.id}})
+  await audit(req,'marketing.tracking_assignment.remove','TrackingIntegrationEvent',String(existing.id),{eventId,integrationId})
+  res.status(204).end()
+})
+
+marketingRouter.get('/integrations/:id/assignments',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id)
+  const current=await prisma.trackingIntegration.findUnique({where:{id}});if(!current||!ownsProducer(req,current.producerId))return res.status(404).json({message:'Integração não encontrada.'})
+  const assignments=await prisma.trackingIntegrationEvent.findMany({
+    where:{integrationId:id},
+    include:{event:{select:{id:true,title:true,code:true}},rules:{orderBy:{eventName:'asc'}}},
+    orderBy:{createdAt:'desc'}
+  })
+  res.json(assignments)
+})
+
 
 // Fase 21.1.2 — fonte consolidada do Marketing OS.
 // Evita que uma falha em um módulo derrube o Dashboard inteiro e diferencia

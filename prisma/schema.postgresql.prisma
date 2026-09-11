@@ -731,15 +731,38 @@ model TrackingIntegration {
 }
 
 model TrackingIntegrationEvent {
-  id            Int                 @id @default(autoincrement())
-  integrationId Int
-  eventId       Int
-  integration   TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
-  event         Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  createdAt     DateTime            @default(now())
+  id                Int                 @id @default(autoincrement())
+  integrationId     Int
+  eventId           Int
+  enabled           Boolean             @default(true)
+  isPrimary         Boolean             @default(false)
+  trackingMode      String              @default("HYBRID")
+  configurationJson String              @default("{}")
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @default(now()) @updatedAt
+  integration       TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  event             Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  rules             TrackingEventRule[]
 
   @@unique([integrationId, eventId])
   @@index([eventId])
+  @@index([integrationId])
+}
+
+model TrackingEventRule {
+  id             Int                      @id @default(autoincrement())
+  assignmentId   Int
+  eventName      String
+  enabled        Boolean                  @default(true)
+  browserEnabled Boolean                  @default(true)
+  serverEnabled  Boolean                  @default(true)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @default(now()) @updatedAt
+  assignment     TrackingIntegrationEvent @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, eventName])
+  @@index([assignmentId])
+  @@index([assignmentId, eventName])
 }
 
 model TrackingDeliveryLog {

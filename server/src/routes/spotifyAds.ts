@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { z } from 'zod'
 import crypto from 'node:crypto'
 import { prisma } from '../prisma.js'
+import { encryptTrackingToken } from '../services/trackingCrypto.js'
 import { requireAuth, requireRoles, type AuthRequest } from '../middleware/auth.js'
 import { globalAdmin } from '../auth.js'
 import { requestedProducerId, writeProducerId, ownsProducer } from '../tenant.js'
@@ -45,21 +46,8 @@ spotifyAdsRouter.use(requireAuth)
 const marketingWriteRoles = ['admin-master', 'admin', 'producer-admin', 'producer-marketing']
 const marketingReadRoles = [...marketingWriteRoles, 'viewer']
 
-// Auxiliar de Criptografia AES-256-GCM para credenciais Spotify em repouso
-function encryptSecret(token: string) {
-  const secret = process.env.TRACKING_TOKEN_SECRET || process.env.JWT_SECRET || 'dev-only-change-me'
-  const key = crypto.createHash('sha256').update(secret).digest()
-  const iv = crypto.randomBytes(12)
-  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv)
-  const ciphertext = Buffer.concat([cipher.update(token, 'utf8'), cipher.final()])
-  const tag = cipher.getAuthTag()
-  return {
-    ciphertext: ciphertext.toString('base64'),
-    iv: iv.toString('base64'),
-    tag: tag.toString('base64'),
-    last4: token.slice(-4)
-  }
-}
+// Auxiliar de Criptografia AES-256-GCM para credenciais Spotify em repouso (centralizado)
+const encryptSecret = (token: string) => encryptTrackingToken(token)
 
 // Armazenamento em memória para enriquecimento complementar (metadados específicos Spotify Ads v3)
 interface SpotifyMetaStore {

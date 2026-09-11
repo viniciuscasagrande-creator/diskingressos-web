@@ -162,7 +162,7 @@ const hubGroups: HubGroup[] = [
     modules: [
       { id: 'marketing-utm-central', title: 'Central UTM & Conversões', description: 'Dashboard executivo completo de UTMs.', icon: Link2, badge: 'Novo' },
       { id: 'marketing-links', title: 'Links, UTMs e QR Codes', description: 'URLs curtas e QR codes para totens/posts.', icon: QrCode },
-      { id: 'marketing-tracking', title: 'Pixel & Analytics', description: 'Meta CAPI, GA4, TikTok Pixel e GTM.', icon: Activity },
+      { id: 'marketing-tracking', title: 'Pixels e Conversões', description: 'Meta CAPI, GA4, TikTok Pixel, Spotify e GTM.', icon: Activity },
       { id: 'marketing-attribution', title: 'Atribuição Multicanal', description: 'UTM, click IDs, receita e ROAS por jornada.', icon: Scale, badge: '25.7.2' },
       { id: 'marketing-conversions', title: 'Central de Conversões', description: 'Jornada clique → sessão → carrinho → compra.', icon: MousePointerClick },
       { id: 'marketing-remarketing', title: 'Remarketing', description: 'Recuperação de checkouts e abandono.', icon: RefreshCw },

@@ -164,7 +164,7 @@ function Details({event,notify}:{event:EventItem;notify:(m:string)=>void}){
 }
 
 function Tracking({event,notify}:{event:EventItem;notify:(m:string)=>void}){
- return <div className="event-context-page"><HeaderBlock eyebrow="TRACKING" title="Pixel & Analytics" description="Múltiplos Pixels e Tokens API vinculados ao evento selecionado." event={event}/><TrackingIntegrationsManager producerId={event.producerId} events={[event]} fixedEventId={event.id} notify={notify}/></div>
+ return <div className="event-context-page"><HeaderBlock eyebrow="TRACKING" title="Pixels e Conversões" description="Múltiplos Pixels e Tokens API vinculados ao evento selecionado." event={event}/><TrackingIntegrationsManager producerId={event.producerId} events={[event]} fixedEventId={event.id} notify={notify}/></div>
 }
 
 function Ga4({event}:{event:EventItem}){

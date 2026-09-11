@@ -40,6 +40,7 @@ export interface MetaPixelConfig {
   googleAnalyticsId?: string;
   googleTagManagerId?: string;
   tiktokPixelId?: string;
+  additionalPixels?: { id: string; name: string; pixelId: string; token?: string; testCode?: string }[];
   activeUtms?: { source: string; medium: string; campaign: string; clicks: number; conversions: number }[];
 }
 

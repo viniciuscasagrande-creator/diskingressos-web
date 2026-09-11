@@ -218,7 +218,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'marketing-affiliates': 'Afiliados e Parceiros',
   'marketing-utm-central': 'Central UTM & Conversões',
   'marketing-links': 'Links, UTMs e QR Codes',
-  'marketing-tracking': 'Pixel & Analytics',
+  'marketing-tracking': 'Pixels e Conversões',
   'marketing-attribution': 'Atribuição Multicanal',
   'marketing-conversions': 'Central de Conversões',
   'marketing-remarketing': 'Remarketing',

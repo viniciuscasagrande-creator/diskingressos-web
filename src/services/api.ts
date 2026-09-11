@@ -125,8 +125,17 @@ export const updateCommunicationChannel=(id:number,body:any)=>request<Communicat
 export const getCommunicationQueue=(producerId?:number)=>request<any[]>(`/communication/queue${qs({producerId})}`)
 export const getContactConsents=(producerId?:number)=>request<ContactConsent[]>(`/communication/consents${qs({producerId})}`)
 
+export type TrackingEventRule={id:number;assignmentId:number;eventName:string;enabled:boolean;browserEnabled:boolean;serverEnabled:boolean}
+export type TrackingIntegrationEvent={
+ id:number;integrationId:number;eventId:number;enabled:boolean;isPrimary:boolean;trackingMode:'HYBRID'|'BROWSER'|'SERVER';configurationJson?:string;createdAt:string;updatedAt:string;event?:{id:number;title:string;code:string};rules?:TrackingEventRule[]
+}
 export type TrackingIntegration={
- id:number;name:string;provider:string;integrationType:string;pixelId:string;apiTokenMasked:string;status:string;applyToAllEvents:boolean;enabledEvents:string[];producerId:number;lastTestAt:string|null;lastTestStatus:string|null;lastError:string|null;lastSentAt:string|null;events:Array<{eventId:number;event:{id:number;title:string;code:string}}> ;_count?:{deliveryLogs:number};createdAt:string;updatedAt:string
+ id:number;name:string;provider:string;integrationType:string;pixelId:string;apiTokenMasked:string;status:string;applyToAllEvents:boolean;enabledEvents:string[];producerId:number;lastTestAt:string|null;lastTestStatus:string|null;lastError:string|null;lastSentAt:string|null;events:TrackingIntegrationEvent[];_count?:{deliveryLogs:number};createdAt:string;updatedAt:string
+}
+export type EventTrackingAssignmentsResponse={
+ event:{id:number;title:string;code:string;producerId:number};
+ assignments:Array<TrackingIntegrationEvent & {integration:TrackingIntegration}>;
+ globalIntegrations:TrackingIntegration[];
 }
 export type TrackingDeliveryLog={id:number;eventName:string;status:string;responseCode:number|null;message:string|null;createdAt:string;event?:{id:number;title:string}|null}
 export const getTrackingIntegrations=(producerId?:number,eventId?:number)=>request<TrackingIntegration[]>(`/marketing/integrations${qs({producerId,eventId})}`)
@@ -135,6 +144,10 @@ export const updateTrackingIntegration=(id:number,body:any)=>request<TrackingInt
 export const deleteTrackingIntegration=(id:number)=>request<void>(`/marketing/integrations/${id}`,{method:'DELETE'})
 export const testTrackingIntegration=(id:number)=>request<{ok:boolean;message:string;lastTestAt:string}>(`/marketing/integrations/${id}/test`,{method:'POST'})
 export const getTrackingIntegrationLogs=(id:number)=>request<TrackingDeliveryLog[]>(`/marketing/integrations/${id}/logs`)
+export const getEventTrackingAssignments=(eventId:number)=>request<EventTrackingAssignmentsResponse>(`/marketing/events/${eventId}/tracking-assignments`)
+export const updateEventTrackingAssignment=(eventId:number,integrationId:number,body:any)=>request<TrackingIntegrationEvent & {integration:TrackingIntegration}>(`/marketing/events/${eventId}/tracking-assignments/${integrationId}`,{method:'PUT',body:JSON.stringify(body)})
+export const deleteEventTrackingAssignment=(eventId:number,integrationId:number)=>request<void>(`/marketing/events/${eventId}/tracking-assignments/${integrationId}`,{method:'DELETE'})
+export const getIntegrationAssignments=(integrationId:number)=>request<TrackingIntegrationEvent[]>(`/marketing/integrations/${integrationId}/assignments`)
 
 // ===== Fase 18.4 — Financeiro Contábil, Borderôs e Assinaturas =====
 export type FinanceAccountingSummary={revenueCents:number;netRevenueCents:number;expensesCents:number;resultCents:number;reconciledCents:number;pendingCents:number;divergences:number;payablesCents:number;receivablesCents:number;borderos:number;signatures:number;costCenters:number;entries:number}

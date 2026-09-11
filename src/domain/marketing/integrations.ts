@@ -41,3 +41,107 @@ export const marketingIntegrationCatalog: MarketingIntegrationDefinition[] = [
 ]
 
 export const integrationByKey = (key: string) => marketingIntegrationCatalog.find(p => p.key === key) || marketingIntegrationCatalog[0]
+
+export type TrackingMode = 'HYBRID' | 'BROWSER' | 'SERVER'
+
+export interface TrackingEventRuleData {
+  id?: number
+  assignmentId?: number
+  eventName: string
+  enabled: boolean
+  browserEnabled: boolean
+  serverEnabled: boolean
+}
+
+export interface TrackingIntegrationEventData {
+  id: number
+  integrationId: number
+  eventId: number
+  enabled: boolean
+  isPrimary: boolean
+  trackingMode: TrackingMode
+  configurationJson?: string
+  createdAt?: string
+  updatedAt?: string
+  rules?: TrackingEventRuleData[]
+  event?: {
+    id: number
+    title: string
+    code: string
+  }
+}
+
+export interface TrackingIntegrationData {
+  id: number
+  name: string
+  provider: MarketingIntegrationProvider
+  integrationType: string
+  pixelId: string
+  status: 'ativo' | 'inativo'
+  applyToAllEvents: boolean
+  apiTokenMasked?: string
+  enabledEvents: string[]
+  lastTestAt?: string | null
+  lastTestStatus?: 'ok' | 'erro' | null
+  lastError?: string | null
+  producerId: number
+  events?: TrackingIntegrationEventData[]
+  _count?: {
+    deliveryLogs: number
+  }
+  createdAt?: string
+  updatedAt?: string
+}
+
+export const TRACKING_MODE_LABELS: Record<TrackingMode, { label: string; description: string; badge: string }> = {
+  HYBRID: {
+    label: 'Híbrido (Navegador + API Server-side)',
+    description: 'Dispara no navegador com deduplicação via ID e envia via API server-side garantida.',
+    badge: 'Híbrido 360°'
+  },
+  BROWSER: {
+    label: 'Apenas Navegador (Client-side)',
+    description: 'Disparo direto no script da página sem passar pelo servidor.',
+    badge: 'Navegador'
+  },
+  SERVER: {
+    label: 'Apenas Servidor (Server-side / CAPI)',
+    description: 'Disparo direto seguro via backend, imune a adblockers e cookies de terceiros.',
+    badge: 'Server-side'
+  }
+}
+
+export const TRACKING_EVENT_LABELS: Record<string, string> = {
+  PageView: 'Visualização de Página',
+  ViewContent: 'Visualização do Evento / Lote',
+  AddToCart: 'Seleção de Ingressos',
+  InitiateCheckout: 'Início do Pagamento (Checkout)',
+  Purchase: 'Compra Aprovada (Conversão)',
+  Lead: 'Cadastro de Interesse',
+  CompleteRegistration: 'Registro Concluído'
+}
+
+export function friendlyIntegrationTypeLabel(type: string): string {
+  switch (type) {
+    case 'pixel_capi':
+      return 'Pixel + API de Conversões'
+    case 'pixel_events_api':
+      return 'Pixel + Events API'
+    case 'conversion_api':
+      return 'Google Ads Conversões Avançadas'
+    case 'measurement_protocol':
+      return 'Google Analytics Server-Side'
+    case 'container':
+      return 'Google Tag Manager (Web & Server)'
+    case 'ads_capi':
+      return 'Spotify Ads CAPI'
+    case 'insight_conversions':
+      return 'Insight Tag + Conversions'
+    case 'tag_conversions':
+      return 'Tag + API de Conversões'
+    case 'uet_conversions':
+      return 'UET Tag + Conversões'
+    default:
+      return 'Integração de Rastreamento'
+  }
+}

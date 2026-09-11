@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
 import { prisma } from '../prisma.js'
+import { decryptTrackingToken } from './trackingCrypto.js'
 
 type CanonicalEvent='page_view'|'view_content'|'add_to_cart'|'begin_checkout'|'add_payment_info'|'purchase'|'lead'|'sign_up'
 
@@ -25,7 +26,7 @@ const eventMap:Record<string,Record<string,string>>={
 
 const sha256=(v?:string|null)=>v?crypto.createHash('sha256').update(v.trim().toLowerCase()).digest('hex'):undefined
 const providerEvent=(provider:string,name:string)=>eventMap[provider]?.[name]||name
-const decrypt=(row:any)=>{if(!row.tokenCiphertext||!row.tokenIv||!row.tokenTag)return null;const secret=process.env.TRACKING_TOKEN_SECRET||process.env.JWT_SECRET||'dev-only-change-me';const key=crypto.createHash('sha256').update(secret).digest();const decipher=crypto.createDecipheriv('aes-256-gcm',key,Buffer.from(row.tokenIv,'base64'));decipher.setAuthTag(Buffer.from(row.tokenTag,'base64'));return Buffer.concat([decipher.update(Buffer.from(row.tokenCiphertext,'base64')),decipher.final()]).toString('utf8')}
+const decrypt=(row:any)=>(!row.tokenCiphertext||!row.tokenIv||!row.tokenTag)?null:decryptTrackingToken(row.tokenCiphertext,row.tokenIv,row.tokenTag)
 
 function buildPayload(provider:string,row:any,input:DispatchInput){
  const mapped=providerEvent(provider,input.eventName),seconds=Math.floor((input.occurredAt||new Date()).getTime()/1000),value=(input.valueCents||0)/100,currency=input.currency||'BRL'
@@ -50,17 +51,66 @@ async function deliver(row:any,payload:any){
  catch(error:any){return {status:'erro',code:503,message:error?.message||'Falha de rede no provedor.'}}
 }
 
+function matchesRuleEvent(ruleEventName:string,canonicalName:string,providerMappedName:string):boolean{
+ const normRule=ruleEventName.toLowerCase().replace(/[^a-z0-9]/g,'')
+ const normCanonical=canonicalName.toLowerCase().replace(/[^a-z0-9]/g,'')
+ const normMapped=providerMappedName.toLowerCase().replace(/[^a-z0-9]/g,'')
+ return normRule===normCanonical||normRule===normMapped
+}
+
 export async function dispatchUniversalConversion(input:DispatchInput){
  const existing=await prisma.marketingConversionEvent.findUnique({where:{eventId:input.eventId}})
  if(existing)return {event:existing,deduplicated:true,dispatches:[]}
- const integrations=await prisma.trackingIntegration.findMany({where:{producerId:input.producerId,status:'ativo',OR:[{applyToAllEvents:true},...(input.eventEntityId?[{events:{some:{eventId:input.eventEntityId}}}]:[])]},include:{events:true}})
+ const integrations=await prisma.trackingIntegration.findMany({
+  where:{
+   producerId:input.producerId,
+   status:'ativo',
+   OR:[
+    {applyToAllEvents:true},
+    ...(input.eventEntityId?[{events:{some:{eventId:input.eventEntityId,enabled:true}}}]:[])
+   ]
+  },
+  include:{
+   events:{
+    where:input.eventEntityId?{eventId:input.eventEntityId}:undefined,
+    include:{rules:true}
+   }
+  }
+ })
  const event=await prisma.marketingConversionEvent.create({data:{eventId:input.eventId,eventName:input.eventName,occurredAt:input.occurredAt||new Date(),producerId:input.producerId,eventEntityId:input.eventEntityId||null,orderId:input.orderId||null,valueCents:input.valueCents||0,currency:input.currency||'BRL',emailHash:sha256(input.email)||null,phoneHash:sha256(input.phone)||null,externalIdHash:sha256(input.externalId)||null,attributionJson:JSON.stringify(input.attribution||{}),metadataJson:JSON.stringify(input.metadata||{})}})
  const dispatches=[] as any[]
  for(const row of integrations){
-  const enabled=JSON.parse(row.enabledEventsJson||'[]') as string[];const mapped=providerEvent(row.provider,input.eventName);if(enabled.length&&!enabled.includes(mapped))continue
-  const idempotencyKey=`${input.eventId}:${row.id}:${mapped}`;let dispatch=await prisma.marketingConversionDispatch.findUnique({where:{idempotencyKey}});if(dispatch){dispatches.push(dispatch);continue}
-  const payload=buildPayload(row.provider,row,input);dispatch=await prisma.marketingConversionDispatch.create({data:{conversionEventId:event.id,integrationId:row.id,provider:row.provider,providerEventName:mapped,idempotencyKey,status:'processing',attempts:1,payloadJson:JSON.stringify(payload),nextAttemptAt:new Date()}})
-  const result=await deliver(row,payload);dispatch=await prisma.marketingConversionDispatch.update({where:{id:dispatch.id},data:{status:result.status,responseCode:result.code,responseMessage:result.message,lastAttemptAt:new Date(),sentAt:result.status==='ok'?new Date():null,nextAttemptAt:result.status==='erro'?new Date(Date.now()+5*60*1000):null}})
+  const mapped=providerEvent(row.provider,input.eventName)
+  const assignment=row.events?.[0]
+  if(assignment){
+   if(assignment.enabled===false)continue
+   // Se o modo for BROWSER, o backend não executa disparo server-side
+   if(assignment.trackingMode==='BROWSER')continue
+
+   if(assignment.rules&&assignment.rules.length>0){
+    const matchingRule=assignment.rules.find((r:any)=>matchesRuleEvent(r.eventName,input.eventName,mapped))
+    if(matchingRule){
+     if(!matchingRule.enabled||!matchingRule.serverEnabled)continue
+    } else {
+     const enabled=JSON.parse(row.enabledEventsJson||'[]') as string[]
+     if(enabled.length&&!enabled.includes(mapped))continue
+    }
+   } else {
+    const enabled=JSON.parse(row.enabledEventsJson||'[]') as string[]
+    if(enabled.length&&!enabled.includes(mapped))continue
+   }
+  } else {
+   const enabled=JSON.parse(row.enabledEventsJson||'[]') as string[]
+   if(enabled.length&&!enabled.includes(mapped))continue
+  }
+
+  const idempotencyKey=`${input.eventId}:${row.id}:${mapped}`
+  let dispatch=await prisma.marketingConversionDispatch.findUnique({where:{idempotencyKey}})
+  if(dispatch){dispatches.push(dispatch);continue}
+  const payload=buildPayload(row.provider,row,input)
+  dispatch=await prisma.marketingConversionDispatch.create({data:{conversionEventId:event.id,integrationId:row.id,provider:row.provider,providerEventName:mapped,idempotencyKey,status:'processing',attempts:1,payloadJson:JSON.stringify(payload),nextAttemptAt:new Date()}})
+  const result=await deliver(row,payload)
+  dispatch=await prisma.marketingConversionDispatch.update({where:{id:dispatch.id},data:{status:result.status,responseCode:result.code,responseMessage:result.message,lastAttemptAt:new Date(),sentAt:result.status==='ok'?new Date():null,nextAttemptAt:result.status==='erro'?new Date(Date.now()+5*60*1000):null}})
   await prisma.trackingDeliveryLog.create({data:{integrationId:row.id,producerId:input.producerId,eventId:input.eventEntityId||null,eventName:mapped,status:result.status,responseCode:result.code,message:`event_id=${input.eventId} · ${result.message}`}})
   dispatches.push(dispatch)
  }
