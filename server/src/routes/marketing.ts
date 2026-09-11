@@ -421,6 +421,229 @@ marketingRouter.get('/integrations/:id/assignments',requireRoles(...marketingRea
   res.json(assignments)
 })
 
+// Fase 28.14.3 — Central de Pixels e Conversões por Evento: Overview, Browser-Config & Ações Granulares
+marketingRouter.get('/events/:eventId/tracking-overview',requireRoles(...marketingReadRoles),async(req:AuthRequest,res)=>{
+  const eventId=Number(req.params.eventId)
+  if(!eventId)return res.status(400).json({message:'Identificador de evento inválido.'})
+  const event=await prisma.event.findUnique({
+    where:{id:eventId},
+    select:{id:true,title:true,code:true,venue:true,city:true,date:true,status:true,producerId:true}
+  })
+  if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'})
+
+  const [assignments,recentLogs]=await Promise.all([
+    prisma.trackingIntegrationEvent.findMany({
+      where:{eventId},
+      include:{
+        integration:{
+          include:{_count:{select:{deliveryLogs:true}}}
+        },
+        rules:{orderBy:{eventName:'asc'}}
+      },
+      orderBy:[{isPrimary:'desc'},{createdAt:'asc'}]
+    }),
+    prisma.trackingDeliveryLog.findMany({
+      where:{OR:[{eventId},{producerId:event.producerId}]},
+      include:{integration:{select:{id:true,name:true,provider:true}}},
+      orderBy:{createdAt:'desc'},
+      take:20
+    })
+  ])
+
+  const totalIntegrations=assignments.length
+  const activeIntegrations=assignments.filter(a=>a.enabled&&a.integration.status==='ativo').length
+  const problemIntegrations=assignments.filter(a=>a.integration.status!=='ativo'||a.integration.lastTestStatus==='erro').length
+  const oneDayAgo=new Date(Date.now()-24*60*60*1000)
+  const receivingEvents=assignments.filter(a=>a.integration.lastSentAt&&new Date(a.integration.lastSentAt)>=oneDayAgo).length
+  const eventsSent24h=recentLogs.filter(l=>new Date(l.createdAt)>=oneDayAgo).length
+
+  let healthScore=100
+  let healthStatusText='Excelente'
+  if(totalIntegrations===0){
+    healthScore=100
+    healthStatusText='Aguardando configurações'
+  }else{
+    const activeRate=activeIntegrations/totalIntegrations
+    const problemDeduction=problemIntegrations*25
+    healthScore=Math.max(0,Math.min(100,Math.round(activeRate*100-problemDeduction)))
+    if(healthScore>=90)healthStatusText='Excelente'
+    else if(healthScore>=70)healthStatusText='Funcionando'
+    else if(healthScore>=50)healthStatusText='Atenção'
+    else healthStatusText='Problema crítico'
+  }
+
+  const providerKeys=['meta','google','tiktok','spotify']
+  const providerNames:Record<string,string>={meta:'Meta',google:'Google',tiktok:'TikTok',spotify:'Spotify'}
+
+  const providers=providerKeys.map(key=>{
+    const items=assignments.filter(a=>a.integration.provider.toLowerCase()===key)
+    const activeCount=items.filter(a=>a.enabled&&a.integration.status==='ativo').length
+    const problemCount=items.filter(a=>a.integration.status!=='ativo'||a.integration.lastTestStatus==='erro').length
+    return{
+      key,
+      name:providerNames[key]||key,
+      total:items.length,
+      active:activeCount,
+      problems:problemCount,
+      receivingEvents:items.some(a=>a.integration.lastSentAt&&new Date(a.integration.lastSentAt)>=oneDayAgo),
+      integrations:items.map(a=>({
+        id:a.integration.id,
+        name:a.integration.name,
+        isPrimary:a.isPrimary,
+        trackingMode:a.trackingMode,
+        status:a.integration.status,
+        lastTestStatus:a.integration.lastTestStatus
+      }))
+    }
+  })
+
+  const alerts:Array<{id:string;severity:'info'|'warning'|'high'|'critical';title:string;message:string;provider?:string;integrationId?:number;actionText?:string}>=[]
+  const hasPurchase=assignments.some(a=>a.enabled&&a.rules.some(r=>r.eventName.toLowerCase().includes('purchase')&&r.enabled))
+  if(assignments.length>0&&!hasPurchase){
+    alerts.push({
+      id:'no-purchase-rule',
+      severity:'warning',
+      title:'Rastreamento de Compra Ausente',
+      message:'Este evento não possui rastreamento de compra (Purchase) ativo para nenhuma integração configurada.',
+      actionText:'Configurar Regras'
+    })
+  }
+
+  const metaPurchases=assignments.filter(a=>a.enabled&&a.integration.provider.toLowerCase()==='meta'&&a.rules.some(r=>r.eventName.toLowerCase().includes('purchase')&&r.enabled))
+  if(metaPurchases.length>1){
+    alerts.push({
+      id:'multi-meta-purchase',
+      severity:'info',
+      title:'Múltiplos Destinos de Compra',
+      message:`${metaPurchases.length} integrações Meta recebem o evento Compra neste evento. Verifique se esta configuração multi-pixel é intencional.`,
+      provider:'meta',
+      actionText:'Revisar Matriz'
+    })
+  }
+
+  for(const a of assignments){
+    if(a.integration.lastTestStatus==='erro'){
+      alerts.push({
+        id:`test-error-${a.integration.id}`,
+        severity:'high',
+        title:`Erro em ${a.integration.name}`,
+        message:a.integration.lastError||'Falha no teste de conexão da integração.',
+        provider:a.integration.provider,
+        integrationId:a.integration.id,
+        actionText:'Diagnóstico'
+      })
+    }
+  }
+
+  const recentActivity=recentLogs.map(l=>({
+    id:l.id,
+    eventName:l.eventName,
+    status:l.status,
+    responseCode:l.responseCode,
+    message:l.message,
+    createdAt:l.createdAt.toISOString(),
+    integrationName:l.integration?.name||'Integração',
+    provider:l.integration?.provider||'geral'
+  }))
+
+  res.json({
+    event,
+    summary:{
+      totalIntegrations,
+      activeIntegrations,
+      problemIntegrations,
+      receivingEvents,
+      eventsSent24h,
+      healthScore,
+      healthStatusText,
+      healthBreakdown:{
+        configurationPct:totalIntegrations>0?100:0,
+        connectivityPct:problemIntegrations===0?100:Math.round(((totalIntegrations-problemIntegrations)/totalIntegrations)*100),
+        recentEventsPct:receivingEvents>0?95:0,
+        failurePct:recentLogs.length>0?Math.round((recentLogs.filter(l=>l.status==='erro').length/recentLogs.length)*100):0
+      }
+    },
+    providers,
+    assignments:assignments.map(a=>({
+      id:a.id,
+      integrationId:a.integrationId,
+      eventId:a.eventId,
+      enabled:a.enabled,
+      isPrimary:a.isPrimary,
+      trackingMode:a.trackingMode,
+      configurationJson:a.configurationJson,
+      createdAt:a.createdAt,
+      updatedAt:a.updatedAt,
+      rules:a.rules,
+      integration:serializeIntegration(a.integration)
+    })),
+    alerts,
+    recentActivity
+  })
+})
+
+marketingRouter.post('/events/:eventId/tracking-assignments/:integrationId/primary',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const eventId=Number(req.params.eventId);const integrationId=Number(req.params.integrationId)
+  if(!eventId||!integrationId)return res.status(400).json({message:'Parâmetros inválidos.'})
+  const event=await prisma.event.findUnique({where:{id:eventId}});if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'})
+  const integration=await prisma.trackingIntegration.findUnique({where:{id:integrationId}});if(!integration||!ownsProducer(req,integration.producerId))return res.status(404).json({message:'Integração não encontrada.'})
+
+  await prisma.$transaction(async tx=>{
+    const sameProviderAssignments=await tx.trackingIntegrationEvent.findMany({
+      where:{eventId,integration:{provider:integration.provider}},
+      select:{id:true}
+    })
+    if(sameProviderAssignments.length>0){
+      await tx.trackingIntegrationEvent.updateMany({
+        where:{id:{in:sameProviderAssignments.map(s=>s.id)}},
+        data:{isPrimary:false}
+      })
+    }
+    await tx.trackingIntegrationEvent.update({
+      where:{integrationId_eventId:{integrationId,eventId}},
+      data:{isPrimary:true}
+    })
+  })
+
+  await audit(req,'marketing.tracking_assignment.primary','TrackingIntegrationEvent',`${eventId}:${integrationId}`,{eventId,integrationId,isPrimary:true})
+  res.json({ok:true})
+})
+
+marketingRouter.post('/events/:eventId/tracking-assignments/:integrationId/unassign',requireRoles(...marketingWriteRoles),async(req:AuthRequest,res)=>{
+  const eventId=Number(req.params.eventId);const integrationId=Number(req.params.integrationId)
+  if(!eventId||!integrationId)return res.status(400).json({message:'Parâmetros inválidos.'})
+  const event=await prisma.event.findUnique({where:{id:eventId}});if(!event||!ownsProducer(req,event.producerId))return res.status(404).json({message:'Evento não encontrado.'})
+
+  const existing=await prisma.trackingIntegrationEvent.findUnique({where:{integrationId_eventId:{integrationId,eventId}}})
+  if(!existing)return res.status(404).json({message:'Associação não encontrada.'})
+
+  await prisma.trackingIntegrationEvent.delete({where:{id:existing.id}})
+  await audit(req,'marketing.tracking_assignment.unassign','TrackingIntegrationEvent',String(existing.id),{eventId,integrationId})
+  res.status(200).json({ok:true})
+})
+
+marketingRouter.get('/events/:eventId/tracking/browser-config',async(req,res)=>{
+  const eventId=Number(req.params.eventId)
+  if(!eventId)return res.status(400).json({message:'Identificador de evento inválido.'})
+  const assignments=await prisma.trackingIntegrationEvent.findMany({
+    where:{eventId,enabled:true,trackingMode:{in:['HYBRID','BROWSER']},integration:{status:'ativo'}},
+    include:{integration:{select:{id:true,name:true,provider:true,integrationType:true,pixelId:true}},rules:{where:{enabled:true,browserEnabled:true}}}
+  })
+  res.json({
+    eventId,
+    integrations:assignments.map(a=>({
+      integrationId:a.integration.id,
+      name:a.integration.name,
+      provider:a.integration.provider,
+      integrationType:a.integration.integrationType,
+      externalId:a.integration.pixelId,
+      trackingMode:a.trackingMode,
+      isPrimary:a.isPrimary,
+      events:a.rules.map(r=>r.eventName)
+    }))
+  })
+})
+
 
 // Fase 21.1.2 — fonte consolidada do Marketing OS.
 // Evita que uma falha em um módulo derrube o Dashboard inteiro e diferencia

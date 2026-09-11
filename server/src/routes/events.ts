@@ -11,7 +11,156 @@ export const eventsRouter=Router();eventsRouter.use(requireAuth)
 const shape=z.object({code:z.string().min(1),title:z.string().min(2),venue:z.string(),city:z.string(),date:z.string(),endDate:z.string().optional(),totalCents:z.number().int().nonnegative().optional(),sales:z.number().int().nonnegative().optional(),available:z.number().int().nonnegative().optional(),courtesy:z.number().int().nonnegative().optional(),occupancy:z.number().nonnegative().optional(),cover:z.string().optional(),badge:z.string().optional(),status:z.string().optional(),description:z.string().optional(),category:z.string().optional(),visibility:z.string().optional(),producerId:z.number().int().optional()})
 function scope(req:AuthRequest){return globalAdmin(req.auth!.role)?undefined:req.auth!.producerId??-1}
 eventsRouter.get('/',async(req:AuthRequest,res)=>{const requested=req.query.producerId?Number(req.query.producerId):undefined;const producerId=globalAdmin(req.auth!.role)?requested:scope(req);res.json(await prisma.event.findMany({where:producerId?{producerId}:undefined,include:{producer:{select:{name:true}}},orderBy:{id:'desc'}}))})
-eventsRouter.get('/code/:code',async(req:AuthRequest,res)=>{const event=await prisma.event.findFirst({where:{code:String(req.params.code)},include:{producer:{select:{id:true,name:true}}}});if(!event)return res.status(404).json({message:'Evento não encontrado.'});if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'});res.json(event)})
+// ===== Fase 28.14.3 — Rastreamento, Overview e Configuração Browser por Evento =====
+eventsRouter.get('/:id/tracking/overview',async(req:AuthRequest,res)=>{
+  const id=Number(req.params.id)
+  if(!Number.isFinite(id))return res.status(400).json({message:'Evento inválido.'})
+  const event=await prisma.event.findUnique({where:{id},select:{id:true,title:true,code:true,venue:true,city:true,date:true,status:true,producerId:true}})
+  if(!event)return res.status(404).json({message:'Evento não encontrado.'})
+  if(!globalAdmin(req.auth!.role)&&event.producerId!==req.auth!.producerId)return res.status(403).json({message:'Acesso negado a evento de outra produtora.'})
+
+  const [assignments,recentLogs]=await Promise.all([
+    prisma.trackingIntegrationEvent.findMany({
+      where:{eventId:id},
+      include:{
+        integration:{
+          include:{_count:{select:{deliveryLogs:true}}}
+        },
+        rules:{orderBy:{eventName:'asc'}}
+      },
+      orderBy:[{isPrimary:'desc'},{createdAt:'asc'}]
+    }),
+    prisma.trackingDeliveryLog.findMany({
+      where:{OR:[{eventId:id},{producerId:event.producerId}]},
+      include:{integration:{select:{id:true,name:true,provider:true}}},
+      orderBy:{createdAt:'desc'},
+      take:20
+    })
+  ])
+
+  const totalIntegrations=assignments.length
+  const activeIntegrations=assignments.filter(a=>a.enabled&&a.integration.status==='ativo').length
+  const problemIntegrations=assignments.filter(a=>a.integration.status!=='ativo'||a.integration.lastTestStatus==='erro').length
+  const oneDayAgo=new Date(Date.now()-24*60*60*1000)
+  const receivingEvents=assignments.filter(a=>a.integration.lastSentAt&&new Date(a.integration.lastSentAt)>=oneDayAgo).length
+  const eventsSent24h=recentLogs.filter(l=>new Date(l.createdAt)>=oneDayAgo).length
+
+  let healthScore=100
+  let healthStatusText='Excelente'
+  if(totalIntegrations===0){
+    healthScore=100
+    healthStatusText='Aguardando configurações'
+  }else{
+    const activeRate=activeIntegrations/totalIntegrations
+    const problemDeduction=problemIntegrations*25
+    healthScore=Math.max(0,Math.min(100,Math.round(activeRate*100-problemDeduction)))
+    if(healthScore>=90)healthStatusText='Excelente'
+    else if(healthScore>=70)healthStatusText='Funcionando'
+    else if(healthScore>=50)healthStatusText='Atenção'
+    else healthStatusText='Problema crítico'
+  }
+
+  const providerKeys=['meta','google','tiktok','spotify']
+  const providerNames:Record<string,string>={meta:'Meta',google:'Google',tiktok:'TikTok',spotify:'Spotify'}
+
+  const providers=providerKeys.map(key=>{
+    const items=assignments.filter(a=>a.integration.provider.toLowerCase()===key)
+    const activeCount=items.filter(a=>a.enabled&&a.integration.status==='ativo').length
+    const problemCount=items.filter(a=>a.integration.status!=='ativo'||a.integration.lastTestStatus==='erro').length
+    return{
+      key,
+      name:providerNames[key]||key,
+      total:items.length,
+      active:activeCount,
+      problems:problemCount,
+      receivingEvents:items.some(a=>a.integration.lastSentAt&&new Date(a.integration.lastSentAt)>=oneDayAgo),
+      integrations:items.map(a=>({
+        id:a.integration.id,
+        name:a.integration.name,
+        isPrimary:a.isPrimary,
+        trackingMode:a.trackingMode,
+        status:a.integration.status,
+        lastTestStatus:a.integration.lastTestStatus
+      }))
+    }
+  })
+
+  res.json({
+    event,
+    summary:{
+      totalIntegrations,
+      activeIntegrations,
+      problemIntegrations,
+      receivingEvents,
+      eventsSent24h,
+      healthScore,
+      healthStatusText,
+      healthBreakdown:{
+        configurationPct:totalIntegrations>0?100:0,
+        connectivityPct:problemIntegrations===0?100:Math.round(((totalIntegrations-problemIntegrations)/totalIntegrations)*100),
+        recentEventsPct:receivingEvents>0?95:0,
+        failurePct:recentLogs.length>0?Math.round((recentLogs.filter(l=>l.status==='erro').length/recentLogs.length)*100):0
+      }
+    },
+    providers,
+    assignments:assignments.map(a=>({
+      id:a.id,
+      integrationId:a.integrationId,
+      eventId:a.eventId,
+      enabled:a.enabled,
+      isPrimary:a.isPrimary,
+      trackingMode:a.trackingMode,
+      configurationJson:a.configurationJson,
+      createdAt:a.createdAt,
+      updatedAt:a.updatedAt,
+      rules:a.rules,
+      integration:{
+        id:a.integration.id,
+        name:a.integration.name,
+        provider:a.integration.provider,
+        integrationType:a.integration.integrationType,
+        pixelId:a.integration.pixelId,
+        status:a.integration.status,
+        applyToAllEvents:a.integration.applyToAllEvents,
+        lastTestStatus:a.integration.lastTestStatus
+      }
+    })),
+    alerts:[],
+    recentActivity:recentLogs.map(l=>({
+      id:l.id,
+      eventName:l.eventName,
+      status:l.status,
+      responseCode:l.responseCode,
+      message:l.message,
+      createdAt:l.createdAt.toISOString(),
+      integrationName:l.integration?.name||'Integração',
+      provider:l.integration?.provider||'geral'
+    }))
+  })
+})
+
+eventsRouter.get('/:id/tracking/browser-config',async(req:AuthRequest,res)=>{
+  const eventId=Number(req.params.id)
+  if(!eventId)return res.status(400).json({message:'Identificador de evento inválido.'})
+  const assignments=await prisma.trackingIntegrationEvent.findMany({
+    where:{eventId,enabled:true,trackingMode:{in:['HYBRID','BROWSER']},integration:{status:'ativo'}},
+    include:{integration:{select:{id:true,name:true,provider:true,integrationType:true,pixelId:true}},rules:{where:{enabled:true,browserEnabled:true}}}
+  })
+  res.json({
+    eventId,
+    integrations:assignments.map(a=>({
+      integrationId:a.integration.id,
+      name:a.integration.name,
+      provider:a.integration.provider,
+      integrationType:a.integration.integrationType,
+      externalId:a.integration.pixelId,
+      trackingMode:a.trackingMode,
+      isPrimary:a.isPrimary,
+      events:a.rules.map(r=>r.eventName)
+    }))
+  })
+})
+
 
 // ===== Fase 26.17.7.1 — Painel Comercial do Evento =====
 eventsRouter.get('/:id/commercial-dashboard',async(req:AuthRequest,res)=>{
