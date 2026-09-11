@@ -272,3 +272,294 @@ export async function getEventBudget(eventId: number): Promise<EventBudgetRespon
 export async function getEventFinancialResult(eventId: number): Promise<EventFinancialResultResponse> {
   return request<EventFinancialResultResponse>(`/events/${eventId}/financial-result`)
 }
+
+// =========================================================================
+// TIPOS - FASE 26.17.9.4.4: FLUXO DE CAIXA, DRE GERENCIAL & CONSOLIDADO
+// =========================================================================
+
+export interface CashflowTimelinePoint {
+  date: string
+  label: string
+  isPast: boolean
+  realizedEntryCents: number
+  realizedExitCents: number
+  projectedEntryCents: number
+  projectedExitCents: number
+  realizedBalanceCents: number | null
+  projectedBalanceCents: number
+}
+
+export interface CashflowProjectionResponse {
+  ok: boolean
+  producerId: number
+  eventId?: number
+  period: string
+  regime: 'caixa' | 'competencia'
+  kpis: {
+    initialBalanceCents: number
+    realizedEntriesCents: number
+    realizedExitsCents: number
+    currentBalanceCents: number
+    receivablesCents: number
+    payablesCents: number
+    projectedBalanceCents: number
+    netCashflowCents: number
+    netProjectedCashflowCents: number
+  }
+  timeline: CashflowTimelinePoint[]
+}
+
+export interface CashflowCalendarItem {
+  type: 'in' | 'out'
+  title: string
+  category: string
+  amountCents: number
+  status: string
+}
+
+export interface CashflowCalendarDay {
+  date: string
+  day: number
+  totalInCents: number
+  totalOutCents: number
+  netCents: number
+  itemsCount: number
+  items: CashflowCalendarItem[]
+}
+
+export interface CashflowCalendarResponse {
+  ok: boolean
+  year: number
+  month: number
+  monthLabel: string
+  totalMonthInCents: number
+  totalMonthOutCents: number
+  days: CashflowCalendarDay[]
+}
+
+export interface DreDrilldownItem {
+  account: string
+  amountCents: number
+  ref: string
+}
+
+export interface DreGroupItem {
+  code: string
+  title: string
+  type: 'revenue' | 'deduction' | 'subtotal' | 'cost' | 'expense' | 'total'
+  budgetedCents: number
+  realizedCents: number
+  committedCents: number
+  projectedCents: number
+  deviationCents: number
+  deviationPct: number
+  isExceeded: boolean
+  alert?: string | null
+  children?: Array<{
+    code: string
+    title: string
+    budgetedCents: number
+    realizedCents: number
+    committedCents: number
+    projectedCents: number
+    drilldown: DreDrilldownItem[]
+  }>
+}
+
+export interface DreManagerialResponse {
+  ok: boolean
+  eventId: number
+  eventTitle: string
+  regime: 'caixa' | 'competencia'
+  dreTree: DreGroupItem[]
+  budgetOverrunAlerts: Array<{ code: string; title: string; deviationPct: number; alert: string }>
+  unitMetrics: {
+    revenuePerTicketCents: number
+    costPerTicketCents: number
+    marginPerTicketCents: number
+    roas: number
+    cacCents: number | null
+    ticketsSold: number
+    totalCapacity: number
+    occupancyPct: number
+  }
+  breakEven: {
+    fixedCostsCents: number
+    variableCostPerTicketCents: number
+    avgTicketPriceCents: number
+    contributionMarginPerTicketCents: number
+    breakEvenTickets: number
+    ticketsSold: number
+    breakEvenCents: number
+    safetyMarginPct: number
+    isBreakEvenReached: boolean
+  }
+}
+
+export interface ProducerConsolidatedEventItem {
+  eventId: number
+  title: string
+  code: string
+  revenueCents: number
+  costsCents: number
+  resultCents: number
+  marginPct: number
+  balanceCents: number
+  payablesCents: number
+  receivablesCents: number
+  ticketsSold: number
+  occupancy: number
+  status: 'lucrativo' | 'deficitario'
+}
+
+export interface ProducerConsolidatedResultResponse {
+  ok: boolean
+  producer: {
+    id: number
+    name: string
+    document: string
+  }
+  summary: {
+    totalRevenueCents: number
+    totalCostsCents: number
+    operatingResultCents: number
+    marginPct: number
+    availableBalanceCents: number
+    receivablesCents: number
+    payablesCents: number
+    projectedBalanceCents: number
+    internalTransfersEliminatedCents: number
+    eventsCount: number
+    profitableEventsCount: number
+    deficitEventsCount: number
+  }
+  events: ProducerConsolidatedEventItem[]
+}
+
+export interface FinancialClosingResponse {
+  ok: boolean
+  eventId: number
+  status: 'fechado' | 'aberto'
+  closedAt?: string | null
+  closedBy?: string | null
+  notes?: string
+  message: string
+}
+
+export interface BorderoBatch {
+  name: string
+  priceCents: number
+  issued: number
+  sold: number
+  courtesy: number
+  refunded: number
+  totalGrossCents: number
+}
+
+export interface BorderoSigner {
+  name: string
+  role: string
+  signed: boolean
+}
+
+export interface BorderoOfficialResponse {
+  ok: boolean
+  bordero: {
+    code: string
+    event: {
+      id: number
+      title: string
+      venue: string
+      date: string
+      city: string
+    }
+    producer: {
+      id: number
+      name: string
+      document: string
+    }
+    issuanceDate: string
+    digitalHash: string
+    batches: BorderoBatch[]
+    financialTotals: {
+      grossTicketSalesCents: number
+      platformFeeCents: number
+      discountsCents: number
+      refundsCents: number
+      taxesCents: number
+      netTicketRevenueCents: number
+      productionCostsCents: number
+      operationalExpensesCents: number
+      payoutsExecutedCents: number
+      netEventResultCents: number
+      finalEventBalanceCents: number
+    }
+    signers: BorderoSigner[]
+  }
+}
+
+// --- FLUXO DE CAIXA: PROJEÇÃO & CALENDÁRIO ---
+export async function getCashflowProjection(params?: {
+  producerId?: number
+  eventId?: number
+  period?: string
+  regime?: string
+}): Promise<CashflowProjectionResponse> {
+  const query = new URLSearchParams()
+  if (params?.producerId) query.set('producerId', String(params.producerId))
+  if (params?.eventId) query.set('eventId', String(params.eventId))
+  if (params?.period) query.set('period', params.period)
+  if (params?.regime) query.set('regime', params.regime)
+  const qs = query.toString() ? `?${query.toString()}` : ''
+  return request<CashflowProjectionResponse>(`/finance/cashflow/projection${qs}`)
+}
+
+export async function getCashflowCalendar(params?: {
+  producerId?: number
+  eventId?: number
+  month?: number
+  year?: number
+}): Promise<CashflowCalendarResponse> {
+  const query = new URLSearchParams()
+  if (params?.producerId) query.set('producerId', String(params.producerId))
+  if (params?.eventId) query.set('eventId', String(params.eventId))
+  if (params?.month) query.set('month', String(params.month))
+  if (params?.year) query.set('year', String(params.year))
+  const qs = query.toString() ? `?${query.toString()}` : ''
+  return request<CashflowCalendarResponse>(`/finance/cashflow/calendar${qs}`)
+}
+
+// --- DRE GERENCIAL DO EVENTO ---
+export async function getEventDreManagerial(
+  eventId: number,
+  regime: 'caixa' | 'competencia' = 'competencia'
+): Promise<DreManagerialResponse> {
+  return request<DreManagerialResponse>(`/events/${eventId}/dre-managerial?regime=${regime}`)
+}
+
+// --- RESULTADO CONSOLIDADO DO PRODUTOR ---
+export async function getProducerConsolidatedResult(params?: {
+  producerId?: number
+}): Promise<ProducerConsolidatedResultResponse> {
+  const query = new URLSearchParams()
+  if (params?.producerId) query.set('producerId', String(params.producerId))
+  const qs = query.toString() ? `?${query.toString()}` : ''
+  return request<ProducerConsolidatedResultResponse>(`/finance/producer-consolidated-result${qs}`)
+}
+
+// --- FECHAMENTO FINANCEIRO DO EVENTO ---
+export async function closeEventFinances(
+  eventId: number,
+  payload: { action?: 'close' | 'reopen'; notes?: string; checklist?: Record<string, boolean> }
+): Promise<FinancialClosingResponse> {
+  return request<FinancialClosingResponse>(`/events/${eventId}/financial-closing`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+// --- BORDERÔ OFICIAL ---
+export async function getEventBorderoOfficial(eventId: number): Promise<BorderoOfficialResponse> {
+  return request<BorderoOfficialResponse>(`/events/${eventId}/bordero-official`)
+}
+
