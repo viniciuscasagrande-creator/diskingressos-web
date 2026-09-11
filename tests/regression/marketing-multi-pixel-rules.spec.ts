@@ -1,5 +1,5 @@
-﻿import { test, expect } from '@playwright/test'
-import { login } from '../fixtures/auth'
+import { test, expect } from '@playwright/test'
+import { login, qaUsers } from '../fixtures/auth'
 
 test.describe('Fase 28.14.2 — Multi-Pixel e Regras Individuais por Evento', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,7 +41,7 @@ test.describe('Fase 28.14.2 — Multi-Pixel e Regras Individuais por Evento', ()
   test('2. Validação da API de Associações Granulares por Evento (GET e PUT com regras por etapa)', async ({ request }) => {
     // Busca token de autenticação via login na API
     const authRes = await request.post('/api/auth/login', {
-      data: { email: 'admin@diskingressos.com.br', password: 'admin' }
+      data: { email: qaUsers.admin.email, password: qaUsers.admin.password }
     })
     expect(authRes.ok()).toBeTruthy()
     const { token } = await authRes.json()

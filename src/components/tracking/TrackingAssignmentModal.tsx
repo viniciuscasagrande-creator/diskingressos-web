@@ -32,9 +32,7 @@ export default function TrackingAssignmentModal({
   onCreateNew,
   notify
 }: Props) {
-  const [mode, setMode] = useState<'choose' | 'existing' | 'new'>(
-    initialProvider ? 'new' : availableIntegrations.filter(x => !alreadyAssignedIds.includes(x.id)).length > 0 ? 'choose' : 'new'
-  )
+  const [mode, setMode] = useState<'existing' | 'new'>('new')
 
   // Existing flow state
   const [searchQuery, setSearchQuery] = useState('')
@@ -43,7 +41,7 @@ export default function TrackingAssignmentModal({
   const [existingIsPrimary, setExistingIsPrimary] = useState(false)
 
   // New integration wizard state
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(initialProvider ? 2 : 1)
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(2)
   const [selectedProviderKey, setSelectedProviderKey] = useState<string>(initialProvider || 'meta')
   const [name, setName] = useState('')
   const [pixelId, setPixelId] = useState('')
@@ -150,49 +148,24 @@ export default function TrackingAssignmentModal({
           </button>
         </div>
 
-        {mode === 'choose' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '12px 0' }}>
-            <p style={{ color: '#64748b', fontSize: '14px', margin: 0 }}>
-              Você pode cadastrar um novo Pixel/CAPI exclusivo ou associar uma integração existente da produtora a este evento.
-            </p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-              <button
-                type="button"
-                className="marketing-provider-card"
-                style={{ textAlign: 'left', padding: '20px', cursor: 'pointer' }}
-                onClick={() => setMode('new')}
-              >
-                <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: '#eff6ff', color: '#2563eb', display: 'grid', placeItems: 'center', marginBottom: '12px' }}>
-                  <Plus size={20} />
-                </div>
-                <strong style={{ fontSize: '15px', color: '#0f172a', display: 'block' }}>
-                  Criar Nova Integração
-                </strong>
-                <small style={{ color: '#64748b', display: 'block', marginTop: '4px' }}>
-                  Cadastre um novo Pixel de agência, parceiro ou co-produtor.
-                </small>
-              </button>
-
-              <button
-                type="button"
-                className="marketing-provider-card"
-                style={{ textAlign: 'left', padding: '20px', cursor: 'pointer' }}
-                onClick={() => setMode('existing')}
-              >
-                <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: '#f0fdf4', color: '#16a34a', display: 'grid', placeItems: 'center', marginBottom: '12px' }}>
-                  <PlugZap size={20} />
-                </div>
-                <strong style={{ fontSize: '15px', color: '#0f172a', display: 'block' }}>
-                  Usar Integração Existente
-                </strong>
-                <small style={{ color: '#64748b', display: 'block', marginTop: '4px' }}>
-                  Vincule um Pixel já cadastrado no catálogo da produtora ({unassignedIntegrations.length} disponíveis).
-                </small>
-              </button>
-            </div>
-          </div>
-        )}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '10px' }}>
+          <button
+            type="button"
+            className={`btn ${mode === 'new' ? 'primary' : 'secondary'}`}
+            style={{ fontSize: '13px', padding: '6px 14px' }}
+            onClick={() => { setMode('new'); setStep(2) }}
+          >
+            + Nova Integração
+          </button>
+          <button
+            type="button"
+            className={`btn ${mode === 'existing' ? 'primary' : 'secondary'}`}
+            style={{ fontSize: '13px', padding: '6px 14px' }}
+            onClick={() => setMode('existing')}
+          >
+            Usar Integração Existente ({unassignedIntegrations.length})
+          </button>
+        </div>
 
         {mode === 'existing' && (
           <form onSubmit={handleAssignExistingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -293,8 +266,8 @@ export default function TrackingAssignmentModal({
             )}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '10px' }}>
-              <button type="button" className="btn secondary" onClick={() => setMode('choose')}>
-                Voltar
+              <button type="button" className="btn secondary" onClick={onClose}>
+                Cancelar
               </button>
               <button
                 type="submit"
@@ -354,6 +327,20 @@ export default function TrackingAssignmentModal({
 
             {step === 2 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <label>
+                  Plataforma de Mídia:
+                  <select
+                    value={selectedProviderKey}
+                    onChange={e => setSelectedProviderKey(e.target.value)}
+                  >
+                    {marketingIntegrationCatalog.map(p => (
+                      <option key={p.key} value={p.key}>
+                        {p.name} ({p.description})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
                 <label>
                   Nome identificador no SafeSaff:
                   <input

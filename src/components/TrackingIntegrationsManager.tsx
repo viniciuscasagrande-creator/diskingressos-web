@@ -243,7 +243,14 @@ export default function TrackingIntegrationsManager({
     healthBreakdown: { configurationPct: 0, connectivityPct: 100, recentEventsPct: 0, failurePct: 0 }
   }
 
-  const providers = overview?.providers || []
+  const defaultProviders = [
+    { key: 'meta', name: 'Meta', total: 0, active: 0, problems: 0, receivingEvents: false, integrations: [] },
+    { key: 'google', name: 'Google', total: 0, active: 0, problems: 0, receivingEvents: false, integrations: [] },
+    { key: 'tiktok', name: 'TikTok', total: 0, active: 0, problems: 0, receivingEvents: false, integrations: [] },
+    { key: 'spotify', name: 'Spotify', total: 0, active: 0, problems: 0, receivingEvents: false, integrations: [] }
+  ]
+
+  const providers = (overview?.providers && overview.providers.length > 0) ? overview.providers : defaultProviders
   const alerts = overview?.alerts || []
   const recentActivity = overview?.recentActivity || []
 

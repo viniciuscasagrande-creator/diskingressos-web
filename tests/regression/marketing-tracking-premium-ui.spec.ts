@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { login } from '../fixtures/auth'
+import { login, qaUsers } from '../fixtures/auth'
 
 test.describe('Fase 28.14.3 — Central de Pixels e Conversões por Evento — UI Premium', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,7 +73,7 @@ test.describe('Fase 28.14.3 — Central de Pixels e Conversões por Evento — U
   test('2. APIs de Tracking Overview e Browser-Config sem vazamento de credenciais', async ({ request }) => {
     // Login API
     const authRes = await request.post('/api/auth/login', {
-      data: { email: 'admin@diskingressos.com.br', password: 'admin' }
+      data: { email: qaUsers.admin.email, password: qaUsers.admin.password }
     })
     expect(authRes.ok()).toBeTruthy()
     const { token } = await authRes.json()
