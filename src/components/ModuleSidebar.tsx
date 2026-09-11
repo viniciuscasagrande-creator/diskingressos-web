@@ -141,7 +141,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },
   { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
   { key: 'marketing-tiktok-ads', label: 'TikTok Ads', icon: Play },
-  { key: 'marketing-spotify', label: 'Spotify Ads', icon: Headphones, badge: 'Áudio' },
+  { key: 'marketing-spotify', label: 'Spotify Ads', icon: Headphones },
   { key: 'marketing-tracking', label: 'Pixels & Integrações', icon: Activity, badge: '360°' },
   { key: 'marketing-attribution', label: 'Atribuição Multicanal', icon: Scale, badge: '25.7.2' },
   { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
