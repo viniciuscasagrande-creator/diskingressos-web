@@ -10,7 +10,7 @@ test.describe('Fase 26.17.10 - Spotify Ads + Conversões + Atribuição por Even
     await page.goto('/app/marketing-dashboard')
 
     // Verifica que o painel de marketing carregou
-    await expect(page.getByRole('heading', { name: /Dashboard Marketing/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Dashboard Marketing/i }).first()).toBeVisible()
 
     // Clica no botão/banner do Spotify Ads & CAPI
     const spotifyTab = page.getByRole('button', { name: /Spotify Ads & CAPI/i })
@@ -98,7 +98,7 @@ test.describe('Fase 26.17.10 - Spotify Ads + Conversões + Atribuição por Even
     await expect(page.getByRole('button', { name: /Publicar Campanha Spotify/i })).toBeVisible()
 
     // Fecha o modal
-    await page.locator('button:has-text("Cancelar")').click()
+    await page.getByLabel('Fechar assistente').click()
   })
 
   test('3. Sub-Abas: Atribuição de Vendas, Spotify CAPI e Comparativo Omnichannel', async ({ page }) => {

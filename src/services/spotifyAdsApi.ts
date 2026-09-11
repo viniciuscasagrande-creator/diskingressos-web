@@ -161,5 +161,181 @@ export const spotifyAdsApi = {
   // 8. Relatório Omnichannel Comparativo
   async getOmnichannelReport(eventId: number): Promise<OmnichannelPerformanceReport> {
     return request<OmnichannelPerformanceReport>(`/marketing/spotify/events/${eventId}/omnichannel`)
+  },
+
+  // -------------------------------------------------------------
+  // FASE 28.7 — GOVERNANÇA, VALIDAÇÃO, APROVAÇÃO E PUBLICAÇÃO
+  // -------------------------------------------------------------
+  async validateCampaign(campaignId: string | number, campaign?: any): Promise<{
+    ok: boolean
+    validationStatus: any
+    checklist: any
+    blockers: any[]
+    warnings: any[]
+    draftHierarchyVersion: number
+  }> {
+    return request<any>(`/marketing/spotify/campaigns/${campaignId}/validate`, {
+      method: 'POST',
+      body: JSON.stringify({ campaign })
+    })
+  },
+
+  async requestApproval(campaignId: string | number, payload: { campaign?: any; eventId?: number }): Promise<{
+    ok: boolean
+    approval: any
+  }> {
+    return request<any>(`/marketing/spotify/campaigns/${campaignId}/approval/request`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+  },
+
+  async approveCampaign(campaignId: string | number): Promise<{ ok: boolean; approval: any }> {
+    return request<any>(`/marketing/spotify/campaigns/${campaignId}/approval/approve`, {
+      method: 'POST'
+    })
+  },
+
+  async rejectCampaign(campaignId: string | number, rejectionReason: string): Promise<{ ok: boolean; approval: any }> {
+    return request<any>(`/marketing/spotify/campaigns/${campaignId}/approval/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ rejectionReason })
+    })
+  },
+
+  async getApproval(campaignId: string | number): Promise<{ approval: any }> {
+    return request<any>(`/marketing/spotify/campaigns/${campaignId}/approval`)
+  },
+
+  async getApprovalsQueue(producerId?: number): Promise<{ queue: any[] }> {
+    return request<{ queue: any[] }>(`/marketing/spotify/approvals/queue${qs({ producerId })}`)
+  },
+
+  async publishHierarchy(campaignId: string | number, payload: { campaign?: any; eventId?: number }): Promise<{
+    ok: boolean
+    publication: any
+  }> {
+    return request<any>(`/marketing/spotify/campaigns/${campaignId}/publish`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+  },
+
+  async getPublication(campaignId: string | number): Promise<{ publication: any }> {
+    return request<any>(`/marketing/spotify/campaigns/${campaignId}/publication`)
+  },
+
+  async getTimeline(campaignId: string | number): Promise<{ timeline: any[] }> {
+    return request<{ timeline: any[] }>(`/marketing/spotify/campaigns/${campaignId}/timeline`)
+  },
+
+  async pauseCampaignHierarchy(campaignId: string | number, reason?: string): Promise<{ ok: boolean; message: string }> {
+    return request<{ ok: boolean; message: string }>(`/marketing/spotify/campaigns/${campaignId}/pause`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    })
+  },
+
+  // -------------------------------------------------------------
+  // FASE 28.8 — SPOTIFY CAPI, CONVERSÕES E DIAGNÓSTICO
+  // -------------------------------------------------------------
+  async getCapiIntegration(producerId?: number): Promise<{ integration: any }> {
+    return request<{ integration: any }>(`/marketing/spotify/capi${qs({ producerId })}`)
+  },
+
+  async listConversions(producerId?: number, eventId?: number): Promise<{ events: any[] }> {
+    return request<{ events: any[] }>(`/marketing/spotify/conversions${qs({ producerId, eventId })}`)
+  },
+
+  async getFunnelReport(producerId?: number, eventId?: number, eventName?: string): Promise<{ funnel: any }> {
+    return request<{ funnel: any }>(`/marketing/spotify/conversions/funnel${qs({ producerId, eventId, eventName })}`)
+  },
+
+  async getCapiDiagnostics(producerId?: number): Promise<{ diagnostics: any }> {
+    return request<{ diagnostics: any }>(`/marketing/spotify/conversions/diagnostics${qs({ producerId })}`)
+  },
+
+  async retryConversion(id: string, producerId?: number): Promise<{ ok: boolean; message: string }> {
+    return request<{ ok: boolean; message: string }>(`/marketing/spotify/conversions/${id}/retry`, {
+      method: 'POST',
+      body: JSON.stringify({ producerId })
+    })
+  },
+
+  // -------------------------------------------------------------
+  // FASE 28.9 — REPORTING REAL, ATRIBUIÇÃO E AUDIENCE INSIGHTS
+  // -------------------------------------------------------------
+  async getReportingOverview(producerId?: number, eventId?: number): Promise<{ metrics: any; comparisons: any[] }> {
+    return request<{ metrics: any; comparisons: any[] }>(`/marketing/spotify/reporting/overview${qs({ producerId, eventId })}`)
+  },
+
+  async getReportingBreakdown(producerId?: number, eventId?: number): Promise<{ rows: any[] }> {
+    return request<{ rows: any[] }>(`/marketing/spotify/reporting/breakdown${qs({ producerId, eventId })}`)
+  },
+
+  async getAudienceInsights(producerId?: number, eventId?: number): Promise<{
+    hasSufficientData: boolean
+    insights: any[]
+    privacyNote?: string
+  }> {
+    return request<any>(`/marketing/spotify/reporting/insights${qs({ producerId, eventId })}`)
+  },
+
+  // -------------------------------------------------------------
+  // FASE 28.10 — DASHBOARD OMNICHANNEL UNIFICADO
+  // -------------------------------------------------------------
+  async getOmnichannelOverview(producerId?: number, eventId?: number): Promise<{
+    producerId: number
+    eventId: number
+    period: string
+    totalInvestedCents: number
+    totalRevenueCents: number
+    totalConversions: number
+    weightedRoas: number
+    matrixQuadrants: {
+      scale: any[]
+      maintain: any[]
+      optimize: any[]
+      reduce: any[]
+    }
+    channels: any[]
+  }> {
+    return request<any>(`/marketing/spotify/omnichannel/overview${qs({ producerId, eventId })}`)
+  },
+
+  // -------------------------------------------------------------
+  // FASE 28.11 — MOTOR DE OTIMIZAÇÃO & INTELIGÊNCIA DE MÍDIA
+  // -------------------------------------------------------------
+  async getOptimizationOverview(producerId?: number, eventId?: number): Promise<{
+    opportunitiesCount: number
+    criticalAlertsCount: number
+    healthyCampaignsCount: number
+    attentionCampaignsCount: number
+    potentialSavingsBrl: number
+    potentialAdditionalRevenueBrl: number
+    dataQualityScore: number
+    insights: any[]
+  }> {
+    return request<any>(`/marketing/spotify/optimization/overview${qs({ producerId, eventId })}`)
+  },
+
+  async simulateInsight(id: string, deltaPercent = 25): Promise<{ ok: boolean; simulation: any }> {
+    return request<{ ok: boolean; simulation: any }>(`/marketing/spotify/optimization/insights/${id}/simulate`, {
+      method: 'POST',
+      body: JSON.stringify({ deltaPercent })
+    })
+  },
+
+  async acceptInsight(id: string): Promise<{ ok: boolean; message: string }> {
+    return request<{ ok: boolean; message: string }>(`/marketing/spotify/optimization/insights/${id}/accept`, {
+      method: 'POST'
+    })
+  },
+
+  async rejectInsight(id: string, reason?: string): Promise<{ ok: boolean; message: string }> {
+    return request<{ ok: boolean; message: string }>(`/marketing/spotify/optimization/insights/${id}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    })
   }
 }

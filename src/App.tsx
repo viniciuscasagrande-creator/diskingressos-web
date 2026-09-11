@@ -298,7 +298,7 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
     return firstPageFor(user)
   }
   if (clean === 'eventos') return 'events'
-  if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify-ads'
+  if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
   if (clean in titleMap) return clean as PageKey
   return firstPageFor(user)
 }
@@ -314,7 +314,7 @@ export default function App() {
   const [page, setPage] = useState<PageKey>(() => {
     if (typeof window !== 'undefined') {
       const clean = window.location.pathname.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
-      if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify-ads'
+      if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
       if (clean in titleMap) return clean as PageKey
     }
     return 'events'
@@ -340,6 +340,13 @@ export default function App() {
         setMobileNavOpen(false)
         setPage(previous)
         window.scrollTo({ top: 0 })
+      } else if (typeof window !== 'undefined') {
+        const clean = window.location.pathname.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+        if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') {
+          setMobileNavOpen(false)
+          setPage('marketing-spotify')
+          window.scrollTo({ top: 0 })
+        }
       }
     }
     window.addEventListener('popstate', onPopState)
@@ -460,7 +467,11 @@ export default function App() {
             const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
             if (isGlobalAdmin(u)) tasks.push(getUsers().then(setUsers))
             await Promise.all(tasks)
-            const targetUrl = initialPage === firstPageFor(u) ? (isGlobalAdmin(u) ? '/' : '/dashboard') : (window.location.pathname.startsWith('/app/') ? window.location.pathname : `/app/${initialPage}`)
+            const targetUrl = initialPage === firstPageFor(u)
+              ? (isGlobalAdmin(u) ? '/' : '/dashboard')
+              : ((initialPage === 'marketing-spotify' || initialPage === 'marketing-spotify-ads')
+                  ? '/app/marketing/spotify'
+                  : (window.location.pathname.startsWith('/app/') ? window.location.pathname : `/app/${initialPage}`))
             window.history.pushState({ page: initialPage }, '', targetUrl)
             return u
           } catch (e) {
@@ -507,6 +518,8 @@ export default function App() {
     setPage(next)
     if (selectedEvent && eventContextPages.has(next)) {
       window.history.pushState({ page: next }, '', `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`)
+    } else if (next === 'marketing-spotify' || next === 'marketing-spotify-ads') {
+      window.history.pushState({ page: next }, '', '/app/marketing/spotify')
     } else {
       window.history.pushState({ page: next }, '', `/app/${next}`)
     }

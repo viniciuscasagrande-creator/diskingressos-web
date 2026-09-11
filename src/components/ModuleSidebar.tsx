@@ -141,7 +141,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },
   { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
   { key: 'marketing-tiktok-ads', label: 'TikTok Ads', icon: Play },
-  { key: 'marketing-spotify-ads', label: 'Spotify Ads', icon: Headphones, badge: 'Áudio' },
+  { key: 'marketing-spotify', label: 'Spotify Ads', icon: Headphones, badge: 'Áudio' },
   { key: 'marketing-tracking', label: 'Pixels & Integrações', icon: Activity, badge: '360°' },
   { key: 'marketing-attribution', label: 'Atribuição Multicanal', icon: Scale, badge: '25.7.2' },
   { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
@@ -176,11 +176,44 @@ const adminItems: Item[] = [
 
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user, onCollapsedChange }: Props) {
   const refundIndependentPages: PageKey[] = ['finance-refunds', 'finance-disputes', 'finance-chargebacks']
-  const [openFinance, setOpenFinance] = useState((page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page))
-  const [openAccounting, setOpenAccounting] = useState(page.startsWith('accounting-') || page === 'finance-accounting')
-  const [openMarketing, setOpenMarketing] = useState(page.startsWith('marketing-'))
-  const [openRemarketing, setOpenRemarketing] = useState(page.startsWith('remarketing-'))
-  const [openAdmin, setOpenAdmin] = useState(page.startsWith('admin-'))
+  const isFinanceActive = (page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page)
+  const isAccountingActive = page.startsWith('accounting-') || page === 'finance-accounting'
+  const isMarketingActive =
+    page.startsWith('marketing-') ||
+    page === 'marketing-spotify' ||
+    page === 'marketing-spotify-ads' ||
+    (typeof window !== 'undefined' && (
+      window.location.pathname.startsWith('/app/marketing') ||
+      window.location.pathname.startsWith('/app/marketing-')
+    ))
+  const isRemarketingActive = page.startsWith('remarketing-')
+  const isAdminActive = page.startsWith('admin-')
+
+  const [openFinance, setOpenFinance] = useState(isFinanceActive)
+  const [openAccounting, setOpenAccounting] = useState(isAccountingActive)
+  const [openMarketing, setOpenMarketing] = useState(isMarketingActive)
+  const [openRemarketing, setOpenRemarketing] = useState(isRemarketingActive)
+  const [openAdmin, setOpenAdmin] = useState(isAdminActive)
+
+  useEffect(() => {
+    if (isMarketingActive) setOpenMarketing(true)
+  }, [page, isMarketingActive])
+
+  useEffect(() => {
+    if (isFinanceActive) setOpenFinance(true)
+  }, [page, isFinanceActive])
+
+  useEffect(() => {
+    if (isAccountingActive) setOpenAccounting(true)
+  }, [page, isAccountingActive])
+
+  useEffect(() => {
+    if (isRemarketingActive) setOpenRemarketing(true)
+  }, [page, isRemarketingActive])
+
+  useEffect(() => {
+    if (isAdminActive) setOpenAdmin(true)
+  }, [page, isAdminActive])
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false
     return window.localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
@@ -239,8 +272,11 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Financeiro"
           icon={WalletCards}
           open={openFinance}
+          keepOpen={isFinanceActive}
           onToggle={() => setOpenFinance(!openFinance)}
-          onClose={() => setOpenFinance(false)}
+          onClose={() => {
+            if (!isFinanceActive) setOpenFinance(false)
+          }}
         >
           {/* Dashboard Financeiro Principal Preservado */}
           <NavItem
@@ -320,8 +356,11 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Contabilidade"
           icon={BookOpenCheck}
           open={openAccounting}
+          keepOpen={isAccountingActive}
           onToggle={() => setOpenAccounting(!openAccounting)}
-          onClose={() => setOpenAccounting(false)}
+          onClose={() => {
+            if (!isAccountingActive) setOpenAccounting(false)
+          }}
         >
           {accountingFinanceItems.map((it, index) => (
             <NavItem
@@ -339,18 +378,27 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Marketing"
           icon={Megaphone}
           open={openMarketing}
+          keepOpen={isMarketingActive}
           onToggle={() => setOpenMarketing(!openMarketing)}
-          onClose={() => setOpenMarketing(false)}
+          onClose={() => {
+            if (!isMarketingActive) setOpenMarketing(false)
+          }}
         >
-          {marketingItems.map((it, index) => (
-            <NavItem
-              key={`mkt-${it.key}-${index}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
+          {marketingItems.map((it, index) => {
+            const isItemActive =
+              page === it.key ||
+              ((it.key === 'marketing-spotify' || it.key === 'marketing-spotify-ads') &&
+                (page === 'marketing-spotify' || page === 'marketing-spotify-ads'))
+            return (
+              <NavItem
+                key={`mkt-${it.key}-${index}`}
+                item={it}
+                active={isItemActive}
+                onNavigate={onNavigate}
+                indent
+              />
+            )
+          })}
         </CollapsibleSection>
 
         {/* Section: Remarketing */}
@@ -358,8 +406,11 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           label="Remarketing"
           icon={Repeat2}
           open={openRemarketing}
+          keepOpen={isRemarketingActive}
           onToggle={() => setOpenRemarketing(!openRemarketing)}
-          onClose={() => setOpenRemarketing(false)}
+          onClose={() => {
+            if (!isRemarketingActive) setOpenRemarketing(false)
+          }}
         >
           {remarketingItems.map((it, index) => (
             <NavItem
@@ -378,8 +429,11 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             label="Administração"
             icon={Building2}
             open={openAdmin}
+            keepOpen={isAdminActive}
             onToggle={() => setOpenAdmin(!openAdmin)}
-            onClose={() => setOpenAdmin(false)}
+            onClose={() => {
+              if (!isAdminActive) setOpenAdmin(false)
+            }}
           >
             {adminItems.map((it, index) => (
               <NavItem
@@ -403,6 +457,7 @@ function CollapsibleSection({
   open,
   onToggle,
   onClose,
+  keepOpen = false,
   children
 }: {
   label: string
@@ -410,6 +465,7 @@ function CollapsibleSection({
   open: boolean
   onToggle: () => void
   onClose: () => void
+  keepOpen?: boolean
   children: ReactNode
 }) {
   return (
@@ -418,7 +474,9 @@ function CollapsibleSection({
       onMouseLeave={() => {
         // Desktop com mouse: mantém a expansão temporária aprovada na Fase 25.3.2.1.
         // Touch/tablet não fecha por mouseleave sintético.
-        if (open && typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) onClose()
+        if (open && !keepOpen && typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+          onClose()
+        }
       }}
     >
       <button
@@ -427,6 +485,7 @@ function CollapsibleSection({
         onClick={onToggle}
         aria-expanded={open}
         title={label}
+        data-testid={`collapsible-${label.toLowerCase().replace(/\s+/g, '-')}`}
       >
         {SectionIcon && <span className="module-nav-icon collapsible-section-icon" aria-hidden="true"><SectionIcon size={18} strokeWidth={1.8} /></span>}
         <span className="collapsible-section-label">{label}</span>
@@ -460,6 +519,7 @@ function NavItem({
       title={item.label}
       aria-current={active ? 'page' : undefined}
       data-testid={`nav-${item.key}`}
+      data-nav-key={item.key}
       data-protected-module={({
         'events': 'eventos',
         'finance-dashboard': 'financeiro',

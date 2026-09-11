@@ -236,6 +236,7 @@ export const SpotifyCampaignWizardModal: React.FC<Props> = ({
           </div>
           <button
             onClick={onClose}
+            aria-label="Fechar assistente"
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
           >
             <X size={20} />

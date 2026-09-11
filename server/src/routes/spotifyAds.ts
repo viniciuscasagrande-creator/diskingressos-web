@@ -7,6 +7,37 @@ import { globalAdmin } from '../auth.js'
 import { requestedProducerId, writeProducerId, ownsProducer } from '../tenant.js'
 import { audit } from '../audit.js'
 import { dispatchUniversalConversion } from '../services/conversionEngine.js'
+import {
+  evaluateHierarchyChecklist,
+  validateSpotifyCampaign,
+  requestCampaignApproval,
+  approveCampaignByManager,
+  rejectCampaignByManager,
+  publishSpotifyCampaignHierarchy,
+  pauseCampaign,
+  getCampaignTimelineHistory,
+  getCampaignApprovalRecord,
+  getCampaignPublicationRecord,
+  getPendingApprovalsQueue
+} from '../services/spotifyGovernance.service.js'
+import {
+  getProducerCapiIntegration,
+  listProducerConversionEvents,
+  getProducerFunnelReport,
+  getProducerCapiDiagnostics,
+  retryProducerConversionEvent
+} from '../services/spotifyCapi.service.js'
+import {
+  getSpotifyReportingOverview,
+  getSpotifyReportingBreakdown,
+  getSpotifyAudienceInsights
+} from '../services/spotifyReporting.service.js'
+import {
+  getOptimizationOverview,
+  simulateInsightImpact,
+  acceptInsightRecommendation,
+  rejectInsightRecommendation
+} from '../services/marketingOptimization.service.js'
 
 export const spotifyAdsRouter = Router()
 spotifyAdsRouter.use(requireAuth)
@@ -378,7 +409,7 @@ spotifyAdsRouter.post('/events/:eventId/copilot-suggest', requireRoles(...market
   }
 
   const city = event.city || 'Curitiba'
-  const state = event.state || 'PR'
+  const state = (event as any).state || 'PR'
 
   res.json({
     copilotSuggested: true,
@@ -422,7 +453,7 @@ spotifyAdsRouter.get('/events/:eventId/campaigns', requireRoles(...marketingRead
         musicGenres: ['Sertanejo Universitário', 'Pop Nacional'],
         relatedArtists: ['Jorge & Mateus', 'Henrique & Juliano'],
         playlistAffinities: ['Top Brasil 2026', 'Esquenta Sertanejo'],
-        locations: [{ state: event.state || 'PR', city: event.city || 'Curitiba', radiusKm: 50 }],
+        locations: [{ state: (event as any).state || 'PR', city: event.city || 'Curitiba', radiusKm: 50 }],
         ageRanges: ['18-24', '25-34'],
         genders: 'ALL' as const,
         platforms: ['IOS', 'ANDROID', 'DESKTOP'] as any[],
@@ -503,7 +534,7 @@ spotifyAdsRouter.get('/events/:eventId/campaigns', requireRoles(...marketingRead
           musicGenres: ['Sertanejo Universitário', 'Pop Nacional'],
           relatedArtists: ['Jorge & Mateus', 'Henrique & Juliano', 'Ana Castela'],
           playlistAffinities: ['Top Brasil 2026', 'Esquenta Sertanejo', 'Viral Sul'],
-          locations: [{ state: event.state || 'PR', city: event.city || 'Curitiba', radiusKm: 45 }],
+          locations: [{ state: (event as any).state || 'PR', city: event.city || 'Curitiba', radiusKm: 45 }],
           ageRanges: ['18-24', '25-34', '35-44'],
           genders: 'ALL',
           platforms: ['IOS', 'ANDROID', 'DESKTOP'],
@@ -616,11 +647,11 @@ spotifyAdsRouter.post('/events/:eventId/campaigns', requireRoles(...marketingWri
     bidStrategy: data.bidStrategy,
     audioCompletionRatePercent: 89,
     companionClicks: 0,
-    targeting: data.targeting,
+    targeting: data.targeting as any,
     creative: {
       ...data.creative,
       trackedDestinationUrl: trackedUrl
-    }
+    } as any
   }
   spotifyCampaignExtras.set(campaign.id, extra)
 
@@ -831,7 +862,7 @@ spotifyAdsRouter.get('/events/:eventId/attributions', requireRoles(...marketingR
       orderCode: o.code,
       buyerName: o.buyerName,
       buyerEmail: o.buyerEmail,
-      buyerPhone: o.buyerPhone || undefined,
+      buyerPhone: (o as any).buyerPhone || undefined,
       ticketSummary: o.tickets?.length ? `${o.tickets.length}x ${o.tickets[0].type}` : '2x Pista Premium',
       grossCents: o.grossCents,
       paymentMethod: o.paymentMethod === 'pix' ? 'PIX Instantâneo' : 'Cartão de Crédito',
@@ -976,4 +1007,383 @@ spotifyAdsRouter.get('/events/:eventId/omnichannel', requireRoles(...marketingRe
     overallRoas,
     channels
   })
+})
+
+// -------------------------------------------------------------
+// 9. FASE 28.7 — GOVERNANÇA, VALIDAÇÃO, APROVAÇÃO E PUBLICAÇÃO
+// -------------------------------------------------------------
+
+// 9.1 Validação Técnica da Hierarquia (Local + API Spotify com action VALIDATE)
+spotifyAdsRouter.post('/campaigns/:campaignId/validate', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const actorName = req.auth?.name || req.auth?.email || 'Produtor'
+  const campaignData = req.body?.campaign || {
+    name: 'Campanha Spotify Ads',
+    objective: 'CONVERSIONS',
+    bidStrategy: 'AUTO_CPM',
+    budgetCents: 500000,
+    dailyBudgetCents: 3500,
+    startsAt: new Date().toISOString(),
+    endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString(),
+    targeting: {
+      musicGenres: ['Sertanejo Universitário', 'Pop Nacional'],
+      locations: [{ state: 'PR', city: 'Curitiba' }]
+    },
+    creative: {
+      audioSpotUrl: 'https://cdn.diskingressos.com.br/audio/spot-30s.mp3',
+      audioDurationSeconds: 30,
+      companionImageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=640&h=640&fit=crop',
+      callToAction: 'Garantir Ingresso',
+      destinationUrl: 'https://www.diskingressos.com.br/evento/1'
+    }
+  }
+
+  try {
+    const result = await validateSpotifyCampaign(campaignId, campaignData, actorName, producerId)
+    res.json({ ok: true, ...result })
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Erro ao validar hierarquia da campanha.' })
+  }
+})
+
+// 9.2 Solicitação de Aprovação Interna do Gestor
+spotifyAdsRouter.post('/campaigns/:campaignId/approval/request', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const requestedBy = req.auth?.name || req.auth?.email || 'Produtor'
+  const eventId = Number(req.body?.eventId || 1)
+  const campaignData = req.body?.campaign || {
+    name: 'Campanha Spotify Ads',
+    budgetCents: 500000,
+    dailyBudgetCents: 3500,
+    startsAt: new Date().toISOString(),
+    endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString()
+  }
+
+  try {
+    const approval = await requestCampaignApproval(campaignId, campaignData, requestedBy, producerId, eventId)
+    res.json({ ok: true, approval })
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Erro ao solicitar aprovação interna.' })
+  }
+})
+
+// 9.3 Aprovação pelo Gestor
+spotifyAdsRouter.post('/campaigns/:campaignId/approval/approve', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const approvedBy = req.auth?.name || req.auth?.email || 'Gestor DiskIngressos'
+
+  try {
+    const approval = await approveCampaignByManager(campaignId, approvedBy, producerId)
+    res.json({ ok: true, approval })
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Erro ao aprovar campanha.' })
+  }
+})
+
+// 9.4 Rejeição / Ajustes Solicitados pelo Gestor (motivo obrigatório)
+spotifyAdsRouter.post('/campaigns/:campaignId/approval/reject', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const rejectedBy = req.auth?.name || req.auth?.email || 'Gestor DiskIngressos'
+  const reason = req.body?.rejectionReason ? String(req.body.rejectionReason) : ''
+
+  try {
+    const approval = await rejectCampaignByManager(campaignId, rejectedBy, reason, producerId)
+    res.json({ ok: true, approval })
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Erro ao rejeitar campanha.' })
+  }
+})
+
+// 9.5 Registro de Aprovação da Campanha
+spotifyAdsRouter.get('/campaigns/:campaignId/approval', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const approval = getCampaignApprovalRecord(campaignId)
+  res.json({ approval })
+})
+
+// 9.6 Fila de Aprovações Pendentes da Produtora
+spotifyAdsRouter.get('/approvals/queue', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const queue = getPendingApprovalsQueue(producerId)
+  res.json({ queue })
+})
+
+// 9.7 Publicação Oficial com Trava Idempotente e Tamper Detection
+spotifyAdsRouter.post('/campaigns/:campaignId/publish', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const publishedBy = req.auth?.name || req.auth?.email || 'Produtor'
+  const eventId = Number(req.body?.eventId || 1)
+  const campaignData = req.body?.campaign || {}
+
+  try {
+    const publication = await publishSpotifyCampaignHierarchy(campaignId, campaignData, publishedBy, producerId, eventId)
+    res.json({ ok: true, publication })
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Falha na publicação da campanha no Spotify.' })
+  }
+})
+
+// 9.8 Registro de Publicação da Campanha
+spotifyAdsRouter.get('/campaigns/:campaignId/publication', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const publication = getCampaignPublicationRecord(campaignId)
+  res.json({ publication })
+})
+
+// 9.9 Histórico e Auditoria Completa da Campanha (Timeline)
+spotifyAdsRouter.get('/campaigns/:campaignId/timeline', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const timeline = getCampaignTimelineHistory(campaignId)
+  res.json({ timeline })
+})
+
+// 9.10 Pausa da Campanha
+spotifyAdsRouter.post('/campaigns/:campaignId/pause', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const campaignId = String(req.params.campaignId)
+  const actor = req.auth?.name || req.auth?.email || 'Produtor'
+  const reason = req.body?.reason ? String(req.body.reason) : undefined
+
+  pauseCampaign(campaignId, actor, reason)
+  res.json({ ok: true, message: 'Campanha pausada com sucesso e auditada.' })
+})
+
+// -------------------------------------------------------------
+// 10. FASE 28.8 — SPOTIFY CAPI, CONVERSÕES E DIAGNÓSTICO
+// -------------------------------------------------------------
+
+// 10.1 Integração CAPI da Produtora
+spotifyAdsRouter.get('/capi', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const integration = getProducerCapiIntegration(producerId)
+  res.json({ integration })
+})
+
+// 10.2 Lista de Eventos de Conversão Server-Side
+spotifyAdsRouter.get('/conversions', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const eventId = req.query.eventId ? Number(req.query.eventId) : undefined
+  const events = listProducerConversionEvents(producerId, eventId)
+  res.json({ events })
+})
+
+// 10.3 Relatório de Funil Completo (Cliques -> Compras)
+spotifyAdsRouter.get('/conversions/funnel', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const eventId = Number(req.query.eventId || 1)
+  const eventName = (req.query.eventName as string) || 'Festival Curitiba 2026'
+  const funnel = getProducerFunnelReport(producerId, eventId, eventName)
+  res.json({ funnel })
+})
+
+// 10.4 Diagnósticos e Taxa de Sucesso em Tempo Real (99.03%)
+spotifyAdsRouter.get('/conversions/diagnostics', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const diagnostics = getProducerCapiDiagnostics(producerId)
+  res.json({ diagnostics })
+})
+
+// 10.5 Reprocessamento de Evento CAPI
+spotifyAdsRouter.post('/conversions/:id/retry', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const id = String(req.params.id)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  try {
+    const result = retryProducerConversionEvent(id, producerId)
+    res.json(result)
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Erro ao reprocessar evento.' })
+  }
+})
+
+// -------------------------------------------------------------
+// 11. FASE 28.9 — REPORTING REAL, ATRIBUIÇÃO E AUDIENCE INSIGHTS
+// -------------------------------------------------------------
+
+// 11.1 Visão Geral de Métricas e Comparação de Atribuição (Spotify vs SafeSaff)
+spotifyAdsRouter.get('/reporting/overview', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const eventId = req.query.eventId ? Number(req.query.eventId) : undefined
+  const data = getSpotifyReportingOverview(producerId, eventId)
+  res.json(data)
+})
+
+// 11.2 Desempenho por Entidade (Campanha, Ad Set, Ad)
+spotifyAdsRouter.get('/reporting/breakdown', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const eventId = req.query.eventId ? Number(req.query.eventId) : undefined
+  const rows = getSpotifyReportingBreakdown(producerId, eventId)
+  res.json({ rows })
+})
+
+// 11.3 Audience Insights com Respeito a Limiares de Privacidade
+spotifyAdsRouter.get('/reporting/insights', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const eventId = Number(req.query.eventId || 1)
+  const insights = getSpotifyAudienceInsights(producerId, eventId)
+  res.json(insights)
+})
+
+// -------------------------------------------------------------
+// 12. FASE 28.10 — DASHBOARD OMNICHANNEL UNIFICADO
+// -------------------------------------------------------------
+spotifyAdsRouter.get('/omnichannel/overview', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const eventId = Number(req.query.eventId || 1)
+
+  interface ChannelRecord {
+    channelKey: 'spotify' | 'meta' | 'google' | 'tiktok'
+    channelName: string
+    family: 'audio' | 'social' | 'search' | 'video'
+    badgeColor: string
+    spentCents: number
+    impressions: number
+    clicks: number
+    ctrPercent: number
+    conversions: number
+    revenueCents: number
+    cpaCents: number
+    roas: number
+    shareOfSalesPercent: number
+    performanceQuadrant: 'SCALE' | 'MAINTAIN' | 'OPTIMIZE' | 'REDUCE'
+  }
+
+  const channels: ChannelRecord[] = [
+    {
+      channelKey: 'spotify',
+      channelName: 'Spotify Ads',
+      family: 'audio',
+      badgeColor: '#1DB954',
+      spentCents: 500000,
+      impressions: 1284520,
+      clicks: 28421,
+      ctrPercent: 2.21,
+      conversions: 1284,
+      revenueCents: 2410000,
+      cpaCents: 389,
+      roas: 4.82,
+      shareOfSalesPercent: 28.5,
+      performanceQuadrant: 'SCALE'
+    },
+    {
+      channelKey: 'meta',
+      channelName: 'Meta Ads (Insta / Face)',
+      family: 'social',
+      badgeColor: '#1877F2',
+      spentCents: 620000,
+      impressions: 340000,
+      clicks: 5100,
+      ctrPercent: 1.50,
+      conversions: 480,
+      revenueCents: 2304000,
+      cpaCents: 1291,
+      roas: 3.72,
+      shareOfSalesPercent: 27.2,
+      performanceQuadrant: 'MAINTAIN'
+    },
+    {
+      channelKey: 'google',
+      channelName: 'Google Ads (Search & PMax)',
+      family: 'search',
+      badgeColor: '#EA4335',
+      spentCents: 450000,
+      impressions: 112000,
+      clicks: 4480,
+      ctrPercent: 4.00,
+      conversions: 420,
+      revenueCents: 2016000,
+      cpaCents: 1071,
+      roas: 4.48,
+      shareOfSalesPercent: 23.8,
+      performanceQuadrant: 'OPTIMIZE'
+    },
+    {
+      channelKey: 'tiktok',
+      channelName: 'TikTok Ads',
+      family: 'video',
+      badgeColor: '#0F172A',
+      spentCents: 280000,
+      impressions: 185000,
+      clicks: 2960,
+      ctrPercent: 1.60,
+      conversions: 237,
+      revenueCents: 1137600,
+      cpaCents: 1181,
+      roas: 4.06,
+      shareOfSalesPercent: 13.4,
+      performanceQuadrant: 'MAINTAIN'
+    }
+  ]
+
+  const totalInvestedCents = channels.reduce((sum, c) => sum + c.spentCents, 0)
+  const totalRevenueCents = channels.reduce((sum, c) => sum + c.revenueCents, 0)
+  const totalConversions = channels.reduce((sum, c) => sum + c.conversions, 0)
+  const weightedRoas = totalInvestedCents > 0 ? Number((totalRevenueCents / totalInvestedCents).toFixed(2)) : 0
+
+  res.json({
+    producerId,
+    eventId,
+    period: 'Últimos 30 Dias',
+    totalInvestedCents,
+    totalRevenueCents,
+    totalConversions,
+    weightedRoas,
+    matrixQuadrants: {
+      scale: channels.filter(c => c.performanceQuadrant === 'SCALE'),
+      maintain: channels.filter(c => c.performanceQuadrant === 'MAINTAIN'),
+      optimize: channels.filter(c => c.performanceQuadrant === 'OPTIMIZE'),
+      reduce: channels.filter(c => c.performanceQuadrant === 'REDUCE')
+    },
+    channels
+  })
+})
+
+// -------------------------------------------------------------
+// 13. FASE 28.11 — MOTOR DE OTIMIZAÇÃO & INTELIGÊNCIA DE MÍDIA
+// -------------------------------------------------------------
+
+// 13.1 Resumo de Recomendações e Insights Explicáveis
+spotifyAdsRouter.get('/optimization/overview', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const eventId = req.query.eventId ? Number(req.query.eventId) : undefined
+  const overview = getOptimizationOverview(producerId, eventId)
+  res.json(overview)
+})
+
+// 13.2 Simulador de Impacto Orçamentário
+spotifyAdsRouter.post('/optimization/insights/:id/simulate', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const id = String(req.params.id)
+  const deltaPercent = Number(req.body?.deltaPercent || 25)
+  const simulation = simulateInsightImpact(id, deltaPercent)
+  res.json({ ok: true, simulation })
+})
+
+// 13.3 Aprovação de Recomendação (Human-in-the-loop)
+spotifyAdsRouter.post('/optimization/insights/:id/accept', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const id = String(req.params.id)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const actor = req.auth?.name || req.auth?.email || 'Gestor'
+  try {
+    const result = acceptInsightRecommendation(id, actor, producerId)
+    res.json(result)
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Erro ao aprovar recomendação.' })
+  }
+})
+
+// 13.4 Rejeição de Recomendação com Justificativa
+spotifyAdsRouter.post('/optimization/insights/:id/reject', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const id = String(req.params.id)
+  const producerId = requestedProducerId(req) || req.auth?.producerId || 1
+  const actor = req.auth?.name || req.auth?.email || 'Gestor'
+  const reason = req.body?.reason ? String(req.body.reason) : 'Decisão manual do gestor de marketing'
+  try {
+    const result = rejectInsightRecommendation(id, actor, reason, producerId)
+    res.json(result)
+  } catch (err: any) {
+    res.status(400).json({ ok: false, message: err?.message || 'Erro ao ignorar recomendação.' })
+  }
 })
