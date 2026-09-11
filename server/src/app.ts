@@ -16,6 +16,7 @@ import { posRouter } from './routes/pos.js'
 import { financeOperationsRouter } from './routes/financeOperations.js'
 import { financeTransfersRouter } from './routes/financeTransfers.js'
 import { financeErpRouter } from './routes/financeErp.js'
+import { financeReconciliationErpRouter } from './routes/financeReconciliationErp.js'
 import { financeAccountingRouter } from './routes/financeAccounting.js'
 import { financePaymentsRouter } from './routes/financePayments.js'
 import { financeSettlementRouter } from './routes/financeSettlement.js'
@@ -118,6 +119,7 @@ app.use('/api/finance', financeTransfersRouter)
 app.use('/api/finance', financeOperationsRouter)
 app.use('/api/finance/accounting', financeAccountingRouter)
 app.use('/api/finance/payments', financePaymentsRouter)
+app.use('/api/finance/reconciliation', financeReconciliationErpRouter)
 app.use('/api/finance/settlement', financeSettlementRouter)
 app.use('/api/finance/disputes', financeDisputesRouter)
 app.use('/api/finance/ledger', ledgerRouter)
