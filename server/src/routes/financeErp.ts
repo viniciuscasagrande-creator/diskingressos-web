@@ -7,7 +7,12 @@ import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 import { requestedProducerId, writeProducerId } from '../tenant.js'
 
 export const financeErpRouter = Router()
-financeErpRouter.use(requireAuth)
+financeErpRouter.use((req, res, next) => {
+  if (req.path.includes('browser-config') || req.path.includes('/tracking/')) {
+    return next()
+  }
+  return requireAuth(req as any, res, next)
+})
 
 // Standard DiskIngressos Cost Center Tree Template
 const DEFAULT_COST_CENTER_TEMPLATE = [
