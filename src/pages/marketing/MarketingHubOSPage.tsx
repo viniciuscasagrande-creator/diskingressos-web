@@ -12,6 +12,7 @@ import {
   type MarketingCampaign
 } from '../../services/api'
 import { CampaignDeliveryMonitoringTable } from '../../components/marketing/CampaignDeliveryMonitoringTable'
+import { MarketingCampaignHealthCard } from '../../components/marketing/MarketingCampaignHealthCard'
 
 type Props = {
   events: EventItem[]
@@ -335,6 +336,13 @@ export default function MarketingHubOSPage(p: Props) {
           </div>
         ))}
       </div>
+
+      {/* CARD EXECUTIVO: STATUS REAL DAS CAMPANHAS (FASE 28.13.1) */}
+      <MarketingCampaignHealthCard
+        eventId={selectedEventId}
+        notify={notify}
+        onNavigate={onNavigate}
+      />
 
       {/* 4. Main Diagnostic Row (Health, Alerts, Activity) */}
       <div className="marketing-os-row marketing-os-row-main">

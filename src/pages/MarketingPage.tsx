@@ -22,6 +22,7 @@ import EmailMarketingPage from './marketing/EmailMarketingPage'
 import MarketingReportsPage from './marketing/MarketingReportsPage'
 import MarketingAttributionPage from './marketing/MarketingAttributionPage'
 import SpotifyAdsHubPage from './marketing/SpotifyAdsHubPage'
+import { CampaignRealStatusPage } from './marketing/status-real/CampaignRealStatusPage'
 import {
   createMarketingCampaign, getMarketingCampaigns, getResolvedTracking,
   getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign,
@@ -53,6 +54,7 @@ export type Mode =
   | 'campaigns'
   | 'ready-campaigns'
   | 'create'
+  | 'status-real'
   | 'meta-ads'
   | 'google-ads'
   | 'tiktok-ads'
@@ -212,6 +214,19 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
 
   const renderSubmodule = () => {
     /* 1. AQUISIÇÃO & CAMPANHAS */
+    if (mode === 'status-real') {
+      return (
+        <CampaignRealStatusPage
+          events={events}
+          producerId={producerId}
+          producerName={producerName}
+          selectedEventId={selectedEventId}
+          notify={notify}
+          onNavigate={onNavigate}
+        />
+      )
+    }
+
     if (mode === 'ready-campaigns') {
       return <ReadyCampaignsPage producerId={producerId} events={events} initialEventId={selectedEventId} notify={notify} />
     }

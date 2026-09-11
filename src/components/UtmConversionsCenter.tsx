@@ -6,7 +6,7 @@ import {
   MessageCircle, Mail, Share2, MoreHorizontal, Users, Target, Clock, ArrowUpRight,
   TrendingDown, Info, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight,
   Edit, Trash2, PauseCircle, PlayCircle, Archive, Check, Send, Smartphone, ShieldCheck,
-  FileSpreadsheet, FileText, CheckCircle, Scale
+  FileSpreadsheet, FileText, CheckCircle, Scale, Headphones
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import {
@@ -89,6 +89,7 @@ const initialLinksData: TrackingLinkItem[] = [
   { id: 6, name: 'E-mail — Newsletter Base Ativa', shortUrl: 'disk.ing/4amigos-email', source: 'email', medium: 'newsletter', campaign: 'base_ativa_maio', destination: 'https://www.diskingressos.com.br/evento/4amigos-2026', visits: 356, added: 56, checkout: 24, abandoned: 3, sales: 12, revenueCents: 156000, status: 'ativa', shortCode: '4amigos-email', createdAt: '2026-05-12T08:00:00Z' },
   { id: 7, name: 'Facebook Ads — Remarketing Checkout', shortUrl: 'disk.ing/4amigos-fb-remarketing', source: 'facebook', medium: 'cpc', campaign: 'remarketing_checkout', destination: 'https://www.diskingressos.com.br/evento/4amigos-2026', visits: 198, added: 32, checkout: 16, abandoned: 2, sales: 7, revenueCents: 98000, status: 'ativa', shortCode: '4amigos-fb-remarketing', createdAt: '2026-05-15T16:45:00Z' },
   { id: 8, name: 'Afiliados — Promoters Oficiais', shortUrl: 'disk.ing/4amigos-afiliados', source: 'affiliates', medium: 'promoter', campaign: 'promoters_oficiais', destination: 'https://www.diskingressos.com.br/evento/4amigos-2026', visits: 79, added: 16, checkout: 9, abandoned: 1, sales: 4, revenueCents: 57000, status: 'ativa', shortCode: '4amigos-afiliados', createdAt: '2026-05-18T11:20:00Z' },
+  { id: 9, name: 'Spotify Ads — Áudio Oficial & Companion Banner', shortUrl: 'disk.ing/4amigos-spotify', source: 'spotify', medium: 'audio_ads', campaign: 'lancamento_spotify', destination: 'https://www.diskingressos.com.br/evento/4amigos-2026', visits: 1120, added: 194, checkout: 82, abandoned: 9, sales: 38, revenueCents: 532000, status: 'ativa', shortCode: '4amigos-spotify', createdAt: '2026-05-19T10:00:00Z' },
 ]
 
 const initialOrdersData: OrderConversion[] = [
@@ -99,6 +100,7 @@ const initialOrdersData: OrderConversion[] = [
   { id: 5, code: '#16355341', status: 'Adicionou', statusKey: 'added', customer: 'Rafael Mendes', email: 'rafael@email.com', phone: '(41) 98455-6677', utmSource: 'instagram', utmMedium: 'cpc', utmCampaign: 'lancamento_2026', utmContent: 'bio_link', utmTerm: 'teatro_positivo', landingPage: 'https://diskingressos.com.br/evento/4amigos', referrer: 'https://l.instagram.com/', sessionId: 'sess_3e5510aabb', visitorId: 'vis_1102938', firstTouch: '31/05/2026 16:45', lastTouch: '31/05/2026 17:05', tickets: '1x Pista Premium', modality: 'Inteira', amountCents: 17000, dateTime: '31/05/2026 17:05' },
   { id: 6, code: '#16355219', status: 'Finalizado', statusKey: 'finalized', customer: 'Camila Rocha', email: 'camila@email.com', phone: '(41) 99233-4455', utmSource: 'instagram', utmMedium: 'cpc', utmCampaign: 'lancamento_2026', utmContent: 'stories_video_1', utmTerm: 'comedia', landingPage: 'https://diskingressos.com.br/evento/4amigos', referrer: 'https://l.instagram.com/', sessionId: 'sess_8b4412ccdd', visitorId: 'vis_4472910', firstTouch: '31/05/2026 15:10', lastTouch: '31/05/2026 15:38', tickets: '2x Pista Lateral', modality: 'Inteira', amountCents: 24000, dateTime: '31/05/2026 15:38' },
   { id: 7, code: '#16355102', status: 'Abandonou', statusKey: 'abandoned', customer: 'Bruno Henrique', email: 'bruno@email.com', phone: '(41) 98844-9911', utmSource: 'instagram', utmMedium: 'cpc', utmCampaign: 'lancamento_2026', utmContent: 'feed_post', utmTerm: 'quatro_amigos', landingPage: 'https://diskingressos.com.br/evento/4amigos', referrer: 'https://l.instagram.com/', sessionId: 'sess_99a113ddee', visitorId: 'vis_8830192', firstTouch: '31/05/2026 14:00', lastTouch: '31/05/2026 14:22', tickets: '1x Camarote Open Bar', modality: 'Inteira', amountCents: 28000, dateTime: '31/05/2026 14:22' },
+  { id: 8, code: '#16355048', status: 'Finalizado', statusKey: 'finalized', customer: 'Eduardo Martins', email: 'eduardo.m@email.com', phone: '(41) 98765-4321', utmSource: 'spotify', utmMedium: 'audio_ads', utmCampaign: 'lancamento_spotify', utmContent: 'spot_30s_lineup', utmTerm: 'streaming_audio', landingPage: 'https://diskingressos.com.br/evento/4amigos', referrer: 'https://open.spotify.com/', sessionId: 'sess_sp_55a109fe2c', visitorId: 'vis_sp_771920', firstTouch: '31/05/2026 13:10', lastTouch: '31/05/2026 13:42', tickets: '2x Pista Premium', modality: 'Inteira', amountCents: 36000, dateTime: '31/05/2026 13:42' },
 ]
 
 const initialAbandonedCarts: AbandonedCartItem[] = [
@@ -107,6 +109,7 @@ const initialAbandonedCarts: AbandonedCartItem[] = [
   { id: 3, customerName: 'Juliana Paes', email: 'juliana.p@email.com', phone: '(41) 99776-5544', cartValueCents: 52000, tickets: '2x Camarote Frontstage', abandonedAt: 'Há 2 horas', utmSource: 'Instagram — Lançamento 2026', status: 'recuperado', messagesSent: 2 },
   { id: 4, customerName: 'Fernando Alencar', email: 'fernando@email.com', phone: '(41) 98112-3344', cartValueCents: 17000, tickets: '1x Pista Premium', abandonedAt: 'Há 3 horas', utmSource: 'Instagram — Lançamento 2026', status: 'pendente', messagesSent: 0 },
   { id: 5, customerName: 'Patrícia Souza', email: 'patricia@email.com', phone: '(41) 99344-7788', cartValueCents: 36000, tickets: '2x Pista Lateral', abandonedAt: 'Há 4 horas', utmSource: 'Instagram — Lançamento 2026', status: 'contatado', messagesSent: 1 },
+  { id: 6, customerName: 'Renata Silveira', email: 'renata.s@email.com', phone: '(41) 99221-3344', cartValueCents: 36000, tickets: '2x Pista Premium', abandonedAt: 'Há 5 horas', utmSource: 'Spotify Ads — Áudio Oficial', status: 'pendente', messagesSent: 0 },
 ]
 
 const dailyTimelineMock = [
@@ -591,6 +594,7 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
                 <option value="all">Todos canais</option>
                 <option value="instagram">Instagram</option>
                 <option value="google">Google Ads</option>
+                <option value="spotify">Spotify Ads</option>
                 <option value="whatsapp">WhatsApp</option>
                 <option value="tiktok">TikTok Ads</option>
                 <option value="influencer">Influencers</option>
@@ -1450,6 +1454,8 @@ function getSourceIcon(source: string) {
       return <Mail size={15} style={{ color: '#FFFFFF' }} />
     case 'facebook':
       return <span style={{ fontWeight: 900, fontSize: '14px', color: '#FFFFFF' }}>f</span>
+    case 'spotify':
+      return <Headphones size={15} style={{ color: '#FFFFFF' }} />
     case 'affiliates':
       return <span style={{ fontWeight: 900, fontSize: '13px', color: '#FFFFFF' }}>V</span>
     default:
@@ -1530,6 +1536,7 @@ function NewLinkDrawer({ form, setForm, eventTitle, onClose, onSubmit }: { form:
               <select value={form.source} onChange={e => setForm({ ...form, source: e.target.value })}>
                 <option value="instagram">Instagram</option>
                 <option value="google">Google Ads</option>
+                <option value="spotify">Spotify Ads (Áudio & Companion)</option>
                 <option value="whatsapp">WhatsApp</option>
                 <option value="tiktok">TikTok Ads</option>
                 <option value="influencer">Influenciadores</option>

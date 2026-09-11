@@ -715,6 +715,7 @@ body{background:#f2f5f9}.app-shell{min-height:100%;display:grid;grid-template-co
 .utm-source-avatar.influencer { background: #D946EF; }
 .utm-source-avatar.email { background: #3B82F6; }
 .utm-source-avatar.facebook { background: #1877F2; }
+.utm-source-avatar.spotify { background: #1DB954; }
 .utm-source-avatar.affiliates { background: #F59E0B; }
 .utm-source-avatar.big { width: 42px; height: 42px; border-radius: 10px; }
 

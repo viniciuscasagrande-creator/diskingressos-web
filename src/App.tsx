@@ -201,6 +201,8 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'marketing-tiktok-ads': 'TikTok Ads',
   'marketing-spotify-ads': 'Spotify Ads & Conversões CAPI',
   'marketing-spotify': 'Spotify Ads & Conversões CAPI',
+  'marketing-status-real': 'Status Real das Campanhas',
+  'marketing-real-status': 'Status Real das Campanhas',
   'marketing-influencers': 'Influenciadores & Promoters',
   'marketing-automations': 'Automações & Jornadas',
   'marketing-whatsapp': 'WhatsApp Marketing',
@@ -299,6 +301,7 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
   }
   if (clean === 'eventos') return 'events'
   if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
+  if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') return 'marketing-status-real'
   if (clean in titleMap) return clean as PageKey
   return firstPageFor(user)
 }
@@ -315,6 +318,7 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const clean = window.location.pathname.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
       if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
+      if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') return 'marketing-status-real'
       if (clean in titleMap) return clean as PageKey
     }
     return 'events'
@@ -345,6 +349,10 @@ export default function App() {
         if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') {
           setMobileNavOpen(false)
           setPage('marketing-spotify')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') {
+          setMobileNavOpen(false)
+          setPage('marketing-status-real')
           window.scrollTo({ top: 0 })
         }
       }
@@ -520,6 +528,8 @@ export default function App() {
       window.history.pushState({ page: next }, '', `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`)
     } else if (next === 'marketing-spotify' || next === 'marketing-spotify-ads') {
       window.history.pushState({ page: next }, '', '/app/marketing/spotify')
+    } else if (next === 'marketing-status-real' || next === 'marketing-real-status') {
+      window.history.pushState({ page: next }, '', '/app/marketing/status-real')
     } else {
       window.history.pushState({ page: next }, '', `/app/${next}`)
     }
@@ -899,6 +909,8 @@ export default function App() {
               'marketing-tiktok-ads': 'tiktok-ads',
               'marketing-spotify-ads': 'spotify-ads',
               'marketing-spotify': 'spotify-ads',
+              'marketing-status-real': 'status-real',
+              'marketing-real-status': 'status-real',
               'marketing-influencers': 'influencers',
               'marketing-automations': 'automations',
               'marketing-whatsapp': 'whatsapp',
