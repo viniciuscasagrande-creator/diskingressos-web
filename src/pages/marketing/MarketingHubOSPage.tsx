@@ -11,6 +11,7 @@ import {
   getResolvedTracking, getAutomationSummary, getCommunicationSummary,
   type MarketingCampaign
 } from '../../services/api'
+import { CampaignDeliveryMonitoringTable } from '../../components/marketing/CampaignDeliveryMonitoringTable'
 
 type Props = {
   events: EventItem[]
@@ -430,6 +431,13 @@ export default function MarketingHubOSPage(p: Props) {
           </div>
         </div>
       </div>
+
+      {/* FASE 28.13 — MONITORAMENTO REAL DE ATIVAÇÃO & ENTREGA DAS CAMPANHAS (META, GOOGLE, TIKTOK, SPOTIFY) */}
+      <CampaignDeliveryMonitoringTable
+        eventId={selectedEventId}
+        notify={notify}
+        onNavigate={onNavigate}
+      />
 
       {/* 5. REFINED: Gráfico Moderno de Evolução Diária de Vendas (R$) & Funil 360° */}
       <div className="marketing-os-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '14px' }}>
