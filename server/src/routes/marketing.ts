@@ -9,7 +9,12 @@ import { requestedProducerId, writeProducerId, ownsProducer } from '../tenant.js
 import { audit } from '../audit.js'
 
 export const marketingRouter=Router()
-marketingRouter.use(requireAuth)
+marketingRouter.use((req, res, next) => {
+  if (req.path.includes('/tracking/browser-config')) {
+    return next()
+  }
+  return requireAuth(req as any, res, next)
+})
 const marketingWriteRoles=['admin-master','admin','producer-admin','producer-marketing']
 const marketingReadRoles=[...marketingWriteRoles,'viewer']
 

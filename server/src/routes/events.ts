@@ -7,7 +7,13 @@ import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 import { buildEventHealth } from '../services/eventOS.js'
 import { buildLotInventory, buildInventoryRecommendations, INVENTORY_ENGINE_RELEASE } from '../services/inventoryEngine.js'
 import { CUSTOMER_360_RELEASE, classifyCustomer, customerKey } from '../services/customer360.js'
-export const eventsRouter=Router();eventsRouter.use(requireAuth)
+export const eventsRouter=Router()
+eventsRouter.use((req, res, next) => {
+  if (req.path.includes('/tracking/browser-config')) {
+    return next()
+  }
+  return requireAuth(req as any, res, next)
+})
 const shape=z.object({code:z.string().min(1),title:z.string().min(2),venue:z.string(),city:z.string(),date:z.string(),endDate:z.string().optional(),totalCents:z.number().int().nonnegative().optional(),sales:z.number().int().nonnegative().optional(),available:z.number().int().nonnegative().optional(),courtesy:z.number().int().nonnegative().optional(),occupancy:z.number().nonnegative().optional(),cover:z.string().optional(),badge:z.string().optional(),status:z.string().optional(),description:z.string().optional(),category:z.string().optional(),visibility:z.string().optional(),producerId:z.number().int().optional()})
 function scope(req:AuthRequest){return globalAdmin(req.auth!.role)?undefined:req.auth!.producerId??-1}
 eventsRouter.get('/',async(req:AuthRequest,res)=>{const requested=req.query.producerId?Number(req.query.producerId):undefined;const producerId=globalAdmin(req.auth!.role)?requested:scope(req);res.json(await prisma.event.findMany({where:producerId?{producerId}:undefined,include:{producer:{select:{name:true}}},orderBy:{id:'desc'}}))})
