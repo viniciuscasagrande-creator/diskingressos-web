@@ -92,6 +92,8 @@ export default function TrackingIntegrationsManager({
     return events.find(e => e.id === selectedEventId) || events[0]
   }, [events, selectedEventId])
 
+  const effectiveProducerId = producerId || currentEvent?.producerId || 1
+
   const load = async () => {
     if (!selectedEventId) return
     setLoading(true)
@@ -502,10 +504,10 @@ export default function TrackingIntegrationsManager({
       )}
 
       {/* Modal Wizard de Associação */}
-      {assignmentModalOpen && selectedEventId && producerId && (
+      {assignmentModalOpen && selectedEventId && (
         <TrackingAssignmentModal
           eventId={selectedEventId}
-          producerId={producerId}
+          producerId={effectiveProducerId}
           availableIntegrations={allProducerIntegrations}
           alreadyAssignedIds={assignments.map(a => a.integration.id)}
           initialProvider={modalInitialProvider}

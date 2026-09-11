@@ -64,17 +64,17 @@ export default function TrackingConversionMatrix({ assignments, onOpenDrawer }: 
         </div>
       </div>
 
-      {activeAssignments.length === 0 ? (
-        <div style={{ padding: '36px', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '8px' }}>
-          Nenhuma integração ativa vinculada a este evento. Adicione uma integração para visualizar a matriz de conversões.
-        </div>
-      ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table className="tracking-matrix-table">
-            <thead>
-              <tr>
-                <th>Evento da Jornada</th>
-                {activeAssignments.map(a => (
+      <div style={{ overflowX: 'auto' }}>
+        <table className="tracking-matrix-table">
+          <thead>
+            <tr>
+              <th>Evento da Jornada</th>
+              {activeAssignments.length === 0 ? (
+                <th style={{ minWidth: '220px', color: '#64748b', fontWeight: 600, textAlign: 'center' }}>
+                  Destinos de Mídia e Conversão
+                </th>
+              ) : (
+                activeAssignments.map(a => (
                   <th key={a.id} style={{ minWidth: '160px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                       <span style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>
@@ -95,29 +95,35 @@ export default function TrackingConversionMatrix({ assignments, onOpenDrawer }: 
                       </small>
                     </div>
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {CANONICAL_STAGES.map(stage => {
-                const totalForStage = countForStage(stage.key)
-                return (
-                  <tr key={stage.key}>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <strong>
-                          {stage.label}
-                          <span className="matrix-badge-multi" style={{ fontWeight: 600 }}>
-                            {totalForStage} destino{totalForStage === 1 ? '' : 's'}
-                          </span>
-                        </strong>
-                        <small style={{ color: '#64748b', fontSize: '11px', marginTop: '2px' }}>
-                          {stage.description}
-                        </small>
-                      </div>
-                    </td>
+                ))
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {CANONICAL_STAGES.map(stage => {
+              const totalForStage = countForStage(stage.key)
+              return (
+                <tr key={stage.key}>
+                  <td>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <strong>
+                        {stage.label}
+                        <span className="matrix-badge-multi" style={{ fontWeight: 600 }}>
+                          {totalForStage} destino{totalForStage === 1 ? '' : 's'}
+                        </span>
+                      </strong>
+                      <small style={{ color: '#64748b', fontSize: '11px', marginTop: '2px' }}>
+                        {stage.description}
+                      </small>
+                    </div>
+                  </td>
 
-                    {activeAssignments.map(a => {
+                  {activeAssignments.length === 0 ? (
+                    <td style={{ textAlign: 'center', color: '#94a3b8', fontSize: '12px', padding: '14px' }}>
+                      Nenhuma integração ativa vinculada a este evento. Adicione uma integração para rotear este evento.
+                    </td>
+                  ) : (
+                    activeAssignments.map(a => {
                       const rule = a.rules?.find(r => r.eventName.toLowerCase() === stage.key.toLowerCase())
                       const enabled = rule ? rule.enabled : true
                       const browserOn = rule ? rule.browserEnabled : true
@@ -160,14 +166,14 @@ export default function TrackingConversionMatrix({ assignments, onOpenDrawer }: 
                           </button>
                         </td>
                       )
-                    })}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+                    })
+                  )}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #edf2f7', fontSize: '12px', color: '#64748b' }}>
         <span>Legenda: <b>Web</b> = Disparo via Navegador · <b>API</b> = Disparo Seguro Server-Side (CAPI) com deduplicação de sinal.</span>

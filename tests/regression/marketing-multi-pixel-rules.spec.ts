@@ -41,7 +41,7 @@ test.describe('Fase 28.14.2 — Multi-Pixel e Regras Individuais por Evento', ()
   test('2. Validação da API de Associações Granulares por Evento (GET e PUT com regras por etapa)', async ({ request }) => {
     // Busca token de autenticação via login na API
     const authRes = await request.post('/api/auth/login', {
-      data: { email: qaUsers.admin.email, password: qaUsers.admin.password }
+      data: { email: qaUsers.producerA.email, password: qaUsers.producerA.password }
     })
     expect(authRes.ok()).toBeTruthy()
     const { token } = await authRes.json()

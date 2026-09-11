@@ -73,7 +73,7 @@ test.describe('Fase 28.14.3 — Central de Pixels e Conversões por Evento — U
   test('2. APIs de Tracking Overview e Browser-Config sem vazamento de credenciais', async ({ request }) => {
     // Login API
     const authRes = await request.post('/api/auth/login', {
-      data: { email: qaUsers.admin.email, password: qaUsers.admin.password }
+      data: { email: qaUsers.producerA.email, password: qaUsers.producerA.password }
     })
     expect(authRes.ok()).toBeTruthy()
     const { token } = await authRes.json()
