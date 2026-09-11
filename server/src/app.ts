@@ -26,6 +26,7 @@ import { financeSplitRouter } from './routes/financeSplit.js'
 import { operationsRouter } from './routes/operations.js'
 import { ticketsRouter } from './routes/tickets.js'
 import { marketingRouter } from './routes/marketing.js'
+import { spotifyAdsRouter } from './routes/spotifyAds.js'
 import { automationRouter } from './routes/automation.js'
 import { supportRouter } from './routes/support.js'
 import { communicationRouter } from './routes/communication.js'
@@ -125,6 +126,7 @@ app.use('/api/finance/disputes', financeDisputesRouter)
 app.use('/api/finance/ledger', ledgerRouter)
 app.use('/api/finance/split', financeSplitRouter)
 app.use('/api/operations', operationsRouter)
+app.use('/api/marketing/spotify', spotifyAdsRouter)
 app.use('/api/marketing/conversions', conversionsRouter)
 app.use('/api/marketing', marketingRouter)
 app.use('/api/automation', automationRouter)

@@ -32,6 +32,7 @@ const channelMeta: Record<MarketingChannel, { label: string; color: string; bg: 
   crm: { label: 'CRM & Reativação', color: '#0284C7', bg: '#F0F9FF', border: '#BAE6FD' },
   coupon: { label: 'Promoção / Cupons', color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
   qrcode: { label: 'QR Code / Mídia Física', color: '#0D9488', bg: '#F0FDFA', border: '#99F6E4' },
+  spotify: { label: 'Spotify Ads', color: '#1DB954', bg: '#F0FDF4', border: '#BBF7D0' },
   multichannel: { label: 'Multicanal', color: '#0D9488', bg: '#F0FDFA', border: '#99F6E4' },
   direct: { label: 'Direto / Orgânico', color: '#64748B', bg: '#F8FAFC', border: '#E2E8F0' },
 }

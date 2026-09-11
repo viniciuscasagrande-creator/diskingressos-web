@@ -4,7 +4,8 @@ import {
   DollarSign, Users, Eye, CreditCard, ArrowRight, 
   Share2, Filter, Download, Plus, Calendar, 
   Sparkles, CheckCircle2, ArrowUpRight, ShieldCheck, 
-  Globe, MessageCircle, Mail, ExternalLink, Sliders
+  Globe, MessageCircle, Mail, ExternalLink, Sliders,
+  Headphones
 } from 'lucide-react';
 import type { EventItem } from '../../types/event';
 import { 
@@ -449,7 +450,34 @@ export const MarketingDashboardPage: React.FC<MarketingDashboardPageProps> = ({
         </DataTable>
       </div>
 
-      {/* 6. Banner do Sistema de Herança de Rastreamento (Fase 4) */}
+      {/* 6. Banner Spotify Ads & Áudio Oficial (Fase 26.17.10) */}
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-card p-5 text-white flex flex-col md:flex-row items-center justify-between gap-4 border border-[#1DB954]/30 shadow-lg">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-btn bg-[#1DB954] text-black shrink-0 shadow-md">
+            <Headphones size={22} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-[15px] font-bold">Spotify Ads API v3 & Conversões CAPI</h4>
+              <span className="text-[10px] font-extrabold uppercase bg-[#1DB954] text-black px-2 py-0.5 rounded-full">
+                Novo • Fase 26.17.10
+              </span>
+            </div>
+            <p className="text-[12px] text-slate-300 mt-0.5">
+              Veicule spots de áudio oficiais de 15s/30s e companion banners 640x640 com público sugerido por Copilot e atribuição por pedido pago.
+            </p>
+          </div>
+        </div>
+        <Button
+          variant="primary"
+          onClick={() => onNavigateToTab('mkt-spotify')}
+          className="bg-[#1DB954] text-black hover:bg-[#19A34A] shrink-0 font-extrabold text-xs"
+        >
+          Acessar Spotify Ads Hub
+        </Button>
+      </div>
+
+      {/* 7. Banner do Sistema de Herança de Rastreamento (Fase 4) */}
       <div className="bg-gradient-to-r from-[#222A36] to-[#17202A] rounded-card p-5 text-white flex flex-col md:flex-row items-center justify-between gap-4 border border-white/10 shadow-lg">
         <div className="flex items-center gap-3.5">
           <div className="flex h-11 w-11 items-center justify-center rounded-btn bg-[#7C3AED] text-white shrink-0 shadow-md">

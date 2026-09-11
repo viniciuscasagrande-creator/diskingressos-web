@@ -3,7 +3,7 @@ import {
   Activity, AlertTriangle, ArrowRight, BarChart3, CalendarDays, CheckCircle2,
   Download, Gift, Link2, Mail, Megaphone, Plus, Rocket, Sparkles, Target,
   TicketPercent, TrendingUp, Users, MessageCircle, Split, Zap, Clock,
-  Smartphone, MousePointerClick, ShieldCheck, ChevronRight, FileText, ArrowLeft
+  Smartphone, MousePointerClick, ShieldCheck, ChevronRight, FileText, ArrowLeft, Headphones
 } from 'lucide-react'
 import type { EventItem } from '../../data/events'
 import {
@@ -240,6 +240,35 @@ export default function MarketingHubOSPage(p: Props) {
             <span>Relatório Executivo</span>
           </button>
         </div>
+      </div>
+
+      {/* Banner Oficial Spotify Ads & CAPI */}
+      <div className="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-[#121212] border border-emerald-500/30 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg mb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+            <Headphones size={24} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                Fase 26.17.10 · Spotify Ads API v3
+              </span>
+              <span className="text-xs text-slate-400">DiskIngressos → Produtor → Evento</span>
+            </div>
+            <h3 className="text-base font-bold text-white">Central de Mídia Spotify Ads & Conversões CAPI</h3>
+            <p className="text-xs text-slate-300">
+              Anúncios de áudio com companion banner 640x640, rastreio CAPI server-side e atribuição multicanal por evento.
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => nav(onNavigate, notify, 'marketing-spotify-ads', 'Spotify Ads')}
+          className="h-9 px-4 rounded-lg bg-[#1DB954] hover:bg-[#1aa34a] text-black text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shrink-0 shadow cursor-pointer font-semibold"
+        >
+          <Headphones size={15} />
+          <span>Spotify Ads & CAPI</span>
+          <ArrowRight size={14} />
+        </button>
       </div>
 
       {/* 2. Context Filters */}
@@ -582,6 +611,7 @@ export default function MarketingHubOSPage(p: Props) {
                 ['Meta Ads', 'marketing-meta-ads'],
                 ['Google Ads', 'marketing-google-ads'],
                 ['TikTok Ads', 'marketing-tiktok-ads'],
+                ['Spotify Ads', 'marketing-spotify-ads'],
                 ['WhatsApp', 'marketing-whatsapp'],
                 ['E-mail Marketing', 'marketing-email'],
                 ['Influenciadores', 'marketing-influencers']

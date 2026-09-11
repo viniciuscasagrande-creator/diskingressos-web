@@ -11,6 +11,7 @@ export type MarketingChannel =
   | 'crm' 
   | 'coupon' 
   | 'qrcode'
+  | 'spotify'
   | 'multichannel';
 
 export type TrackingInheritanceMode = 'inherit' | 'custom' | 'disabled';

@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Megaphone, ShoppingCart, Link, 
   Tag, Sliders, MessageCircle, Mail, Users, 
   TrendingUp, Layers3, Sparkles, Plus, FileText, ArrowUpRight,
-  Radio
+  Radio, Headphones
 } from 'lucide-react';
 import type { EventItem } from '../../types/event';
 import { MarketingDashboardPage } from './MarketingDashboardPage';
@@ -13,6 +13,7 @@ import { PixelInheritancePage } from './PixelInheritancePage';
 import { CouponsPromoPage } from './CouponsPromoPage';
 import { AutomationCenterPage } from '../automation/AutomationCenterPage';
 import { CommunicationPage } from './CommunicationPage';
+import { SpotifyAdsHubPage } from './SpotifyAdsHubPage';
 
 export type MarketingSubTab = 
   | 'mkt-hub'
@@ -27,6 +28,7 @@ export type MarketingSubTab =
   | 'mkt-affiliates'
   | 'mkt-analytics'
   | 'mkt-comm-integrations'
+  | 'mkt-spotify'
   | 'mkt-reports';
 
 interface MarketingHubProps {
@@ -49,6 +51,7 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
 
   const modules = [
     { id: 'mkt-dashboard', title: 'Dashboard', desc: 'KPIs, funil de conversão e desempenho geral.', icon: LayoutDashboard, color: 'text-[#7C3AED]' },
+    { id: 'mkt-spotify', title: 'Spotify Ads & Áudio', desc: 'Campanhas de áudio oficial, CAPI, estimativa e atribuição por evento.', icon: Headphones, color: 'text-[#1DB954]' },
     { id: 'mkt-campaigns', title: 'Campanhas', desc: 'Criação, agendamento e métricas de anúncios.', icon: Megaphone, color: 'text-purple-600' },
     { id: 'mkt-automations', title: 'Automações', desc: 'Fluxos automáticos de comunicação e gatilhos.', icon: Sparkles, color: 'text-blue-500' },
     { id: 'mkt-whatsapp', title: 'WhatsApp', desc: 'Campanhas diretas e mensagens transacionais.', icon: MessageCircle, color: 'text-[#25D366]' },
@@ -147,6 +150,18 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
         >
           <Radio size={15} />
           <span>Integrações (Fase 14)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('mkt-spotify')}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-btn text-xs font-bold transition-all shrink-0 ${
+            activeTab === 'mkt-spotify'
+              ? 'bg-[#1DB954] text-black shadow-xs'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+          }`}
+        >
+          <Headphones size={15} />
+          <span>Spotify Ads & CAPI</span>
         </button>
 
         <button
@@ -258,6 +273,17 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
       {/* 10. Communication Integrations (Fase 14) */}
       {activeTab === 'mkt-comm-integrations' && (
         <CommunicationPage producerId={producerId} producerName={producerName} notify={notify} />
+      )}
+
+      {/* 11. Spotify Ads & Conversões (Fase 26.17.10) */}
+      {activeTab === 'mkt-spotify' && (
+        <SpotifyAdsHubPage
+          events={events}
+          selectedEventId={selectedEventId}
+          producerId={producerId}
+          producerName={producerName}
+          notify={notify}
+        />
       )}
     </div>
   );

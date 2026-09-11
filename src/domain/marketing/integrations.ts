@@ -11,6 +11,7 @@ export type MarketingIntegrationProvider =
   | 'snapchat'
   | 'microsoft_ads'
   | 'clarity'
+  | 'spotify'
 
 export type MarketingIntegrationDefinition = {
   key: MarketingIntegrationProvider
@@ -35,7 +36,8 @@ export const marketingIntegrationCatalog: MarketingIntegrationDefinition[] = [
   { key:'pinterest', name:'Pinterest Tag', family:'ads', integrationType:'tag_conversions', identifierLabel:'Tag ID', identifierPlaceholder:'0000000000000', tokenLabel:'Conversions API token', description:'Pinterest Ads, Tag e conversões server-side.', capabilities:['Pinterest Tag','Conversions API','Audiences','Shopping intent'], recommendedEvents:['PageVisit','ViewCategory','AddToCart','Checkout','Lead','Signup'] },
   { key:'snapchat', name:'Snap Pixel', family:'ads', integrationType:'pixel_capi', identifierLabel:'Pixel ID', identifierPlaceholder:'xxxxxxxx-xxxx-xxxx-xxxx', tokenLabel:'Conversions API token', description:'Snap Ads, Pixel e Conversions API.', capabilities:['Snap Pixel','Conversions API','Audiences','Attribution'], recommendedEvents:['PAGE_VIEW','VIEW_CONTENT','ADD_CART','START_CHECKOUT','PURCHASE','SIGN_UP'] },
   { key:'microsoft_ads', name:'Microsoft Advertising', family:'ads', integrationType:'uet_conversions', identifierLabel:'UET Tag ID', identifierPlaceholder:'00000000', tokenLabel:'API / OAuth secret', description:'Bing/Microsoft Ads com UET e conversões.', capabilities:['UET','Microsoft Ads','Conversion goals','Remarketing'], recommendedEvents:['page_view','view_content','add_to_cart','begin_checkout','purchase','lead'] },
-  { key:'clarity', name:'Microsoft Clarity', family:'analytics', integrationType:'analytics', identifierLabel:'Project ID', identifierPlaceholder:'xxxxxxxxxx', tokenLabel:'API credential (opcional)', description:'Heatmaps, gravações de sessão e diagnóstico UX.', capabilities:['Heatmaps','Session recordings','UX insights','Funnels'], recommendedEvents:['PageView','ViewContent','InitiateCheckout','Purchase'] }
+  { key:'clarity', name:'Microsoft Clarity', family:'analytics', integrationType:'analytics', identifierLabel:'Project ID', identifierPlaceholder:'xxxxxxxxxx', tokenLabel:'API credential (opcional)', description:'Heatmaps, gravações de sessão e diagnóstico UX.', capabilities:['Heatmaps','Session recordings','UX insights','Funnels'], recommendedEvents:['PageView','ViewContent','InitiateCheckout','Purchase'] },
+  { key:'spotify', name:'Spotify Ads', family:'ads', integrationType:'ads_capi', identifierLabel:'Ad Account ID', identifierPlaceholder:'sp_ad_acc_xxxxxxxx', tokenLabel:'Access Token / Client Secret', description:'Spotify Ads API v3 com CAPI, áudio, companion banner e atribuição de ingressos.', capabilities:['Spotify Ads v3','CAPI Audio','Audience Estimate','Event Attribution'], recommendedEvents:['VIEW','PRODUCT','ADDTOCART','CHECKOUT','PURCHASE'] }
 ]
 
 export const integrationByKey = (key: string) => marketingIntegrationCatalog.find(p => p.key === key) || marketingIntegrationCatalog[0]

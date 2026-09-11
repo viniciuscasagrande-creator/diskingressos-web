@@ -33,7 +33,8 @@ export const providerEventMap: Record<string, Partial<Record<CanonicalMarketingE
   snapchat: { page_view:'PAGE_VIEW', view_content:'VIEW_CONTENT', add_to_cart:'ADD_CART', begin_checkout:'START_CHECKOUT', purchase:'PURCHASE', sign_up:'SIGN_UP' },
   microsoft_ads: { page_view:'page_view', view_content:'view_content', add_to_cart:'add_to_cart', begin_checkout:'begin_checkout', purchase:'purchase', lead:'lead' },
   gtm: { page_view:'PageView', view_content:'ViewContent', add_to_cart:'AddToCart', begin_checkout:'InitiateCheckout', purchase:'Purchase' },
-  clarity: { page_view:'PageView', view_content:'ViewContent', begin_checkout:'InitiateCheckout', purchase:'Purchase' }
+  clarity: { page_view:'PageView', view_content:'ViewContent', begin_checkout:'InitiateCheckout', purchase:'Purchase' },
+  spotify: { page_view:'VIEW', view_content:'PRODUCT', add_to_cart:'ADDTOCART', begin_checkout:'CHECKOUT', add_payment_info:'CHECKOUT', purchase:'PURCHASE', lead:'LEAD', sign_up:'SIGN_UP' }
 }
 
 export const mapCanonicalEvent = (provider:string,eventName:CanonicalMarketingEvent) => providerEventMap[provider]?.[eventName] || eventName

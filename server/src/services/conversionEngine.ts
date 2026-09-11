@@ -19,7 +19,8 @@ const eventMap:Record<string,Record<string,string>>={
  snapchat:{page_view:'PAGE_VIEW',view_content:'VIEW_CONTENT',add_to_cart:'ADD_CART',begin_checkout:'START_CHECKOUT',purchase:'PURCHASE',sign_up:'SIGN_UP'},
  microsoft_ads:{page_view:'page_view',view_content:'view_content',add_to_cart:'add_to_cart',begin_checkout:'begin_checkout',purchase:'purchase',lead:'lead'},
  gtm:{page_view:'PageView',view_content:'ViewContent',add_to_cart:'AddToCart',begin_checkout:'InitiateCheckout',purchase:'Purchase'},
- clarity:{page_view:'PageView',view_content:'ViewContent',begin_checkout:'InitiateCheckout',purchase:'Purchase'}
+  clarity:{page_view:'PageView',view_content:'ViewContent',begin_checkout:'InitiateCheckout',purchase:'Purchase'},
+  spotify:{page_view:'VIEW',view_content:'PRODUCT',add_to_cart:'ADDTOCART',begin_checkout:'CHECKOUT',add_payment_info:'CHECKOUT',purchase:'PURCHASE',lead:'LEAD',sign_up:'SIGN_UP'}
 }
 
 const sha256=(v?:string|null)=>v?crypto.createHash('sha256').update(v.trim().toLowerCase()).digest('hex'):undefined
@@ -32,6 +33,7 @@ function buildPayload(provider:string,row:any,input:DispatchInput){
  if(provider==='meta')return {data:[{event_name:mapped,event_time:seconds,event_id:input.eventId,action_source:'website',user_data:user,custom_data:{currency,value,order_id:input.orderId}}]}
  if(provider==='tiktok')return {event_source:'web',event_source_id:row.pixelId,data:[{event:mapped,event_time:seconds,event_id:input.eventId,user:{email:sha256(input.email),phone:sha256(input.phone),external_id:sha256(input.externalId)},properties:{currency,value,order_id:String(input.orderId||'')}}]}
  if(provider==='ga4')return {client_id:input.externalId||input.eventId,events:[{name:mapped,params:{currency,value,transaction_id:String(input.orderId||input.eventId)}}]}
+ if(provider==='spotify')return {event_name:mapped,event_time:seconds,event_id:input.eventId,user_data:{email:sha256(input.email),phone_number:sha256(input.phone),external_id:sha256(input.externalId)},custom_data:{currency,value,order_id:input.orderId?String(input.orderId):undefined,content_type:'ticket',event_entity_id:input.eventEntityId},action_source:'WEBSITE'}
  return {event_id:input.eventId,event_name:mapped,event_time:seconds,value,currency,order_id:input.orderId,user,attribution:input.attribution||{},metadata:input.metadata||{}}
 }
 
@@ -42,6 +44,7 @@ async function deliver(row:any,payload:any){
  if(row.provider==='meta'){url=`https://graph.facebook.com/v21.0/${encodeURIComponent(row.pixelId)}/events?access_token=${encodeURIComponent(token)}`}
  else if(row.provider==='tiktok'){url='https://business-api.tiktok.com/open_api/v1.3/event/track/';headers['Access-Token']=token}
  else if(row.provider==='ga4'){url=`https://www.google-analytics.com/mp/collect?measurement_id=${encodeURIComponent(row.pixelId)}&api_secret=${encodeURIComponent(token)}`}
+ else if(row.provider==='spotify'){url=`https://api.spotify.com/v1/ad-accounts/${encodeURIComponent(row.pixelId)}/conversions`;headers['Authorization']=`Bearer ${token}`}
  else return {status:'queued',code:202,message:`Conector ${row.provider} preparado para worker/OAuth específico.`}
  try{const response=await fetch(url,{method:'POST',headers,body:JSON.stringify(payload)});const text=(await response.text()).slice(0,600);return {status:response.ok?'ok':'erro',code:response.status,message:text||response.statusText}}
  catch(error:any){return {status:'erro',code:503,message:error?.message||'Falha de rede no provedor.'}}

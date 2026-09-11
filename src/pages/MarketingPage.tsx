@@ -6,7 +6,7 @@ import {
   Share2, Compass, Eye, CheckCircle2, Sliders, Filter, Sparkles, RefreshCw,
   Send, Trash2, Edit, Copy, Check, MessageCircle, ArrowRight, Layers,
   Target, ShieldCheck, Flame, Scale, FileSpreadsheet, FileText, ChevronDown,
-  CheckCircle, Play, Pause, ExternalLink, Award, Search, X, UserCheck, ArrowLeft
+  CheckCircle, Play, Pause, ExternalLink, Award, Search, X, UserCheck, ArrowLeft, Headphones
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import AutomationCenterPage from './AutomationCenterPage'
@@ -21,6 +21,7 @@ import WhatsAppMarketingPage from './marketing/WhatsAppMarketingPage'
 import EmailMarketingPage from './marketing/EmailMarketingPage'
 import MarketingReportsPage from './marketing/MarketingReportsPage'
 import MarketingAttributionPage from './marketing/MarketingAttributionPage'
+import SpotifyAdsHubPage from './marketing/SpotifyAdsHubPage'
 import {
   createMarketingCampaign, getMarketingCampaigns, getResolvedTracking,
   getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign,
@@ -36,6 +37,8 @@ export type Mode =
   | 'meta-ads'
   | 'google-ads'
   | 'tiktok-ads'
+  | 'spotify-ads'
+  | 'spotify'
   | 'influencers'
   | 'automations'
   | 'whatsapp'
@@ -101,6 +104,7 @@ const hubGroups: HubGroup[] = [
       { id: 'marketing-meta-ads', title: 'Meta Ads', description: 'Campanhas Instagram / Facebook e CAPI.', icon: Target },
       { id: 'marketing-google-ads', title: 'Google Ads', description: 'Rede de Pesquisa, YouTube e palavras-chave.', icon: Search },
       { id: 'marketing-tiktok-ads', title: 'TikTok Ads', description: 'Spark Ads, vídeos e conversões virais.', icon: Play },
+      { id: 'marketing-spotify-ads', title: 'Spotify Ads', description: 'Campanhas de áudio oficial, companion banners e CAPI.', icon: Headphones, badge: 'Áudio' },
       { id: 'marketing-influencers', title: 'Influenciadores', description: 'Criadores, comissões e links exclusivos.', icon: Users, badge: 'VIP' }
     ]
   },
@@ -202,6 +206,19 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
 
     if (mode === 'tiktok-ads') {
       return <TikTokAdsManager events={events} event={selectedEvent} notify={notify} />
+    }
+
+    if (mode === 'spotify-ads' || mode === 'spotify') {
+      return (
+        <SpotifyAdsHubPage
+          events={events}
+          producerId={producerId}
+          producerName={producerName}
+          selectedEventId={selectedEventId}
+          notify={notify}
+          onNavigate={onNavigate}
+        />
+      )
     }
 
     if (mode === 'influencers') {

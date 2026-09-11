@@ -19,11 +19,12 @@ export const mockMarketingFunnel: ConversionFunnelData = {
 };
 
 export const mockChannelsPerformance: ChannelPerformance[] = [
-  { channel: 'instagram', channelLabel: 'Instagram Ads & Stories', percentage: 42, revenue: 52680, sales: 1195, color: '#E1306C' },
-  { channel: 'google', channelLabel: 'Google Ads & Search', percentage: 25, revenue: 31350, sales: 712, color: '#4285F4' },
-  { channel: 'whatsapp', channelLabel: 'WhatsApp Direct & Disparos', percentage: 18, revenue: 22570, sales: 512, color: '#25D366' },
-  { channel: 'email', channelLabel: 'E-mail Marketing & Newsletters', percentage: 8, revenue: 10030, sales: 228, color: '#EA580C' },
-  { channel: 'direct', channelLabel: 'Tráfego Orgânico & Direto', percentage: 7, revenue: 8800, sales: 200, color: '#64748B' },
+  { channel: 'instagram', channelLabel: 'Instagram Ads & Stories', percentage: 36, revenue: 52680, sales: 1195, color: '#E1306C' },
+  { channel: 'google', channelLabel: 'Google Ads & Search', percentage: 22, revenue: 31350, sales: 712, color: '#4285F4' },
+  { channel: 'spotify', channelLabel: 'Spotify Ads (Áudio Oficial)', percentage: 14, revenue: 20450, sales: 465, color: '#1DB954' },
+  { channel: 'whatsapp', channelLabel: 'WhatsApp Direct & Disparos', percentage: 15, revenue: 22570, sales: 512, color: '#25D366' },
+  { channel: 'email', channelLabel: 'E-mail Marketing & Newsletters', percentage: 7, revenue: 10030, sales: 228, color: '#EA580C' },
+  { channel: 'direct', channelLabel: 'Tráfego Orgânico & Direto', percentage: 6, revenue: 8800, sales: 200, color: '#64748B' },
 ];
 
 export const mockDailyRevenue = [
