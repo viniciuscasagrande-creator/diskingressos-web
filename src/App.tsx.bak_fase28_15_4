@@ -48,13 +48,6 @@ import FinanceSettlementHubPage from './pages/finance/FinanceSettlementHubPage'
 import FinanceDisputesHubPage from './pages/finance/FinanceDisputesHubPage'
 import AdvancedTaxesRouter from './pages/finance/advanced/AdvancedTaxesRouter'
 import './pages/finance/advanced/advanced-taxes.css'
-import { AppRouter } from './navigation/router'
-import { MobileNavigationController } from './navigation/mobile-controller'
-import {
-  ACCOUNTING_TAB_TO_ROUTE,
-  normalizeAccountingTab
-} from './navigation/accounting-routes'
-import { AccountingController } from './accounting/accounting-controller'
 import ModulePlaceholder from './pages/ModulePlaceholder'
 import POSPage from './pages/POSPage'
 import LoginPage from './pages/LoginPage'
@@ -165,20 +158,8 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'finance-gateways': 'Gateway de Pagamentos',
   'finance-pdv': 'Pontos de Venda (PDV)',
 
-  // CONTABILIDADE (FASE 28.15.4)
-  'accounting-dashboard': 'Visão Geral Contábil',
-  'accounting-inteligencia': 'Inteligência Contábil',
-  'accounting-conciliacao': 'Centro de Conciliação',
-  'accounting-rastreabilidade': 'Rastreabilidade Contábil',
-  'accounting-dre': 'DRE Gerencial',
-  'accounting-balanco': 'Balanço Patrimonial',
-  'accounting-fechamento': 'Fechamento Mensal',
-  'accounting-plano-de-contas': 'Plano de Contas',
-  'accounting-lancamentos': 'Lançamentos Contábeis',
-  'accounting-documentos': 'Documentos & Assinaturas',
-  'accounting-fiscal': 'Fiscal & SPED',
-  'accounting-relatorios': 'Relatórios Contábeis',
-  // Aliases legados
+  // CONTABILIDADE
+  'accounting-dashboard': 'Dashboard Contábil',
   'accounting-chart': 'Plano de Contas',
   'accounting-journal': 'Livro Diário',
   'accounting-ledger': 'Livro Razão',
@@ -192,6 +173,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'accounting-nfe': 'NF-e (Notas de Produtos & PDV)',
   'accounting-sped': 'Declarações Fiscais & SPED',
   'accounting-obligations': 'Agenda de Obrigações Fiscais',
+  'accounting-dre': 'DRE — Demonstração do Resultado',
   'accounting-balance-sheet': 'Balanço Patrimonial (BP)',
   'accounting-trial-balance': 'Balancete de Verificação',
   'accounting-cashflow': 'DFC — Fluxo de Caixa Contábil',
@@ -313,17 +295,11 @@ function firstPageFor(user: AppUser): PageKey {
 }
 
 function resolvePageFromPath(path: string, user: AppUser): PageKey {
-  const clean = path.replace(/^#\/?/, '').replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+  const clean = path.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
   if (!clean || clean === 'login' || clean === 'dashboard') {
     return firstPageFor(user)
   }
   if (clean === 'eventos') return 'events'
-  if (clean.startsWith('contabilidade/')) {
-    const sub = clean.replace('contabilidade/', '')
-    const tab = normalizeAccountingTab(sub)
-    return `accounting-${tab}` as PageKey
-  }
-  if (clean === 'contabilidade' || clean === 'accounting-disk') return 'accounting-dashboard'
   if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
   if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') return 'marketing-status-real'
   if (clean in titleMap) return clean as PageKey
@@ -340,14 +316,7 @@ export default function App() {
   const [view, setView] = useState<'horizontal' | 'compact'>('horizontal')
   const [page, setPage] = useState<PageKey>(() => {
     if (typeof window !== 'undefined') {
-      const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
-      const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
-      if (clean.startsWith('contabilidade/')) {
-        const sub = clean.replace('contabilidade/', '')
-        const tab = normalizeAccountingTab(sub)
-        return `accounting-${tab}` as PageKey
-      }
-      if (clean === 'contabilidade' || clean === 'accounting-disk') return 'accounting-dashboard'
+      const clean = window.location.pathname.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
       if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
       if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') return 'marketing-status-real'
       if (clean in titleMap) return clean as PageKey
@@ -364,45 +333,20 @@ export default function App() {
     return window.localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
   })
 
-  // Fase 28.15.5: Controlador unificado de navegação mobile e drawer
-  useEffect(() => {
-    const unsubMobile = MobileNavigationController.subscribe(setMobileNavOpen)
-    return () => {
-      unsubMobile()
-    }
-  }, [])
-
-  // Fase 21.1.5 + Fase 28.15.4: histórico do navegador, Voltar/Avançar e deep-links contábeis
+  // Fase 21.1.5: cada tela vira uma entrada real no histórico do navegador.
+  // Isso faz Voltar/Avançar restaurarem a tela anterior sem perder o contexto do Marketing.
   useEffect(() => {
     const current = window.history.state || {}
     if (!current.page) window.history.replaceState({ ...current, page }, '', window.location.href)
     const onPopState = (ev: PopStateEvent) => {
-      MobileNavigationController.close()
       const previous = ev.state?.page as PageKey | undefined
       if (previous) {
         setMobileNavOpen(false)
         setPage(previous)
-        if (previous.startsWith('accounting-')) {
-          const tab = normalizeAccountingTab(previous.replace('accounting-', ''))
-          AccountingController.activateTab(tab, { skipRouter: true })
-        }
         window.scrollTo({ top: 0 })
       } else if (typeof window !== 'undefined') {
-        const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
-        const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
-        if (clean.startsWith('contabilidade/')) {
-          const sub = clean.replace('contabilidade/', '')
-          const tab = normalizeAccountingTab(sub)
-          setMobileNavOpen(false)
-          setPage(`accounting-${tab}` as PageKey)
-          AccountingController.activateTab(tab, { skipRouter: true })
-          window.scrollTo({ top: 0 })
-        } else if (clean === 'contabilidade' || clean === 'accounting-disk') {
-          setMobileNavOpen(false)
-          setPage('accounting-dashboard')
-          AccountingController.activateTab('dashboard', { skipRouter: true })
-          window.scrollTo({ top: 0 })
-        } else if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') {
+        const clean = window.location.pathname.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+        if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') {
           setMobileNavOpen(false)
           setPage('marketing-spotify')
           window.scrollTo({ top: 0 })
@@ -414,17 +358,23 @@ export default function App() {
       }
     }
     window.addEventListener('popstate', onPopState)
-    const unsubRouter = AppRouter.subscribe((route) => {
-      if (route.module === 'contabilidade') {
-        const tab = normalizeAccountingTab(route.tab || 'dashboard')
-        setPage(`accounting-${tab}` as PageKey)
-      }
-    })
-    return () => {
-      window.removeEventListener('popstate', onPopState)
-      unsubRouter()
-    }
+    return () => window.removeEventListener('popstate', onPopState)
   }, [])
+
+  // Fase 25.6.1: drawer mobile com ESC e bloqueio de rolagem do body.
+  useEffect(() => {
+    if (!mobileNavOpen) return
+    const previousOverflow = document.body.style.overflow
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileNavOpen(false)
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [mobileNavOpen])
 
   const module = useMemo(() => moduleFor(page, user), [page, user])
   const notify = (m: string) => {
@@ -567,7 +517,6 @@ export default function App() {
   }
 
   const navigate = (next: PageKey) => {
-    MobileNavigationController.close()
     setMobileNavOpen(false)
     if (next !== 'profile-dashboard' && !canAccess(user, areaFor(next))) {
       notify('Seu perfil não possui permissão para este módulo.')
@@ -577,11 +526,6 @@ export default function App() {
     setPage(next)
     if (selectedEvent && eventContextPages.has(next)) {
       window.history.pushState({ page: next }, '', `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`)
-    } else if (next.startsWith('accounting-') || next === 'finance-accounting') {
-      const tab = normalizeAccountingTab(next.replace('accounting-', ''))
-      const targetRoute = ACCOUNTING_TAB_TO_ROUTE[tab] || '/contabilidade/dashboard'
-      window.history.pushState({ page: next, route: targetRoute, tab }, '', targetRoute)
-      AccountingController.activateTab(tab, { skipRouter: true })
     } else if (next === 'marketing-spotify' || next === 'marketing-spotify-ads') {
       window.history.pushState({ page: next }, '', '/app/marketing/spotify')
     } else if (next === 'marketing-status-real' || next === 'marketing-real-status') {
@@ -633,7 +577,7 @@ export default function App() {
   }
 
   return (
-    <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open sidebar-mobile-expanded' : ''} ${sidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''}`}>
+    <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open' : ''} ${sidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''}`}>
       <Header
         query={query}
         onQuery={setQuery}
@@ -647,23 +591,16 @@ export default function App() {
           if (isGlobalAdmin(user)) setPage(v === 'all' ? 'global-dashboard' : 'events')
         }}
         onLogout={logout}
-        onToggleMenu={() => MobileNavigationController.toggle()}
-        isMobileNavOpen={mobileNavOpen}
+        onToggleMenu={() => setMobileNavOpen(v => !v)}
       />
 
-      <button
-        type="button"
-        className="mobile-nav-backdrop"
-        data-testid="mobile-nav-backdrop"
-        aria-label="Fechar navegação"
-        onClick={() => MobileNavigationController.close()}
-      />
+      <button className="mobile-nav-backdrop" aria-label="Fechar navegação" onClick={() => setMobileNavOpen(false)} />
 
       {inEventContext && selectedEvent ? (
         <EventContextSidebar
           event={selectedEvent}
           page={page}
-          onNavigate={(p) => { navigate(p); MobileNavigationController.close() }}
+          onNavigate={(p) => { navigate(p); setMobileNavOpen(false) }}
           onBack={() => {
             setSelectedEvent(null)
             setPage('events')
@@ -676,12 +613,11 @@ export default function App() {
         <ModuleSidebar
           module={module}
           page={page}
-          onNavigate={(p) => { navigate(p); MobileNavigationController.close() }}
-          onHome={() => { MobileNavigationController.close(); navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard') }}
+          onNavigate={(p) => { navigate(p); setMobileNavOpen(false) }}
+          onHome={() => { setMobileNavOpen(false); navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard') }}
           canAdmin={canAccess(user, 'admin')}
           user={user}
           onCollapsedChange={setSidebarCollapsed}
-          mobileNavOpen={mobileNavOpen}
         />
       )}
 
@@ -864,27 +800,53 @@ export default function App() {
           <EventCostCentersBudgetPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
-        {/* FASE 28.15.4: VIEW FÍSICA ÚNICA DE CONTABILIDADE (view-accounting-disk) */}
-        {(page.startsWith('accounting-') || ['finance-accounting', 'finance-chart-accounts', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page)) && (
+        {/* FASE 18.4: ERP FINANCEIRO, CONTÁBIL, BORDERÔS E ASSINATURA DIGITAL */}
+        {['finance-accounting', 'finance-chart-accounts', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page) && (
           <FinanceAccountingHubPage
             events={visibleEvents}
             producerId={scopedProducerId}
             initialTab={
-              page.startsWith('accounting-')
-                ? normalizeAccountingTab(page.replace('accounting-', ''))
-                : page === 'finance-chart-accounts' ? 'plano-de-contas'
-                : page === 'finance-cost-centers' ? 'plano-de-contas'
-                : page === 'finance-accounting-entries' ? 'lancamentos'
-                : page === 'finance-obligations' ? 'fiscal'
-                : page === 'finance-dre' ? 'dre'
-                : page === 'finance-borderos' ? 'documentos'
-                : page === 'finance-signatures' ? 'documentos'
-                : page === 'finance-closing' ? 'fechamento'
-                : 'dashboard'
+              page === 'finance-cost-centers' ? 'cost-centers' :
+              page === 'finance-chart-accounts' ? 'accounts' :
+              page === 'finance-accounting-entries' ? 'entries' :
+              page === 'finance-obligations' ? 'obligations' :
+              page === 'finance-dre' ? 'dre' :
+              page === 'finance-borderos' ? 'borderos' :
+              page === 'finance-signatures' ? 'signatures' :
+              page === 'finance-closing' ? 'closing' : 'dashboard'
             }
             notify={notify}
-            onBack={() => setPage('profile-dashboard')}
+            onBack={() => setPage('finance-dashboard')}
           />
+        )}
+
+        {/* FASE 18.1, 18.2 & 18.3: CONTABILIDADE INTEGRADA */}
+        {page === 'accounting-dashboard' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dashboard" notify={notify} onBack={() => setPage('profile-dashboard')} />
+        )}
+        {page === 'accounting-chart' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="accounts" notify={notify} onBack={() => setPage('accounting-dashboard')} />
+        )}
+        {page === 'accounting-entries' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="entries" notify={notify} onBack={() => setPage('accounting-dashboard')} />
+        )}
+        {page === 'accounting-cost-centers' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="cost-centers" notify={notify} onBack={() => setPage('accounting-dashboard')} />
+        )}
+        {page === 'accounting-reconciliation' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="reconciliation" notify={notify} onBack={() => setPage('accounting-dashboard')} />
+        )}
+        {page === 'accounting-closing' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="closing" notify={notify} onBack={() => setPage('accounting-dashboard')} />
+        )}
+        {page === 'accounting-dre' && (
+          <FinanceAccountingHubPage events={visibleEvents} producerId={scopedProducerId} initialTab="dre" notify={notify} onBack={() => setPage('accounting-dashboard')} />
+        )}
+        {page === 'accounting-journal' && (
+          <AccountingJournalPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+        {page === 'accounting-ledger' && (
+          <AccountingLedgerPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
         {page === 'finance-bank-accounts' && (
@@ -909,6 +871,17 @@ export default function App() {
         )}
         {((page as any) === 'finance-settlement' || (page as any) === 'finance-settlements') && (
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="settlements" notify={notify} onBack={() => setPage('finance-dashboard')} />
+        )}
+
+        {/* CONTABILIDADE ADVANCED */}
+        {accountingPlaceholder.includes(page) && (
+          <FinanceAccountingHubPage
+            events={visibleEvents}
+            producerId={scopedProducerId}
+            initialTab="reports"
+            notify={notify}
+            onBack={() => setPage('finance-dashboard')}
+          />
         )}
 
         {/* MARKETING */}

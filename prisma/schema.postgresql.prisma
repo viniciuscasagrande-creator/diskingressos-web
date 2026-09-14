@@ -811,29 +811,38 @@ model MarketingConversionEvent {
 }
 
 model MarketingConversionDispatch {
-  id                Int       @id @default(autoincrement())
-  conversionEventId Int
-  integrationId     Int
-  provider          String
-  providerEventName String
-  idempotencyKey    String    @unique
-  status            String    @default("queued")
-  attempts          Int       @default(0)
-  payloadJson       String    @default("{}")
-  responseCode      Int?
-  responseMessage   String?
-  lastAttemptAt     DateTime?
-  nextAttemptAt     DateTime?
-  sentAt            DateTime?
-  conversionEvent   MarketingConversionEvent @relation(fields: [conversionEventId], references: [id], onDelete: Cascade)
-  integration       TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                    Int       @id @default(autoincrement())
+  conversionEventId     Int
+  integrationId         Int
+  provider              String
+  providerEventName     String
+  idempotencyKey        String    @unique
+  status                String    @default("queued") // queued, processing, retrying, completed, failed_permanently, cancelled
+  priority              String    @default("NORMAL") // HIGH, NORMAL, LOW
+  deliveryMode          String    @default("SERVER") // SERVER, BROWSER, HYBRID
+  attempts              Int       @default(0)
+  maxAttempts           Int       @default(5)
+  payloadJson           String    @default("{}")
+  responseCode          Int?
+  responseMessage       String?
+  errorCode             String?
+  errorMessageSanitized String?
+  lockedAt              DateTime?
+  lockedBy              String?
+  lastAttemptAt         DateTime?
+  nextAttemptAt         DateTime?
+  processedAt           DateTime?
+  sentAt                DateTime?
+  conversionEvent       MarketingConversionEvent @relation(fields: [conversionEventId], references: [id], onDelete: Cascade)
+  integration           TrackingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@index([conversionEventId])
   @@index([integrationId, status])
   @@index([provider, status])
-  @@index([nextAttemptAt])
+  @@index([status, nextAttemptAt])
+  @@index([lockedAt])
 }
 
 model TrackingLink {

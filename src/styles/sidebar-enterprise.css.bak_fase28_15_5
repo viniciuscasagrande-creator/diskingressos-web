@@ -156,81 +156,14 @@
 /* Mobile: o menu vira drawer e ignora o estado de largura recolhida. */
 @media (max-width:767px){
   .safesaff-sidebar.module-sidebar,
-  .safesaff-sidebar.module-sidebar.safesaff-sidebar--collapsed,
-  .event-context-sidebar{
-    position:fixed!important;left:0!important;top:0!important;bottom:0!important;
+  .safesaff-sidebar.module-sidebar.safesaff-sidebar--collapsed{
+    position:fixed!important;left:0!important;top:66px!important;bottom:0!important;
     width:min(86vw,320px)!important;min-width:0!important;max-width:320px!important;
-    height:100dvh!important;max-height:100dvh!important;transform:translateX(-105%)!important;z-index:1002!important;
+    height:calc(100dvh - 66px)!important;transform:translateX(-105%)!important;z-index:1002!important;
     padding-bottom:calc(24px + env(safe-area-inset-bottom))!important;
-    transition:transform .24s cubic-bezier(0.16, 1, 0.3, 1)!important;
-    box-shadow:0 0 40px rgba(0,0,0,.5)!important;
-    overflow-y:auto!important;
-    -webkit-overflow-scrolling:touch!important;
-    touch-action:pan-y!important;
+    transition:transform .22s ease!important;
   }
-  .mobile-nav-open .safesaff-sidebar.module-sidebar,
-  .sidebar-mobile-expanded .safesaff-sidebar.module-sidebar,
-  .safesaff-sidebar.module-sidebar.sidebar-mobile-expanded,
-  .mobile-nav-open .event-context-sidebar,
-  .sidebar-mobile-expanded .event-context-sidebar{
-    transform:translateX(0)!important;
-  }
-  .mobile-nav-backdrop{
-    position:fixed!important;
-    inset:0!important;
-    z-index:1001!important;
-    border:0!important;
-    background:rgba(2,6,23,.65)!important;
-    backdrop-filter:blur(3px)!important;
-    -webkit-backdrop-filter:blur(3px)!important;
-    display:none;
-    cursor:pointer;
-  }
-  .mobile-nav-open .mobile-nav-backdrop,
-  .sidebar-mobile-expanded .mobile-nav-backdrop{
-    display:block!important;
-  }
-  .safesaff-sidebar-mobile-close{
-    display:grid!important;
-    place-items:center!important;
-    width:36px!important;
-    height:36px!important;
-    min-width:36px!important;
-    min-height:36px!important;
-    border:1px solid rgba(255,255,255,.08)!important;
-    border-radius:50%!important;
-    background:rgba(255,255,255,.05)!important;
-    color:#b9c4d0!important;
-    padding:0!important;
-    cursor:pointer!important;
-    margin-left:auto!important;
-    transition:background .16s ease,color .16s ease!important;
-  }
-  .safesaff-sidebar-mobile-close:hover{
-    background:rgba(255,255,255,.12)!important;
-    color:#fff!important;
-  }
-  .mobile-menu-button, .sidebar-mobile-main-toggle{
-    display:inline-flex!important;
-    align-items:center!important;
-    justify-content:center!important;
-    width:42px!important;
-    height:42px!important;
-    min-width:42px!important;
-    min-height:42px!important;
-    padding:0!important;
-    border:1px solid rgba(255,255,255,.1)!important;
-    border-radius:8px!important;
-    background:rgba(255,255,255,.05)!important;
-    color:#dce3eb!important;
-    cursor:pointer!important;
-    transition:background .16s ease,color .16s ease,border-color .16s ease!important;
-  }
-  .mobile-menu-button:hover, .sidebar-mobile-main-toggle:hover{
-    background:rgba(255,255,255,.1)!important;
-    color:#fff!important;
-    border-color:rgba(255,255,255,.2)!important;
-  }
+  .mobile-nav-open .safesaff-sidebar.module-sidebar{transform:translateX(0)!important}
   .safesaff-sidebar--collapsed .safesaff-sidebar-home{display:flex!important}
   .safesaff-sidebar--collapsed .module-caption{display:block!important}
   .safesaff-sidebar--collapsed .module-nav-label,
@@ -239,12 +172,6 @@
   .safesaff-sidebar--collapsed .nav-item-badge{display:initial!important}
   .safesaff-sidebar-toggle{display:none!important}
   .safesaff-sidebar .module-nav-item,.safesaff-sidebar .collapsible-section-head{min-height:44px!important;height:44px!important}
-}
-
-@media (min-width:768px){
-  .safesaff-sidebar-mobile-close{display:none!important}
-  .mobile-menu-button, .sidebar-mobile-main-toggle{display:none!important}
-  .mobile-nav-backdrop{display:none!important}
 }
 
 @media (prefers-reduced-motion:reduce){

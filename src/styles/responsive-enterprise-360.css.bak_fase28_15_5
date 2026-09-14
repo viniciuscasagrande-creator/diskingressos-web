@@ -95,18 +95,6 @@ img,svg,canvas,video{max-width:100%}
   .availability-legend{grid-template-columns:1fr!important}
   .finance-hub-carousel .finance-carousel-track>button{flex-basis:104px!important;min-width:104px!important}
   .mobile-bottom-nav button{font-size:9px!important;padding-inline:2px}
-
-  /* Refinamento 360px — Telas compactas */
-  .global-topbar{padding:6px 10px!important;gap:6px!important;min-height:52px!important}
-  .navbar-logo{max-height:22px!important;max-width:115px!important}
-  .mobile-menu-button, .sidebar-mobile-main-toggle{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important}
-  .module-titlebar{padding:8px 12px!important;gap:8px!important}
-  .module-titlebar h1{font-size:1.1rem!important}
-  .fa-header{padding:12px 14px!important;gap:10px!important}
-  .fa-header h2{font-size:1.2rem!important}
-  .fa-tabs{padding:4px!important;gap:4px!important}
-  .fa-tabs button{padding:6px 9px!important;font-size:11.5px!important}
-  .fa-panel{padding:12px!important}
 }
 
 /* Telas largas: impede que dashboards se estiquem indefinidamente. */

@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { prisma } from '../prisma.js'
 import { decryptTrackingToken } from './trackingCrypto.js'
+import { runWorkerTick } from './marketingTrackingWorker.js'
 
 type CanonicalEvent='page_view'|'view_content'|'add_to_cart'|'begin_checkout'|'add_payment_info'|'purchase'|'lead'|'sign_up'
 
@@ -26,7 +27,6 @@ const eventMap:Record<string,Record<string,string>>={
 
 const sha256=(v?:string|null)=>v?crypto.createHash('sha256').update(v.trim().toLowerCase()).digest('hex'):undefined
 const providerEvent=(provider:string,name:string)=>eventMap[provider]?.[name]||name
-const decrypt=(row:any)=>(!row.tokenCiphertext||!row.tokenIv||!row.tokenTag)?null:decryptTrackingToken(row.tokenCiphertext,row.tokenIv,row.tokenTag)
 
 function buildPayload(provider:string,row:any,input:DispatchInput){
  const mapped=providerEvent(provider,input.eventName),seconds=Math.floor((input.occurredAt||new Date()).getTime()/1000),value=(input.valueCents||0)/100,currency=input.currency||'BRL'
@@ -36,19 +36,6 @@ function buildPayload(provider:string,row:any,input:DispatchInput){
  if(provider==='ga4')return {client_id:input.externalId||input.eventId,events:[{name:mapped,params:{currency,value,transaction_id:String(input.orderId||input.eventId)}}]}
  if(provider==='spotify')return {event_name:mapped,event_time:seconds,event_id:input.eventId,user_data:{email:sha256(input.email),phone_number:sha256(input.phone),external_id:sha256(input.externalId)},custom_data:{currency,value,order_id:input.orderId?String(input.orderId):undefined,content_type:'ticket',event_entity_id:input.eventEntityId},action_source:'WEBSITE'}
  return {event_id:input.eventId,event_name:mapped,event_time:seconds,value,currency,order_id:input.orderId,user,attribution:input.attribution||{},metadata:input.metadata||{}}
-}
-
-async function deliver(row:any,payload:any){
- const mode=(process.env.MARKETING_DELIVERY_MODE||'dry_run').toLowerCase();if(mode!=='live')return {status:'dry_run',code:202,message:'Evento preparado. MARKETING_DELIVERY_MODE não está em live.'}
- const token=decrypt(row);if(!token)return {status:'erro',code:400,message:'Credencial não configurada.'}
- let url:string|undefined,headers:Record<string,string>={'content-type':'application/json'}
- if(row.provider==='meta'){url=`https://graph.facebook.com/v21.0/${encodeURIComponent(row.pixelId)}/events?access_token=${encodeURIComponent(token)}`}
- else if(row.provider==='tiktok'){url='https://business-api.tiktok.com/open_api/v1.3/event/track/';headers['Access-Token']=token}
- else if(row.provider==='ga4'){url=`https://www.google-analytics.com/mp/collect?measurement_id=${encodeURIComponent(row.pixelId)}&api_secret=${encodeURIComponent(token)}`}
- else if(row.provider==='spotify'){url=`https://api.spotify.com/v1/ad-accounts/${encodeURIComponent(row.pixelId)}/conversions`;headers['Authorization']=`Bearer ${token}`}
- else return {status:'queued',code:202,message:`Conector ${row.provider} preparado para worker/OAuth específico.`}
- try{const response=await fetch(url,{method:'POST',headers,body:JSON.stringify(payload)});const text=(await response.text()).slice(0,600);return {status:response.ok?'ok':'erro',code:response.status,message:text||response.statusText}}
- catch(error:any){return {status:'erro',code:503,message:error?.message||'Falha de rede no provedor.'}}
 }
 
 function matchesRuleEvent(ruleEventName:string,canonicalName:string,providerMappedName:string):boolean{
@@ -108,14 +95,40 @@ export async function dispatchUniversalConversion(input:DispatchInput){
   let dispatch=await prisma.marketingConversionDispatch.findUnique({where:{idempotencyKey}})
   if(dispatch){dispatches.push(dispatch);continue}
   const payload=buildPayload(row.provider,row,input)
-  dispatch=await prisma.marketingConversionDispatch.create({data:{conversionEventId:event.id,integrationId:row.id,provider:row.provider,providerEventName:mapped,idempotencyKey,status:'processing',attempts:1,payloadJson:JSON.stringify(payload),nextAttemptAt:new Date()}})
-  const result=await deliver(row,payload)
-  dispatch=await prisma.marketingConversionDispatch.update({where:{id:dispatch.id},data:{status:result.status,responseCode:result.code,responseMessage:result.message,lastAttemptAt:new Date(),sentAt:result.status==='ok'?new Date():null,nextAttemptAt:result.status==='erro'?new Date(Date.now()+5*60*1000):null}})
-  await prisma.trackingDeliveryLog.create({data:{integrationId:row.id,producerId:input.producerId,eventId:input.eventEntityId||null,eventName:mapped,status:result.status,responseCode:result.code,message:`event_id=${input.eventId} · ${result.message}`}})
+  const priority=input.eventName==='purchase'?'HIGH':'NORMAL'
+  const deliveryMode=(process.env.MARKETING_DELIVERY_MODE||'dry_run').toLowerCase()
+
+  dispatch=await prisma.marketingConversionDispatch.create({
+    data:{
+      conversionEventId:event.id,
+      integrationId:row.id,
+      provider:row.provider,
+      providerEventName:mapped,
+      idempotencyKey,
+      status:'queued',
+      priority,
+      deliveryMode,
+      maxAttempts:5,
+      attempts:0,
+      payloadJson:JSON.stringify(payload),
+      nextAttemptAt:new Date()
+    }
+  })
   dispatches.push(dispatch)
  }
+
+ // Dispara processamento em background sem travar o checkout
+ if(dispatches.length>0){
+   setImmediate(()=>{
+     runWorkerTick().catch(err=>{
+       console.error('[conversionEngine] Erro ao disparar worker assíncrono:', err)
+     })
+   })
+ }
+
  return {event,deduplicated:false,dispatches}
 }
+
 
 export async function dispatchPurchaseForOrder(orderId:number){
  const order=await prisma.order.findUnique({where:{id:orderId},include:{attribution:{include:{trackingLink:true}}}});if(!order||order.status!=='pago')return null

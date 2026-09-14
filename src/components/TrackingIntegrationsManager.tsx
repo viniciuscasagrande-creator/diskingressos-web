@@ -429,7 +429,13 @@ export default function TrackingIntegrationsManager({
                 Ver histórico detalhado →
               </button>
             </div>
-            <TrackingRecentActivity activity={recentActivity.slice(0, 5)} />
+            <TrackingRecentActivity
+              activity={recentActivity.slice(0, 5)}
+              eventId={selectedEventId || undefined}
+              outboxStats={overview?.outboxStats}
+              notify={notify}
+              onRefresh={load}
+            />
           </div>
         </div>
       )}
@@ -482,7 +488,13 @@ export default function TrackingIntegrationsManager({
       {/* Tab 4: Atividade & Telemetria */}
       {activeTab === 'activity' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <TrackingRecentActivity activity={recentActivity} />
+          <TrackingRecentActivity
+            activity={recentActivity}
+            eventId={selectedEventId || undefined}
+            outboxStats={overview?.outboxStats}
+            notify={notify}
+            onRefresh={load}
+          />
         </div>
       )}
 

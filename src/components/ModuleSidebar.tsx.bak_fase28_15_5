@@ -9,9 +9,8 @@ import {
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
   FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2,
-  PanelLeftClose, PanelLeftOpen, Activity, Play, ArrowLeftRight, ArrowDownLeft, ArrowUpRight, CircleDollarSign, Calendar, CheckCircle2, X
+  PanelLeftClose, PanelLeftOpen, Activity, Play, ArrowLeftRight, ArrowDownLeft, ArrowUpRight, CircleDollarSign, Calendar, CheckCircle2
 } from 'lucide-react'
-import { MobileNavigationController } from '../navigation/mobile-controller'
 
 export type ModuleKey = 'events' | 'finance' | 'accounting' | 'pos' | 'facial' | 'admin' | 'marketing' | 'remarketing' | 'sac'
 
@@ -47,7 +46,6 @@ type Props = {
   canAdmin?: boolean
   user?: AppUser
   onCollapsedChange?: (collapsed: boolean) => void
-  mobileNavOpen?: boolean
 }
 
 type Item = {
@@ -193,7 +191,7 @@ function canonicalAccountingKey(p: PageKey): PageKey {
   return p
 }
 
-export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user, onCollapsedChange, mobileNavOpen = false }: Props) {
+export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user, onCollapsedChange }: Props) {
   const refundIndependentPages: PageKey[] = ['finance-refunds', 'finance-disputes', 'finance-chargebacks']
   const isFinanceActive = (page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page)
   const isAccountingActive =
@@ -255,9 +253,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 
   return (
     <aside
-      className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''} ${mobileNavOpen ? 'sidebar-mobile-expanded' : ''}`}
-      id="main-module-sidebar"
-      data-testid="main-module-sidebar"
+      className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''}`}
       aria-label="Navegação principal"
       data-core-protection-release="26.x.3.10-runtime-functional-stability-2026-09-03"
       data-finance-release="25.8.2-event-remarketing-functional-2026-09-02 25.8.1-abandoned-cart-tenant-event-scope-2026-09-02 25.8-enterprise-refund-engine-2026-09-02 25.7.1.1-sidebar-typography-hotfix-2026-09-02 25.7.1-universal-conversion-engine-2026-09-02 25.7-marketing-integrations-360-2026-09-02 25.6.1-sidebar-reference-navigation-2026-09-02 25.3.2.1-premium-sidebar-auto-collapse-2026-09-02"
@@ -276,16 +272,6 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           title={collapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}
         >
           {collapsed ? <PanelLeftOpen size={18} strokeWidth={1.8} /> : <PanelLeftClose size={18} strokeWidth={1.8} />}
-        </button>
-        <button
-          type="button"
-          className="safesaff-sidebar-mobile-close"
-          onClick={() => MobileNavigationController.close()}
-          aria-label="Fechar navegação"
-          title="Fechar menu"
-          data-testid="sidebar-mobile-close"
-        >
-          <X size={18} strokeWidth={1.8} />
         </button>
       </div>
 

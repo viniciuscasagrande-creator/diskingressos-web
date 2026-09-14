@@ -174,6 +174,14 @@ export type TrackingOverviewResponse={
     integrationId?:number;
     actionText?:string;
   }>;
+  outboxStats?: {
+    queued: number;
+    processing: number;
+    retrying: number;
+    completed: number;
+    deadLetter: number;
+    circuitBreakers: Record<string, any>;
+  };
   recentActivity:Array<{
     id:number;
     eventName:string;
@@ -184,6 +192,63 @@ export type TrackingOverviewResponse={
     integrationName:string;
     provider:string;
   }>;
+}
+
+export type TrackingDispatchItem = {
+  id: number
+  conversionEventId: number
+  integrationId: number
+  provider: string
+  providerEventName: string
+  idempotencyKey: string
+  status: 'queued' | 'processing' | 'retrying' | 'completed' | 'failed_permanently' | 'cancelled' | 'ok' | 'erro' | 'dry_run'
+  priority: string
+  deliveryMode: string
+  attempts: number
+  maxAttempts: number
+  errorCode: string | null
+  errorMessageSanitized: string | null
+  responseCode: number | null
+  responseMessage: string | null
+  lastAttemptAt: string | null
+  nextAttemptAt: string | null
+  sentAt: string | null
+  processedAt: string | null
+  createdAt: string
+  updatedAt: string
+  integration?: {
+    id: number
+    name: string
+    provider: string
+    pixelId: string
+  }
+  conversionEvent?: {
+    id: number
+    eventId: string
+    eventName: string
+    producerId: number
+    eventEntityId: number | null
+    orderId: number | null
+    occurredAt: string
+  }
+}
+
+export type TrackingWorkerHealth = {
+  status: 'healthy' | 'degraded' | 'critical'
+  queueDepth: number
+  queuedCount: number
+  processingCount: number
+  retryingCount: number
+  completedCount: number
+  deadLetterCount: number
+  oldestPendingAgeMinutes: number
+  lastRunAt: string | null
+  providers: Record<string, {
+    state: 'CLOSED' | 'OPEN' | 'HALF_OPEN'
+    consecutiveFailures: number
+    lastFailureTime: number | null
+    cooldownMs: number
+  }>
 }
 
 export const getTrackingIntegrations=(producerId?:number,eventId?:number)=>request<TrackingIntegration[]>(`/marketing/integrations${qs({producerId,eventId})}`)
@@ -200,6 +265,13 @@ export const getEventTrackingOverview=(eventId:number)=>request<TrackingOverview
 export const setPrimaryTrackingAssignment=(eventId:number,integrationId:number)=>request<{ok:boolean}>(`/marketing/events/${eventId}/tracking-assignments/${integrationId}/primary`,{method:'POST'})
 export const unassignTrackingIntegrationFromEvent=(eventId:number,integrationId:number)=>request<{ok:boolean}>(`/marketing/events/${eventId}/tracking-assignments/${integrationId}/unassign`,{method:'POST'})
 export const getEventTrackingBrowserConfig=(eventId:number)=>request<{eventId:number;integrations:any[]}>(`/marketing/events/${eventId}/tracking/browser-config`)
+export const getTrackingWorkerHealth=()=>request<TrackingWorkerHealth>('/marketing/tracking/worker/health')
+export const getTrackingQueue=(params?:{eventId?:number;status?:string;provider?:string;limit?:number})=>request<TrackingDispatchItem[]>(`/marketing/tracking/queue${qs(params)}`)
+export const getTrackingDeadLetter=(params?:{eventId?:number;limit?:number})=>request<TrackingDispatchItem[]>(`/marketing/tracking/dead-letter${qs(params)}`)
+export const getTrackingDispatch=(id:number)=>request<TrackingDispatchItem>(`/marketing/tracking/dispatches/${id}`)
+export const retryTrackingDispatch=(id:number)=>request<{ok:boolean;dispatch:TrackingDispatchItem}>(`/marketing/tracking/dispatches/${id}/retry`,{method:'POST'})
+export const cancelTrackingDispatch=(id:number,reason?:string)=>request<{ok:boolean;dispatch:TrackingDispatchItem}>(`/marketing/tracking/dispatches/${id}/cancel`,{method:'POST',body:JSON.stringify({reason})})
+export const triggerTrackingWorkerTick=()=>request<{processed:number;results:any[]}>('/marketing/tracking/worker/tick',{method:'POST'})
 
 // ===== Fase 18.4 — Financeiro Contábil, Borderôs e Assinaturas =====
 export type FinanceAccountingSummary={revenueCents:number;netRevenueCents:number;expensesCents:number;resultCents:number;reconciledCents:number;pendingCents:number;divergences:number;payablesCents:number;receivablesCents:number;borderos:number;signatures:number;costCenters:number;entries:number}

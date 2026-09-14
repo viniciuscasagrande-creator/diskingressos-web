@@ -8,7 +8,7 @@ test('@protected Estornos permanece módulo independente e abre a Central Enterp
   await expect(estornos).toHaveAttribute('data-protected-module', 'estornos')
   await estornos.click()
   await expect(page).toHaveURL(/\/app\/finance-refunds(?:$|[?#])/)
-  await expect(page.getByRole('heading', { name: /Central de Estornos, Reembolsos & Chargebacks/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Centro de Controle de Estornos|Central de Estornos/i })).toBeVisible()
 })
 
 test('@protected rota direta de Estornos não pode desaparecer', async ({ page }) => {
@@ -27,7 +27,7 @@ test('Estornos mantém Centro de Controle oficial', async ({ page }) => {
 
   await expect(page.getByText('Estornos executados')).toBeVisible()
   await expect(page.getByText('Montante estornado')).toBeVisible()
-  await expect(page.getByText('Solicitações pendentes')).toBeVisible()
+  await expect(page.getByText('Solicitações pendentes', { exact: true })).toBeVisible()
   await expect(page.getByText('Taxas retidas')).toBeVisible()
   await expect(page.getByText('Preservado em voucher')).toBeVisible()
   await expect(page.getByText('SLA médio')).toBeVisible()

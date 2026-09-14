@@ -10,27 +10,16 @@ type Props = {
   onProducer?: (v: number | 'all') => void
   onLogout?: () => void
   onToggleMenu?: () => void
-  isMobileNavOpen?: boolean
 }
 
-export default function Header({ query, onQuery, user, producers = [], selectedProducer = 'all', onProducer, onLogout, onToggleMenu, isMobileNavOpen = false }: Props) {
+export default function Header({ query, onQuery, user, producers = [], selectedProducer = 'all', onProducer, onLogout, onToggleMenu }: Props) {
   const userName = user?.name || 'Usuário'
   const userInitials = userName.split(' ').filter(Boolean).map(x => x[0]).slice(0, 2).join('').toUpperCase() || 'DI'
   const userRole = user?.role ? (roleLabel[user.role] || user.role) : 'Acesso'
 
   return (
     <header className="topbar global-topbar">
-      <button
-        type="button"
-        className="mobile-menu-button sidebar-mobile-main-toggle"
-        onClick={onToggleMenu}
-        aria-label={isMobileNavOpen ? 'Fechar navegação' : 'Abrir navegação'}
-        aria-expanded={isMobileNavOpen}
-        data-testid="mobile-menu-button"
-        data-sidebar-toggle="mobile"
-      >
-        <Menu size={22} />
-      </button>
+      <button className="mobile-menu-button" onClick={onToggleMenu} aria-label="Abrir navegação"><Menu size={22} /></button>
       <div className="brand global-brand" title="DiskIngressos">
         <img
           src="/logo-diskingressos.png"

@@ -7,6 +7,13 @@ import { requireAuth, requireRoles, type AuthRequest } from '../middleware/auth.
 import { globalAdmin } from '../auth.js'
 import { requestedProducerId, writeProducerId, ownsProducer } from '../tenant.js'
 import { audit } from '../audit.js'
+import {
+  getTrackingWorkerHealth,
+  reprocessDispatch,
+  cancelDispatch,
+  runWorkerTick
+} from '../services/marketingTrackingWorker.js'
+import { trackingCircuitBreaker } from '../services/trackingCircuitBreaker.js'
 
 export const marketingRouter=Router()
 marketingRouter.use((req, res, next) => {
@@ -540,6 +547,30 @@ marketingRouter.get('/events/:eventId/tracking-overview',requireRoles(...marketi
     }
   }
 
+  const [
+    outboxQueued,
+    outboxProcessing,
+    outboxRetrying,
+    outboxCompleted,
+    outboxDeadLetter
+  ] = await Promise.all([
+    prisma.marketingConversionDispatch.count({ where: { conversionEvent: { eventEntityId: eventId }, status: 'queued' } }),
+    prisma.marketingConversionDispatch.count({ where: { conversionEvent: { eventEntityId: eventId }, status: 'processing' } }),
+    prisma.marketingConversionDispatch.count({ where: { conversionEvent: { eventEntityId: eventId }, status: 'retrying' } }),
+    prisma.marketingConversionDispatch.count({ where: { conversionEvent: { eventEntityId: eventId }, status: { in: ['completed', 'ok'] } } }),
+    prisma.marketingConversionDispatch.count({ where: { conversionEvent: { eventEntityId: eventId }, status: 'failed_permanently' } })
+  ])
+
+  if(outboxDeadLetter > 0){
+    alerts.push({
+      id: 'outbox-dead-letter',
+      severity: 'critical',
+      title: 'Disparos na Dead Letter Queue',
+      message: `${outboxDeadLetter} disparo(s) falharam permanentemente e aguardam ação manual.`,
+      actionText: 'Ver Fila'
+    })
+  }
+
   const recentActivity=recentLogs.map(l=>({
     id:l.id,
     eventName:l.eventName,
@@ -567,6 +598,14 @@ marketingRouter.get('/events/:eventId/tracking-overview',requireRoles(...marketi
         recentEventsPct:receivingEvents>0?95:0,
         failurePct:recentLogs.length>0?Math.round((recentLogs.filter(l=>l.status==='erro').length/recentLogs.length)*100):0
       }
+    },
+    outboxStats:{
+      queued:outboxQueued,
+      processing:outboxProcessing,
+      retrying:outboxRetrying,
+      completed:outboxCompleted,
+      deadLetter:outboxDeadLetter,
+      circuitBreakers:trackingCircuitBreaker.getStatus()
     },
     providers,
     assignments:assignments.map(a=>({
@@ -673,4 +712,129 @@ marketingRouter.get('/os/summary',requireRoles(...marketingReadRoles),async(req:
  const communication={channels:channels.length,activeChannels:channels.filter((x:any)=>x.status==='ativo').length,queued:executions.filter((x:any)=>x.status==='agendado').length,sent:executions.filter((x:any)=>x.status==='enviado').length,failed:executions.filter((x:any)=>x.status==='falhou').length,optOuts:0}
  const unavailable=Object.entries(sourceHealth).filter(([,v])=>!v.ok).map(([name])=>name)
  res.json({campaigns,ready:readyNormalized,tracking,automation,communication,health:{ok:unavailable.length===0,unavailable,sourceHealth}})
+})
+
+// ===== Fase 28.14.4 — Motor Assíncrono de Conversões, Outbox, Retry & Dead Letter =====
+
+marketingRouter.get('/tracking/worker/health', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req)
+  const health = await getTrackingWorkerHealth(producerId)
+  res.json(health)
+})
+
+marketingRouter.get('/tracking/queue', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req)
+  const eventId = req.query.eventId ? Number(req.query.eventId) : undefined
+  const status = typeof req.query.status === 'string' ? req.query.status : undefined
+  const provider = typeof req.query.provider === 'string' ? req.query.provider : undefined
+  const limit = Math.min(Number(req.query.limit || 50), 100)
+
+  const whereClause: any = {}
+  if (producerId) {
+    whereClause.conversionEvent = { producerId }
+  }
+  if (eventId) {
+    whereClause.conversionEvent = {
+      ...(whereClause.conversionEvent || {}),
+      eventEntityId: eventId
+    }
+  }
+  if (status && status !== 'all') {
+    if (status === 'dead_letter') {
+      whereClause.status = 'failed_permanently'
+    } else {
+      whereClause.status = status
+    }
+  }
+  if (provider && provider !== 'all') {
+    whereClause.provider = provider
+  }
+
+  const dispatches = await prisma.marketingConversionDispatch.findMany({
+    where: whereClause,
+    include: {
+      integration: { select: { id: true, name: true, provider: true, pixelId: true } },
+      conversionEvent: { select: { id: true, eventId: true, eventName: true, producerId: true, eventEntityId: true, orderId: true, occurredAt: true } }
+    },
+    orderBy: [
+      { priority: 'desc' },
+      { createdAt: 'desc' }
+    ],
+    take: limit
+  })
+
+  res.json(dispatches)
+})
+
+marketingRouter.get('/tracking/dead-letter', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const producerId = requestedProducerId(req)
+  const eventId = req.query.eventId ? Number(req.query.eventId) : undefined
+  const limit = Math.min(Number(req.query.limit || 50), 100)
+
+  const dispatches = await prisma.marketingConversionDispatch.findMany({
+    where: {
+      status: 'failed_permanently',
+      ...(producerId ? { conversionEvent: { producerId } } : {}),
+      ...(eventId ? { conversionEvent: { eventEntityId: eventId } } : {})
+    },
+    include: {
+      integration: { select: { id: true, name: true, provider: true, pixelId: true } },
+      conversionEvent: { select: { id: true, eventId: true, eventName: true, producerId: true, eventEntityId: true, orderId: true, occurredAt: true } }
+    },
+    orderBy: { lastAttemptAt: 'desc' },
+    take: limit
+  })
+
+  res.json(dispatches)
+})
+
+marketingRouter.get('/tracking/dispatches/:id', requireRoles(...marketingReadRoles), async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const dispatch = await prisma.marketingConversionDispatch.findUnique({
+    where: { id },
+    include: {
+      integration: { select: { id: true, name: true, provider: true, pixelId: true, producerId: true } },
+      conversionEvent: true
+    }
+  })
+  if (!dispatch || !ownsProducer(req, dispatch.conversionEvent.producerId)) {
+    return res.status(404).json({ message: 'Item da fila de disparos não encontrado.' })
+  }
+  res.json(dispatch)
+})
+
+marketingRouter.post('/tracking/dispatches/:id/retry', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const dispatch = await prisma.marketingConversionDispatch.findUnique({
+    where: { id },
+    include: { conversionEvent: true }
+  })
+  if (!dispatch || !ownsProducer(req, dispatch.conversionEvent.producerId)) {
+    return res.status(404).json({ message: 'Item da fila de disparos não encontrado.' })
+  }
+
+  const result = await reprocessDispatch(id, req.auth?.id)
+  await audit(req, 'marketing.tracking_dispatch.retry', 'MarketingConversionDispatch', String(id), { provider: dispatch.provider })
+  res.json(result)
+})
+
+marketingRouter.post('/tracking/dispatches/:id/cancel', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const id = Number(req.params.id)
+  const dispatch = await prisma.marketingConversionDispatch.findUnique({
+    where: { id },
+    include: { conversionEvent: true }
+  })
+  if (!dispatch || !ownsProducer(req, dispatch.conversionEvent.producerId)) {
+    return res.status(404).json({ message: 'Item da fila de disparos não encontrado.' })
+  }
+
+  const reason = req.body?.reason || 'Cancelado pelo operador'
+  const result = await cancelDispatch(id, reason, req.auth?.id)
+  await audit(req, 'marketing.tracking_dispatch.cancel', 'MarketingConversionDispatch', String(id), { provider: dispatch.provider, reason })
+  res.json(result)
+})
+
+marketingRouter.post('/tracking/worker/tick', requireRoles(...marketingWriteRoles), async (req: AuthRequest, res) => {
+  const result = await runWorkerTick()
+  res.json(result)
 })

@@ -9,6 +9,10 @@ const protectedModules = [
   { label: /Atendimento|SAC/i, route: '/app/sac-hub' },
 ]
 
+test.use({
+  baseURL: process.env.PLAYWRIGHT_BASE_URL || process.env.DEPLOY_GUARD_BASE_URL || 'https://safesaff.vercel.app'
+})
+
 test.describe('Fase 26.x.3 • Deploy Guard pós-Vercel', () => {
   test('deploy responde e carrega a aplicação', async ({ page }) => {
     const response = await page.goto('/app', { waitUntil: 'domcontentloaded' })
