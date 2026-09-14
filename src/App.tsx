@@ -170,6 +170,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'finance-refunds': 'Devoluções / Estornos',
   'finance-gateways': 'Gateway de Pagamentos',
   'finance-pdv': 'Pontos de Venda (PDV)',
+  'finance-chart-accounts': 'Plano de Contas',
 
   // CONTABILIDADE (FASE 28.15.4)
   'accounting-dashboard': 'Visão Geral Contábil',
@@ -990,16 +991,19 @@ export default function App() {
           <EventCostCentersBudgetPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
+        {/* PLANO DE CONTAS NO FINANCEIRO */}
+        {page === 'finance-chart-accounts' && (
+          <AccountingChartPage events={visibleEvents} notify={notify} onNavigate={navigate} />
+        )}
+
         {/* FASE 28.15.4: VIEW FÍSICA ÚNICA DE CONTABILIDADE (view-accounting-disk) */}
-        {(page.startsWith('accounting-') || ['finance-accounting', 'finance-chart-accounts', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page)) && (
+        {(page.startsWith('accounting-') || ['finance-accounting', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page)) && (
           <FinanceAccountingHubPage
             events={visibleEvents}
             producerId={scopedProducerId}
             initialTab={
               page.startsWith('accounting-')
                 ? normalizeAccountingTab(page.replace('accounting-', ''))
-                : page === 'finance-chart-accounts' ? 'plano-de-contas'
-                : page === 'finance-cost-centers' ? 'plano-de-contas'
                 : page === 'finance-accounting-entries' ? 'lancamentos'
                 : page === 'finance-obligations' ? 'fiscal'
                 : page === 'finance-dre' ? 'dre'

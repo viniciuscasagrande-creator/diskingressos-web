@@ -251,8 +251,6 @@ export const ACCOUNTING_TAB_ALIASES: Record<string, AccountingTabKey> = {
   'plano-de-contas': 'plano-de-contas',
   'chart': 'plano-de-contas',
   'accounts': 'plano-de-contas',
-  'cost-centers': 'plano-de-contas',
-  'centros-de-custos': 'plano-de-contas',
   'lancamentos': 'lancamentos',
   'entries': 'lancamentos',
   'journal': 'lancamentos',

@@ -91,6 +91,7 @@ const financeAccountGroup: Item[] = [
 const financeManagementGroup: Item[] = [
   { key: 'finance-receivables', label: 'Contas a Receber', icon: ArrowDownLeft },
   { key: 'finance-payables', label: 'Contas a Pagar', icon: ArrowUpRight },
+  { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck, route: '/app/finance-chart-accounts', menuKey: 'finance-chart-accounts' },
   { key: 'finance-cost-centers', label: 'Centro de Custos', icon: Boxes },
   { key: 'finance-dre', label: 'Orçamentos', icon: Scale },
   { key: 'finance-expenses', label: 'Fornecedores', icon: Users },
@@ -181,7 +182,7 @@ const adminItems: Item[] = [
 ]
 
 function canonicalAccountingKey(p: PageKey): PageKey {
-  if (p === 'accounting-chart' || p === 'accounting-cost-centers' || p === 'finance-chart-accounts' || p === 'finance-cost-centers') return 'accounting-plano-de-contas'
+  if (p === 'accounting-chart' || p === 'accounting-cost-centers') return 'accounting-plano-de-contas'
   if (p === 'accounting-entries' || p === 'accounting-journal' || p === 'accounting-ledger' || p === 'finance-accounting-entries') return 'accounting-lancamentos'
   if (p === 'accounting-reconciliation') return 'accounting-conciliacao'
   if (p === 'accounting-closing' || p === 'finance-closing') return 'accounting-fechamento'
@@ -195,7 +196,7 @@ function canonicalAccountingKey(p: PageKey): PageKey {
 
 export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdmin = true, user, onCollapsedChange, mobileNavOpen = false }: Props) {
   const refundIndependentPages: PageKey[] = ['finance-refunds', 'finance-disputes', 'finance-chargebacks']
-  const isFinanceActive = (page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page)
+  const isFinanceActive = (page.startsWith('finance-') || page === 'finance') && !refundIndependentPages.includes(page) && page !== 'finance-accounting'
   const isAccountingActive =
     page.startsWith('accounting-') ||
     page === 'finance-accounting' ||

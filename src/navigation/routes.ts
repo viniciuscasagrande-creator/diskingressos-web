@@ -91,6 +91,26 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     context: { producer: true, event: false },
     permissions: ['financeiro.transferencias.criar', 'financeiro.visualizar']
   },
+  '/app/finance-chart-accounts': {
+    path: '/app/finance-chart-accounts',
+    view: 'finance-chart-accounts',
+    module: 'financeiro',
+    title: 'Plano de Contas',
+    menuKey: 'finance-chart-accounts',
+    breadcrumb: ['Financeiro', 'Plano de Contas'],
+    context: { producer: false, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/app/finance-cost-centers': {
+    path: '/app/finance-cost-centers',
+    view: 'finance-cost-centers',
+    module: 'financeiro',
+    title: 'Centro de Custos',
+    menuKey: 'finance-cost-centers',
+    breadcrumb: ['Financeiro', 'Centro de Custos'],
+    context: { producer: false, event: false },
+    permissions: ['financeiro.visualizar']
+  },
   '/marketing/dashboard': {
     path: '/marketing/dashboard',
     view: 'marketing-dashboard',
@@ -152,8 +172,8 @@ export const LEGACY_ROUTE_ALIASES: Record<string, string> = {
   'accounting-balance-sheet': '/contabilidade/balanco',
   'accounting-trial-balance': '/contabilidade/balanco',
   'finance-accounting': '/contabilidade/dashboard',
-  'finance-chart-accounts': '/contabilidade/plano-de-contas',
-  'finance-cost-centers': '/contabilidade/plano-de-contas',
+  'finance-chart-accounts': '/app/finance-chart-accounts',
+  'finance-cost-centers': '/app/finance-cost-centers',
   'finance-accounting-entries': '/contabilidade/lancamentos',
   'finance-obligations': '/contabilidade/fiscal',
   'finance-dre': '/contabilidade/dre',
