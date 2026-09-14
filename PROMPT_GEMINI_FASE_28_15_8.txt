@@ -1,0 +1,76 @@
+FASE 28.15.8 — TESTES AUTOMATIZADOS, REGRESSÃO E HOMOLOGAÇÃO TÉCNICA
+
+Preservar integralmente as Fases 28.15.1 a 28.15.7.
+
+ANTES:
+- auditar package.json;
+- identificar ferramentas existentes;
+- aproveitar JSDOM/node:test;
+- usar Playwright somente se estiver instalado ou puder ser adicionado com segurança.
+
+CRIAR TESTES:
+UNIT: Router, MenuStateManager, AccountingController, AppContext, PermissionGuard, ContextGuard.
+INTEGRAÇÃO: Router+DOM, Financeiro, Contabilidade, breadcrumbs, contexto.
+E2E: navegação, Financeiro, Contabilidade, permissões, contexto Produtor, mobile 360.
+
+VALIDAR:
+- um clique = um render;
+- F5;
+- Voltar/Avançar;
+- deep-link;
+- aliases;
+- item ativo único;
+- Financeiro completo;
+- Contabilidade completa;
+- nenhuma tab undefined.
+
+SEGURANÇA:
+Produtor A com A1/A2.
+Produtor B com B1.
+A→A1 permitido.
+A→A2 permitido.
+A→B1 bloqueado.
+Testar URL sem permissão, producerId/eventId manipulados, troca de produtor limpando eventId e logout limpando contexto.
+
+RESPONSIVIDADE:
+360, 768 e 1440.
+Sem overflow horizontal.
+Drawer e breadcrumbs funcionais.
+Sem tela branca.
+
+CONSOLE:
+Falhar em ReferenceError, TypeError não tratado, uncaught exception ou unhandled rejection.
+
+PLAYWRIGHT, SE DISPONÍVEL:
+screenshot only-on-failure
+trace retain-on-failure
+video retain-on-failure
+
+TAGS:
+@smoke @security @responsive @regression
+
+SEVERIDADE:
+P0 segurança/perda de dados
+P1 fluxo principal
+P2 secundário
+P3 visual
+Zero P0/P1 para homologação.
+
+EXECUTAR:
+npm ci quando apropriado
+node --check
+npm run build
+unit
+integration
+smoke
+security
+responsive
+regression
+
+GERAR:
+MATRIZ_REGRESSAO_FASE_28_15_8.md
+RELATORIO_TESTES_AUTOMATIZADOS_FASE_28_15_8.md
+RELATORIO_HOMOLOGACAO_FASE_28_15_8.md
+
+Diferenciar cada teste como REAL, MOCK, UNITÁRIO, INTEGRAÇÃO, E2E ou MANUAL.
+Não declarar aprovado sem evidência.
