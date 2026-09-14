@@ -167,9 +167,9 @@ test.describe('Fase 28.15.6 — Breadcrumbs, Permissões e Contexto Produtor/Eve
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 2)
 
     // O breadcrumb mobile compacto deve estar ativo
-    const mobileBreadcrumb = page.locator('.breadcrumb-mobile').first()
+    const mobileBreadcrumb = page.locator('.breadcrumb-mobile:visible').first()
     await expect(mobileBreadcrumb).toBeVisible()
-    const mobileCurrent = page.locator('[data-testid="breadcrumb-mobile-current"]').first()
+    const mobileCurrent = page.locator('[data-testid="breadcrumb-mobile-current"]:visible').first()
     await expect(mobileCurrent).toBeVisible()
   })
 

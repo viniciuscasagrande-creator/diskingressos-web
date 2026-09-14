@@ -332,6 +332,10 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
   if (clean === 'contabilidade' || clean === 'accounting-disk') return 'accounting-dashboard'
   if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
   if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') return 'marketing-status-real'
+  const resolved = AppRouter.resolve(path)
+  if (resolved && resolved.view && (resolved.view as string) in titleMap) {
+    return resolved.view as PageKey
+  }
   if (clean in titleMap) return clean as PageKey
   return firstPageFor(user)
 }
@@ -527,12 +531,17 @@ export default function App() {
         const u = await getMe()
         if (!active) return
         setUser(u)
-        const producerSelection: number | 'all' = isGlobalAdmin(u) ? 'all' : (u.producerId || 'all')
+        AppContext.setUser(u, seedProducers)
+        const ctxState = AppContext.getState()
+        const producerSelection: number | 'all' = isGlobalAdmin(u)
+          ? (ctxState.producerId !== null ? ctxState.producerId : 'all')
+          : (u.producerId || 'all')
         setSelectedProducer(producerSelection)
         const initialPage = typeof window !== 'undefined' ? resolvePageFromPath(window.location.pathname, u) : firstPageFor(u)
         setPage(initialPage)
-        AppContext.setUser(u, seedProducers)
-        AppContext.setProducer(producerSelection === 'all' ? null : producerSelection, undefined, seedProducers)
+        if (producerSelection !== 'all') {
+          AppContext.setProducer(producerSelection, ctxState.producerName || undefined, seedProducers)
+        }
         const tasks: any[] = [
           loadScopeData(u, producerSelection),
           getProducers().then((prods) => {
