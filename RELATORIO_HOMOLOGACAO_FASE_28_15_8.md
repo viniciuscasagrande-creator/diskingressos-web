@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD013 -->
+<!-- markdownlint-disable MD013 MD060 -->
 # Relatório de Homologação — Fase 28.15.8
 
 ## Testes Automatizados, Regressão e Homologação Técnica

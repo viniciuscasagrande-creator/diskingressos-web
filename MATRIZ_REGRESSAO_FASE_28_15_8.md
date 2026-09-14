@@ -1,4 +1,4 @@
-<!-- markdownlint-disable MD013 -->
+<!-- markdownlint-disable MD013 MD060 -->
 # Matriz de Regressão — Fase 28.15.8
 
 ## PDT DiskIngressos Enterprise
