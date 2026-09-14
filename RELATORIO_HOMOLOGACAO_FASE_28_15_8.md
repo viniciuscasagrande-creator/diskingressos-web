@@ -1,4 +1,6 @@
+<!-- markdownlint-disable MD013 -->
 # Relatório de Homologação — Fase 28.15.8
+
 ## Testes Automatizados, Regressão e Homologação Técnica
 
 **Data de Homologação:** 14 de Setembro de 2026  
@@ -12,6 +14,7 @@
 A **Fase 28.15.8** submeteu todo o sistema PDT DiskIngressos à validação técnica automatizada mais abrangente de sua história. Foram executados **50 testes automatizados** cobrindo testes unitários de lógica pura, testes de integração de fluxo, e testes de ponta a ponta (E2E) simulando usuários reais (Administrador e Produtores) em navegadores reais Chromium.
 
 Todos os critérios de aceite e bloqueadores absolutos definidos pela liderança foram rigorosamente atendidos:
+
 - **Zero falhas P0** (Segurança, IDOR e perda de dados);
 - **Zero falhas P1** (Fluxo principal, rotas e painéis);
 - **Zero telas brancas**;
@@ -38,7 +41,7 @@ Todos os critérios de aceite e bloqueadores absolutos definidos pela liderança
 ### 3. Matriz de Severidade
 
 | Severidade | Descrição | Ocorrências Identificadas | Ocorrências Pendentes |
-| --- | --- | ---:| ---:|
+| --- | --- | ---: | ---: |
 | **P0** | Segurança / perda de dados / sistema indisponível | 0 | **0** |
 | **P1** | Fluxo principal quebrado / telas inacessíveis | 0 | **0** |
 | **P2** | Função secundária com comportamento anômalo | 0 | **0** |

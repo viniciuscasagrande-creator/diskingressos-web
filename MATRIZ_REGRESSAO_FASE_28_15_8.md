@@ -1,4 +1,6 @@
+<!-- markdownlint-disable MD013 -->
 # Matriz de Regressão — Fase 28.15.8
+
 ## PDT DiskIngressos Enterprise
 
 Data de Execução: 14 de Setembro de 2026  

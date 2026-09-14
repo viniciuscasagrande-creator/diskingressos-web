@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD013 -->
 # Matriz de Regressão — Fase 28.15.8
 
 | ID | Módulo | Cenário | Tipo | Prioridade | Resultado | Evidência |

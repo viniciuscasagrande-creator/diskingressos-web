@@ -1,4 +1,6 @@
+<!-- markdownlint-disable MD013 -->
 # Relatório de Testes Automatizados — Fase 28.15.8
+
 ## PDT DiskIngressos Enterprise
 
 **Data de Execução:** 14 de Setembro de 2026  
@@ -27,7 +29,7 @@ A **Fase 28.15.8** submeteu toda a base do PDT DiskIngressos consolidada nas Fas
 ### 2. Classificação dos Testes
 
 | Categoria | Método de Execução | Tipo de Dado | Quantidade | Status |
-| --- | --- | --- | ---:| --- |
+| --- | --- | --- | ---: | --- |
 | **Unitários** | `node:test` + TypeScript (`tsx`) | REAL / Lógica Pura | 18 | **APROVADO** (100%) |
 | **Integração** | `node:test` + TypeScript (`tsx`) | REAL / Componentes | 3 | **APROVADO** (100%) |
 | **E2E Abrangente 28.15.8** | Playwright (Chromium Headless) | REAL / API + DB | 8 | **APROVADO** (100%) |
@@ -42,7 +44,9 @@ A **Fase 28.15.8** submeteu toda a base do PDT DiskIngressos consolidada nas Fas
 ### 3. Detalhamento das Suítes de Testes
 
 #### 3.1 Suíte Unitária (`tests/unit/*.test.ts`) — 18 Testes
+
 Executada via `node --import tsx --test tests/unit/*.test.ts`:
+
 1. `Unit - Router: resolveRoute mapeia rotas canônicas` — **PASS**
 2. `Unit - Router: resolveRoute mapeia aliases legados para rotas canônicas` — **PASS**
 3. `Unit - Router: resolveRoute mapeia contexto de evento dinâmico` — **PASS**
@@ -63,11 +67,13 @@ Executada via `node --import tsx --test tests/unit/*.test.ts`:
 18. `Unit - PermissionGuard: Produtor Marketing tem acesso ao marketing e bloqueio a financeiro/admin` — **PASS**
 
 #### 3.2 Suíte de Integração (`tests/integration/*.test.ts`) — 3 Testes
+
 1. `Integration - BreadcrumbManager: resolve rota padrão` — **PASS**
 2. `Integration - BreadcrumbManager: injeta contexto de evento quando ativo` — **PASS**
 3. `Integration - Contexto Produtor/Evento: Ciclo completo com bloqueio de acesso cruzado` — **PASS**
 
 #### 3.3 Suíte E2E Abrangente (`tests/regression/phase28-15-8-comprehensive.spec.ts`) — 8 Testes
+
 1. `NAV-001 & NAV-002: F5 preserva rota canônica e um clique navega sem duplicidade @smoke @regression` — **PASS** (16.3s)
 2. `NAV-003: Voltar / Avançar sincroniza histórico e abas contábeis @regression` — **PASS** (13.6s)
 3. `MENU-001 & A11Y-001: Apenas um item ativo no menu com aria-current @regression` — **PASS** (13.1s)
@@ -78,6 +84,7 @@ Executada via `node --import tsx --test tests/unit/*.test.ts`:
 8. `MOB-001 & MOB-002: Mobile 360px sem overflow horizontal e drawer funcional @responsive @regression` — **PASS** (13.3s)
 
 #### 3.4 Suítes de Regressão E2E das Fases Anteriores — 21 Testes
+
 - **`breadcrumbs-permissions-context.spec.ts` (6 testes):** 100% PASS
 - **`protected-core-modules.spec.ts` (5 testes):** 100% PASS
 - **`accounting-subroutes.spec.ts` (4 testes):** 100% PASS
@@ -88,6 +95,7 @@ Executada via `node --import tsx --test tests/unit/*.test.ts`:
 ### 4. Monitoramento de Console e Erros Fatais
 
 Em todas as suítes E2E, o listener `page.on('pageerror')` foi configurado para abortar os testes imediatamente na ocorrência de:
+
 - `ReferenceError`
 - `TypeError` não tratado
 - `UnhandledPromiseRejection`

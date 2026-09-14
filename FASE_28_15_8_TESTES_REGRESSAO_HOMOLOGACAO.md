@@ -2,7 +2,8 @@
 
 ## Objetivo
 
-Homologar tecnicamente as Fases 28.15.1 a 28.15.7 com testes unitários, integração, E2E, segurança/contexto e responsividade.
+Homologar tecnicamente as Fases 28.15.1 a 28.15.7 com testes unitários,
+integração, E2E, segurança/contexto e responsividade.
 
 ## Stack
 
@@ -12,7 +13,8 @@ No backup analisado anteriormente havia Vite + JSDOM e Playwright não estava de
 Prioridade:
 
 1. JSDOM + node:test para unitários/integração;
-2. Playwright para E2E somente se estiver disponível ou puder ser instalado com segurança;
+2. Playwright para E2E somente se estiver disponível ou puder ser instalado
+   com segurança;
 3. não adicionar frameworks concorrentes sem necessidade.
 
 ## Estrutura sugerida
@@ -145,8 +147,10 @@ Esperado:
 
 ## Segurança / IDOR
 
-Usuário do Produtor A tentando recurso do Produtor B deve receber bloqueio (403 na validação backend real).
-Se backend real não estiver disponível, marcar como MOCK e registrar pendência de validação integrada.
+Usuário do Produtor A tentando recurso do Produtor B deve receber bloqueio
+(403 na validação backend real).
+Se backend real não estiver disponível, marcar como MOCK e registrar
+pendência de validação integrada.
 
 ## Troca de produtor
 
@@ -211,7 +215,8 @@ Falhar se:
 
 ## Performance básica
 
-Navegar repetidamente entre módulos e garantir que listeners/renderizações não cresçam indefinidamente.
+Navegar repetidamente entre módulos e garantir que listeners/renderizações
+não cresçam indefinidamente.
 
 ## Aliases
 
