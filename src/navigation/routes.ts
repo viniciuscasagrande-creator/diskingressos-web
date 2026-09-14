@@ -1,5 +1,6 @@
 // ==============================================================================
-// FASE 28.15.1 + 28.15.4 — MAPA DE ROTAS UNIFICADO DO PDT DISKINGRESSOS
+// FASE 28.15.1 + 28.15.4 + 28.15.6 — MAPA DE ROTAS UNIFICADO DO PDT DISKINGRESSOS
+// Camada de rotas com requisitos de contexto (Produtor/Evento) e permissões granulares
 // ==============================================================================
 
 import {
@@ -17,6 +18,16 @@ export interface RouteConfig {
   title: string
   menuKey?: string
   breadcrumb?: string[]
+  context?: {
+    producer?: boolean
+    event?: boolean
+  }
+  permissions?: string[]
+  guardState?: {
+    allowed: boolean
+    blockedReason?: 'unauthorized' | 'need_producer' | 'need_event'
+    message?: string
+  }
 }
 
 export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
@@ -26,7 +37,9 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     module: 'events',
     title: 'Meu Dashboard',
     menuKey: 'profile-dashboard',
-    breadcrumb: ['Início', 'Dashboard']
+    breadcrumb: ['Início', 'Dashboard'],
+    context: { producer: false, event: false },
+    permissions: ['eventos.visualizar']
   },
   '/eventos': {
     path: '/eventos',
@@ -34,7 +47,9 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     module: 'events',
     title: 'Todos os Eventos',
     menuKey: 'events',
-    breadcrumb: ['Eventos', 'Todos os Eventos']
+    breadcrumb: ['Eventos', 'Todos os Eventos'],
+    context: { producer: false, event: false },
+    permissions: ['eventos.visualizar']
   },
   '/financeiro/dashboard': {
     path: '/financeiro/dashboard',
@@ -42,7 +57,39 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     module: 'financeiro',
     title: 'Dashboard Financeiro',
     menuKey: 'finance-dashboard',
-    breadcrumb: ['Financeiro', 'Dashboard']
+    breadcrumb: ['Financeiro', 'Dashboard'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/financeiro/saldos': {
+    path: '/financeiro/saldos',
+    view: 'finance',
+    module: 'financeiro',
+    title: 'Gestão de Saldos',
+    menuKey: 'finance',
+    breadcrumb: ['Financeiro', 'Gestão de Saldos'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.saldos.visualizar', 'financeiro.visualizar']
+  },
+  '/financeiro/estornos': {
+    path: '/financeiro/estornos',
+    view: 'finance-refunds',
+    module: 'financeiro',
+    title: 'Centro de Controle de Estornos',
+    menuKey: 'finance-refunds',
+    breadcrumb: ['Financeiro', 'Estornos'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.estornos.executar', 'financeiro.visualizar']
+  },
+  '/financeiro/transferencias': {
+    path: '/financeiro/transferencias',
+    view: 'finance',
+    module: 'financeiro',
+    title: 'Transferências entre Eventos',
+    menuKey: 'finance',
+    breadcrumb: ['Financeiro', 'Transferências'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.transferencias.criar', 'financeiro.visualizar']
   },
   '/marketing/dashboard': {
     path: '/marketing/dashboard',
@@ -50,7 +97,29 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     module: 'marketing',
     title: 'Dashboard Marketing',
     menuKey: 'marketing-dashboard',
-    breadcrumb: ['Marketing', 'Dashboard']
+    breadcrumb: ['Marketing', 'Dashboard'],
+    context: { producer: true, event: false },
+    permissions: ['marketing.visualizar']
+  },
+  '/marketing/pixels': {
+    path: '/marketing/pixels',
+    view: 'marketing-tracking',
+    module: 'marketing',
+    title: 'Pixels e Conversões',
+    menuKey: 'marketing-tracking',
+    breadcrumb: ['Marketing', 'Pixels e Conversões'],
+    context: { producer: true, event: true },
+    permissions: ['marketing.pixels.gerenciar', 'marketing.visualizar']
+  },
+  '/marketing/spotify': {
+    path: '/marketing/spotify',
+    view: 'marketing-spotify',
+    module: 'marketing',
+    title: 'Spotify Ads & Conversões CAPI',
+    menuKey: 'marketing-spotify',
+    breadcrumb: ['Marketing', 'Spotify Ads & CAPI'],
+    context: { producer: true, event: false },
+    permissions: ['marketing.visualizar']
   },
   '/sac': {
     path: '/sac',
@@ -58,7 +127,9 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     module: 'sac',
     title: 'Atendimento / SAC',
     menuKey: 'sac-hub',
-    breadcrumb: ['Atendimento', 'SAC']
+    breadcrumb: ['Atendimento', 'SAC'],
+    context: { producer: false, event: false },
+    permissions: ['sac.visualizar']
   },
   // Injeta as 12 rotas contábeis canônicas
   ...ACCOUNTING_ROUTES
@@ -92,8 +163,13 @@ export const LEGACY_ROUTE_ALIASES: Record<string, string> = {
   'contabilidade': '/contabilidade/dashboard',
   'financial-dashboard': '/financeiro/dashboard',
   'financeiro': '/financeiro/dashboard',
+  'finance-dashboard': '/financeiro/dashboard',
+  'finance': '/financeiro/saldos',
+  'finance-refunds': '/financeiro/estornos',
   'marketing-hub': '/marketing/dashboard',
   'marketing-overview': '/marketing/dashboard',
+  'marketing-tracking': '/marketing/pixels',
+  'marketing-pixels': '/marketing/pixels',
   'dashboard-main': '/dashboard'
 }
 
@@ -128,12 +204,43 @@ export function resolveRoute(pathOrAlias: string): RouteConfig {
     return CANONICAL_ROUTES[canonical] || resolveAccountingRoute(canonical)
   }
 
-  // 4. Default fallback
+  // 4. Detecção de rota de contexto de evento: /eventos/:code/*
+  const eventRouteMatch = normalizedPath.match(/^\/eventos\/([^\/]+)(?:\/(.+))?$/)
+  if (eventRouteMatch) {
+    const sub = eventRouteMatch[2] || 'dashboard'
+    return {
+      path: normalizedPath,
+      view: `event-${sub}`,
+      module: 'events',
+      title: sub === 'pixel' ? 'Pixel e Rastreamento' : 'Dashboard do Evento',
+      breadcrumb: ['Eventos', 'Dashboard do Evento'],
+      context: { producer: true, event: true },
+      permissions: ['eventos.visualizar']
+    }
+  }
+
+  // 5. Default fallback
+  const isFinance = normalizedPath.includes('finance') || normalizedPath.includes('fin-')
+  const isMkt = normalizedPath.includes('marketing')
+  const isAcc = normalizedPath.includes('contabilidade') || normalizedPath.includes('accounting')
+  const isSac = normalizedPath.includes('sac')
+
   return {
     path: normalizedPath,
     view: aliasKey || 'events',
-    module: normalizedPath.includes('contabilidade') ? 'contabilidade' : 'events',
+    module: isAcc ? 'contabilidade' : isFinance ? 'financeiro' : isMkt ? 'marketing' : isSac ? 'sac' : 'events',
     title: 'DiskIngressos',
-    breadcrumb: ['DiskIngressos']
+    breadcrumb: ['DiskIngressos'],
+    context: {
+      producer: isFinance || isMkt || isAcc,
+      event: false
+    },
+    permissions: isFinance
+      ? ['financeiro.visualizar']
+      : isMkt
+      ? ['marketing.visualizar']
+      : isAcc
+      ? ['contabilidade.visualizar']
+      : ['eventos.visualizar']
   }
 }

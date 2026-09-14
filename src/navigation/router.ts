@@ -1,17 +1,23 @@
 // ==============================================================================
-// FASE 28.15.1 + 28.15.4 — APPROUTER
-// Router único da aplicação DiskIngressos
+// FASE 28.15.1 + 28.15.4 + 28.15.6 — APPROUTER
+// Router único da aplicação DiskIngressos com Pipeline de Segurança e Contexto
+// Pipeline: Router.resolve() → PermissionGuard → ContextGuard → View → MenuStateManager → BreadcrumbManager
 // ==============================================================================
 
 import { resolveRoute, type RouteConfig } from './routes'
 import { MenuStateManager } from './menu-state'
 import { AccountingController } from '../accounting/accounting-controller'
 import { MobileNavigationController } from './mobile-controller'
+import { PermissionGuard } from '../security/permission-guard'
+import { ContextGuard } from '../security/context-guard'
+import { AppContext } from '../context/app-context'
+import { BreadcrumbManager } from './breadcrumbs'
 
 export interface NavigationOptions {
   replace?: boolean
   source?: string
   skipAccountingController?: boolean
+  skipGuards?: boolean
 }
 
 export interface RouterListener {
@@ -72,22 +78,63 @@ export const AppRouter = {
     }
   },
 
+  /**
+   * Executa a validação de segurança e contexto da rota especificada.
+   * Ordem: Router.resolve() → PermissionGuard → ContextGuard
+   */
+  evaluateRouteGuards(route: RouteConfig): RouteConfig {
+    const enriched = { ...route }
+    const user = AppContext.getState().user
+
+    // 1. PermissionGuard
+    const permCheck = PermissionGuard.checkRoute(enriched, user)
+    if (!permCheck.allowed) {
+      enriched.guardState = {
+        allowed: false,
+        blockedReason: 'unauthorized',
+        message: permCheck.reason || 'Você não possui permissão para acessar esta funcionalidade.'
+      }
+      return enriched
+    }
+
+    // 2. ContextGuard
+    const ctxCheck = ContextGuard.checkRoute(enriched, AppContext.getState())
+    if (!ctxCheck.allowed) {
+      enriched.guardState = {
+        allowed: false,
+        blockedReason: ctxCheck.blockedReason,
+        message: ctxCheck.message
+      }
+      return enriched
+    }
+
+    // Autorizado e contextualizado com sucesso
+    enriched.guardState = { allowed: true }
+    return enriched
+  },
+
   current(): RouteConfig {
     if (!this._current) {
       const initial = typeof window !== 'undefined'
         ? window.location.pathname + window.location.hash
         : '/dashboard'
-      this._current = resolveRoute(initial)
+      const baseRoute = resolveRoute(initial)
+      this._current = this.evaluateRouteGuards(baseRoute)
     }
     return this._current
   },
 
   resolve(path: string): RouteConfig {
-    return resolveRoute(path)
+    const rawRoute = resolveRoute(path)
+    return this.evaluateRouteGuards(rawRoute)
   },
 
   navigate(path: string, options?: NavigationOptions): boolean {
-    const route = resolveRoute(path)
+    // 1. Router.resolve()
+    const rawRoute = resolveRoute(path)
+
+    // 2 & 3. PermissionGuard & ContextGuard
+    const route = options?.skipGuards ? rawRoute : this.evaluateRouteGuards(rawRoute)
     this._current = route
 
     if (typeof window !== 'undefined') {
@@ -101,10 +148,10 @@ export const AppRouter = {
         window.history.pushState({ route: route.path, tab: route.tab }, '', route.path)
       }
 
-      // Sincroniza estado de menu
+      // 4. Sincroniza estado de menu
       MenuStateManager.sync(route)
 
-      // Se for rota contábil, ativa a aba no AccountingController
+      // Se for rota contábil e autorizada, ativa a aba no AccountingController
       if (route.module === 'contabilidade' && route.tab && !options?.skipAccountingController) {
         AccountingController.activateTab(route.tab, { skipRouter: true })
       }
@@ -113,7 +160,7 @@ export const AppRouter = {
       MobileNavigationController.close()
     }
 
-    // Notifica listeners (como o React App)
+    // 5. Notifica listeners (como o React App)
     this._listeners.forEach(fn => {
       try {
         fn(route)
@@ -133,7 +180,8 @@ export const AppRouter = {
   syncFromLocation(locationString?: string, isPopState = false): boolean {
     if (typeof window === 'undefined') return false
     const loc = locationString || (window.location.pathname + window.location.hash)
-    const route = resolveRoute(loc)
+    const rawRoute = resolveRoute(loc)
+    const route = this.evaluateRouteGuards(rawRoute)
     this._current = route
 
     if (!isPopState) {

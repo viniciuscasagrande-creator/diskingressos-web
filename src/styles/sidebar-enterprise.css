@@ -390,3 +390,58 @@
   }
 }
 
+/* ==============================================================================
+   FASE 28.15.6 — BREADCRUMBS & CONTEXT SELECTORS ENTERPRISE
+   ============================================================================== */
+.event-switch {
+  height: 35px;
+  border: 1px solid #4a5563;
+  background: #303946;
+  color: #eef3f7;
+  border-radius: 7px;
+  padding: 0 9px;
+  max-width: 200px;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+.event-switch:focus {
+  border-color: #06b6d4;
+}
+.producer-badge-fixed {
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: #06b6d4;
+  border-radius: 7px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.breadcrumb-container {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+}
+.breadcrumb-desktop li {
+  line-height: 1.4;
+}
+.breadcrumb-mobile {
+  max-width: 100%;
+}
+@media (max-width: 1000px) {
+  .context-selector-producer,
+  .context-selector-event,
+  .producer-badge-fixed {
+    display: none !important;
+  }
+}
+
+

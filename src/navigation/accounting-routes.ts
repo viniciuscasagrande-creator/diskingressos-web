@@ -28,6 +28,11 @@ export interface AccountingRouteDefinition {
   view: 'accounting-disk'
   module: 'contabilidade'
   breadcrumb: string[]
+  context?: {
+    producer?: boolean
+    event?: boolean
+  }
+  permissions?: string[]
 }
 
 export const ACCOUNTING_TAB_TO_ROUTE: Record<AccountingTabKey, string> = {
@@ -206,6 +211,22 @@ export const ACCOUNTING_ROUTES: Record<string, AccountingRouteDefinition> = {
     breadcrumb: ['Contabilidade', 'Relatórios']
   }
 }
+
+// Fase 28.15.6: Enriquecimento das rotas contábeis com contexto de produtor e permissões granulares
+Object.values(ACCOUNTING_ROUTES).forEach(def => {
+  if (!def.context) {
+    def.context = { producer: true, event: false }
+  }
+  if (!def.permissions) {
+    if (def.tab === 'fechamento') {
+      def.permissions = ['contabilidade.fechamento.executar', 'contabilidade.visualizar']
+    } else if (def.tab === 'lancamentos') {
+      def.permissions = ['contabilidade.lancamentos.criar', 'contabilidade.visualizar']
+    } else {
+      def.permissions = ['contabilidade.visualizar']
+    }
+  }
+})
 
 // Aliases legados de abas e nomes antigos para normalização segura
 export const ACCOUNTING_TAB_ALIASES: Record<string, AccountingTabKey> = {

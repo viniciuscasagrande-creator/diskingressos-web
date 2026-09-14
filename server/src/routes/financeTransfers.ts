@@ -404,6 +404,14 @@ financeTransfersRouter.get('/events/:eventId/ledger', async (req: AuthRequest, r
   const eventId = Number(req.params.eventId)
   const producerId = requestedProducerId(req)
 
+  // Proteção IDOR: evento deve pertencer à produtora autorizada
+  if (producerId) {
+    const rawEv = await prisma.event.findUnique({ where: { id: eventId }, select: { id: true, producerId: true } }).catch(() => null)
+    if (rawEv && rawEv.producerId !== producerId) {
+      return res.status(403).json({ message: 'Acesso negado: o evento não pertence à sua produtora.' })
+    }
+  }
+
   const txRows = await prisma.financialTransaction.findMany({
     where: { eventId, ...(producerId ? { producerId } : {}) },
     orderBy: { occurredAt: 'desc' },
@@ -472,9 +480,21 @@ financeTransfersRouter.post('/internal-transfers/preview', async (req: AuthReque
       return res.status(400).json({ message: 'O evento de destino deve ser diferente do evento de origem.' })
     }
 
+    const [rawSrc, rawDest] = await Promise.all([
+      prisma.event.findUnique({ where: { id: p.sourceEventId }, select: { id: true, title: true, producerId: true } }).catch(() => null),
+      prisma.event.findUnique({ where: { id: p.destinationEventId }, select: { id: true, title: true, producerId: true } }).catch(() => null),
+    ])
+
+    if (rawSrc && rawSrc.producerId !== producerId) {
+      return res.status(403).json({ message: 'Acesso negado: o evento de origem não pertence à produtora autorizada.' })
+    }
+    if (rawDest && rawDest.producerId !== producerId) {
+      return res.status(403).json({ message: 'Acesso negado: o evento de destino não pertence à produtora autorizada.' })
+    }
+
     const [srcEvent, destEvent] = await Promise.all([
-      prisma.event.findFirst({ where: { id: p.sourceEventId, producerId } }).catch(() => null),
-      prisma.event.findFirst({ where: { id: p.destinationEventId, producerId } }).catch(() => null),
+      rawSrc && rawSrc.producerId === producerId ? Promise.resolve(rawSrc) : prisma.event.findFirst({ where: { id: p.sourceEventId, producerId } }).catch(() => null),
+      rawDest && rawDest.producerId === producerId ? Promise.resolve(rawDest) : prisma.event.findFirst({ where: { id: p.destinationEventId, producerId } }).catch(() => null),
     ])
 
     const srcTitle = srcEvent?.title || `Evento #${p.sourceEventId}`
@@ -601,9 +621,21 @@ financeTransfersRouter.post('/internal-transfers', async (req: AuthRequest, res)
       return res.status(400).json({ message: 'O evento de destino deve ser diferente do evento de origem.' })
     }
 
+    const [rawSrc, rawDest] = await Promise.all([
+      prisma.event.findUnique({ where: { id: p.sourceEventId }, select: { id: true, title: true, producerId: true } }).catch(() => null),
+      prisma.event.findUnique({ where: { id: p.destinationEventId }, select: { id: true, title: true, producerId: true } }).catch(() => null),
+    ])
+
+    if (rawSrc && rawSrc.producerId !== producerId) {
+      return res.status(403).json({ message: 'Acesso negado: o evento de origem não pertence à produtora autorizada.' })
+    }
+    if (rawDest && rawDest.producerId !== producerId) {
+      return res.status(403).json({ message: 'Acesso negado: o evento de destino não pertence à produtora autorizada.' })
+    }
+
     const [srcEvent, destEvent] = await Promise.all([
-      prisma.event.findFirst({ where: { id: p.sourceEventId, producerId } }).catch(() => null),
-      prisma.event.findFirst({ where: { id: p.destinationEventId, producerId } }).catch(() => null),
+      rawSrc && rawSrc.producerId === producerId ? Promise.resolve(rawSrc) : prisma.event.findFirst({ where: { id: p.sourceEventId, producerId } }).catch(() => null),
+      rawDest && rawDest.producerId === producerId ? Promise.resolve(rawDest) : prisma.event.findFirst({ where: { id: p.destinationEventId, producerId } }).catch(() => null),
     ])
 
     const srcTitle = srcEvent?.title || `Evento #${p.sourceEventId}`

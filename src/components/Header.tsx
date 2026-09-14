@@ -1,5 +1,17 @@
-import { LogOut, Menu, Search, SlidersHorizontal } from 'lucide-react'
+// ==============================================================================
+// FASE 28.15.5 + 28.15.6 — HEADER
+// Cabeçalho global com seletores de contexto (Produtor → Evento) e perfil seguro
+// ==============================================================================
+
+import { LogOut, Menu, Search, SlidersHorizontal, Calendar, Building2 } from 'lucide-react'
 import { isGlobalAdmin, roleLabel, type AppUser, type Producer } from '../auth/model'
+
+export type HeaderEventItem = {
+  id: number
+  code?: string
+  title: string
+  producerId?: number
+}
 
 type Props = {
   query: string
@@ -8,15 +20,59 @@ type Props = {
   producers?: Producer[]
   selectedProducer?: number | 'all'
   onProducer?: (v: number | 'all') => void
+  events?: HeaderEventItem[]
+  selectedEventId?: number | null
+  onEvent?: (eventId: number | null) => void
   onLogout?: () => void
   onToggleMenu?: () => void
   isMobileNavOpen?: boolean
 }
 
-export default function Header({ query, onQuery, user, producers = [], selectedProducer = 'all', onProducer, onLogout, onToggleMenu, isMobileNavOpen = false }: Props) {
+export default function Header({
+  query,
+  onQuery,
+  user,
+  producers = [],
+  selectedProducer = 'all',
+  onProducer,
+  events = [],
+  selectedEventId = null,
+  onEvent,
+  onLogout,
+  onToggleMenu,
+  isMobileNavOpen = false
+}: Props) {
   const userName = user?.name || 'Usuário'
-  const userInitials = userName.split(' ').filter(Boolean).map(x => x[0]).slice(0, 2).join('').toUpperCase() || 'DI'
-  const userRole = user?.role ? (roleLabel[user.role] || user.role) : 'Acesso'
+  const userInitials =
+    userName
+      .split(' ')
+      .filter(Boolean)
+      .map((x) => x[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase() || 'DI'
+  const userRole = user?.role ? roleLabel[user.role] || user.role : 'Acesso'
+
+  const isAdmin = user ? isGlobalAdmin(user) : false
+
+  // Nome da produtora para exibição fixa quando usuário não for Admin
+  const currentProducerName =
+    user && !isAdmin
+      ? producers.find((p) => p.id === user.producerId)?.name || 'Minha Produtora'
+      : null
+
+  // Filtra os eventos disponíveis para o seletor:
+  // Se for admin com produtora selecionada, filtra por ela; se for produtor regular, filtra pelo seu producerId
+  const scopedProducerId = isAdmin
+    ? selectedProducer === 'all'
+      ? null
+      : selectedProducer
+    : user?.producerId || null
+
+  const availableEvents = events.filter((e) => {
+    if (scopedProducerId === null) return true
+    return e.producerId === scopedProducerId
+  })
 
   return (
     <header className="topbar global-topbar">
@@ -31,6 +87,7 @@ export default function Header({ query, onQuery, user, producers = [], selectedP
       >
         <Menu size={22} />
       </button>
+
       <div className="brand global-brand" title="DiskIngressos">
         <img
           src="/logo-diskingressos.png"
@@ -38,30 +95,95 @@ export default function Header({ query, onQuery, user, producers = [], selectedP
           className="navbar-logo"
         />
       </div>
+
       <div className="search-wrap global-search">
         <Search size={21} />
-        <input value={query || ''} onChange={e => onQuery(e.target.value)} placeholder="Buscar eventos..." />
+        <input
+          value={query || ''}
+          onChange={(e) => onQuery(e.target.value)}
+          placeholder="Buscar eventos..."
+        />
         <SlidersHorizontal size={19} />
       </div>
-      <div className="profile-area global-profile">
-        {user && isGlobalAdmin(user) && onProducer && (
-          <select className="producer-switch" value={selectedProducer} onChange={e => onProducer(e.target.value === 'all' ? 'all' : Number(e.target.value))}>
-            <option value="all">Todas as produtoras</option>
-            {producers.filter(p => p?.status === 'ativo').map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
+
+      <div className="profile-area global-profile flex items-center gap-2">
+        {/* Seletor de Produtora: Somente para Administrador autorizado */}
+        {user && isAdmin && onProducer && (
+          <div className="context-selector-producer hidden sm:flex items-center">
+            <select
+              className="producer-switch"
+              data-testid="header-producer-select"
+              title="Selecione a Produtora Ativa"
+              value={selectedProducer}
+              onChange={(e) =>
+                onProducer(e.target.value === 'all' ? 'all' : Number(e.target.value))
+              }
+            >
+              <option value="all">Todas as produtoras</option>
+              {producers
+                .filter((p) => p?.status === 'ativo')
+                .map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+            </select>
+          </div>
         )}
+
+        {/* Produtora Fixa: Para perfil Produtor (nunca recebe seletor de outras produtoras) */}
+        {user && !isAdmin && currentProducerName && (
+          <div
+            className="producer-badge-fixed hidden sm:inline-flex items-center gap-1.5"
+            data-testid="header-producer-fixed"
+            title={`Produtora Ativa: ${currentProducerName}`}
+          >
+            <Building2 size={13} className="text-[#06B6D4] shrink-0" />
+            <span className="truncate max-w-[140px]">{currentProducerName}</span>
+          </div>
+        )}
+
+        {/* Seletor de Evento Contextual (Produtor → Evento) */}
+        {user && onEvent && (
+          <div className="context-selector-event hidden md:flex items-center">
+            <select
+              className="event-switch"
+              data-testid="header-event-select"
+              title="Filtrar por Evento no Contexto"
+              value={selectedEventId ?? ''}
+              onChange={(e) => {
+                const val = e.target.value
+                onEvent(val === '' ? null : Number(val))
+              }}
+            >
+              <option value="">Selecione um evento...</option>
+              {availableEvents.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div className="avatar">
           {userInitials}
           <span className="online" />
         </div>
+
         <div className="profile-copy">
           <strong>{userName}</strong>
           <small>{userRole}</small>
         </div>
+
         {onLogout && (
-          <button className="logout-btn" onClick={onLogout} title="Sair">
+          <button
+            type="button"
+            className="logout-btn"
+            onClick={onLogout}
+            title="Sair"
+            data-testid="btn-logout"
+          >
             <LogOut size={18} />
           </button>
         )}
@@ -69,4 +191,3 @@ export default function Header({ query, onQuery, user, producers = [], selectedP
     </header>
   )
 }
-

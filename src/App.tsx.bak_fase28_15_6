@@ -50,12 +50,6 @@ import AdvancedTaxesRouter from './pages/finance/advanced/AdvancedTaxesRouter'
 import './pages/finance/advanced/advanced-taxes.css'
 import { AppRouter } from './navigation/router'
 import { MobileNavigationController } from './navigation/mobile-controller'
-import { AppContext } from './context/app-context'
-import { useAppContext } from './context/useAppContext'
-import { BreadcrumbManager } from './navigation/breadcrumbs'
-import { BreadcrumbNav } from './components/BreadcrumbNav'
-import { BlockedStateView } from './components/BlockedStateView'
-import type { RouteConfig } from './navigation/routes'
 import {
   ACCOUNTING_TAB_TO_ROUTE,
   normalizeAccountingTab
@@ -370,14 +364,6 @@ export default function App() {
     return window.localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
   })
 
-  // Fase 28.15.6: Contexto centralizado e Breadcrumbs contextuais
-  const appContextState = useAppContext()
-  const [currentRoute, setCurrentRoute] = useState<RouteConfig>(() => AppRouter.current())
-
-  const breadcrumbItems = useMemo(() => {
-    return BreadcrumbManager.resolve(currentRoute, appContextState)
-  }, [currentRoute, appContextState])
-
   // Fase 28.15.5: Controlador unificado de navegação mobile e drawer
   useEffect(() => {
     const unsubMobile = MobileNavigationController.subscribe(setMobileNavOpen)
@@ -386,14 +372,12 @@ export default function App() {
     }
   }, [])
 
-  // Fase 21.1.5 + Fase 28.15.4 + Fase 28.15.6: histórico do navegador, Voltar/Avançar e deep-links contábeis
+  // Fase 21.1.5 + Fase 28.15.4: histórico do navegador, Voltar/Avançar e deep-links contábeis
   useEffect(() => {
     const current = window.history.state || {}
     if (!current.page) window.history.replaceState({ ...current, page }, '', window.location.href)
     const onPopState = (ev: PopStateEvent) => {
       MobileNavigationController.close()
-      const currentLoc = window.location.pathname + window.location.hash
-      AppRouter.syncFromLocation(currentLoc, true)
       const previous = ev.state?.page as PageKey | undefined
       if (previous) {
         setMobileNavOpen(false)
@@ -431,12 +415,9 @@ export default function App() {
     }
     window.addEventListener('popstate', onPopState)
     const unsubRouter = AppRouter.subscribe((route) => {
-      setCurrentRoute(route)
       if (route.module === 'contabilidade') {
         const tab = normalizeAccountingTab(route.tab || 'dashboard')
         setPage(`accounting-${tab}` as PageKey)
-      } else if (route.view && (route.view as string) in titleMap) {
-        setPage(route.view as PageKey)
       }
     })
     return () => {
@@ -492,21 +473,7 @@ export default function App() {
     try {
       const requested = isGlobalAdmin(u) ? (producerSelection === 'all' ? undefined : producerSelection) : (u.producerId || undefined)
       const rows = await getEvents(requested)
-      if (rows) {
-        const norm = normalizeEvents(rows)
-        setEvents(norm)
-        // Se havia evento no AppContext, revalidar pertencimento
-        const currentCtx = AppContext.getState()
-        if (currentCtx.eventId) {
-          const matched = norm.find((e) => e.id === currentCtx.eventId)
-          if (matched) {
-            setSelectedEvent(matched)
-          } else {
-            setSelectedEvent(null)
-            AppContext.clearEvent()
-          }
-        }
-      }
+      if (rows) setEvents(normalizeEvents(rows))
     } catch (error) {
       setEvents([])
       console.error('Falha ao carregar eventos da API/banco:', error)
@@ -517,7 +484,6 @@ export default function App() {
     if (typeof window !== 'undefined' && window.location.pathname === '/login') {
       clearApiToken()
       setUser(null)
-      AppContext.setUser(null)
       return
     }
     if (!hasStoredToken()) return
@@ -531,18 +497,9 @@ export default function App() {
         setSelectedProducer(producerSelection)
         const initialPage = typeof window !== 'undefined' ? resolvePageFromPath(window.location.pathname, u) : firstPageFor(u)
         setPage(initialPage)
-        AppContext.setUser(u, seedProducers)
-        AppContext.setProducer(producerSelection === 'all' ? null : producerSelection, undefined, seedProducers)
-        const tasks: any[] = [
-          loadScopeData(u, producerSelection),
-          getProducers().then((prods) => {
-            setProducers(prods)
-            AppContext.setUser(u, prods)
-          })
-        ]
+        const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
         if (isGlobalAdmin(u)) tasks.push(getUsers().then(setUsers))
         await Promise.all(tasks)
-        AppRouter.syncFromLocation()
       } catch {
         // Keep seed default user
       }
@@ -565,8 +522,6 @@ export default function App() {
             setPage(initialPage)
             // O login só é concluído visualmente depois que o escopo real da produtora
             // e seus eventos forem carregados da mesma API que autenticou o usuário.
-            AppContext.setUser(u, producers)
-            AppContext.setProducer(producerSelection === 'all' ? null : producerSelection, undefined, producers)
             const tasks: any[] = [loadScopeData(u, producerSelection), getProducers().then(setProducers)]
             if (isGlobalAdmin(u)) tasks.push(getUsers().then(setUsers))
             await Promise.all(tasks)
@@ -576,14 +531,12 @@ export default function App() {
                   ? '/app/marketing/spotify'
                   : (window.location.pathname.startsWith('/app/') ? window.location.pathname : `/app/${initialPage}`))
             window.history.pushState({ page: initialPage }, '', targetUrl)
-            AppRouter.syncFromLocation(targetUrl)
             return u
           } catch (e) {
             // Nunca simular login de produtor com seed local quando a API/cloud falhar.
             // Isso escondia erros de autenticação/escopo e deixava o painel sem dados.
             clearApiToken()
             setUser(null)
-            AppContext.setUser(null)
             setEvents([])
             throw e
           }
@@ -592,25 +545,12 @@ export default function App() {
     )
   }
 
-  const editEvent = (e: EventItem) => {
-    setSelectedEvent(e)
-    AppContext.setEvent(e.id, e.title, e.producerId)
-    setPage('edit-event')
-    AppRouter.syncFromLocation('/app/edit-event')
-  }
-  const openLots = (e: EventItem) => {
-    setSelectedEvent(e)
-    AppContext.setEvent(e.id, e.title, e.producerId)
-    setPage('lots')
-    AppRouter.syncFromLocation('/app/lots')
-  }
+  const editEvent = (e: EventItem) => { setSelectedEvent(e); setPage('edit-event') }
+  const openLots = (e: EventItem) => { setSelectedEvent(e); setPage('lots') }
   const openEventContext = (e: EventItem) => {
     setSelectedEvent(e)
-    AppContext.setEvent(e.id, e.title, e.producerId)
     setPage('event-dashboard')
-    const targetUrl = `/eventos/${e.code}/dashboard`
-    window.history.pushState({ page: 'event-dashboard' }, '', targetUrl)
-    AppRouter.syncFromLocation(targetUrl)
+    window.history.pushState({ page: 'event-dashboard' }, '', `/eventos/${e.code}/dashboard`)
     window.scrollTo({ top: 0 })
   }
   const openDashboard = openEventContext
@@ -623,9 +563,7 @@ export default function App() {
     setEvents(prev => exists ? prev.map(e => e.id === secured.id ? secured : e) : [secured, ...prev])
     notify(exists ? 'Alterações salvas com sucesso.' : 'Evento criado com sucesso.')
     setSelectedEvent(null)
-    AppContext.clearEvent()
     setPage('events')
-    AppRouter.syncFromLocation('/eventos')
   }
 
   const navigate = (next: PageKey) => {
@@ -635,30 +573,22 @@ export default function App() {
       notify('Seu perfil não possui permissão para este módulo.')
       return
     }
-    if (next === 'new-event') {
-      setSelectedEvent(null)
-      AppContext.clearEvent()
-    }
+    if (next === 'new-event') setSelectedEvent(null)
     setPage(next)
-    let targetUrl = `/app/${next}`
     if (selectedEvent && eventContextPages.has(next)) {
-      targetUrl = `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`
-      window.history.pushState({ page: next }, '', targetUrl)
+      window.history.pushState({ page: next }, '', `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`)
     } else if (next.startsWith('accounting-') || next === 'finance-accounting') {
       const tab = normalizeAccountingTab(next.replace('accounting-', ''))
-      targetUrl = ACCOUNTING_TAB_TO_ROUTE[tab] || '/contabilidade/dashboard'
-      window.history.pushState({ page: next, route: targetUrl, tab }, '', targetUrl)
+      const targetRoute = ACCOUNTING_TAB_TO_ROUTE[tab] || '/contabilidade/dashboard'
+      window.history.pushState({ page: next, route: targetRoute, tab }, '', targetRoute)
       AccountingController.activateTab(tab, { skipRouter: true })
     } else if (next === 'marketing-spotify' || next === 'marketing-spotify-ads') {
-      targetUrl = '/app/marketing/spotify'
-      window.history.pushState({ page: next }, '', targetUrl)
+      window.history.pushState({ page: next }, '', '/app/marketing/spotify')
     } else if (next === 'marketing-status-real' || next === 'marketing-real-status') {
-      targetUrl = '/app/marketing/status-real'
-      window.history.pushState({ page: next }, '', targetUrl)
+      window.history.pushState({ page: next }, '', '/app/marketing/status-real')
     } else {
-      window.history.pushState({ page: next }, '', targetUrl)
+      window.history.pushState({ page: next }, '', `/app/${next}`)
     }
-    AppRouter.syncFromLocation(targetUrl)
     window.scrollTo({ top: 0 })
   }
 
@@ -696,7 +626,6 @@ export default function App() {
   const logout = () => {
     clearApiToken()
     setUser(null)
-    AppContext.setUser(null)
     setQuery('')
     setSelectedEvent(null)
     setSelectedProducer('all')
@@ -711,30 +640,11 @@ export default function App() {
         user={user}
         producers={producers}
         selectedProducer={selectedProducer}
-        events={events}
-        selectedEventId={selectedEvent?.id ?? appContextState.eventId}
-        onProducer={async (v) => {
+        onProducer={async v => {
           setSelectedProducer(v)
           setSelectedEvent(null)
-          AppContext.setProducer(v === 'all' ? null : v, undefined, producers)
           await loadScopeData(user, v)
-          if (isGlobalAdmin(user)) {
-            const next = v === 'all' ? 'global-dashboard' : 'events'
-            setPage(next)
-            AppRouter.navigate(next === 'events' ? '/eventos' : '/dashboard')
-          }
-        }}
-        onEvent={(evId) => {
-          if (!evId) {
-            setSelectedEvent(null)
-            AppContext.clearEvent()
-            return
-          }
-          const found = events.find((e) => e.id === evId)
-          if (found) {
-            setSelectedEvent(found)
-            AppContext.setEvent(found.id, found.title, found.producerId)
-          }
+          if (isGlobalAdmin(user)) setPage(v === 'all' ? 'global-dashboard' : 'events')
         }}
         onLogout={logout}
         onToggleMenu={() => MobileNavigationController.toggle()}
@@ -756,10 +666,8 @@ export default function App() {
           onNavigate={(p) => { navigate(p); MobileNavigationController.close() }}
           onBack={() => {
             setSelectedEvent(null)
-            AppContext.clearEvent()
             setPage('events')
             window.history.pushState({}, '', '/eventos')
-            AppRouter.syncFromLocation('/eventos')
             window.scrollTo({ top: 0 })
           }}
           canAdmin={canAccess(user, 'admin')}
@@ -778,57 +686,52 @@ export default function App() {
       )}
 
       <div className={`module-titlebar ${mobileInternalHeaderPages.has(page) ? 'mobile-titlebar-hidden' : ''}`}>
-        <div className="flex flex-col gap-1.5 min-w-0">
-          <BreadcrumbNav items={breadcrumbItems} />
-          <div className="flex items-center gap-3">
-            {page !== 'profile-dashboard' && page !== 'global-dashboard' && (
-              <button
-                onClick={() => {
-                  if (inEventContext && selectedEvent) {
-                    setSelectedEvent(null)
-                    AppContext.clearEvent()
-                    setPage('events')
-                    AppRouter.syncFromLocation('/eventos')
-                  } else if (page === 'finance-dashboard' || page === 'finance-hub') {
-                    setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
-                  } else if (page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread') {
-                    setPage('finance-dashboard')
-                  } else if (page.startsWith('accounting')) {
-                    setPage('accounting-dashboard')
-                  } else if (page.startsWith('marketing')) {
-                    setPage('marketing-dashboard')
-                  } else if (page.startsWith('remarketing')) {
-                    setPage('remarketing-dashboard')
-                  } else if (page.startsWith('sac')) {
-                    setPage('sac-hub')
-                  } else if (page.startsWith('admin')) {
-                    setPage('admin-hub')
-                  } else if (['lots', 'participants', 'edit-event', 'event-dashboard', 'new-event'].includes(page)) {
-                    setPage('events')
-                  } else {
-                    setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
-                  }
-                  window.scrollTo({ top: 0 })
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#17212F] hover:bg-[#253245] text-slate-700 hover:text-slate-900 border border-slate-200 transition shadow-xs cursor-pointer select-none"
-                title="Voltar ao Painel Anterior"
-              >
-                <ArrowLeft size={14} className="text-[#06B6D4]" />
-                <span>
-                  {page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread'
-                    ? page === 'finance-dashboard' || page === 'finance-hub'
-                      ? 'Voltar ao Início'
-                      : 'Voltar ao Dashboard'
-                    : inEventContext
-                    ? 'Voltar aos Eventos'
-                    : 'Voltar'}
-                </span>
-              </button>
-            )}
-            <h1>{titleMap[page] || 'DiskIngressos'}</h1>
-          </div>
+        <div className="flex items-center gap-3">
+          {page !== 'profile-dashboard' && page !== 'global-dashboard' && (
+            <button
+              onClick={() => {
+                if (inEventContext && selectedEvent) {
+                  setSelectedEvent(null)
+                  setPage('events')
+                } else if (page === 'finance-dashboard' || page === 'finance-hub') {
+                  setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
+                } else if (page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread') {
+                  setPage('finance-dashboard')
+                } else if (page.startsWith('accounting')) {
+                  setPage('accounting-dashboard')
+                } else if (page.startsWith('marketing')) {
+                  setPage('marketing-dashboard')
+                } else if (page.startsWith('remarketing')) {
+                  setPage('remarketing-dashboard')
+                } else if (page.startsWith('sac')) {
+                  setPage('sac-hub')
+                } else if (page.startsWith('admin')) {
+                  setPage('admin-hub')
+                } else if (['lots', 'participants', 'edit-event', 'event-dashboard', 'new-event'].includes(page)) {
+                  setPage('events')
+                } else {
+                  setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
+                }
+                window.scrollTo({ top: 0 })
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#17212F] hover:bg-[#253245] text-slate-700 hover:text-slate-900 border border-slate-200 transition shadow-xs cursor-pointer select-none"
+              title="Voltar ao Painel Anterior"
+            >
+              <ArrowLeft size={14} className="text-[#06B6D4]" />
+              <span>
+                {page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread'
+                  ? page === 'finance-dashboard' || page === 'finance-hub'
+                    ? 'Voltar ao Início'
+                    : 'Voltar ao Dashboard'
+                  : inEventContext
+                  ? 'Voltar aos Eventos'
+                  : 'Voltar'}
+              </span>
+            </button>
+          )}
+          <h1>{titleMap[page] || 'DiskIngressos'}</h1>
         </div>
-        <div className="scope-pill shrink-0">
+        <div className="scope-pill">
           {inEventContext && selectedEvent
             ? `Evento ${selectedEvent.code}`
             : scopedProducerId === null
@@ -837,28 +740,8 @@ export default function App() {
         </div>
       </div>
 
-      {mobileInternalHeaderPages.has(page) && (
-        <div className="md:hidden px-4 py-2 border-b border-slate-800 bg-[#0F172A]/90">
-          <BreadcrumbNav items={breadcrumbItems} dataTestId="breadcrumb-nav-mobile" />
-        </div>
-      )}
-
       <main className="content phase6-content">
-        {currentRoute.guardState && !currentRoute.guardState.allowed ? (
-          <BlockedStateView
-            type={currentRoute.guardState.blockedReason || 'unauthorized'}
-            message={currentRoute.guardState.message}
-            onAction={() => {
-              if (currentRoute.guardState?.blockedReason === 'need_event') {
-                navigate('events')
-              } else {
-                navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
-              }
-            }}
-          />
-        ) : (
-          <>
-            {page === 'profile-dashboard' && !isGlobalAdmin(user) && (
+        {page === 'profile-dashboard' && !isGlobalAdmin(user) && (
           <ProfileDashboardPage
             user={user}
             producer={producers.find(p => p.id === user.producerId)}
@@ -1122,8 +1005,6 @@ export default function App() {
         {page === 'pos-terminals' && <POSPage events={visibleEvents} initialTab="terminals" notify={notify} />}
         {page === 'pos-sales' && <POSPage events={visibleEvents} initialTab="sales" notify={notify} />}
         {page === 'pos-closing' && <POSPage events={visibleEvents} initialTab="closing" notify={notify} />}
-          </>
-        )}
       </main>
 
       <nav className="mobile-bottom-nav" aria-label="Navegação mobile">

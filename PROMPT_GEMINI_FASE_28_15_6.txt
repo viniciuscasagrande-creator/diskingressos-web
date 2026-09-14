@@ -1,0 +1,99 @@
+FASE 28.15.6 — BREADCRUMBS, PERMISSÕES E CONTEXTO PRODUTOR/EVENTO
+
+Analise primeiro o projeto real e preserve integralmente as Fases 28.15.1 a 28.15.5.
+
+OBJETIVO
+Implantar camada única de breadcrumbs, permissões e contexto Produtor/Evento.
+
+REGRA CRÍTICA
+PRODUTOR só pode acessar seus próprios eventos/dados.
+ADMIN só recebe escopo ampliado quando autorizado.
+Não confiar apenas no frontend.
+
+IMPLEMENTAR
+
+1. AppContext
+user, role, producerId, producerName, eventId, eventName.
+Ao trocar produtor: limpar evento.
+
+2. PermissionGuard
+Toda rota protegida deve validar permissão antes de renderizar.
+
+3. ContextGuard
+Cada rota declara:
+context: { producer: true|false, event: true|false }
+
+4. BreadcrumbManager
+Derivar breadcrumb da rota e contexto atual.
+Interface em pt-BR.
+Mobile 360 sem overflow.
+
+5. Router
+Fluxo:
+resolve → PermissionGuard → ContextGuard → render → MenuStateManager → BreadcrumbManager
+
+6. Seletor de contexto
+Admin autorizado:
+Produtor → Evento
+
+Produtor:
+Produtor fixo → somente seus eventos.
+
+7. Persistência
+Pode usar sessionStorage para UX, mas contexto restaurado precisa ser revalidado.
+
+8. Segurança backend
+Revisar endpoints contra IDOR.
+Não aceitar producerId/eventId do frontend sem validar contra usuário autenticado.
+
+9. Financeiro
+Transferências entre eventos devem validar origem/destino dentro do escopo autorizado.
+
+10. Marketing
+Pixels por Evento exigem evento autorizado.
+Nenhum pixel de evento terceiro.
+
+11. Contabilidade
+Contexto consolidado ou por evento conforme rota.
+
+12. SAC
+Escopo global somente para perfil interno autorizado.
+
+13. Estados amigáveis
+Sem permissão:
+Acesso não autorizado.
+
+Sem produtor:
+Selecione um produtor para continuar.
+
+Sem evento:
+Selecione um evento para continuar.
+
+NÃO
+- apagar telas;
+- recriar dashboards;
+- alterar regras financeiras/contábeis;
+- remover aliases;
+- fazer limpeza geral da 28.15.7;
+- declarar concluída sem testar acesso indevido.
+
+TESTES
+ADMIN:
+troca produtor/evento, breadcrumbs, F5, voltar/avançar.
+
+PRODUTOR:
+somente produtor/eventos próprios; URLs e IDs terceiros bloqueados.
+
+PERMISSÕES:
+leitura, Financeiro, Marketing, Contabilidade, sem acesso.
+
+MOBILE:
+360 px sem overflow.
+
+GERAR
+RELATORIO_HOMOLOGACAO_FASE_28_15_6.md
+
+Documentar:
+perfis, permissões, matriz de acesso, rotas por contexto, validações backend, arquivos alterados, testes de segurança, falhas, correções e status final.
+
+NÃO APROVAR se houver qualquer acesso confirmado de produtor a dados de outro produtor.
