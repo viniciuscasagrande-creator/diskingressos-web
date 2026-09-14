@@ -1,0 +1,147 @@
+FASE 28.15.7 — LIMPEZA DE LEGADO, CÓDIGO DUPLICADO E CONSOLIDAÇÃO TÉCNICA
+
+IMPORTANTE:
+Esta é uma fase de limpeza técnica, NÃO de redesign e NÃO de reescrita do sistema.
+
+Preserve integralmente tudo homologado nas Fases 28.15.1 a 28.15.6.
+
+ANTES DE APAGAR QUALQUER CÓDIGO:
+1. localizar referências;
+2. classificar dependências;
+3. testar;
+4. só então remover.
+
+ESCOPO PRINCIPAL:
+- index.html
+- src/app.js
+- src/styles.css
+- src/navigation/*
+- src/context/*
+- src/security/*
+- limitless_assets/js/app.js
+- package.json
+- scripts carregados pela aplicação
+
+REVISAR:
+
+1. Navegação
+Buscar:
+openView
+navigateTo
+switchActiveView
+hashchange
+popstate
+pushState
+replaceState
+data-view
+data-route
+onclick de navegação
+
+AppRouter deve ser a única fonte real de navegação.
+
+2. Listeners
+Mapear todos addEventListener.
+Eliminar duplicações e listeners acumulativos.
+
+3. Inicializadores
+Classificar:
+global-once
+view-once
+view-every-open
+data-refresh
+
+Evitar inicialização duplicada.
+
+4. Código morto JS
+Classificar cada item:
+REMOVER
+MANTER
+MIGRAR
+DEPRECAR
+INVESTIGAR
+
+Não apagar INVESTIGAR.
+
+5. CSS legado
+Mapear classes antigas versus estrutura atual.
+Não remover seletor dinâmico sem buscar referências JS.
+
+6. Limitless/Bootstrap
+Não apagar biblioteca inteira.
+Consolidar apenas controladores conflitantes.
+
+7. Inline handlers
+Migrar primeiro navegação/menu/tabs repetitivas.
+Ações críticas podem permanecer se houver risco.
+
+8. Aliases
+Gerar inventário alias → rota → referências.
+Remover apenas alias sem uso real ou compatibilidade necessária.
+
+9. Variáveis globais
+Classificar window.* em:
+API pública
+compatibilidade
+debug
+legado
+
+10. Console
+Remover debug temporário.
+Nunca logar segredo ou dado sensível.
+
+11. Segurança
+Buscar tokens, API keys, senhas e segredos.
+Não imprimir segredo encontrado no relatório.
+
+12. Dependências
+Revisar package.json.
+Não remover pacote sem confirmar imports, scripts e build.
+
+13. Storage/cache
+Revisar localStorage/sessionStorage/cache.
+Garantir limpeza em logout/troca produtor/troca evento.
+
+14. Erros
+Eliminar catches vazios e falhas silenciosas quando seguro.
+
+NÃO:
+- apagar telas;
+- alterar UI homologada;
+- mudar regras financeiras/contábeis;
+- mudar APIs;
+- mudar banco;
+- quebrar aliases necessários;
+- mexer nas permissões/contexto homologados;
+- alterar mobile homologado.
+
+GERAR OBRIGATORIAMENTE:
+
+INVENTARIO_LEGADO_FASE_28_15_7.md
+
+RELATORIO_REMOCOES_FASE_28_15_7.md
+
+RELATORIO_HOMOLOGACAO_FASE_28_15_7.md
+
+EXECUTAR:
+- busca global;
+- node --check onde aplicável;
+- npm run build;
+- testes existentes;
+- navegação manual/automatizada disponível;
+- console sem erro crítico.
+
+TESTE REGRESSÃO:
+Dashboard, Eventos, Marketing, Financeiro, Contabilidade, SAC, Relatórios, Configurações;
+Financeiro completo;
+Contabilidade completa;
+Admin/Produtor;
+troca produtor/evento;
+F5;
+Voltar/Avançar;
+deep-link;
+360 px;
+desktop.
+
+REGRA FINAL:
+Em caso de dúvida, MANTER + DOCUMENTAR.
+Não declarar concluída se surgir qualquer regressão crítica.
