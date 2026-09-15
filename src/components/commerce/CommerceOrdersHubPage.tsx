@@ -149,7 +149,7 @@ export const CommerceOrdersHubPage: React.FC = () => {
           </button>
           <span className="px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-indigo-600" />
-            Fase 29.8 Homologada
+            Commerce Core Homologado
           </span>
         </div>
       </div>

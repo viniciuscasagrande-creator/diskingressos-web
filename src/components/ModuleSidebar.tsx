@@ -71,9 +71,9 @@ type Item = {
 const mainItems: Item[] = [
   { key: 'profile-dashboard', label: 'Dashboard', icon: BarChart3 },
   { key: 'events', label: 'Todos os Eventos', icon: Ticket },
-  { key: 'commerce-orders', label: 'Pedidos & Vendas', icon: ShoppingBag, badge: 'Fase 29.8' },
-  { key: 'event-support', label: 'Suporte a Eventos', icon: Layers, badge: 'Fase 29.2' },
-  { key: 'developer-center', label: 'Desenvolvedor', icon: Terminal, badge: 'Fase 29.7' },
+  { key: 'commerce-orders', label: 'Pedidos & Vendas', icon: ShoppingBag },
+  { key: 'event-support', label: 'Suporte a Eventos', icon: Layers },
+  { key: 'developer-center', label: 'Desenvolvedor', icon: Terminal },
   { key: 'operations', label: 'Núcleo Operacional', icon: ChartNoAxesCombined },
   { key: 'new-event', label: 'Novo Evento', icon: PlusSquare },
   { key: 'lots', label: 'Configurar Lotes', icon: SlidersHorizontal },

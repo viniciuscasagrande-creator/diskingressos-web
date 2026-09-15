@@ -487,7 +487,7 @@ export const OrderDossier360Modal: React.FC<OrderDossier360ModalProps> = ({
         <div className="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
           <span className="text-xs text-slate-500 flex items-center gap-1.5">
             <FileCheck className="w-4 h-4 text-emerald-600" />
-            Integridade Comercial Homologada no Disk Core (Fase 29.8)
+            Integridade Comercial Homologada no Disk Core
           </span>
           <button
             type="button"
