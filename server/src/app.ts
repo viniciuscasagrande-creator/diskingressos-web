@@ -34,6 +34,8 @@ import { trackingPublicRouter } from './routes/trackingPublic.js'
 import { conversionsRouter } from './routes/conversions.js'
 import { scopeRouter } from './routes/scope.js'
 import { eventSupportRouter } from './routes/eventSupport.js'
+import { iamSecurityRouter } from './routes/iamSecurity.js'
+import { commerceCoreRouter } from './routes/commerceCore.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -135,6 +137,10 @@ app.use('/api/support', supportRouter)
 app.use('/api/service', supportRouter)
 app.use('/api/v1', eventSupportRouter)
 app.use('/api/event-support', eventSupportRouter)
+app.use('/api/v1', iamSecurityRouter)
+app.use('/api/developer', iamSecurityRouter)
+app.use('/api/v1', commerceCoreRouter)
+app.use('/api/commerce', commerceCoreRouter)
 app.use('/api/communication', communicationRouter)
 app.use('/api/audit', auditRouter)
 

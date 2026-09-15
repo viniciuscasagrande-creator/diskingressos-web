@@ -86,6 +86,8 @@ import ProfileDashboardPage from './pages/ProfileDashboardPage'
 import { canAccess, isGlobalAdmin, producers as seedProducers, seedUsers, type AppUser } from './auth/model'
 import { login as apiLogin, setApiToken, clearApiToken, hasStoredToken, getMe, getProducers, getUsers, getEvents } from './services/api'
 import { EventSupportHubPage } from './components/event-support/EventSupportHubPage'
+import { DeveloperCommandCenterPage } from './components/developer/DeveloperCommandCenterPage'
+import { CommerceOrdersHubPage } from './components/commerce/CommerceOrdersHubPage'
 
 const mobileInternalHeaderPages = new Set<PageKey>([
   'events',
@@ -147,6 +149,8 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-audit': 'Logs do Evento',
   'event-permissions': 'Permissões do Evento',
   'event-support': 'Suporte a Eventos & Event Builder',
+  'commerce-orders': 'Pedidos, Ingressos & Integridade Comercial',
+  'developer-center': 'Desenvolvedor • Central de Observabilidade',
 
   // HUBS ENTERPRISE (FASE 28.15.8.1)
   'finance-hub-account': 'Conta Financeira',
@@ -349,6 +353,8 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
   }
   if (clean === 'eventos') return 'events'
   if (clean === 'event-support' || clean === 'app/event-support') return 'event-support'
+  if (clean === 'commerce-orders' || clean === 'app/commerce-orders' || clean === 'pedidos' || clean === 'app/pedidos') return 'commerce-orders'
+  if (clean === 'developer-center' || clean === 'app/developer-center' || clean === 'desenvolvedor' || clean === 'app/desenvolvedor') return 'developer-center'
   if (clean.startsWith('eventos/')) {
     const parts = clean.split('/')
     const tool = parts[2] || 'dashboard'
@@ -1079,6 +1085,12 @@ export default function App() {
         )}
         {page === 'event-support' && (
           <EventSupportHubPage />
+        )}
+        {page === 'commerce-orders' && (
+          <CommerceOrdersHubPage />
+        )}
+        {page === 'developer-center' && (
+          <DeveloperCommandCenterPage />
         )}
         {page === 'new-event' && <EventFormPage mode="new" onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'edit-event' && <EventFormPage mode="edit" event={selectedEvent} onCancel={() => setPage('events')} onSave={saveEvent} />}
