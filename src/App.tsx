@@ -88,6 +88,7 @@ import { login as apiLogin, setApiToken, clearApiToken, hasStoredToken, getMe, g
 import { EventSupportHubPage } from './components/event-support/EventSupportHubPage'
 import { DeveloperCommandCenterPage } from './components/developer/DeveloperCommandCenterPage'
 import { CommerceOrdersHubPage } from './components/commerce/CommerceOrdersHubPage'
+import { PaymentsHubPage } from './components/payments/PaymentsHubPage'
 
 const mobileInternalHeaderPages = new Set<PageKey>([
   'events',
@@ -151,6 +152,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-support': 'Suporte a Eventos & Event Builder',
   'commerce-orders': 'Pedidos, Ingressos & Integridade Comercial',
   'developer-center': 'Desenvolvedor • Central de Observabilidade',
+  'payments-hub': 'Central de Pagamentos Enterprise',
 
   // HUBS ENTERPRISE (FASE 28.15.8.1)
   'finance-hub-account': 'Conta Financeira',
@@ -355,6 +357,7 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
   if (clean === 'event-support' || clean === 'app/event-support') return 'event-support'
   if (clean === 'commerce-orders' || clean === 'app/commerce-orders' || clean === 'pedidos' || clean === 'app/pedidos') return 'commerce-orders'
   if (clean === 'developer-center' || clean === 'app/developer-center' || clean === 'desenvolvedor' || clean === 'app/desenvolvedor') return 'developer-center'
+  if (clean === 'payments-hub' || clean === 'payments' || clean === 'app/payments' || clean === 'pagamentos' || clean === 'app/pagamentos') return 'payments-hub'
   if (clean.startsWith('eventos/')) {
     const parts = clean.split('/')
     const tool = parts[2] || 'dashboard'
@@ -1087,10 +1090,16 @@ export default function App() {
           <EventSupportHubPage />
         )}
         {page === 'commerce-orders' && (
-          <CommerceOrdersHubPage />
+          <CommerceOrdersHubPage onNavigateToPayments={() => navigate('payments-hub')} />
         )}
         {page === 'developer-center' && (
           <DeveloperCommandCenterPage />
+        )}
+        {page === 'payments-hub' && (
+          <PaymentsHubPage
+            onNavigateToOrders={() => navigate('commerce-orders')}
+            onNavigateToFinance={() => navigate('finance-dashboard')}
+          />
         )}
         {page === 'new-event' && <EventFormPage mode="new" onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'edit-event' && <EventFormPage mode="edit" event={selectedEvent} onCancel={() => setPage('events')} onSave={saveEvent} />}

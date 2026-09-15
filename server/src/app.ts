@@ -36,6 +36,7 @@ import { scopeRouter } from './routes/scope.js'
 import { eventSupportRouter } from './routes/eventSupport.js'
 import { iamSecurityRouter } from './routes/iamSecurity.js'
 import { commerceCoreRouter } from './routes/commerceCore.js'
+import { paymentsEnterpriseRouter } from './routes/paymentsEnterprise.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -141,6 +142,8 @@ app.use('/api/v1', iamSecurityRouter)
 app.use('/api/developer', iamSecurityRouter)
 app.use('/api/v1', commerceCoreRouter)
 app.use('/api/commerce', commerceCoreRouter)
+app.use('/api/v1/payments', paymentsEnterpriseRouter)
+app.use('/api/payments', paymentsEnterpriseRouter)
 app.use('/api/communication', communicationRouter)
 app.use('/api/audit', auditRouter)
 

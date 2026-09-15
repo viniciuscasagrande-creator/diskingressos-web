@@ -17,7 +17,8 @@ import {
   ExternalLink,
   ShieldCheck,
   ChevronRight,
-  UserCheck
+  UserCheck,
+  CreditCard
 } from 'lucide-react'
 import { commerceCoreService } from '../../services/commerceCore.service'
 import type {
@@ -28,7 +29,11 @@ import type {
 } from '../../types/commerce-orders.types'
 import { OrderDossier360Modal } from './OrderDossier360Modal'
 
-export const CommerceOrdersHubPage: React.FC = () => {
+interface CommerceOrdersHubPageProps {
+  onNavigateToPayments?: () => void
+}
+
+export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({ onNavigateToPayments }) => {
   const [summary, setSummary] = useState<CommerceKpiSummary | null>(null)
   const [orders, setOrders] = useState<OrderRecord[]>([])
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null)
@@ -147,6 +152,17 @@ export const CommerceOrdersHubPage: React.FC = () => {
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-indigo-600' : ''}`} />
             <span>Atualizar Vendas</span>
           </button>
+          {onNavigateToPayments && (
+            <button
+              type="button"
+              onClick={onNavigateToPayments}
+              className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30"
+              data-testid="goto-payments-btn"
+            >
+              <CreditCard className="w-3.5 h-3.5" />
+              <span>Central de Pagamentos</span>
+            </button>
+          )}
           <span className="px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-indigo-600" />
             Commerce Core Homologado
