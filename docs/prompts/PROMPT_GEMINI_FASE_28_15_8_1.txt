@@ -1,0 +1,181 @@
+FASE 28.15.8.1 — REORGANIZAÇÃO DEFINITIVA DO MENU ENTERPRISE
+
+PROBLEMA:
+A sidebar do PDT ficou excessivamente longa, com funções, categorias, subfunções e relatórios misturados. O vídeo de validação mostrou especialmente Financeiro e Contabilidade sobrecarregados.
+
+OBJETIVO:
+Reduzir a sidebar sem remover NENHUMA funcionalidade.
+
+REGRA:
+SIDEBAR = módulos/áreas.
+HUB INTERNO = funções.
+TELA = execução.
+
+NÃO APAGAR:
+telas, rotas, APIs, regras, funções, relatórios, permissões, aliases necessários ou integrações.
+
+ANTES DE ALTERAR:
+Gerar inventário de todos os itens atuais:
+nome, grupo, rota/data-view, onclick, view, permissão e novo destino.
+
+NOVA SIDEBAR FINANCEIRO:
+- Visão Geral
+- Conta Financeira
+- Contas
+- Tesouraria
+- Compras & Fornecedores
+- Controladoria
+- Conciliação
+- Relatórios
+
+CRIAR HUB CONTA FINANCEIRA:
+Conta do Produtor
+Saldo por Evento
+Gestão de Saldos
+Transferência entre Eventos
+Extrato
+Divisão de Receitas
+Pagamentos & Taxas
+
+HUB CONTAS:
+Contas a Receber
+Contas a Pagar
+Antecipações
+Repasses
+Agenda Financeira
+Pagamentos/Taxas existentes
+
+HUB TESOURARIA:
+Contas Bancárias
+PIX
+CNAB
+Pagamentos em Lote
+Agenda de Repasses
+Liquidação
+Projeção de Caixa
+
+HUB COMPRAS & FORNECEDORES:
+Compras, Aprovações, Solicitações, Cotações, Pedidos, Recebimentos,
+Cadastro de Fornecedores, Fornecedor 360°, Documentos, CNDs,
+Contratos, Parcelas e Vencimentos.
+
+HUB CONTROLADORIA:
+Centros de Custos
+Orçamentos
+Fluxo de Caixa
+Projeção
+DRE Gerencial
+Resultado Consolidado
+
+HUB CONCILIAÇÃO:
+Bancária
+Gateways
+Repasses
+Retorno Bancário
+Rastreabilidade Financeira
+
+HUB RELATÓRIOS:
+Extrato
+Borderôs
+Relatório por Evento
+Consolidado
+Receitas Detalhadas
+Despesas Detalhadas
+
+CONTABILIDADE SIDEBAR:
+- Visão Geral
+- Operação Contábil
+- Demonstrações
+- Fiscal & Compliance
+- Relatórios
+
+OPERAÇÃO CONTÁBIL:
+Plano de Contas
+Lançamentos
+Centro de Conciliação
+Rastreabilidade
+Fechamento
+
+DEMONSTRAÇÕES:
+DRE
+Balanço Patrimonial
+demais indicadores existentes
+
+FISCAL & COMPLIANCE:
+Fiscal
+Auditoria
+Compliance
+Documentos
+somente itens realmente existentes
+
+MARKETING SIDEBAR:
+- Visão Geral
+- Campanhas
+- Comunicação
+- Conversões & Pixels
+- Analytics
+
+CAMPANHAS:
+Campanhas, Multicanais, Status Real, Templates, Cupons, UTMs/QR, Afiliados.
+
+COMUNICAÇÃO:
+WhatsApp, E-mail, Automações, Carrinho Abandonado, Remarketing.
+
+CONVERSÕES & PIXELS:
+Central de Pixels por Evento, Meta, Google, TikTok, Spotify, Health Check, Diagnóstico e Alertas.
+
+SAC:
+Manter Central 360° com acesso destacado.
+
+IMPLEMENTAÇÃO:
+1. criar hubs usando rotas existentes;
+2. testar hubs;
+3. só depois reduzir sidebar;
+4. preservar deep-links;
+5. integrar AppRouter;
+6. integrar MenuStateManager;
+7. integrar BreadcrumbManager;
+8. respeitar PermissionGuard;
+9. respeitar AppContext;
+10. validar Mobile 360.
+
+ESTADO:
+Uma rota profunda como /financeiro/tesouraria/pix deve deixar Tesouraria ativa na sidebar e PIX ativo dentro do hub.
+
+NÃO criar terceira/quarta camada permanente na sidebar.
+
+HUB VISUAL:
+cards premium compactos, ícone, título, descrição curta.
+Desktop 3–4 colunas.
+Tablet 2.
+Mobile 1.
+
+TESTES:
+Financeiro 8 hubs;
+Contabilidade 5 hubs;
+Marketing 5 hubs;
+Central 360;
+deep-links;
+F5;
+Voltar/Avançar;
+permissões;
+Produtor/Evento;
+360/390/430;
+desktop;
+console.
+
+EXECUTAR NOVAMENTE A REGRESSÃO DA FASE 28.15.8 APÓS A MIGRAÇÃO.
+
+GERAR:
+MAPA_MENU_ANTES_DEPOIS_FASE_28_15_8_1.md
+RELATORIO_MIGRACAO_MENU_FASE_28_15_8_1.md
+RELATORIO_HOMOLOGACAO_FASE_28_15_8_1.md
+
+NÃO DECLARAR CONCLUÍDA:
+se alguma função desaparecer;
+se deep-link quebrar;
+se houver tela branca;
+se houver P0/P1;
+se produtor puder acessar dados de terceiros.
+
+Somente após homologação avançar para 28.15.9.
