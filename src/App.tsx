@@ -48,6 +48,8 @@ import FinanceSettlementHubPage from './pages/finance/FinanceSettlementHubPage'
 import FinanceDisputesHubPage from './pages/finance/FinanceDisputesHubPage'
 import AdvancedTaxesRouter from './pages/finance/advanced/AdvancedTaxesRouter'
 import './pages/finance/advanced/advanced-taxes.css'
+import ModuleHubView from './components/ModuleHubView'
+import { FINANCE_HUBS, ACCOUNTING_HUBS, MARKETING_HUBS } from './config/module-hubs'
 import { AppRouter } from './navigation/router'
 import { MobileNavigationController } from './navigation/mobile-controller'
 import { AppContext } from './context/app-context'
@@ -140,6 +142,22 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-users': 'Usuários do Evento',
   'event-audit': 'Logs do Evento',
   'event-permissions': 'Permissões do Evento',
+
+  // HUBS ENTERPRISE (FASE 28.15.8.1)
+  'finance-hub-account': 'Conta Financeira',
+  'finance-hub-bills': 'Contas & Compromissos',
+  'finance-hub-treasury': 'Tesouraria',
+  'finance-hub-procurement': 'Compras & Fornecedores',
+  'finance-hub-controlling': 'Controladoria',
+  'finance-hub-reconciliation': 'Conciliação Financeira',
+  'finance-hub-reports': 'Relatórios Financeiros',
+  'accounting-hub-operations': 'Operação Contábil',
+  'accounting-hub-statements': 'Demonstrações Contábeis',
+  'accounting-hub-compliance': 'Fiscal & Compliance',
+  'marketing-hub-campaigns': 'Campanhas de Marketing',
+  'marketing-hub-communication': 'Comunicação & Automações',
+  'marketing-hub-pixels': 'Conversões & Pixels',
+  'marketing-hub-analytics': 'Analytics de Marketing',
 
   // FINANCEIRO
   'finance-dashboard': 'Dashboard Financeiro',
@@ -325,6 +343,26 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
     return firstPageFor(user)
   }
   if (clean === 'eventos') return 'events'
+  // Hubs Financeiro (Fase 28.15.8.1)
+  if (clean === 'financeiro/conta-financeira' || clean === 'app/finance-hub-account') return 'finance-hub-account'
+  if (clean === 'financeiro/contas' || clean === 'app/finance-hub-bills') return 'finance-hub-bills'
+  if (clean === 'financeiro/tesouraria' || clean === 'app/finance-hub-treasury') return 'finance-hub-treasury'
+  if (clean === 'financeiro/compras-fornecedores' || clean === 'app/finance-hub-procurement') return 'finance-hub-procurement'
+  if (clean === 'financeiro/controladoria' || clean === 'app/finance-hub-controlling') return 'finance-hub-controlling'
+  if (clean === 'financeiro/conciliacao' || clean === 'app/finance-hub-reconciliation') return 'finance-hub-reconciliation'
+  if (clean === 'financeiro/relatorios' || clean === 'app/finance-hub-reports') return 'finance-hub-reports'
+
+  // Hubs Contabilidade (Fase 28.15.8.1)
+  if (clean === 'contabilidade/operacao' || clean === 'app/accounting-hub-operations') return 'accounting-hub-operations'
+  if (clean === 'contabilidade/demonstracoes' || clean === 'app/accounting-hub-statements') return 'accounting-hub-statements'
+  if (clean === 'contabilidade/fiscal-compliance' || clean === 'app/accounting-hub-compliance') return 'accounting-hub-compliance'
+
+  // Hubs Marketing (Fase 28.15.8.1)
+  if (clean === 'marketing/campanhas' || clean === 'app/marketing-hub-campaigns') return 'marketing-hub-campaigns'
+  if (clean === 'marketing/comunicacao' || clean === 'app/marketing-hub-communication') return 'marketing-hub-communication'
+  if (clean === 'marketing/pixels' || clean === 'app/marketing-hub-pixels') return 'marketing-hub-pixels'
+  if (clean === 'marketing/analytics' || clean === 'app/marketing-hub-analytics') return 'marketing-hub-analytics'
+
   if (clean.startsWith('contabilidade/')) {
     const sub = clean.replace('contabilidade/', '')
     const tab = normalizeAccountingTab(sub)
@@ -353,6 +391,23 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
       const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+      if (clean === 'financeiro/conta-financeira' || clean === 'app/finance-hub-account') return 'finance-hub-account'
+      if (clean === 'financeiro/contas' || clean === 'app/finance-hub-bills') return 'finance-hub-bills'
+      if (clean === 'financeiro/tesouraria' || clean === 'app/finance-hub-treasury') return 'finance-hub-treasury'
+      if (clean === 'financeiro/compras-fornecedores' || clean === 'app/finance-hub-procurement') return 'finance-hub-procurement'
+      if (clean === 'financeiro/controladoria' || clean === 'app/finance-hub-controlling') return 'finance-hub-controlling'
+      if (clean === 'financeiro/conciliacao' || clean === 'app/finance-hub-reconciliation') return 'finance-hub-reconciliation'
+      if (clean === 'financeiro/relatorios' || clean === 'app/finance-hub-reports') return 'finance-hub-reports'
+
+      if (clean === 'contabilidade/operacao' || clean === 'app/accounting-hub-operations') return 'accounting-hub-operations'
+      if (clean === 'contabilidade/demonstracoes' || clean === 'app/accounting-hub-statements') return 'accounting-hub-statements'
+      if (clean === 'contabilidade/fiscal-compliance' || clean === 'app/accounting-hub-compliance') return 'accounting-hub-compliance'
+
+      if (clean === 'marketing/campanhas' || clean === 'app/marketing-hub-campaigns') return 'marketing-hub-campaigns'
+      if (clean === 'marketing/comunicacao' || clean === 'app/marketing-hub-communication') return 'marketing-hub-communication'
+      if (clean === 'marketing/pixels' || clean === 'app/marketing-hub-pixels') return 'marketing-hub-pixels'
+      if (clean === 'marketing/analytics' || clean === 'app/marketing-hub-analytics') return 'marketing-hub-analytics'
+
       if (clean.startsWith('contabilidade/')) {
         const sub = clean.replace('contabilidade/', '')
         const tab = normalizeAccountingTab(sub)
@@ -403,7 +458,7 @@ export default function App() {
       if (previous) {
         setMobileNavOpen(false)
         setPage(previous)
-        if (previous.startsWith('accounting-')) {
+        if (previous.startsWith('accounting-') && !ACCOUNTING_HUBS[previous]) {
           const tab = normalizeAccountingTab(previous.replace('accounting-', ''))
           AccountingController.activateTab(tab, { skipRouter: true })
         }
@@ -411,7 +466,19 @@ export default function App() {
       } else if (typeof window !== 'undefined') {
         const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
         const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
-        if (clean.startsWith('contabilidade/')) {
+        if (clean === 'contabilidade/operacao' || clean === 'app/accounting-hub-operations') {
+          setMobileNavOpen(false)
+          setPage('accounting-hub-operations')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'contabilidade/demonstracoes' || clean === 'app/accounting-hub-statements') {
+          setMobileNavOpen(false)
+          setPage('accounting-hub-statements')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'contabilidade/fiscal-compliance' || clean === 'app/accounting-hub-compliance') {
+          setMobileNavOpen(false)
+          setPage('accounting-hub-compliance')
+          window.scrollTo({ top: 0 })
+        } else if (clean.startsWith('contabilidade/')) {
           const sub = clean.replace('contabilidade/', '')
           const tab = normalizeAccountingTab(sub)
           setMobileNavOpen(false)
@@ -437,8 +504,10 @@ export default function App() {
     window.addEventListener('popstate', onPopState)
     const unsubRouter = AppRouter.subscribe((route) => {
       setCurrentRoute(route)
-      if (route.module === 'contabilidade') {
-        const tab = normalizeAccountingTab(route.tab || 'dashboard')
+      if (route.view && ((route.view as string) in ACCOUNTING_HUBS || (route.view as string) in FINANCE_HUBS || (route.view as string) in MARKETING_HUBS)) {
+        setPage(route.view as PageKey)
+      } else if (route.module === 'contabilidade' && route.tab) {
+        const tab = normalizeAccountingTab(route.tab)
         setPage(`accounting-${tab}` as PageKey)
       } else if (route.view && (route.view as string) in titleMap) {
         setPage(route.view as PageKey)
@@ -463,7 +532,7 @@ export default function App() {
     'event-users', 'event-audit', 'event-permissions'
   ])
 
-  const inEventContext = !!selectedEvent && eventContextPages.has(page)
+  const inEventContext = !!selectedEvent && (appContextState.scope === 'EVENT' || eventContextPages.has(page))
   const scopedProducerId = user ? (isGlobalAdmin(user) ? (selectedProducer === 'all' ? null : selectedProducer) : user.producerId) : null
   const visibleEvents = useMemo(() => !user ? [] : events.filter(e => scopedProducerId === null || e.producerId === scopedProducerId), [events, user, scopedProducerId])
   const visibleEventIds = useMemo(() => new Set(visibleEvents.map(e => e.id)), [visibleEvents])
@@ -604,19 +673,19 @@ export default function App() {
 
   const editEvent = (e: EventItem) => {
     setSelectedEvent(e)
-    AppContext.setEvent(e.id, e.title, e.producerId)
+    AppContext.selectEvent(e.id, e.title, e.producerId)
     setPage('edit-event')
     AppRouter.syncFromLocation('/app/edit-event')
   }
   const openLots = (e: EventItem) => {
     setSelectedEvent(e)
-    AppContext.setEvent(e.id, e.title, e.producerId)
+    AppContext.selectEvent(e.id, e.title, e.producerId)
     setPage('lots')
     AppRouter.syncFromLocation('/app/lots')
   }
   const openEventContext = (e: EventItem) => {
     setSelectedEvent(e)
-    AppContext.setEvent(e.id, e.title, e.producerId)
+    AppContext.selectEvent(e.id, e.title, e.producerId)
     setPage('event-dashboard')
     const targetUrl = `/eventos/${e.code}/dashboard`
     window.history.pushState({ page: 'event-dashboard' }, '', targetUrl)
@@ -633,7 +702,7 @@ export default function App() {
     setEvents(prev => exists ? prev.map(e => e.id === secured.id ? secured : e) : [secured, ...prev])
     notify(exists ? 'Alterações salvas com sucesso.' : 'Evento criado com sucesso.')
     setSelectedEvent(null)
-    AppContext.clearEvent()
+    AppContext.selectAllEvents()
     setPage('events')
     AppRouter.syncFromLocation('/eventos')
   }
@@ -647,12 +716,33 @@ export default function App() {
     }
     if (next === 'new-event') {
       setSelectedEvent(null)
-      AppContext.clearEvent()
+      AppContext.selectAllEvents()
     }
     setPage(next)
     let targetUrl = `/app/${next}`
+
+    const hubRouteMap: Partial<Record<PageKey, string>> = {
+      'finance-hub-account': '/financeiro/conta-financeira',
+      'finance-hub-bills': '/financeiro/contas',
+      'finance-hub-treasury': '/financeiro/tesouraria',
+      'finance-hub-procurement': '/financeiro/compras-fornecedores',
+      'finance-hub-controlling': '/financeiro/controladoria',
+      'finance-hub-reconciliation': '/financeiro/conciliacao',
+      'finance-hub-reports': '/financeiro/relatorios',
+      'accounting-hub-operations': '/contabilidade/operacao',
+      'accounting-hub-statements': '/contabilidade/demonstracoes',
+      'accounting-hub-compliance': '/contabilidade/fiscal-compliance',
+      'marketing-hub-campaigns': '/marketing/campanhas',
+      'marketing-hub-communication': '/marketing/comunicacao',
+      'marketing-hub-pixels': '/marketing/pixels',
+      'marketing-hub-analytics': '/marketing/analytics',
+    }
+
     if (selectedEvent && eventContextPages.has(next)) {
       targetUrl = `/eventos/${selectedEvent.code}/${next.replace('event-', '')}`
+      window.history.pushState({ page: next }, '', targetUrl)
+    } else if (hubRouteMap[next]) {
+      targetUrl = hubRouteMap[next]!
       window.history.pushState({ page: next }, '', targetUrl)
     } else if (next.startsWith('accounting-') || next === 'finance-accounting') {
       const tab = normalizeAccountingTab(next.replace('accounting-', ''))
@@ -737,13 +827,13 @@ export default function App() {
         onEvent={(evId) => {
           if (!evId) {
             setSelectedEvent(null)
-            AppContext.clearEvent()
+            AppContext.selectAllEvents()
             return
           }
           const found = events.find((e) => e.id === evId)
           if (found) {
             setSelectedEvent(found)
-            AppContext.setEvent(found.id, found.title, found.producerId)
+            AppContext.selectEvent(found.id, found.title, found.producerId)
           }
         }}
         onLogout={logout}
@@ -936,6 +1026,14 @@ export default function App() {
           <EventContextPage event={selectedEvent} participants={visibleParticipants} page={page} onNavigate={navigate} notify={notify} />
         )}
 
+        {/* HUBS DO FINANCEIRO (FASE 28.15.8.1) */}
+        {FINANCE_HUBS[page] && (
+          <ModuleHubView
+            hubDef={FINANCE_HUBS[page]}
+            onNavigate={navigate}
+          />
+        )}
+
         {/* HUB FINANCEIRO & DASHBOARD */}
         {page === 'finance-hub' && (
           <FinanceHubPage onNavigate={navigate} />
@@ -996,8 +1094,16 @@ export default function App() {
           <AccountingChartPage events={visibleEvents} notify={notify} onNavigate={navigate} />
         )}
 
+        {/* HUBS DA CONTABILIDADE (FASE 28.15.8.1) */}
+        {ACCOUNTING_HUBS[page] && (
+          <ModuleHubView
+            hubDef={ACCOUNTING_HUBS[page]}
+            onNavigate={navigate}
+          />
+        )}
+
         {/* FASE 28.15.4: VIEW FÍSICA ÚNICA DE CONTABILIDADE (view-accounting-disk) */}
-        {(page.startsWith('accounting-') || ['finance-accounting', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page)) && (
+        {((page.startsWith('accounting-') && !ACCOUNTING_HUBS[page]) || ['finance-accounting', 'finance-accounting-entries', 'finance-obligations', 'finance-dre', 'finance-borderos', 'finance-signatures', 'finance-closing'].includes(page)) && (
           <FinanceAccountingHubPage
             events={visibleEvents}
             producerId={scopedProducerId}
@@ -1041,6 +1147,14 @@ export default function App() {
           <FinanceSettlementHubPage producerId={scopedProducerId ?? undefined} initialTab="settlements" notify={notify} onBack={() => setPage('finance-dashboard')} />
         )}
 
+        {/* HUBS DO MARKETING (FASE 28.15.8.1) */}
+        {MARKETING_HUBS[page] && (
+          <ModuleHubView
+            hubDef={MARKETING_HUBS[page]}
+            onNavigate={navigate}
+          />
+        )}
+
         {/* MARKETING */}
         {page === 'marketing-communications' && (
           <CommunicationPage
@@ -1050,7 +1164,7 @@ export default function App() {
             onNavigate={navigate}
           />
         )}
-        {page.startsWith('marketing-') && page !== 'marketing-communications' && (
+        {page.startsWith('marketing-') && !MARKETING_HUBS[page] && page !== 'marketing-communications' && (
           <MarketingPage
             events={visibleEvents}
             producerId={scopedProducerId}

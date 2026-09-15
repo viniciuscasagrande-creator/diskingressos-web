@@ -9,7 +9,7 @@ import {
   Mail, Tags, Target, UsersRound, ShoppingBag, Clock3,
   FileSpreadsheet, Sparkles, ChevronDown, ListTree, BookOpenText, BookMarked,
   FileSignature, Boxes, BookOpenCheck, FileText, Zap, Link2, Headphones, NotebookTabs, Percent, Store, Undo2,
-  PanelLeftClose, PanelLeftOpen, Activity, Play, ArrowLeftRight, ArrowDownLeft, ArrowUpRight, CircleDollarSign, Calendar, CheckCircle2, X
+  PanelLeftClose, PanelLeftOpen, Activity, Play, ArrowLeftRight, ArrowDownLeft, ArrowUpRight, CircleDollarSign, Calendar, CheckCircle2, X, Download
 } from 'lucide-react'
 import { MobileNavigationController } from '../navigation/mobile-controller'
 
@@ -20,6 +20,10 @@ export type PageKey =
   | 'event-live-ops' | 'event-incidents' | 'event-revenue-intel' | 'event-global-search' | 'event-permission-engine' | 'event-compliance' | 'event-intelligence' | 'event-readiness' | 'event-forecast' | 'event-day-command' | 'event-producer-executive' | 'event-platform-noc'
   | 'event-tickets' | 'event-courtesy' | 'event-reports' | 'event-details' | 'event-pixel' | 'event-utm' | 'event-ga4' | 'event-traffic' | 'event-meta-ads' | 'event-remarketing' | 'event-users' | 'event-audit' | 'event-permissions'
   | 'facial'
+  // HUBS ENTERPRISE (FASE 28.15.8.1)
+  | 'finance-hub-account' | 'finance-hub-bills' | 'finance-hub-treasury' | 'finance-hub-procurement' | 'finance-hub-controlling' | 'finance-hub-reconciliation' | 'finance-hub-reports'
+  | 'accounting-hub-operations' | 'accounting-hub-statements' | 'accounting-hub-compliance'
+  | 'marketing-hub-campaigns' | 'marketing-hub-communication' | 'marketing-hub-pixels' | 'marketing-hub-analytics'
   // FINANCEIRO
   | 'finance-dashboard' | 'finance-hub' | 'finance' | 'finance-producer-account' | 'finance-statement' | 'finance-cashflow' | 'finance-receivables' | 'finance-payables' | 'finance-spread-simulator'
   | 'finance-payouts' | 'finance-advance' | 'finance-reconciliation' | 'finance-bank-accounts' | 'finance-expenses' | 'finance-bordero' | 'finance-consolidated'
@@ -74,91 +78,102 @@ const mainItems: Item[] = [
   { key: 'admin-hub', label: 'Administração', icon: Building2 },
 ]
 
-// 2. FINANCEIRO: ESTRUTURA ERP COMPLETA (FASE 26.17.9.4.2)
+// 2. FINANCEIRO: 8 HUBS ESTRATÉGICOS (FASE 28.15.8.1)
 const independentRefundItem: Item = { key: 'finance-refunds', label: 'Estornos', icon: Undo2, badge: 'ERP' }
-
 const mainFinanceDashboardItem: Item = { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards }
 
-// CONTA FINANCEIRA
-const financeAccountGroup: Item[] = [
-  { key: 'finance-producer-account', label: 'Conta do Produtor', icon: Landmark },
-  { key: 'finance-hub', label: 'Saldo por Evento', icon: WalletCards },
-  { key: 'finance-statement', label: 'Extrato', icon: ReceiptText },
-  { key: 'finance-producer-account', label: 'Transferências entre Eventos', icon: ArrowLeftRight },
-]
-
-// GESTÃO
-const financeManagementGroup: Item[] = [
-  { key: 'finance-receivables', label: 'Contas a Receber', icon: ArrowDownLeft },
-  { key: 'finance-payables', label: 'Contas a Pagar', icon: ArrowUpRight },
-  { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck, route: '/app/finance-chart-accounts', menuKey: 'finance-chart-accounts' },
-  { key: 'finance-cost-centers', label: 'Centro de Custos', icon: Boxes },
-  { key: 'finance-dre', label: 'Orçamentos', icon: Scale },
-  { key: 'finance-expenses', label: 'Fornecedores', icon: Users },
-]
-
-// RECEBIMENTOS
-const financeReceivablesGroup: Item[] = [
-  { key: 'finance-receivables', label: 'Recebíveis', icon: CircleDollarSign },
-  { key: 'finance-cashflow', label: 'Agenda Financeira', icon: Calendar },
-  { key: 'finance-payouts', label: 'Repasses', icon: HandCoins },
-  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
-  { key: 'finance-reconciliation', label: 'Conciliação', icon: CheckCircle2 },
-]
-
-// ANÁLISE
-const financeAnalysisGroup: Item[] = [
-  { key: 'finance-cashflow', label: 'Fluxo de Caixa', icon: TrendingUp },
-  { key: 'finance-cost-centers', label: 'Resultado por Evento', icon: BarChart3 },
-  { key: 'finance-split', label: 'Divisão de Receitas', icon: Split },
-  { key: 'finance-methods', label: 'Pagamentos & Taxas', icon: CreditCard },
-  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
-]
-
-const cashFinanceItems: Item[] = [
+const financeHubItems: Item[] = [
   { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards },
-  { key: 'finance-advance', label: 'Antecipações', icon: Zap },
-  { key: 'finance-split', label: 'Divisão de Receitas', icon: Split },
-  { key: 'finance-methods', label: 'Pagamentos & Taxas', icon: CreditCard },
-  { key: 'finance-reports', label: 'Relatórios Financeiros', icon: FileSpreadsheet },
+  { key: 'finance-hub-account', label: 'Conta Financeira', icon: Landmark, route: '/financeiro/conta-financeira' },
+  { key: 'finance-hub-bills', label: 'Contas', icon: ArrowDownLeft, route: '/financeiro/contas' },
+  { key: 'finance-hub-treasury', label: 'Tesouraria', icon: Landmark, route: '/financeiro/tesouraria' },
+  { key: 'finance-hub-procurement', label: 'Compras & Fornecedores', icon: Users, route: '/financeiro/compras-fornecedores' },
+  { key: 'finance-hub-controlling', label: 'Controladoria', icon: Boxes, route: '/financeiro/controladoria' },
+  { key: 'finance-chart-accounts', label: 'Plano de Contas', icon: BookOpenCheck, route: '/app/finance-chart-accounts', menuKey: 'finance-chart-accounts' },
+  { key: 'finance-hub-reconciliation', label: 'Conciliação', icon: CheckCircle2, route: '/financeiro/conciliacao' },
+  { key: 'finance-hub-reports', label: 'Relatórios', icon: FileSpreadsheet, route: '/financeiro/relatorios' },
 ]
 
-// 3. CONTABILIDADE & BORDERÔS (ERP COMPLETO - FASE 28.15.4)
-const accountingFinanceItems: Item[] = [
+// 3. CONTABILIDADE: HUBS ESTRATÉGICOS (FASE 28.15.8.1)
+const accountingHubItems: Item[] = [
   { key: 'accounting-dashboard', label: 'Visão Geral', icon: BarChart3, badge: 'Contábil', route: '/contabilidade/dashboard', menuKey: 'accounting-dashboard' },
-  { key: 'accounting-inteligencia', label: 'Inteligência Contábil', icon: Brain, route: '/contabilidade/inteligencia', menuKey: 'accounting-inteligencia' },
-  { key: 'accounting-conciliacao', label: 'Centro de Conciliação', icon: Scale, route: '/contabilidade/conciliacao', menuKey: 'accounting-conciliacao' },
-  { key: 'accounting-rastreabilidade', label: 'Rastreabilidade', icon: ReceiptText, route: '/contabilidade/rastreabilidade', menuKey: 'accounting-rastreabilidade' },
+  { key: 'accounting-hub-operations', label: 'Operação Contábil', icon: BookOpenCheck, route: '/contabilidade/operacao', menuKey: 'accounting-hub-operations' },
   { key: 'accounting-dre', label: 'DRE Gerencial', icon: BarChart3, route: '/contabilidade/dre', menuKey: 'accounting-dre' },
-  { key: 'accounting-balanco', label: 'Balanço Patrimonial', icon: Landmark, route: '/contabilidade/balanco', menuKey: 'accounting-balanco' },
-  { key: 'accounting-fechamento', label: 'Fechamento Mensal', icon: LockKeyhole, route: '/contabilidade/fechamento', menuKey: 'accounting-fechamento' },
-  { key: 'accounting-plano-de-contas', label: 'Plano de Contas', icon: BookOpenCheck, route: '/contabilidade/plano-de-contas', menuKey: 'accounting-plano-de-contas' },
-  { key: 'accounting-lancamentos', label: 'Lançamentos', icon: FileText, route: '/contabilidade/lancamentos', menuKey: 'accounting-lancamentos' },
-  { key: 'accounting-documentos', label: 'Documentos', icon: FileSignature, route: '/contabilidade/documentos', menuKey: 'accounting-documentos' },
-  { key: 'accounting-fiscal', label: 'Fiscal', icon: FileSpreadsheet, route: '/contabilidade/fiscal', menuKey: 'accounting-fiscal' },
-  { key: 'accounting-relatorios', label: 'Relatórios', icon: FileSpreadsheet, route: '/contabilidade/relatorios', menuKey: 'accounting-relatorios' },
+  { key: 'accounting-hub-statements', label: 'Demonstrações', icon: Scale, route: '/contabilidade/demonstracoes', menuKey: 'accounting-hub-statements' },
+  { key: 'accounting-hub-compliance', label: 'Fiscal & Compliance', icon: FileSpreadsheet, route: '/contabilidade/fiscal-compliance', menuKey: 'accounting-hub-compliance' },
+  { key: 'accounting-relatorios', label: 'Relatórios', icon: Download, route: '/contabilidade/relatorios', menuKey: 'accounting-relatorios' },
 ]
 
-// 4. MARKETING & GROWTH
-const marketingItems: Item[] = [
+// 4. MARKETING: 5 HUBS ESTRATÉGICOS (FASE 28.15.8.1)
+const marketingHubItems: Item[] = [
   { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
-  { key: 'marketing-status-real', label: 'Status Real', icon: Activity, badge: 'Ao vivo' },
-  { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
-  { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
-  { key: 'marketing-meta-ads', label: 'Meta Ads', icon: Target },
-  { key: 'marketing-google-ads', label: 'Google Ads', icon: ListTree },
-  { key: 'marketing-tiktok-ads', label: 'TikTok Ads', icon: Play },
-  { key: 'marketing-spotify', label: 'Spotify Ads', icon: Headphones },
-  { key: 'marketing-tracking', label: 'Pixels e Conversões', icon: Activity, badge: '360°' },
-  { key: 'marketing-attribution', label: 'Atribuição Multicanal', icon: Scale, badge: '25.7.2' },
-  { key: 'marketing-influencers', label: 'Influenciadores', icon: UsersRound },
-  { key: 'marketing-utm-central', label: 'Central UTM & Conversões', icon: Link2, badge: 'Novo' },
-  { key: 'marketing-whatsapp', label: 'WhatsApp', icon: MessageCircle },
-  { key: 'marketing-email', label: 'E-mail Marketing', icon: Mail },
-  { key: 'marketing-coupons', label: 'Cupons & Descontos', icon: Tags },
-  { key: 'marketing-cashback', label: 'Cashback Promocional', icon: WalletCards },
-  { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
+  { key: 'marketing-hub-campaigns', label: 'Campanhas', icon: Megaphone, route: '/marketing/campanhas' },
+  { key: 'marketing-hub-communication', label: 'Comunicação', icon: MessageCircle, route: '/marketing/comunicacao' },
+  { key: 'marketing-hub-pixels', label: 'Conversões & Pixels', icon: Activity, badge: '360°', route: '/marketing/pixels' },
+  { key: 'marketing-hub-analytics', label: 'Analytics', icon: FileSpreadsheet, route: '/marketing/analytics' },
 ]
+
+function isFinanceHubItemActive(itemKey: PageKey, currentPage: PageKey): boolean {
+  if (itemKey === 'finance-dashboard') return currentPage === 'finance-dashboard'
+  if (itemKey === 'finance-chart-accounts') return currentPage === 'finance-chart-accounts'
+  if (itemKey === 'finance-hub-account' || itemKey === 'finance-hub') {
+    return ['finance-hub-account', 'finance-hub', 'finance-producer-account', 'finance-statement', 'finance-split', 'finance-methods'].includes(currentPage)
+  }
+  if (itemKey === 'finance-hub-bills' || itemKey === 'finance-receivables') {
+    return ['finance-hub-bills', 'finance-receivables', 'finance-payables', 'finance-advance', 'finance-payouts', 'finance-cashflow', 'finance-rates'].includes(currentPage)
+  }
+  if (itemKey === 'finance-hub-treasury' || itemKey === 'finance-bank-accounts') {
+    return ['finance-hub-treasury', 'finance-bank-accounts'].includes(currentPage)
+  }
+  if (itemKey === 'finance-hub-procurement' || itemKey === 'finance-expenses') {
+    return ['finance-hub-procurement', 'finance-expenses'].includes(currentPage)
+  }
+  if (itemKey === 'finance-hub-controlling' || itemKey === 'finance-cost-centers') {
+    return ['finance-hub-controlling', 'finance-cost-centers'].includes(currentPage)
+  }
+  if (itemKey === 'finance-hub-reconciliation' || itemKey === 'finance-reconciliation') {
+    return ['finance-hub-reconciliation', 'finance-reconciliation', 'finance-bank'].includes(currentPage)
+  }
+  if (itemKey === 'finance-hub-reports' || itemKey === 'finance-reports') {
+    return ['finance-hub-reports', 'finance-reports', 'finance-bordero', 'finance-consolidated', 'finance-sales'].includes(currentPage)
+  }
+  return itemKey === currentPage
+}
+
+function isAccountingHubItemActive(itemKey: PageKey, currentPage: PageKey): boolean {
+  if (itemKey === 'accounting-dashboard') return currentPage === 'accounting-dashboard' || currentPage === 'finance-accounting'
+  if (itemKey === 'accounting-dre') return currentPage === 'accounting-dre' || currentPage === 'finance-dre'
+  if (itemKey === 'accounting-hub-operations' || itemKey === 'accounting-plano-de-contas') {
+    return ['accounting-hub-operations', 'accounting-plano-de-contas', 'accounting-lancamentos', 'accounting-conciliacao', 'accounting-rastreabilidade', 'accounting-fechamento', 'accounting-chart', 'accounting-journal', 'accounting-ledger', 'accounting-entries'].includes(currentPage)
+  }
+  if (itemKey === 'accounting-hub-statements') {
+    return ['accounting-hub-statements', 'accounting-balanco', 'accounting-inteligencia', 'accounting-balance-sheet', 'accounting-trial-balance'].includes(currentPage)
+  }
+  if (itemKey === 'accounting-hub-compliance' || itemKey === 'accounting-fiscal') {
+    return ['accounting-hub-compliance', 'accounting-fiscal', 'accounting-documentos', 'accounting-taxes', 'accounting-nfse', 'accounting-nfe', 'accounting-sped', 'accounting-obligations'].includes(currentPage)
+  }
+  if (itemKey === 'accounting-relatorios') {
+    return ['accounting-relatorios', 'accounting-exports'].includes(currentPage)
+  }
+  return itemKey === currentPage
+}
+
+function isMarketingHubItemActive(itemKey: PageKey, currentPage: PageKey): boolean {
+  if (itemKey === 'marketing-dashboard') return currentPage === 'marketing-dashboard' || currentPage === 'marketing-hub'
+  if (itemKey === 'marketing-hub-campaigns' || itemKey === 'marketing-campaigns') {
+    return ['marketing-hub-campaigns', 'marketing-campaigns', 'marketing-status-real', 'marketing-real-status', 'marketing-ready-campaigns', 'marketing-create', 'marketing-coupons', 'marketing-utm-central', 'marketing-links', 'marketing-affiliates', 'marketing-influencers', 'marketing-cashback', 'marketing-coins', 'marketing-gamification', 'marketing-referral'].includes(currentPage)
+  }
+  if (itemKey === 'marketing-hub-communication' || itemKey === 'marketing-communications') {
+    return ['marketing-hub-communication', 'marketing-communications', 'marketing-whatsapp', 'marketing-email', 'marketing-automations', 'marketing-crm', 'marketing-audiences', 'marketing-remarketing', 'marketing-recovery'].includes(currentPage)
+  }
+  if (itemKey === 'marketing-hub-pixels' || itemKey === 'marketing-tracking') {
+    return ['marketing-hub-pixels', 'marketing-tracking', 'marketing-conversions', 'marketing-meta-ads', 'marketing-google-ads', 'marketing-tiktok-ads', 'marketing-spotify', 'marketing-spotify-ads', 'marketing-attribution'].includes(currentPage)
+  }
+  if (itemKey === 'marketing-hub-analytics' || itemKey === 'marketing-reports') {
+    return ['marketing-hub-analytics', 'marketing-reports', 'marketing-channel-performance', 'marketing-campaign-ranking', 'marketing-funnel-insights'].includes(currentPage)
+  }
+  return itemKey === currentPage
+}
 
 // 5. REMARKETING & RESGATE
 const remarketingItems: Item[] = [
@@ -305,7 +320,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           )
         })}
 
-        {/* Section: Financeiro (ERP Estruturado - Fase 26.17.9.4.2) */}
+        {/* Section: Financeiro (8 Hubs Enterprise — Fase 28.15.8.1) */}
         <CollapsibleSection
           label="Financeiro"
           icon={WalletCards}
@@ -316,65 +331,11 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             if (!isFinanceActive) setOpenFinance(false)
           }}
         >
-          {/* Dashboard Financeiro Principal Preservado */}
-          <NavItem
-            item={mainFinanceDashboardItem}
-            active={page === 'finance-dashboard' || page === 'finance'}
-            onNavigate={onNavigate}
-            indent
-          />
-
-          {/* Grupo 1: CONTA FINANCEIRA */}
-          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
-            CONTA FINANCEIRA
-          </div>
-          {financeAccountGroup.map((it, idx) => (
+          {financeHubItems.map((it, idx) => (
             <NavItem
-              key={`acc-${it.key}-${it.label}-${idx}`}
+              key={`fin-hub-${it.key}-${idx}`}
               item={it}
-              active={page === it.key && (it.label !== 'Extrato' || page === 'finance-statement')}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-
-          {/* Grupo 2: GESTÃO */}
-          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
-            GESTÃO
-          </div>
-          {financeManagementGroup.map((it, idx) => (
-            <NavItem
-              key={`mgt-${it.key}-${it.label}-${idx}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-
-          {/* Grupo 3: RECEBIMENTOS */}
-          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
-            RECEBIMENTOS
-          </div>
-          {financeReceivablesGroup.map((it, idx) => (
-            <NavItem
-              key={`rec-${it.key}-${it.label}-${idx}`}
-              item={it}
-              active={page === it.key}
-              onNavigate={onNavigate}
-              indent
-            />
-          ))}
-
-          {/* Grupo 4: ANÁLISE */}
-          <div className="module-caption" style={{ padding: '8px 12px 2px 18px', fontSize: '9px', fontWeight: 800, color: '#64748b' }}>
-            ANÁLISE
-          </div>
-          {financeAnalysisGroup.map((it, idx) => (
-            <NavItem
-              key={`ana-${it.key}-${it.label}-${idx}`}
-              item={it}
-              active={page === it.key}
+              active={isFinanceHubItemActive(it.key, page)}
               onNavigate={onNavigate}
               indent
             />
@@ -389,7 +350,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           onNavigate={onNavigate}
         />
 
-        {/* Section: Financeiro Contábil & Borderôs */}
+        {/* Section: Contabilidade (5 Hubs Enterprise — Fase 28.15.8.1) */}
         <CollapsibleSection
           label="Contabilidade"
           icon={BookOpenCheck}
@@ -400,18 +361,18 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             if (!isAccountingActive) setOpenAccounting(false)
           }}
         >
-          {accountingFinanceItems.map((it, index) => (
+          {accountingHubItems.map((it, index) => (
             <NavItem
-              key={`acc-${it.key}-${index}`}
+              key={`acc-hub-${it.key}-${index}`}
               item={it}
-              active={canonicalAccountingKey(page) === it.key}
+              active={isAccountingHubItemActive(it.key, page)}
               onNavigate={onNavigate}
               indent
             />
           ))}
         </CollapsibleSection>
 
-        {/* Section: Marketing */}
+        {/* Section: Marketing (5 Hubs Enterprise — Fase 28.15.8.1) */}
         <CollapsibleSection
           label="Marketing"
           icon={Megaphone}
@@ -422,21 +383,15 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             if (!isMarketingActive) setOpenMarketing(false)
           }}
         >
-          {marketingItems.map((it, index) => {
-            const isItemActive =
-              page === it.key ||
-              ((it.key === 'marketing-spotify' || it.key === 'marketing-spotify-ads') &&
-                (page === 'marketing-spotify' || page === 'marketing-spotify-ads'))
-            return (
-              <NavItem
-                key={`mkt-${it.key}-${index}`}
-                item={it}
-                active={isItemActive}
-                onNavigate={onNavigate}
-                indent
-              />
-            )
-          })}
+          {marketingHubItems.map((it, index) => (
+            <NavItem
+              key={`mkt-hub-${it.key}-${index}`}
+              item={it}
+              active={isMarketingHubItemActive(it.key, page)}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
         </CollapsibleSection>
 
         {/* Section: Remarketing */}

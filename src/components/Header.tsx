@@ -5,15 +5,22 @@
 
 import { LogOut, Menu, Search, SlidersHorizontal, Calendar, Building2 } from 'lucide-react'
 import { isGlobalAdmin, roleLabel, type AppUser, type Producer } from '../auth/model'
+import GlobalEventSelector from './GlobalEventSelector'
+import type { SafeSaffScope } from '../context/app-context'
 
 export type HeaderEventItem = {
   id: number
   code?: string
   title: string
+  venue?: string
+  city?: string
+  date?: string
+  status?: string
   producerId?: number
 }
 
 type Props = {
+  scope?: SafeSaffScope
   query: string
   onQuery: (value: string) => void
   user: AppUser | null
@@ -29,6 +36,7 @@ type Props = {
 }
 
 export default function Header({
+  scope = 'PRODUCER',
   query,
   onQuery,
   user,
@@ -73,6 +81,12 @@ export default function Header({
     if (scopedProducerId === null) return true
     return e.producerId === scopedProducerId
   })
+
+  const effectiveProducerName =
+    currentProducerName ||
+    (selectedProducer !== 'all'
+      ? producers.find((p) => p.id === selectedProducer)?.name || null
+      : 'Visão Global')
 
   return (
     <header className="topbar global-topbar">
@@ -143,9 +157,16 @@ export default function Header({
           </div>
         )}
 
-        {/* Seletor de Evento Contextual (Produtor → Evento) */}
+        {/* Seletor Global de Evento Contextual (Produtor × Evento — Fase 28.15.8.1) */}
         {user && onEvent && (
-          <div className="context-selector-event hidden md:flex items-center">
+          <div className="context-selector-event hidden md:flex items-center gap-2">
+            <GlobalEventSelector
+              scope={selectedEventId ? 'EVENT' : (scope || 'PRODUCER')}
+              producerName={effectiveProducerName}
+              events={availableEvents}
+              selectedEventId={selectedEventId}
+              onSelectEvent={(ev) => onEvent(ev ? ev.id : null)}
+            />
             <select
               className="event-switch"
               data-testid="header-event-select"

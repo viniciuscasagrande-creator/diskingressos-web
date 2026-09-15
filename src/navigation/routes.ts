@@ -61,6 +61,76 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     context: { producer: true, event: false },
     permissions: ['financeiro.visualizar']
   },
+  '/financeiro/conta-financeira': {
+    path: '/financeiro/conta-financeira',
+    view: 'finance-hub-account',
+    module: 'financeiro',
+    title: 'Conta Financeira',
+    menuKey: 'finance-hub-account',
+    breadcrumb: ['Financeiro', 'Conta Financeira'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/financeiro/contas': {
+    path: '/financeiro/contas',
+    view: 'finance-hub-bills',
+    module: 'financeiro',
+    title: 'Contas & Compromissos',
+    menuKey: 'finance-hub-bills',
+    breadcrumb: ['Financeiro', 'Contas'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/financeiro/tesouraria': {
+    path: '/financeiro/tesouraria',
+    view: 'finance-hub-treasury',
+    module: 'financeiro',
+    title: 'Tesouraria',
+    menuKey: 'finance-hub-treasury',
+    breadcrumb: ['Financeiro', 'Tesouraria'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/financeiro/compras-fornecedores': {
+    path: '/financeiro/compras-fornecedores',
+    view: 'finance-hub-procurement',
+    module: 'financeiro',
+    title: 'Compras & Fornecedores',
+    menuKey: 'finance-hub-procurement',
+    breadcrumb: ['Financeiro', 'Compras & Fornecedores'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/financeiro/controladoria': {
+    path: '/financeiro/controladoria',
+    view: 'finance-hub-controlling',
+    module: 'financeiro',
+    title: 'Controladoria',
+    menuKey: 'finance-hub-controlling',
+    breadcrumb: ['Financeiro', 'Controladoria'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/financeiro/conciliacao': {
+    path: '/financeiro/conciliacao',
+    view: 'finance-hub-reconciliation',
+    module: 'financeiro',
+    title: 'Conciliação',
+    menuKey: 'finance-hub-reconciliation',
+    breadcrumb: ['Financeiro', 'Conciliação'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/financeiro/relatorios': {
+    path: '/financeiro/relatorios',
+    view: 'finance-hub-reports',
+    module: 'financeiro',
+    title: 'Relatórios Financeiros',
+    menuKey: 'finance-hub-reports',
+    breadcrumb: ['Financeiro', 'Relatórios'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
   '/financeiro/saldos': {
     path: '/financeiro/saldos',
     view: 'finance',
@@ -111,6 +181,36 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     context: { producer: false, event: false },
     permissions: ['financeiro.visualizar']
   },
+  '/marketing/campanhas': {
+    path: '/marketing/campanhas',
+    view: 'marketing-hub-campaigns',
+    module: 'marketing',
+    title: 'Campanhas',
+    menuKey: 'marketing-hub-campaigns',
+    breadcrumb: ['Marketing', 'Campanhas'],
+    context: { producer: true, event: false },
+    permissions: ['marketing.visualizar']
+  },
+  '/marketing/comunicacao': {
+    path: '/marketing/comunicacao',
+    view: 'marketing-hub-communication',
+    module: 'marketing',
+    title: 'Comunicação',
+    menuKey: 'marketing-hub-communication',
+    breadcrumb: ['Marketing', 'Comunicação'],
+    context: { producer: true, event: false },
+    permissions: ['marketing.visualizar']
+  },
+  '/marketing/analytics': {
+    path: '/marketing/analytics',
+    view: 'marketing-hub-analytics',
+    module: 'marketing',
+    title: 'Analytics de Marketing',
+    menuKey: 'marketing-hub-analytics',
+    breadcrumb: ['Marketing', 'Analytics'],
+    context: { producer: true, event: false },
+    permissions: ['marketing.visualizar']
+  },
   '/marketing/dashboard': {
     path: '/marketing/dashboard',
     view: 'marketing-dashboard',
@@ -123,13 +223,43 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
   },
   '/marketing/pixels': {
     path: '/marketing/pixels',
-    view: 'marketing-tracking',
+    view: 'marketing-hub-pixels',
     module: 'marketing',
     title: 'Pixels e Conversões',
-    menuKey: 'marketing-tracking',
+    menuKey: 'marketing-hub-pixels',
     breadcrumb: ['Marketing', 'Pixels e Conversões'],
     context: { producer: true, event: true },
     permissions: ['marketing.pixels.gerenciar', 'marketing.visualizar']
+  },
+  '/contabilidade/operacao': {
+    path: '/contabilidade/operacao',
+    view: 'accounting-hub-operations',
+    module: 'contabilidade',
+    title: 'Operação Contábil',
+    menuKey: 'accounting-hub-operations',
+    breadcrumb: ['Contabilidade', 'Operação Contábil'],
+    context: { producer: true, event: false },
+    permissions: ['contabilidade.visualizar']
+  },
+  '/contabilidade/demonstracoes': {
+    path: '/contabilidade/demonstracoes',
+    view: 'accounting-hub-statements',
+    module: 'contabilidade',
+    title: 'Demonstrações Contábeis',
+    menuKey: 'accounting-hub-statements',
+    breadcrumb: ['Contabilidade', 'Demonstrações'],
+    context: { producer: true, event: false },
+    permissions: ['contabilidade.visualizar']
+  },
+  '/contabilidade/fiscal-compliance': {
+    path: '/contabilidade/fiscal-compliance',
+    view: 'accounting-hub-compliance',
+    module: 'contabilidade',
+    title: 'Fiscal & Compliance',
+    menuKey: 'accounting-hub-compliance',
+    breadcrumb: ['Contabilidade', 'Fiscal & Compliance'],
+    context: { producer: true, event: false },
+    permissions: ['contabilidade.visualizar']
   },
   '/marketing/spotify': {
     path: '/marketing/spotify',
@@ -173,24 +303,42 @@ export const LEGACY_ROUTE_ALIASES: Record<string, string> = {
   'accounting-trial-balance': '/contabilidade/balanco',
   'finance-accounting': '/contabilidade/dashboard',
   'finance-chart-accounts': '/app/finance-chart-accounts',
-  'finance-cost-centers': '/app/finance-cost-centers',
-  'finance-accounting-entries': '/contabilidade/lancamentos',
-  'finance-obligations': '/contabilidade/fiscal',
-  'finance-dre': '/contabilidade/dre',
-  'finance-borderos': '/contabilidade/documentos',
-  'finance-signatures': '/contabilidade/documentos',
-  'finance-closing': '/contabilidade/fechamento',
-  'contabilidade': '/contabilidade/dashboard',
   'financial-dashboard': '/financeiro/dashboard',
   'financeiro': '/financeiro/dashboard',
   'finance-dashboard': '/financeiro/dashboard',
+  'finance-hub': '/financeiro/conta-financeira',
+  'finance-receivables': '/financeiro/contas',
+  'finance-bank-accounts': '/financeiro/tesouraria',
+  'finance-expenses': '/financeiro/compras-fornecedores',
+  'finance-cost-centers': '/financeiro/controladoria',
+  'finance-reconciliation': '/financeiro/conciliacao',
+  'finance-reports': '/financeiro/relatorios',
+  'financeiro/tesouraria/pix': '/app/finance-methods',
+  'financeiro/tesouraria/contas': '/app/finance-bank-accounts',
   'finance': '/financeiro/saldos',
   'finance-refunds': '/financeiro/estornos',
   'marketing-hub': '/marketing/dashboard',
   'marketing-overview': '/marketing/dashboard',
+  'marketing-campaigns': '/marketing/campanhas',
+  'marketing-communications': '/marketing/comunicacao',
+  'marketing-reports': '/marketing/analytics',
   'marketing-tracking': '/marketing/pixels',
   'marketing-pixels': '/marketing/pixels',
-  'dashboard-main': '/dashboard'
+  'dashboard-main': '/dashboard',
+  'finance-hub-account': '/financeiro/conta-financeira',
+  'finance-hub-bills': '/financeiro/contas',
+  'finance-hub-treasury': '/financeiro/tesouraria',
+  'finance-hub-procurement': '/financeiro/compras-fornecedores',
+  'finance-hub-controlling': '/financeiro/controladoria',
+  'finance-hub-reconciliation': '/financeiro/conciliacao',
+  'finance-hub-reports': '/financeiro/relatorios',
+  'accounting-hub-operations': '/contabilidade/operacao',
+  'accounting-hub-statements': '/contabilidade/demonstracoes',
+  'accounting-hub-compliance': '/contabilidade/fiscal-compliance',
+  'marketing-hub-campaigns': '/marketing/campanhas',
+  'marketing-hub-communication': '/marketing/comunicacao',
+  'marketing-hub-pixels': '/marketing/pixels',
+  'marketing-hub-analytics': '/marketing/analytics'
 }
 
 export function resolveRoute(pathOrAlias: string): RouteConfig {

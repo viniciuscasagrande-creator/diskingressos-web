@@ -28,6 +28,8 @@ export interface AuditContextRecord {
   details?: string
 }
 
+export type SafeSaffScope = 'PRODUCER' | 'EVENT'
+
 export interface AppContextState {
   user: AppUser | null
   role: Role | null
@@ -35,6 +37,7 @@ export interface AppContextState {
   producerName: string | null
   eventId: number | null
   eventName: string | null
+  scope: SafeSaffScope
 }
 
 export type AppContextListener = (state: AppContextState) => void
@@ -49,7 +52,8 @@ class AppContextManager {
     producerId: null,
     producerName: null,
     eventId: null,
-    eventName: null
+    eventName: null,
+    scope: 'PRODUCER'
   }
 
   private listeners = new Set<AppContextListener>()
@@ -89,7 +93,8 @@ class AppContextManager {
         producerId: this.state.producerId,
         producerName: this.state.producerName,
         eventId: this.state.eventId,
-        eventName: this.state.eventName
+        eventName: this.state.eventName,
+        scope: this.state.scope
       }
       window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
     } catch (e) {
@@ -168,6 +173,7 @@ class AppContextManager {
       this.state.producerName = null
       this.state.eventId = null
       this.state.eventName = null
+      this.state.scope = 'PRODUCER'
       this.persist()
       this.notify()
       return
@@ -190,14 +196,17 @@ class AppContextManager {
             if (parsed.producerId === this.state.producerId && parsed.eventId) {
               this.state.eventId = parsed.eventId
               this.state.eventName = parsed.eventName || null
+              this.state.scope = 'EVENT'
             } else {
               this.state.eventId = null
               this.state.eventName = null
+              this.state.scope = 'PRODUCER'
             }
           }
         } catch {
           this.state.eventId = null
           this.state.eventName = null
+          this.state.scope = 'PRODUCER'
         }
       }
     } else {
@@ -226,6 +235,7 @@ class AppContextManager {
       this.state.producerName = restoredProducerName
       this.state.eventId = restoredEventId
       this.state.eventName = restoredEventName
+      this.state.scope = restoredEventId ? 'EVENT' : 'PRODUCER'
     }
 
     this.persist()
@@ -267,11 +277,12 @@ class AppContextManager {
     if (changed) {
       this.state.eventId = null
       this.state.eventName = null
+      this.state.scope = 'PRODUCER'
 
       this.recordAudit(
         'CONTEXT_PRODUCER_CHANGED',
         'CHANGED',
-        `Produtora alterada para ${this.state.producerName || 'Todas as Produtoras'} (evento resetado)`
+        `Produtora alterada para ${this.state.producerName || 'Todas as Produtoras'} (evento resetado, escopo PRODUCER)`
       )
     }
 
@@ -313,11 +324,12 @@ class AppContextManager {
 
     this.state.eventId = eventId
     this.state.eventName = eventName || (eventId ? `Evento #${eventId}` : null)
+    this.state.scope = eventId ? 'EVENT' : 'PRODUCER'
 
     this.recordAudit(
       'CONTEXT_EVENT_CHANGED',
       'CHANGED',
-      `Evento ativo alterado para ${this.state.eventName || 'Nenhum'}`
+      `Evento ativo alterado para ${this.state.eventName || 'Nenhum'} (escopo ${this.state.scope})`
     )
 
     this.persist()
@@ -326,15 +338,56 @@ class AppContextManager {
   }
 
   /**
-   * Limpa o evento ativo.
+   * Limpa o evento ativo e retorna ao escopo PRODUCER.
    */
   public clearEvent(): void {
-    if (this.state.eventId === null) return
+    if (this.state.eventId === null && this.state.scope === 'PRODUCER') return
     this.state.eventId = null
     this.state.eventName = null
-    this.recordAudit('CONTEXT_EVENT_CHANGED', 'CHANGED', 'Evento ativo limpo manualmente')
+    this.state.scope = 'PRODUCER'
+    this.recordAudit('CONTEXT_EVENT_CHANGED', 'CHANGED', 'Evento ativo limpo manualmente (escopo PRODUCER)')
     this.persist()
     this.notify()
+  }
+
+  /**
+   * Define explicitamente o escopo do SafeSaff (PRODUCER ou EVENT).
+   */
+  public setScope(scope: SafeSaffScope): void {
+    if (this.state.scope === scope) return
+    this.state.scope = scope
+    if (scope === 'PRODUCER') {
+      this.state.eventId = null
+      this.state.eventName = null
+    }
+    this.persist()
+    this.notify()
+  }
+
+  /**
+   * Seleciona um evento específico e atualiza escopo para EVENT.
+   */
+  public selectEvent(
+    event: { id: number; code?: string; title?: string; name?: string; producerId?: number } | number | null,
+    title?: string,
+    producerId?: number
+  ): boolean {
+    if (!event) {
+      this.clearEvent()
+      return true
+    }
+    if (typeof event === 'number') {
+      return this.setEvent(event, title, producerId)
+    }
+    const label = event.title || event.name || (event.code ? `Evento ${event.code}` : `Evento #${event.id}`)
+    return this.setEvent(event.id, label, event.producerId)
+  }
+
+  /**
+   * Seleciona a visão consolidada de todos os eventos da produtora (escopo PRODUCER).
+   */
+  public selectAllEvents(): void {
+    this.clearEvent()
   }
 }
 
