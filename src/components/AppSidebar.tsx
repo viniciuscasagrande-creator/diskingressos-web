@@ -7,13 +7,13 @@
 import React from 'react'
 import { useSafeSaffContext } from '../hooks/useSafeSaffContext'
 import EventContextSidebar from './EventContextSidebar'
-import ModuleSidebar, { type PageKey } from './ModuleSidebar'
+import ModuleSidebar, { type PageKey, type ModuleKey } from './ModuleSidebar'
 import type { EventItem } from '../data/events'
 import type { AppUser } from '../auth/model'
 import type { ProducerEvent } from '../types/context.types'
 
 export interface AppSidebarProps {
-  module: string
+  module: ModuleKey
   page: PageKey
   selectedEvent: EventItem | null
   onNavigate: (page: PageKey) => void

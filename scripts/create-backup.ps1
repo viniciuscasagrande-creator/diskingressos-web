@@ -6,7 +6,7 @@ if (-not (Test-Path $desktopPath)) {
     $desktopPath = [Environment]::GetFolderPath("Desktop")
 }
 
-$dest = Join-Path $desktopPath "SafeSaff_Backup_Fase28_13_1_$dateStr.zip"
+$dest = Join-Path $desktopPath "SafeSaff_Backup_Fase28_15_8_1_$dateStr.zip"
 
 Write-Host "Iniciando criacao do backup geral do SafeSaff..."
 Write-Host "Origem: $src"

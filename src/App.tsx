@@ -50,6 +50,9 @@ import AdvancedTaxesRouter from './pages/finance/advanced/AdvancedTaxesRouter'
 import './pages/finance/advanced/advanced-taxes.css'
 import ModuleHubView from './components/ModuleHubView'
 import { FINANCE_HUBS, ACCOUNTING_HUBS, MARKETING_HUBS } from './config/module-hubs'
+import AppSidebar from './components/AppSidebar'
+import { SafeSaffProvider } from './context/SafeSaffContext'
+import type { ProducerEvent } from './types/context.types'
 import { AppRouter } from './navigation/router'
 import { MobileNavigationController } from './navigation/mobile-controller'
 import { AppContext } from './context/app-context'
@@ -343,6 +346,13 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
     return firstPageFor(user)
   }
   if (clean === 'eventos') return 'events'
+  if (clean.startsWith('eventos/')) {
+    const parts = clean.split('/')
+    const tool = parts[2] || 'dashboard'
+    const candidate = (`event-${tool}` in titleMap ? `event-${tool}` : tool) as PageKey
+    if (candidate in titleMap) return candidate
+    return 'event-dashboard'
+  }
   // Hubs Financeiro (Fase 28.15.8.1)
   if (clean === 'financeiro/conta-financeira' || clean === 'app/finance-hub-account') return 'finance-hub-account'
   if (clean === 'financeiro/contas' || clean === 'app/finance-hub-bills') return 'finance-hub-bills'
@@ -391,6 +401,13 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
       const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+      if (clean.startsWith('eventos/')) {
+        const parts = clean.split('/')
+        const tool = parts[2] || 'dashboard'
+        const candidate = (`event-${tool}` in titleMap ? `event-${tool}` : tool) as PageKey
+        if (candidate in titleMap) return candidate
+        return 'event-dashboard'
+      }
       if (clean === 'financeiro/conta-financeira' || clean === 'app/finance-hub-account') return 'finance-hub-account'
       if (clean === 'financeiro/contas' || clean === 'app/finance-hub-bills') return 'finance-hub-bills'
       if (clean === 'financeiro/tesouraria' || clean === 'app/finance-hub-treasury') return 'finance-hub-treasury'
@@ -466,7 +483,14 @@ export default function App() {
       } else if (typeof window !== 'undefined') {
         const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
         const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
-        if (clean === 'contabilidade/operacao' || clean === 'app/accounting-hub-operations') {
+        if (clean.startsWith('eventos/')) {
+          const parts = clean.split('/')
+          const tool = parts[2] || 'dashboard'
+          const candidate = (`event-${tool}` in titleMap ? `event-${tool}` : tool) as PageKey
+          setMobileNavOpen(false)
+          setPage(candidate in titleMap ? candidate : 'event-dashboard')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'contabilidade/operacao' || clean === 'app/accounting-hub-operations') {
           setMobileNavOpen(false)
           setPage('accounting-hub-operations')
           window.scrollTo({ top: 0 })
@@ -569,9 +593,24 @@ export default function App() {
       if (rows) {
         const norm = normalizeEvents(rows)
         setEvents(norm)
-        // Se havia evento no AppContext, revalidar pertencimento
+        // Sincroniza evento com URL ou com AppContext
         const currentCtx = AppContext.getState()
-        if (currentCtx.eventId) {
+        const path = typeof window !== 'undefined' ? window.location.pathname : ''
+        const eventMatch = path.match(/^\/(?:app\/)?eventos\/([^\/]+)(?:\/([^\/]+))?/)
+        const urlCode = eventMatch ? eventMatch[1] : null
+
+        if (urlCode) {
+          const matched = norm.find((e) => e.code === urlCode || String(e.id) === urlCode)
+          if (matched) {
+            setSelectedEvent(matched)
+            AppContext.selectEvent(matched.id, matched.title, matched.producerId)
+            const tool = eventMatch[2]
+            if (tool) {
+              const mappedPage = (`event-${tool}` in titleMap ? `event-${tool}` : tool) as PageKey
+              if (mappedPage in titleMap) setPage(mappedPage)
+            }
+          }
+        } else if (currentCtx.eventId) {
           const matched = norm.find((e) => e.id === currentCtx.eventId)
           if (matched) {
             setSelectedEvent(matched)
@@ -804,57 +843,72 @@ export default function App() {
   }
 
   return (
-    <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open sidebar-mobile-expanded' : ''} ${sidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''}`}>
-      <Header
-        query={query}
-        onQuery={setQuery}
-        user={user}
-        producers={producers}
-        selectedProducer={selectedProducer}
-        events={events}
-        selectedEventId={selectedEvent?.id ?? appContextState.eventId}
-        onProducer={async (v) => {
-          setSelectedProducer(v)
-          setSelectedEvent(null)
-          AppContext.setProducer(v === 'all' ? null : v, undefined, producers)
-          await loadScopeData(user, v)
-          if (isGlobalAdmin(user)) {
-            const next = v === 'all' ? 'global-dashboard' : 'events'
-            setPage(next)
-            AppRouter.navigate(next === 'events' ? '/eventos' : '/dashboard')
-          }
-        }}
-        onEvent={(evId) => {
-          if (!evId) {
+    <SafeSaffProvider
+      producerId={scopedProducerId}
+      initialEvents={visibleEvents.map(e => ({
+        id: e.id,
+        name: e.title,
+        title: e.title,
+        code: e.code,
+        venue: e.venue,
+        city: e.city,
+        date: e.date,
+        status: e.status,
+        producerId: e.producerId,
+        cover: e.cover
+      }))}
+    >
+      <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open sidebar-mobile-expanded' : ''} ${sidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''}`}>
+        <Header
+          query={query}
+          onQuery={setQuery}
+          user={user}
+          producers={producers}
+          selectedProducer={selectedProducer}
+          events={events}
+          selectedEventId={selectedEvent?.id ?? appContextState.eventId}
+          onProducer={async (v) => {
+            setSelectedProducer(v)
             setSelectedEvent(null)
-            AppContext.selectAllEvents()
-            return
-          }
-          const found = events.find((e) => e.id === evId)
-          if (found) {
-            setSelectedEvent(found)
-            AppContext.selectEvent(found.id, found.title, found.producerId)
-          }
-        }}
-        onLogout={logout}
-        onToggleMenu={() => MobileNavigationController.toggle()}
-        isMobileNavOpen={mobileNavOpen}
-      />
+            AppContext.setProducer(v === 'all' ? null : v, undefined, producers)
+            await loadScopeData(user, v)
+            if (isGlobalAdmin(user)) {
+              const next = v === 'all' ? 'global-dashboard' : 'events'
+              setPage(next)
+              AppRouter.navigate(next === 'events' ? '/eventos' : '/dashboard')
+            }
+          }}
+          onEvent={(evId) => {
+            if (!evId) {
+              setSelectedEvent(null)
+              AppContext.selectAllEvents()
+              return
+            }
+            const found = events.find((e) => e.id === evId)
+            if (found) {
+              setSelectedEvent(found)
+              AppContext.selectEvent(found.id, found.title, found.producerId)
+            }
+          }}
+          onLogout={logout}
+          onToggleMenu={() => MobileNavigationController.toggle()}
+          isMobileNavOpen={mobileNavOpen}
+        />
 
-      <button
-        type="button"
-        className="mobile-nav-backdrop"
-        data-testid="mobile-nav-backdrop"
-        aria-label="Fechar navegação"
-        onClick={() => MobileNavigationController.close()}
-      />
+        <button
+          type="button"
+          className="mobile-nav-backdrop"
+          data-testid="mobile-nav-backdrop"
+          aria-label="Fechar navegação"
+          onClick={() => MobileNavigationController.close()}
+        />
 
-      {inEventContext && selectedEvent ? (
-        <EventContextSidebar
-          event={selectedEvent}
+        <AppSidebar
+          module={module}
           page={page}
+          selectedEvent={selectedEvent}
           onNavigate={(p) => { navigate(p); MobileNavigationController.close() }}
-          onBack={() => {
+          onBackToProducer={() => {
             setSelectedEvent(null)
             AppContext.clearEvent()
             setPage('events')
@@ -862,20 +916,26 @@ export default function App() {
             AppRouter.syncFromLocation('/eventos')
             window.scrollTo({ top: 0 })
           }}
-          canAdmin={canAccess(user, 'admin')}
-        />
-      ) : (
-        <ModuleSidebar
-          module={module}
-          page={page}
-          onNavigate={(p) => { navigate(p); MobileNavigationController.close() }}
+          onSelectOtherEvent={(newEvent) => {
+            const match = visibleEvents.find(e => String(e.id) === String(newEvent.id) || (e.code && e.code === String(newEvent.id))) || (newEvent as unknown as EventItem)
+            setSelectedEvent(match)
+            AppContext.selectEvent(Number(newEvent.id), newEvent.name || newEvent.title, newEvent.producerId)
+
+            if (inEventContext) {
+              const code = match.code || String(match.id)
+              const toolSlug = page.startsWith('event-') ? page.replace('event-', '') : page
+              const targetUrl = `/eventos/${code}/${toolSlug}`
+              window.history.pushState({ page }, '', targetUrl)
+              AppRouter.syncFromLocation(targetUrl)
+            }
+          }}
           onHome={() => { MobileNavigationController.close(); navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard') }}
           canAdmin={canAccess(user, 'admin')}
           user={user}
           onCollapsedChange={setSidebarCollapsed}
           mobileNavOpen={mobileNavOpen}
+          inEventContext={inEventContext}
         />
-      )}
 
       <div className={`module-titlebar ${mobileInternalHeaderPages.has(page) ? 'mobile-titlebar-hidden' : ''}`}>
         <div className="flex flex-col gap-1.5 min-w-0">
@@ -1265,5 +1325,6 @@ export default function App() {
       <ScrollTop />
       {toast && <div className="toast">{toast}</div>}
     </div>
+    </SafeSaffProvider>
   )
 }

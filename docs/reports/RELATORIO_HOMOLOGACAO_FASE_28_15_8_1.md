@@ -28,13 +28,14 @@ Principais destaques da homologação:
 
 | Arquivo de Teste | Descrição / Foco | Testes Executados | Status | Duração |
 | --- | --- | :---: | :---: | :---: |
+| `tests/regression/global-context-produtor-evento.spec.ts` | Contexto Global Produtor × Evento, Sidebar Dinâmica e Segurança IDOR | 6 | **6 PASSED** | 9.8s |
 | `tests/regression/menu-enterprise-hubs.spec.ts` | Hubs Financeiro, Contábil, Marketing, Busca e Seletor Global | 5 | **5 PASSED** | 18.6s |
 | `tests/regression/accounting-subroutes.spec.ts` | Consolidação view única e 12 subrotas contábeis | 4 | **4 PASSED** | 24.8s |
 | `tests/regression/finance-chart-accounts.spec.ts` | Desvinculação Plano de Contas vs Contabilidade | 1 | **1 PASSED** | 12.3s |
 | `tests/regression/protected-core-modules.spec.ts` | 5 Módulos Críticos Protegidos por CI | 5 | **5 PASSED** | 8.5s |
 | `tests/regression/breadcrumbs-permissions-context.spec.ts` | Breadcrumbs, ContextGuard, PermissionGuard | 6 | **6 PASSED** | 22.1s |
 | `tests/regression/mobile-responsive-enterprise.spec.ts` | Responsividade Mobile 360px sem overflow | 6 | **6 PASSED** | 19.4s |
-| **Total Consolidado** | **Validação E2E Fase 28.15.8.1** | **27** | **27 PASSED (100%)** | — |
+| **Total Consolidado** | **Validação E2E Fase 28.15.8.1 Completa** | **33** | **33 PASSED (100%)** | — |
 
 ---
 
@@ -47,6 +48,11 @@ Principais destaques da homologação:
 | **Zero Perda de Telas** | 100% das telas e subrotas anteriores acessíveis | **CONFIRMADO** | `menu-enterprise-hubs.spec.ts` e `accounting-subroutes.spec.ts` |
 | **Busca Interna nos Hubs** | Filtragem reativa instantânea sem recarga | **CONFIRMADO** | `menu-enterprise-hubs.spec.ts:198` |
 | **Contexto Global Produtor x Evento** | Alternador no Header entre PRODUCER e EVENT | **CONFIRMADO** | `menu-enterprise-hubs.spec.ts:150` |
+| **Comutação Automática de Sidebar** | Escopo PRODUCER ativa ModuleSidebar; Escopo EVENT ativa EventContextSidebar | **CONFIRMADO** | `global-context-produtor-evento.spec.ts:43` |
+| **Troca Rápida no Topo da Sidebar** | Switcher no cabeçalho da EventContextSidebar preserva ferramenta ativa | **CONFIRMADO** | `global-context-produtor-evento.spec.ts:81` |
+| **Retorno ao Produtor** | Botão "← Todos os Eventos" restaura escopo PRODUCER e Sidebar corporativa | **CONFIRMADO** | `global-context-produtor-evento.spec.ts:123` |
+| **Persistência de Sessão e URL** | Deep-links `/eventos/:code/:tool` restauram contexto após recarga (F5) | **CONFIRMADO** | `global-context-produtor-evento.spec.ts:152` |
+| **Segurança contra IDOR** | Bloqueio com HTTP 403 Proibido para tentativas de cross-tenant | **CONFIRMADO** | `global-context-produtor-evento.spec.ts:177` |
 | **Desbloqueio Contextual de Pixels** | Evento selecionado libera acesso ao hub de pixels | **CONFIRMADO** | `menu-enterprise-hubs.spec.ts:150` |
 | **Padronização pt-BR** | Interface do usuário 100% em Português do Brasil | **CONFIRMADO** | Rótulos, títulos, badges e textos em pt-BR |
 | **Zero Telas Brancas** | Renderização estável sem TypeError/ReferenceError | **CONFIRMADO** | 100% dos testes Playwright executados em Chromium real |
