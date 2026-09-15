@@ -85,6 +85,7 @@ import GlobalDashboardPage from './pages/GlobalDashboardPage'
 import ProfileDashboardPage from './pages/ProfileDashboardPage'
 import { canAccess, isGlobalAdmin, producers as seedProducers, seedUsers, type AppUser } from './auth/model'
 import { login as apiLogin, setApiToken, clearApiToken, hasStoredToken, getMe, getProducers, getUsers, getEvents } from './services/api'
+import { EventSupportHubPage } from './components/event-support/EventSupportHubPage'
 
 const mobileInternalHeaderPages = new Set<PageKey>([
   'events',
@@ -145,6 +146,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-users': 'Usuários do Evento',
   'event-audit': 'Logs do Evento',
   'event-permissions': 'Permissões do Evento',
+  'event-support': 'Suporte a Eventos & Event Builder',
 
   // HUBS ENTERPRISE (FASE 28.15.8.1)
   'finance-hub-account': 'Conta Financeira',
@@ -346,6 +348,7 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
     return firstPageFor(user)
   }
   if (clean === 'eventos') return 'events'
+  if (clean === 'event-support' || clean === 'app/event-support') return 'event-support'
   if (clean.startsWith('eventos/')) {
     const parts = clean.split('/')
     const tool = parts[2] || 'dashboard'
@@ -1073,6 +1076,9 @@ export default function App() {
             onOpen={openEventContext}
             onNavigate={navigate}
           />
+        )}
+        {page === 'event-support' && (
+          <EventSupportHubPage />
         )}
         {page === 'new-event' && <EventFormPage mode="new" onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'edit-event' && <EventFormPage mode="edit" event={selectedEvent} onCancel={() => setPage('events')} onSave={saveEvent} />}
