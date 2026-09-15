@@ -6,9 +6,18 @@ import {
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import type { PageKey } from './ModuleSidebar'
+import type { ProducerEvent } from '../types/context.types'
+import GlobalEventSelector from './context/GlobalEventSelector'
 
 type Item = { key: PageKey; label: string; icon: ComponentType<{ size?: number }> }
-type Props = { event: EventItem; page: PageKey; onNavigate: (page: PageKey) => void; onBack: () => void; canAdmin?: boolean }
+type Props = {
+  event: EventItem
+  page: PageKey
+  onNavigate: (page: PageKey) => void
+  onBack: () => void
+  onSelectOtherEvent?: (event: ProducerEvent) => void
+  canAdmin?: boolean
+}
 
 const eventItems: Item[] = [
   { key: 'event-command-center', label: 'Cockpit 360', icon: Activity },
@@ -54,13 +63,34 @@ const configItems: Item[] = [
   { key: 'event-compliance', label: 'Audit & Compliance', icon: ScrollText },
 ]
 
-export default function EventContextSidebar({ event, page, onNavigate, onBack, canAdmin = true }: Props) {
+export default function EventContextSidebar({
+  event,
+  page,
+  onNavigate,
+  onBack,
+  onSelectOtherEvent,
+  canAdmin = true
+}: Props) {
   return (
     <aside className="module-sidebar event-context-sidebar" data-testid="event-context-sidebar">
       <button className="back-module event-back" onClick={onBack} title="Voltar a Todos os Eventos" data-testid="event-sidebar-back">
         <ArrowLeft size={18} />
         <span>← Todos os Eventos</span>
       </button>
+
+      {/* Seletor rápido de evento no topo da sidebar individual */}
+      <div className="p-2 border-b border-[#1e293b] bg-[#0b1222]" data-testid="event-sidebar-switcher-wrap">
+        <GlobalEventSelector
+          compact
+          onEventChange={(newEvent) => {
+            if (!newEvent) {
+              onBack()
+            } else if (onSelectOtherEvent) {
+              onSelectOtherEvent(newEvent)
+            }
+          }}
+        />
+      </div>
 
       <div className="event-context-summary">
         <div className={`event-context-cover ${event.cover}`}>
