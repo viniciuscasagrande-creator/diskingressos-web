@@ -1,4 +1,5 @@
 # RELATÓRIO OFICIAL DE HOMOLOGAÇÃO — FASE 29.14.1.2.3
+
 ## Validação Visual & Navegação: Claro/Escuro, Header, Sidebar, Contextos, Responsividade e Zero Tela Branca
 
 **Data de Conclusão:** 16 de Setembro de 2026  
@@ -57,6 +58,7 @@
 A **Fase 29.14.1.2.3** concluiu com êxito absoluto a auditoria visual, estrutural, funcional e responsiva da plataforma DiskIngressos Web, submetendo a aplicação real conectada na Fase 29.14.1.2.2 a uma bateria rigorosa de testes automatizados e inspeções visuais ponto a ponto.
 
 Ao longo do processo:
+
 - Foi identificado e eliminado o gargalo de layout herdado do CSS legado que causava o colapso visual do cabeçalho e desalinhamento da barra lateral (`.app-shell` com grid fixo de 286px em `src/styles.css`).
 - Foram adicionadas regras canônicas de Modo Escuro no CSS global para unificar o fundo da casca e barras de título de módulos legados com o Design System Komposo/Disk.
 - Foram capturadas 18 evidências visuais reais em alta resolução na pasta `evidencias/fase-29-14-1-2-3/`, mapeando cada módulo corporativo tanto em Modo Claro quanto em Modo Escuro, além de estados de contexto, menu expandido/recolhido e visualização mobile.
@@ -67,21 +69,24 @@ Ao longo do processo:
 
 ## 2. OBJETIVOS DA FASE E CRITÉRIO DE PARADA
 
-### Objetivos Estabelecidos:
+### Objetivos Estabelecidos
+
 1. Validar a montagem única da casca mestre sem duplicidade de componentes concorrentes.
 2. Homologar a transição de temas (Claro, Escuro e Sistema) e sua persistência via `localStorage`.
 3. Validar a estabilidade da navegação por todos os módulos corporativos, garantindo **Zero Tela Branca**.
 4. Testar a integridade responsiva e a ausência de scroll horizontal indesejado nas larguras técnicas de `360px`, `768px`, `1024px`, `1280px`, `1440px` e `1920px`.
 5. Isolar e catalogar os débitos visuais internos para que sejam migrados organizadamente na Fase 29.14.1.3.
 
-### Critério de Parada:
+### Critério de Parada
+
 **ESTRITAMENTE RESPEITADO.** Não foi iniciado nenhum redesenho interno de telas ou componentes de negócio na Fase 29.14.1.2.3. O trabalho foi limitado a homologação, correção de defeitos de casca/tema e inventário. O ciclo foi interrompido para análise e aprovação humana explícita antes da Fase 29.14.1.3.
 
 ---
 
 ## 3. ESCOPO EXECUTADO VS. ESCOPO EXPRESSAMENTE NÃO EXECUTADO
 
-### Escopo Executado:
+### Escopo Executado
+
 - Homologação visual em tempo de execução dos componentes `AppShell`, `AppHeader`, `AppSidebar`, `AppBreadcrumb` e `MainContent`.
 - Correção do colapso de largura no cabeçalho através do ajuste no `src/styles.css` (`.app-shell` flex vertical).
 - Harmonização das variáveis CSS e classes de Dark Mode para contêineres globais e barras de título de módulos (`.dark .module-titlebar`).
@@ -89,7 +94,8 @@ Ao longo do processo:
 - Geração automatizada das 18 capturas de tela em `evidencias/fase-29-14-1-2-3/`.
 - Execução de 31 testes Playwright abrangendo navegação, temas, persistência, responsividade e módulos protegidos.
 
-### Escopo Expressamente NÃO Executado (Preservado para a Fase 29.14.1.3):
+### Escopo Expressamente NÃO Executado (Preservado para a Fase 29.14.1.3)
+
 - **Não foram alterados** os cartões de métricas (KPIs) internos de Financeiro, Marketing, Eventos ou SAC.
 - **Não foram modificadas** as tabelas internas, formulários ou abas do Centro de Controle de Estornos (`FinanceDisputesHubPage.tsx`).
 - **Não foram alteradas** as rotas em `src/App.tsx` nem as `PageKeys` de navegação.
@@ -101,7 +107,7 @@ Ao longo do processo:
 
 A cadeia arquitetural está 100% alinhada e operando de ponta a ponta:
 
-```
+```text
 ThemeProvider (src/design-system/theme/ThemeProvider.tsx)
   └── [HTML Class: .dark | .light + data-theme]
       └── App.tsx (Raiz de Estado, Sessão, Produtoras, Eventos e Router)
@@ -126,6 +132,7 @@ ThemeProvider (src/design-system/theme/ThemeProvider.tsx)
 ## 5. CONFIRMAÇÃO DE MONTAGEM ÚNICA
 
 A verificação automatizada via Playwright (`homologacao-fase-29-14-1-2-3-real.spec.ts`, teste 1) confirmou no DOM real da aplicação:
+
 - **`locator('.app-shell')`:** Exatamente **1 instância** montada.
 - **`locator('.global-topbar')`:** Exatamente **1 cabeçalho global** presente.
 - **`locator('#main-module-sidebar')`:** Exatamente **1 sidebar principal** ativa.
@@ -326,11 +333,13 @@ Testado sistematicamente em todas as larguras de viewport padrão:
 ## 27. PROBLEMAS ESTRUTURAIS ENCONTRADOS E CORRIGIDOS (CATEGORIA B)
 
 ### B.1 — Colapso do Header e Desalinhamento da Sidebar em `src/styles.css`
+
 - **Sintoma:** O cabeçalho global ficava espremido em 286px no canto esquerdo da tela, quebrando o layout em colunas horizontais anômalas e gerando sobreposição de botões.
 - **Causa Raiz:** A classe legada `.app-shell` em `src/styles.css` continha `display: grid; grid-template-columns: 286px 1fr; grid-template-rows: 76px 1fr`.
 - **Correção Efetuada:** Substituição da regra de grid fixo por `display: flex !important; flex-direction: column !important; min-height: 100vh;`. Remoção de media queries legadas concorrentes. O cabeçalho passou a ocupar 100% da largura da janela em qualquer resolução.
 
 ### B.2 — Conflito de Visibilidade Responsiva no `AppBreadcrumb`
+
 - **Sintoma:** Testes de regressão de módulos protegidos falhavam ao buscar o primeiro texto visível do módulo, pois encontravam o nó do breadcrumb oculto via classe Tailwind.
 - **Causa Raiz:** O breadcrumb havia sido configurado temporariamente com `hidden 2xl:flex`.
 - **Correção Efetuada:** Atualizado para `hidden md:flex ml-2` no `AppHeader.tsx`, garantindo que o breadcrumb permaneça visível em desktops a partir de 768px sem colidir com outros elementos.
@@ -340,14 +349,16 @@ Testado sistematicamente em todas as larguras de viewport padrão:
 ## 28. PROBLEMAS DE TEMA / CSS ENCONTRADOS E CORRIGIDOS (CATEGORIA C)
 
 ### C.1 — Fundo Claro Residual no Modo Escuro
+
 - **Sintoma:** Em telas antigas com seletores legados (`.phase6-content`, `.module-titlebar`), o fundo permanecia branco mesmo com a classe `.dark` ativa no `<html>`.
 - **Correção Efetuada:** Adicionadas regras pontuais no `src/styles.css`:
-  ```css
-  .dark body { background-color: var(--disk-bg-app, #0B0F19); color: var(--disk-text-primary, #F8FAFC); }
-  .dark .phase6-content { background: transparent !important; }
-  .dark .module-titlebar { background: var(--disk-bg-surface, #111827) !important; border-color: var(--disk-border-default, #1F2937) !important; color: var(--disk-text-primary, #F8FAFC) !important; }
-  .dark .scope-pill { background: rgba(30, 41, 59, 0.7) !important; border-color: #334155 !important; color: #38bdf8 !important; }
-  ```
+
+```css
+.dark body { background-color: var(--disk-bg-app, #0B0F19); color: var(--disk-text-primary, #F8FAFC); }
+.dark .phase6-content { background: transparent !important; }
+.dark .module-titlebar { background: var(--disk-bg-surface, #111827) !important; border-color: var(--disk-border-default, #1F2937) !important; color: var(--disk-text-primary, #F8FAFC) !important; }
+.dark .scope-pill { background: rgba(30, 41, 59, 0.7) !important; border-color: #334155 !important; color: #38bdf8 !important; }
+```
 
 ---
 
@@ -366,6 +377,7 @@ Os itens abaixo foram expressamente **preservados sem alteração** durante a Fa
 ## 30. CONFIRMAÇÃO DE INTEGRIDADE DOS MÓDULOS PROTEGIDOS (REGRA SUPREMA)
 
 Executado `npm run verify:protected-modules` e verificado:
+
 - [x] **Eventos:** Rota `/app/events`, PageKey `events` e menu preservados.
 - [x] **Financeiro:** Rota `/app/finance-dashboard`, PageKey `finance-dashboard` e menu preservados.
 - [x] **Estornos:** Rota `/app/finance-refunds`, PageKey `finance-refunds`, tela oficial `FinanceDisputesHubPage.tsx` e menu independente preservados.
@@ -385,6 +397,7 @@ Executado `npm run verify:protected-modules` e verificado:
 ## 32. CONFIRMAÇÃO DE PADRONIZAÇÃO TOTAL EM PORTUGUÊS DO BRASIL (PT-BR)
 
 Toda a interface visível validada nesta fase opera exclusivamente em pt-BR:
+
 - **Menus e Ações:** *"Início"*, *"Eventos"*, *"Financeiro"*, *"Estornos"*, *"Marketing"*, *"Atendimento / SAC"*, *"Contabilidade"*, *"Sair"*.
 - **Controles de Tema:** *"Alternar para modo escuro"*, *"Alternar para modo claro"*, *"Tema do sistema"*.
 - **Cabeçalho:** *"Buscar eventos, pedidos, clientes..."*, *"Todas as Produtoras"*, *"Todos os Eventos"*, *"Notificações"*.
@@ -475,6 +488,7 @@ Todas as capturas foram salvas no diretório `evidencias/fase-29-14-1-2-3/`:
 ## 36. PARECER FINAL DA FASE 29.14.1.2.3
 
 A **Fase 29.14.1.2.3** atingiu **100% de aprovação técnica e visual**:
+
 - A fundação visual Komposo/Disk está perfeitamente integrada à aplicação real.
 - O colapso do cabeçalho legado foi corrigido em definitivo no CSS mestre.
 - Não existem telas brancas, travamentos ou regressões de rotas e menus.
@@ -494,4 +508,5 @@ Recomendamos a seguinte sequência cirúrgica para a futura Fase 29.14.1.3 assim
 4. **Etapa 29.14.1.3.4:** Revalidação de CI e nova rodada de screenshots comparativos.
 
 ---
+
 *Relatório gerado e certificado pela auditoria de testes automatizados e homologação de layout.*
