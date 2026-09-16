@@ -76,6 +76,47 @@
 
   /* Transição de Tema */
   --disk-theme-transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  /* Compatibilidade shadcn/ui & Tailwind Core Semantic Tokens */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
+  --primary: #F97316;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1F5F9;
+  --secondary-foreground: #0F172A;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #FFF7ED;
+  --accent-foreground: #C2410C;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E2E8F0;
+  --input: #CBD5E1;
+  --ring: #F97316;
+  --radius: 0.75rem;
+
+  /* Estados semânticos globais */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --info: #3B82F6;
+
+  /* Tokens preparados para Sidebar na próxima etapa */
+  --sidebar: #1E293B;
+  --sidebar-foreground: #F8FAFC;
+  --sidebar-hover: #334155;
+  --sidebar-active: #F97316;
+  --sidebar-border: #334155;
+
+  /* Tokens preparados para Gráficos */
+  --chart-1: #F97316;
+  --chart-2: #10B981;
+  --chart-3: #3B82F6;
+  --chart-4: #8B5CF6;
+  --chart-5: #EC4899;
 }
 
 /* Modo Escuro (.dark ou [data-theme="dark"]) */
@@ -149,6 +190,46 @@
   --disk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
   --disk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
   --disk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+
+  /* Compatibilidade shadcn/ui & Tailwind Core Semantic Tokens (Modo Escuro) */
+  --background: #0B0F19;
+  --foreground: #F8FAFC;
+  --card: #111827;
+  --card-foreground: #F8FAFC;
+  --popover: #1F2937;
+  --popover-foreground: #F8FAFC;
+  --primary: #F97316;
+  --primary-foreground: #FFFFFF;
+  --secondary: #1F2937;
+  --secondary-foreground: #F8FAFC;
+  --muted: #162032;
+  --muted-foreground: #94A3B8;
+  --accent: rgba(249, 115, 22, 0.14);
+  --accent-foreground: #FB923C;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #1F2937;
+  --input: #374151;
+  --ring: #F97316;
+
+  /* Estados semânticos globais */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --info: #3B82F6;
+
+  /* Tokens preparados para Sidebar na próxima etapa */
+  --sidebar: #0F172A;
+  --sidebar-foreground: #F8FAFC;
+  --sidebar-hover: #1E293B;
+  --sidebar-active: #F97316;
+  --sidebar-border: #1E293B;
+
+  /* Tokens preparados para Gráficos (Dark Mode) */
+  --chart-1: #FB923C;
+  --chart-2: #34D399;
+  --chart-3: #60A5FA;
+  --chart-4: #A78BFA;
+  --chart-5: #F472B6;
 }
 
 /* ==========================================================================
