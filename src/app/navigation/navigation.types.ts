@@ -36,7 +36,7 @@ export interface NavigationGroup {
 }
 
 export interface BreadcrumbCrumb {
-  id: string
+  id?: string
   label: string
   path?: string
   isCurrent?: boolean

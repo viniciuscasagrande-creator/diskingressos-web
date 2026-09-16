@@ -65,7 +65,7 @@ export default function AppSidebar({
       onNavigate={onNavigate}
       onHome={onHome}
       canAdmin={canAdmin}
-      user={user}
+      user={user || undefined}
       onCollapsedChange={onCollapsedChange}
       mobileNavOpen={mobileNavOpen}
     />

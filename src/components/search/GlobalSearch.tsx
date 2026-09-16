@@ -49,7 +49,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
       />
 
       <div className="absolute right-2 flex items-center gap-1 pointer-events-none">
-        <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground bg-muted border border-border/70 rounded shadow-2xs">
+        <kbd className="hidden 2xl:inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground bg-muted border border-border/70 rounded shadow-2xs">
           Ctrl K
         </kbd>
       </div>

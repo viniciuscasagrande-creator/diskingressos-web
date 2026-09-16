@@ -26,7 +26,7 @@ export const AppBreadcrumb: React.FC<AppBreadcrumbProps> = ({ items, className =
     <nav
       aria-label="Caminho de navegação"
       data-testid="app-breadcrumb"
-      className={`hidden md:flex items-center text-xs font-medium text-muted-foreground select-none max-w-xl ${className}`}
+      className={`items-center text-xs font-medium text-muted-foreground select-none max-w-xl ${className}`}
     >
       <ol className="flex items-center gap-1.5 flex-wrap">
         {items.map((crumb, idx) => {

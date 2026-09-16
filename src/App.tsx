@@ -51,6 +51,7 @@ import './pages/finance/advanced/advanced-taxes.css'
 import ModuleHubView from './components/ModuleHubView'
 import { FINANCE_HUBS, ACCOUNTING_HUBS, MARKETING_HUBS } from './config/module-hubs'
 import AppSidebar from './components/AppSidebar'
+import AppShell from './app/layout/AppShell'
 import { SafeSaffProvider } from './context/SafeSaffContext'
 import type { ProducerEvent } from './types/context.types'
 import { AppRouter } from './navigation/router'
@@ -908,84 +909,73 @@ export default function App() {
         cover: e.cover
       }))}
     >
-      <div className={`app-shell phase6-shell phase7-shell ${mobileNavOpen ? 'mobile-nav-open sidebar-mobile-expanded' : ''} ${sidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''}`}>
-        <Header
-          query={query}
-          onQuery={setQuery}
-          user={user}
-          producers={producers}
-          selectedProducer={selectedProducer}
-          events={events}
-          selectedEventId={selectedEvent?.id ?? appContextState.eventId}
-          onProducer={async (v) => {
-            setSelectedProducer(v)
+      <AppShell
+        module={module}
+        page={page}
+        user={user}
+        producers={producers}
+        selectedProducerId={selectedProducer}
+        onSelectProducer={async (v) => {
+          setSelectedProducer(v)
+          setSelectedEvent(null)
+          AppContext.setProducer(v === 'all' ? null : v, undefined, producers)
+          await loadScopeData(user, v)
+          if (isGlobalAdmin(user)) {
+            const next = v === 'all' ? 'global-dashboard' : 'events'
+            setPage(next)
+            AppRouter.navigate(next === 'events' ? '/eventos' : '/dashboard')
+          }
+        }}
+        events={events}
+        selectedEventId={selectedEvent?.id ?? appContextState.eventId}
+        selectedEvent={selectedEvent}
+        onSelectEvent={(evId) => {
+          if (!evId) {
             setSelectedEvent(null)
-            AppContext.setProducer(v === 'all' ? null : v, undefined, producers)
-            await loadScopeData(user, v)
-            if (isGlobalAdmin(user)) {
-              const next = v === 'all' ? 'global-dashboard' : 'events'
-              setPage(next)
-              AppRouter.navigate(next === 'events' ? '/eventos' : '/dashboard')
-            }
-          }}
-          onEvent={(evId) => {
-            if (!evId) {
-              setSelectedEvent(null)
-              AppContext.selectAllEvents()
-              return
-            }
-            const found = events.find((e) => e.id === evId)
-            if (found) {
-              setSelectedEvent(found)
-              AppContext.selectEvent(found.id, found.title, found.producerId)
-            }
-          }}
-          onLogout={logout}
-          onToggleMenu={() => MobileNavigationController.toggle()}
-          isMobileNavOpen={mobileNavOpen}
-        />
+            AppContext.selectAllEvents()
+            return
+          }
+          const found = events.find((e) => e.id === evId)
+          if (found) {
+            setSelectedEvent(found)
+            AppContext.selectEvent(found.id, found.title, found.producerId)
+          }
+        }}
+        onNavigate={(p) => { navigate(p); MobileNavigationController.close() }}
+        onBackToProducer={() => {
+          setSelectedEvent(null)
+          AppContext.clearEvent()
+          setPage('events')
+          window.history.pushState({}, '', '/eventos')
+          AppRouter.syncFromLocation('/eventos')
+          window.scrollTo({ top: 0 })
+        }}
+        onSelectOtherEvent={(newEvent) => {
+          const match = visibleEvents.find(e => String(e.id) === String(newEvent.id) || (e.code && e.code === String(newEvent.id))) || (newEvent as unknown as EventItem)
+          setSelectedEvent(match)
+          AppContext.selectEvent(Number(newEvent.id), newEvent.name || newEvent.title, newEvent.producerId)
 
-        <button
-          type="button"
-          className="mobile-nav-backdrop"
-          data-testid="mobile-nav-backdrop"
-          aria-label="Fechar navegação"
-          onClick={() => MobileNavigationController.close()}
-        />
-
-        <AppSidebar
-          module={module}
-          page={page}
-          selectedEvent={selectedEvent}
-          onNavigate={(p) => { navigate(p); MobileNavigationController.close() }}
-          onBackToProducer={() => {
-            setSelectedEvent(null)
-            AppContext.clearEvent()
-            setPage('events')
-            window.history.pushState({}, '', '/eventos')
-            AppRouter.syncFromLocation('/eventos')
-            window.scrollTo({ top: 0 })
-          }}
-          onSelectOtherEvent={(newEvent) => {
-            const match = visibleEvents.find(e => String(e.id) === String(newEvent.id) || (e.code && e.code === String(newEvent.id))) || (newEvent as unknown as EventItem)
-            setSelectedEvent(match)
-            AppContext.selectEvent(Number(newEvent.id), newEvent.name || newEvent.title, newEvent.producerId)
-
-            if (inEventContext) {
-              const code = match.code || String(match.id)
-              const toolSlug = page.startsWith('event-') ? page.replace('event-', '') : page
-              const targetUrl = `/eventos/${code}/${toolSlug}`
-              window.history.pushState({ page }, '', targetUrl)
-              AppRouter.syncFromLocation(targetUrl)
-            }
-          }}
-          onHome={() => { MobileNavigationController.close(); navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard') }}
-          canAdmin={canAccess(user, 'admin')}
-          user={user}
-          onCollapsedChange={setSidebarCollapsed}
-          mobileNavOpen={mobileNavOpen}
-          inEventContext={inEventContext}
-        />
+          if (inEventContext) {
+            const code = match.code || String(match.id)
+            const toolSlug = page.startsWith('event-') ? page.replace('event-', '') : page
+            const targetUrl = `/eventos/${code}/${toolSlug}`
+            window.history.pushState({ page }, '', targetUrl)
+            AppRouter.syncFromLocation(targetUrl)
+          }
+        }}
+        onHome={() => { MobileNavigationController.close(); navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard') }}
+        onLogout={logout}
+        searchQuery={query}
+        onSearchChange={setQuery}
+        breadcrumbs={breadcrumbItems}
+        inEventContext={inEventContext}
+        canAdmin={canAccess(user, 'admin')}
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarCollapsedChange={setSidebarCollapsed}
+        mobileNavOpen={mobileNavOpen}
+        onToggleMobileNav={() => MobileNavigationController.toggle()}
+        onCloseMobileNav={() => MobileNavigationController.close()}
+      >
 
       <div className={`module-titlebar ${mobileInternalHeaderPages.has(page) ? 'mobile-titlebar-hidden' : ''}`}>
         <div className="flex flex-col gap-1.5 min-w-0">
@@ -1053,7 +1043,7 @@ export default function App() {
         </div>
       )}
 
-      <main className="content phase6-content">
+      <div className="content phase6-content w-full min-w-0">
         {currentRoute.guardState && !currentRoute.guardState.allowed ? (
           <BlockedStateView
             type={currentRoute.guardState.blockedReason || 'unauthorized'}
@@ -1393,7 +1383,8 @@ export default function App() {
         {page === 'pos-closing' && <POSPage events={visibleEvents} initialTab="closing" notify={notify} />}
           </>
         )}
-      </main>
+      </div>
+      </AppShell>
 
       <nav className="mobile-bottom-nav" aria-label="Navegação mobile">
         <button onClick={() => { navigate(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard'); setMobileNavOpen(false) }}><Home size={20}/><span>Início</span></button>
@@ -1406,7 +1397,6 @@ export default function App() {
       <AppFooter />
       <ScrollTop />
       {toast && <div className="toast">{toast}</div>}
-    </div>
     </SafeSaffProvider>
   )
 }

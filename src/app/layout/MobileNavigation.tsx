@@ -53,7 +53,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-200 animate-in fade-in"
         onClick={onClose}
-        data-testid="mobile-nav-backdrop"
+        data-testid="mobile-drawer-backdrop"
       />
 
       {/* Gaveta Lateral (Drawer Vertical) */}
@@ -72,7 +72,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
             <button
               type="button"
               onClick={onClose}
-              data-testid="sidebar-mobile-close"
+              data-testid="mobile-drawer-close"
               aria-label="Fechar menu"
               className="p-1.5 rounded-lg border border-border/70 text-foreground hover:bg-muted/40 transition cursor-pointer"
             >

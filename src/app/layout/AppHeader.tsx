@@ -62,7 +62,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
   return (
     <header
-      className="sticky top-0 z-40 w-full h-[var(--header-height,4rem)] bg-surface/95 backdrop-blur-md border-b border-border/80 px-3 sm:px-5 flex items-center justify-between gap-2 sm:gap-4 transition-colors"
+      className="global-topbar sticky top-0 z-40 w-full h-[var(--header-height,4rem)] bg-surface/95 backdrop-blur-md border-b border-border/80 px-3 sm:px-5 flex items-center justify-between gap-2 sm:gap-4 transition-colors"
       data-testid="app-header-global"
     >
       {/* Bloco Esquerdo: Mobile Trigger + Logo + Breadcrumb / Contexto */}
@@ -74,17 +74,18 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
             aria-label={isMobileNavOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
             aria-expanded={isMobileNavOpen}
             data-testid="mobile-menu-button"
-            className="md:hidden p-2 rounded-xl border border-border/80 bg-surface hover:bg-surface-elevated text-foreground transition cursor-pointer"
+            data-sidebar-toggle="mobile"
+            className="sidebar-mobile-main-toggle md:hidden p-2 rounded-xl border border-border/80 bg-surface hover:bg-surface-elevated text-foreground transition cursor-pointer"
           >
             <Menu size={18} />
           </button>
         )}
 
-        <div className="flex items-center gap-2 select-none" title="DiskIngressos Enterprise">
+        <div className="brand global-brand flex items-center gap-2 select-none" title="DiskIngressos Enterprise">
           <img
             src="/logo-diskingressos.png"
             alt="DiskIngressos"
-            className="h-7 w-auto object-contain hidden xs:block"
+            className="navbar-logo h-7 w-auto object-contain hidden xs:block"
           />
         </div>
 
@@ -95,39 +96,43 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
         />
 
         {/* Breadcrumb Global Integrado */}
-        <AppBreadcrumb items={breadcrumbs} className="hidden xl:flex ml-2" />
+        <AppBreadcrumb items={breadcrumbs} className="hidden md:flex ml-2" />
       </div>
 
       {/* Bloco Central: Seletores de Contexto + Busca Global */}
-      <div className="hidden md:flex items-center gap-2 flex-1 max-w-2xl mx-2">
+      <div className="hidden md:flex items-center gap-2 flex-1 max-w-xl mx-2 min-w-0">
         {onSelectProducer && (
-          <ProducerSelector
-            producers={producers}
-            selectedProducerId={selectedProducerId}
-            onSelectProducer={onSelectProducer}
-            isAdmin={isAdmin}
-            fixedProducerName={currentProducerName}
-          />
+          <div className="hidden lg:block shrink-0">
+            <ProducerSelector
+              producers={producers}
+              selectedProducerId={selectedProducerId}
+              onSelectProducer={onSelectProducer}
+              isAdmin={isAdmin}
+              fixedProducerName={currentProducerName}
+            />
+          </div>
         )}
 
         {onSelectEvent && (
-          <EventSelector
-            events={events}
-            selectedEventId={selectedEventId}
-            onSelectEvent={onSelectEvent}
-            producerName={currentProducerName}
-          />
+          <div className="hidden xl:block shrink-0">
+            <EventSelector
+              events={events}
+              selectedEventId={selectedEventId}
+              onSelectEvent={onSelectEvent}
+              producerName={currentProducerName}
+            />
+          </div>
         )}
 
         <GlobalSearch
           value={searchQuery}
           onChange={onSearchChange}
-          className="flex-1"
+          className="flex-1 min-w-0"
         />
       </div>
 
       {/* Bloco Direito: Tema + Notificações + Perfil */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 relative z-20">
         {/* ThemeSwitcher da Fase 29.14.1.1 */}
         <ThemeToggleCompact />
 

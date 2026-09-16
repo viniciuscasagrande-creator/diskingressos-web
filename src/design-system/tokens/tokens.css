@@ -29,6 +29,10 @@
   --z-toast: 150;
 }
 
+html {
+  scroll-padding-top: var(--header-height, 4rem);
+}
+
 /* Movimento Reduzido (29.14.1.1.36) */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {

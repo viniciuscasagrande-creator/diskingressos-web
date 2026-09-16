@@ -41,6 +41,11 @@ export interface AppShellProps {
   inEventContext?: boolean
   canAdmin?: boolean
   fullWidthContent?: boolean
+  sidebarCollapsed?: boolean
+  onSidebarCollapsedChange?: (collapsed: boolean) => void
+  mobileNavOpen?: boolean
+  onToggleMobileNav?: () => void
+  onCloseMobileNav?: () => void
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -65,10 +70,15 @@ export const AppShell: React.FC<AppShellProps> = ({
   breadcrumbs = [],
   inEventContext = false,
   canAdmin = true,
-  fullWidthContent = false
+  fullWidthContent = false,
+  sidebarCollapsed: controlledSidebarCollapsed,
+  onSidebarCollapsedChange,
+  mobileNavOpen: controlledMobileNavOpen,
+  onToggleMobileNav,
+  onCloseMobileNav
 }) => {
-  // Estado da Sidebar colapsada com sincronização de localStorage
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+  // Estado interno da Sidebar colapsada com sincronização de localStorage
+  const [internalSidebarCollapsed, setInternalSidebarCollapsed] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false
     return (
       window.localStorage.getItem('disk-sidebar-collapsed') === 'true' ||
@@ -76,21 +86,56 @@ export const AppShell: React.FC<AppShellProps> = ({
     )
   })
 
-  // Estado da gaveta mobile
-  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  // Estado interno da gaveta mobile
+  const [internalMobileNavOpen, setInternalMobileNavOpen] = useState(false)
+
+  const isSidebarControlled = typeof controlledSidebarCollapsed === 'boolean'
+  const effectiveSidebarCollapsed = isSidebarControlled
+    ? controlledSidebarCollapsed
+    : internalSidebarCollapsed
+
+  const handleCollapsedChange = (collapsed: boolean) => {
+    if (!isSidebarControlled) {
+      setInternalSidebarCollapsed(collapsed)
+    }
+    onSidebarCollapsedChange?.(collapsed)
+  }
+
+  const isMobileNavControlled = typeof controlledMobileNavOpen === 'boolean'
+  const effectiveMobileNavOpen = isMobileNavControlled
+    ? controlledMobileNavOpen
+    : internalMobileNavOpen
+
+  const handleToggleMobileNav = () => {
+    if (onToggleMobileNav) {
+      onToggleMobileNav()
+    } else {
+      setInternalMobileNavOpen((prev) => !prev)
+    }
+  }
+
+  const handleCloseMobileNav = () => {
+    if (onCloseMobileNav) {
+      onCloseMobileNav()
+    } else {
+      setInternalMobileNavOpen(false)
+    }
+  }
 
   // Sincroniza persistência de colapso
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.localStorage.setItem('disk-sidebar-collapsed', String(sidebarCollapsed))
-      window.localStorage.setItem('safesaff.sidebar.collapsed', String(sidebarCollapsed))
+      window.localStorage.setItem('disk-sidebar-collapsed', String(effectiveSidebarCollapsed))
+      window.localStorage.setItem('safesaff.sidebar.collapsed', String(effectiveSidebarCollapsed))
     }
-  }, [sidebarCollapsed])
+  }, [effectiveSidebarCollapsed])
 
-  // Fecha o drawer mobile ao trocar de página
+  // Fecha o drawer mobile ao trocar de página se não for controlado externamente
   useEffect(() => {
-    setMobileNavOpen(false)
-  }, [page])
+    if (!isMobileNavControlled) {
+      setInternalMobileNavOpen(false)
+    }
+  }, [page, isMobileNavControlled])
 
   // Grupos de navegação filtrados para o drawer mobile
   const filteredGroups = filterNavigation(NAVIGATION_GROUPS, {
@@ -110,9 +155,9 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   return (
     <div
-      className={`min-h-screen bg-background text-foreground flex flex-col font-sans antialiased transition-colors ${
-        sidebarCollapsed ? 'sidebar-collapsed' : ''
-      }`}
+      className={`app-shell min-h-screen bg-background text-foreground flex flex-col font-sans antialiased transition-colors w-full max-w-full overflow-x-hidden ${
+        effectiveSidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''
+      } ${effectiveMobileNavOpen ? 'mobile-nav-open sidebar-mobile-expanded' : ''}`}
       data-testid="disk-app-shell"
       style={
         {
@@ -134,10 +179,18 @@ export const AppShell: React.FC<AppShellProps> = ({
         onSelectEvent={onSelectEvent}
         searchQuery={searchQuery}
         onSearchChange={onSearchChange}
-        onToggleMobileNav={() => setMobileNavOpen((prev) => !prev)}
-        isMobileNavOpen={mobileNavOpen}
+        onToggleMobileNav={handleToggleMobileNav}
+        isMobileNavOpen={effectiveMobileNavOpen}
         breadcrumbs={breadcrumbs}
         onLogout={onLogout}
+      />
+
+      <button
+        type="button"
+        className="mobile-nav-backdrop"
+        data-testid="mobile-nav-backdrop"
+        aria-label="Fechar navegação"
+        onClick={handleCloseMobileNav}
       />
 
       {/* Área Central: Sidebar Global + Conteúdo Principal */}
@@ -149,15 +202,15 @@ export const AppShell: React.FC<AppShellProps> = ({
           selectedEvent={selectedEvent}
           onNavigate={(p) => {
             onNavigate(p)
-            setMobileNavOpen(false)
+            handleCloseMobileNav()
           }}
           onBackToProducer={onBackToProducer}
           onSelectOtherEvent={onSelectOtherEvent}
           onHome={onHome}
           canAdmin={canAdmin}
           user={user}
-          onCollapsedChange={setSidebarCollapsed}
-          mobileNavOpen={mobileNavOpen}
+          onCollapsedChange={handleCollapsedChange}
+          mobileNavOpen={effectiveMobileNavOpen}
           inEventContext={inEventContext}
         />
 
@@ -169,11 +222,14 @@ export const AppShell: React.FC<AppShellProps> = ({
 
       {/* Gaveta de Navegação Mobile (Vertical, sem carrossel) */}
       <MobileNavigation
-        isOpen={mobileNavOpen}
-        onClose={() => setMobileNavOpen(false)}
+        isOpen={effectiveMobileNavOpen}
+        onClose={handleCloseMobileNav}
         groups={filteredGroups}
         currentPage={page}
-        onNavigate={onNavigate}
+        onNavigate={(p) => {
+          onNavigate(p)
+          handleCloseMobileNav()
+        }}
         producerName={producerDisplayName}
         eventName={eventDisplayName}
       />
