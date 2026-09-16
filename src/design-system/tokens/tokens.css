@@ -1,235 +1,27 @@
 /* ==========================================================================
    DISK INGRESSOS ENTERPRISE DESIGN SYSTEM
-   Tokens Visuais Baseados na Referência Komposo
-   Cores Oficiais: Laranja Disk (#F97316) + Superfícies Adaptativas Claro/Escuro
+   Tokens Visuais Oficiais Baseados na Referência Komposo
    ========================================================================== */
 
+@import "./colors.css";
+@import "./typography.css";
+@import "./spacing.css";
+@import "./radius.css";
+@import "./shadows.css";
+
+/* Transição de Tema Suave & Controlada (29.14.1.1.35) */
 :root {
-  /* Marca Institucional Disk */
-  --disk-color-primary: #F97316;
-  --disk-color-primary-hover: #EA580C;
-  --disk-color-primary-active: #C2410C;
-  --disk-color-primary-subtle: #FFF7ED;
-  --disk-color-primary-subtle-border: #FED7AA;
-  --disk-color-primary-foreground: #FFFFFF;
-
-  /* Superfícies & Fundos (Modo Claro) */
-  --disk-bg-app: #F8FAFC;
-  --disk-bg-surface: #FFFFFF;
-  --disk-bg-elevated: #FFFFFF;
-  --disk-bg-muted: #F1F5F9;
-  --disk-bg-hover: #F8FAFC;
-  --disk-bg-active: #F1F5F9;
-
-  /* Bordas & Divisores */
-  --disk-border-default: #E2E8F0;
-  --disk-border-subtle: #F1F5F9;
-  --disk-border-strong: #CBD5E1;
-  --disk-border-focus: #F97316;
-
-  /* Tipografia & Contrastes */
-  --disk-text-primary: #0F172A;
-  --disk-text-secondary: #334155;
-  --disk-text-muted: #64748B;
-  --disk-text-disabled: #94A3B8;
-  --disk-text-inverse: #FFFFFF;
-
-  /* Estados Semânticos Unificados */
-  --disk-color-success: #10B981;
-  --disk-color-success-hover: #059669;
-  --disk-color-success-subtle: #ECFDF5;
-  --disk-color-success-border: #A7F3D0;
-  --disk-color-success-text: #065F46;
-
-  --disk-color-warning: #F59E0B;
-  --disk-color-warning-hover: #D97706;
-  --disk-color-warning-subtle: #FFFBEB;
-  --disk-color-warning-border: #FDE68A;
-  --disk-color-warning-text: #92400E;
-
-  --disk-color-danger: #EF4444;
-  --disk-color-danger-hover: #DC2626;
-  --disk-color-danger-subtle: #FEF2F2;
-  --disk-color-danger-border: #FECACA;
-  --disk-color-danger-text: #991B1B;
-
-  --disk-color-info: #3B82F6;
-  --disk-color-info-hover: #2563EB;
-  --disk-color-info-subtle: #EFF6FF;
-  --disk-color-info-border: #BFDBFE;
-  --disk-color-info-text: #1E40AF;
-
-  /* Paleta Unificada de Gráficos & Métricas */
-  --disk-chart-1: #F97316;
-  --disk-chart-2: #10B981;
-  --disk-chart-3: #3B82F6;
-  --disk-chart-4: #8B5CF6;
-  --disk-chart-5: #EC4899;
-  --disk-chart-6: #06B6D4;
-  --disk-chart-grid: #E2E8F0;
-  --disk-chart-axis: #64748B;
-
-  /* Sombras */
-  --disk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --disk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-  --disk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-
-  /* Transição de Tema */
   --disk-theme-transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-
-  /* Compatibilidade shadcn/ui & Tailwind Core Semantic Tokens */
-  --background: #F8FAFC;
-  --foreground: #0F172A;
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #F97316;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-  --accent: #FFF7ED;
-  --accent-foreground: #C2410C;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #CBD5E1;
-  --ring: #F97316;
-  --radius: 0.75rem;
-
-  /* Estados semânticos globais */
-  --success: #10B981;
-  --warning: #F59E0B;
-  --info: #3B82F6;
-
-  /* Tokens preparados para Sidebar na próxima etapa */
-  --sidebar: #1E293B;
-  --sidebar-foreground: #F8FAFC;
-  --sidebar-hover: #334155;
-  --sidebar-active: #F97316;
-  --sidebar-border: #334155;
-
-  /* Tokens preparados para Gráficos */
-  --chart-1: #F97316;
-  --chart-2: #10B981;
-  --chart-3: #3B82F6;
-  --chart-4: #8B5CF6;
-  --chart-5: #EC4899;
 }
 
-/* Modo Escuro (.dark ou [data-theme="dark"]) */
-.dark,
-[data-theme="dark"] {
-  /* Marca Institucional Disk (Ajuste de contraste) */
-  --disk-color-primary: #F97316;
-  --disk-color-primary-hover: #FB923C;
-  --disk-color-primary-active: #EA580C;
-  --disk-color-primary-subtle: rgba(249, 115, 22, 0.14);
-  --disk-color-primary-subtle-border: rgba(249, 115, 22, 0.32);
-  --disk-color-primary-foreground: #FFFFFF;
-
-  /* Superfícies & Fundos (Modo Escuro Komposo) */
-  --disk-bg-app: #0B0F19;
-  --disk-bg-surface: #111827;
-  --disk-bg-elevated: #1F2937;
-  --disk-bg-muted: #162032;
-  --disk-bg-hover: #1E293B;
-  --disk-bg-active: #24334C;
-
-  /* Bordas & Divisores */
-  --disk-border-default: #1F2937;
-  --disk-border-subtle: #162032;
-  --disk-border-strong: #374151;
-  --disk-border-focus: #F97316;
-
-  /* Tipografia & Contrastes */
-  --disk-text-primary: #F8FAFC;
-  --disk-text-secondary: #CBD5E1;
-  --disk-text-muted: #94A3B8;
-  --disk-text-disabled: #64748B;
-  --disk-text-inverse: #0F172A;
-
-  /* Estados Semânticos Unificados */
-  --disk-color-success: #10B981;
-  --disk-color-success-hover: #34D399;
-  --disk-color-success-subtle: rgba(16, 185, 129, 0.14);
-  --disk-color-success-border: rgba(16, 185, 129, 0.3);
-  --disk-color-success-text: #34D399;
-
-  --disk-color-warning: #F59E0B;
-  --disk-color-warning-hover: #FBBF24;
-  --disk-color-warning-subtle: rgba(245, 158, 11, 0.14);
-  --disk-color-warning-border: rgba(245, 158, 11, 0.3);
-  --disk-color-warning-text: #FBBF24;
-
-  --disk-color-danger: #EF4444;
-  --disk-color-danger-hover: #F87171;
-  --disk-color-danger-subtle: rgba(239, 68, 68, 0.14);
-  --disk-color-danger-border: rgba(239, 68, 68, 0.3);
-  --disk-color-danger-text: #F87171;
-
-  --disk-color-info: #3B82F6;
-  --disk-color-info-hover: #60A5FA;
-  --disk-color-info-subtle: rgba(59, 130, 246, 0.14);
-  --disk-color-info-border: rgba(59, 130, 246, 0.3);
-  --disk-color-info-text: #60A5FA;
-
-  /* Paleta Unificada de Gráficos & Métricas (Dark Mode) */
-  --disk-chart-1: #FB923C;
-  --disk-chart-2: #34D399;
-  --disk-chart-3: #60A5FA;
-  --disk-chart-4: #A78BFA;
-  --disk-chart-5: #F472B6;
-  --disk-chart-6: #22D3EE;
-  --disk-chart-grid: #1F2937;
-  --disk-chart-axis: #94A3B8;
-
-  /* Sombras no Dark Mode */
-  --disk-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --disk-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-  --disk-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-
-  /* Compatibilidade shadcn/ui & Tailwind Core Semantic Tokens (Modo Escuro) */
-  --background: #0B0F19;
-  --foreground: #F8FAFC;
-  --card: #111827;
-  --card-foreground: #F8FAFC;
-  --popover: #1F2937;
-  --popover-foreground: #F8FAFC;
-  --primary: #F97316;
-  --primary-foreground: #FFFFFF;
-  --secondary: #1F2937;
-  --secondary-foreground: #F8FAFC;
-  --muted: #162032;
-  --muted-foreground: #94A3B8;
-  --accent: rgba(249, 115, 22, 0.14);
-  --accent-foreground: #FB923C;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #1F2937;
-  --input: #374151;
-  --ring: #F97316;
-
-  /* Estados semânticos globais */
-  --success: #10B981;
-  --warning: #F59E0B;
-  --info: #3B82F6;
-
-  /* Tokens preparados para Sidebar na próxima etapa */
-  --sidebar: #0F172A;
-  --sidebar-foreground: #F8FAFC;
-  --sidebar-hover: #1E293B;
-  --sidebar-active: #F97316;
-  --sidebar-border: #1E293B;
-
-  /* Tokens preparados para Gráficos (Dark Mode) */
-  --chart-1: #FB923C;
-  --chart-2: #34D399;
-  --chart-3: #60A5FA;
-  --chart-4: #A78BFA;
-  --chart-5: #F472B6;
+/* Movimento Reduzido (29.14.1.1.36) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* ==========================================================================
@@ -258,7 +50,7 @@
 .disk-card {
   background-color: var(--disk-bg-surface);
   border: 1px solid var(--disk-border-default);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   box-shadow: var(--disk-shadow-sm);
   color: var(--disk-text-primary);
   transition: var(--disk-theme-transition);
@@ -267,7 +59,7 @@
 .disk-card-interactive {
   background-color: var(--disk-bg-surface);
   border: 1px solid var(--disk-border-default);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   box-shadow: var(--disk-shadow-sm);
   color: var(--disk-text-primary);
   transition: all 0.2s ease;
@@ -278,14 +70,14 @@
   box-shadow: var(--disk-shadow-md);
 }
 
-/* Botões do Design System */
+/* Botões do Design System (29.14.1.1.22) */
 .disk-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   font-weight: 700;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 10px 16px;
   font-size: 14px;
   transition: all 0.15s ease;
@@ -345,7 +137,7 @@
   background-color: var(--disk-bg-surface);
   border: 1px solid var(--disk-border-default);
   color: var(--disk-text-primary);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 10px 14px;
   font-size: 14px;
   outline: none;
@@ -364,13 +156,13 @@
   cursor: not-allowed;
 }
 
-/* Badges Semânticos */
+/* Badges Semânticos (29.14.1.1.8) */
 .disk-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;

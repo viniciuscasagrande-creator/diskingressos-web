@@ -1,0 +1,77 @@
+/* ==========================================================================
+   DISK INGRESSOS DESIGN SYSTEM — TIPOGRAFIA & NÚMEROS TABULARES
+   ========================================================================== */
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Escala de Tamanhos */
+  --font-size-page: 2rem;       /* 32px */
+  --font-size-section: 1.5rem;   /* 24px */
+  --font-size-card: 1rem;        /* 16px */
+  --font-size-kpi: 1.875rem;     /* 30px */
+  --font-size-body: 0.875rem;    /* 14px */
+  --font-size-aux: 0.75rem;      /* 12px */
+
+  /* Pesos */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+}
+
+/* Classes Utilitárias Tipográficas Padronizadas */
+.disk-heading-page {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-page);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.disk-heading-section {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-section);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.disk-heading-card {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-card);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.4;
+}
+
+.disk-text-kpi {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-kpi);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.disk-text-body {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+}
+
+.disk-text-aux {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-aux);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.4;
+}
+
+/* Valores Financeiros (29.14.1.1.14) */
+.disk-currency-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+  text-align: right;
+}

@@ -12,11 +12,9 @@
           var stored = localStorage.getItem('disk-theme');
           var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
           var resolved = stored === 'dark' || ((!stored || stored === 'system') && prefersDark) ? 'dark' : 'light';
-          if (resolved === 'dark') {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(resolved);
+          document.documentElement.style.colorScheme = resolved;
           document.documentElement.setAttribute('data-theme', resolved);
           var metaThemeColor = document.querySelector('meta[name="theme-color"]');
           if (metaThemeColor) {
