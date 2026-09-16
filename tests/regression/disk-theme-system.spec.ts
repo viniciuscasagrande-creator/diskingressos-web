@@ -82,7 +82,7 @@ test.describe('Design System Disk • Padrão Visual Komposo & Sistema de Temas'
     const showcase = page.locator('[data-testid="design-system-showcase"]')
     await expect(showcase).toBeVisible({ timeout: 15000 })
 
-    const toggleCompact = page.locator('[data-testid="disk-theme-toggle-compact"]')
+    const toggleCompact = page.locator('[data-testid="disk-theme-toggle-compact"]').first()
     await expect(toggleCompact).toBeVisible()
 
     // Clicar para alternar

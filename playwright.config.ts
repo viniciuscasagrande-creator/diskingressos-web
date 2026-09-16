@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000'
-const external = Boolean(process.env.PLAYWRIGHT_BASE_URL)
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3005'
+const external = Boolean(process.env.PLAYWRIGHT_BASE_URL || true)
 
 export default defineConfig({
   testDir: './tests',

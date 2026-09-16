@@ -268,11 +268,15 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
   }, [page, isAdminActive])
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false
-    return window.localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
+    return (
+      window.localStorage.getItem('disk-sidebar-collapsed') === 'true' ||
+      window.localStorage.getItem('safesaff.sidebar.collapsed') === 'true'
+    )
   })
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      window.localStorage.setItem('disk-sidebar-collapsed', String(collapsed))
       window.localStorage.setItem('safesaff.sidebar.collapsed', String(collapsed))
     }
     onCollapsedChange?.(collapsed)
@@ -473,16 +477,7 @@ function CollapsibleSection({
   children: ReactNode
 }) {
   return (
-    <div
-      className="collapsible-nav-section"
-      onMouseLeave={() => {
-        // Desktop com mouse: mantém a expansão temporária aprovada na Fase 25.3.2.1.
-        // Touch/tablet não fecha por mouseleave sintético.
-        if (open && !keepOpen && typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-          onClose()
-        }
-      }}
-    >
+    <div className="collapsible-nav-section">
       <button
         type="button"
         className={`collapsible-section-head ${open ? 'open' : ''}`}

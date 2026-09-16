@@ -7,6 +7,9 @@ import { LogOut, Menu, Search, SlidersHorizontal, Calendar, Building2 } from 'lu
 import { isGlobalAdmin, roleLabel, type AppUser, type Producer } from '../auth/model'
 import GlobalEventSelector from './GlobalEventSelector'
 import type { SafeSaffScope } from '../context/app-context'
+import { ThemeToggleCompact } from '../design-system/components/ThemeToggleCompact'
+import { NotificationMenu } from './user/NotificationMenu'
+import { ContextIndicator } from './context/ContextIndicator'
 
 export type HeaderEventItem = {
   id: number
@@ -110,6 +113,12 @@ export default function Header({
         />
       </div>
 
+      {/* Indicador de Contexto Ativo (Produtora / Evento) */}
+      <ContextIndicator
+        producerName={effectiveProducerName}
+        eventName={availableEvents.find((e) => e.id === selectedEventId)?.title || null}
+      />
+
       <div className="search-wrap global-search">
         <Search size={21} />
         <input
@@ -186,6 +195,12 @@ export default function Header({
             </select>
           </div>
         )}
+
+        {/* Alternador de Tema Komposo (Fase 29.14.1.1) */}
+        <ThemeToggleCompact />
+
+        {/* Notificações Rápidas do Header */}
+        <NotificationMenu />
 
         <div className="avatar">
           {userInitials}

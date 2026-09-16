@@ -29,6 +29,9 @@ import { useTheme } from '../../design-system/hooks/useTheme'
 import { ThemeSwitcher } from '../../design-system/components/ThemeSwitcher'
 import { ThemeToggleCompact } from '../../design-system/components/ThemeToggleCompact'
 import { getChartPalette } from '../../design-system/themes/chart-theme'
+import { NavigationDiagnostic } from '../dev/NavigationDiagnostic'
+import { ContextIndicator } from '../context/ContextIndicator'
+import { NotificationMenu } from '../user/NotificationMenu'
 
 export const DesignSystemShowcasePage: React.FC = () => {
   const { theme, resolvedTheme, setTheme } = useTheme()
@@ -848,6 +851,79 @@ export const DesignSystemShowcasePage: React.FC = () => {
                 )
               })}
             </svg>
+          </div>
+        </div>
+      </section>
+
+      {/* Seção Nova: AppShell & Header Global Komposo/Disk */}
+      <section className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800" data-testid="showcase-appshell-section">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/20">
+            <Layout className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+              Estrutura Unificada — AppShell + Header + Sidebar Komposo/Disk
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Arquitetura de casca única, seletor de contexto Produtor × Evento, Drawer mobile sem overflow e persistência de recolhimento por clique.
+            </p>
+          </div>
+        </div>
+
+        {/* Demonstração dos Componentes do Header Global */}
+        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+            Componentes Centrais Integrados ao Header Global
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-3">
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                Indicador Contextual (Produtora / Evento)
+              </span>
+              <div className="flex flex-wrap items-center gap-3">
+                <ContextIndicator
+                  producerName="Seven Entretenimento"
+                  eventName="Festival Coolritiba 2026"
+                />
+                <ContextIndicator
+                  producerName="Opus Entretenimento"
+                  eventName={null}
+                />
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Evita o risco operacional de atuar no evento errado em áreas críticas (Financeiro, Marketing, Cupons).
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-3">
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+                Ações Rápidas do Header
+              </span>
+              <div className="flex items-center gap-3">
+                <ThemeToggleCompact />
+                <NotificationMenu />
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Alternador de tema Komposo e central rápida de notificações dividida em Não Lidas e Críticas.
+              </p>
+            </div>
+          </div>
+
+          {/* Painel de Diagnóstico do Modo Desenvolvedor */}
+          <div className="pt-2">
+            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2">
+              Painel de Diagnóstico de Navegação
+            </h4>
+            <NavigationDiagnostic
+              user={{ id: 1, name: 'Administrador Master', email: 'admin@diskingressos.com.br', role: 'admin-master', producerId: null, status: 'ativo' }}
+              producerId={1}
+              producerName="Seven Entretenimento"
+              eventId={101}
+              eventName="Festival Coolritiba 2026"
+              currentPage="events"
+            />
           </div>
         </div>
       </section>

@@ -12,6 +12,21 @@
 /* Transição de Tema Suave & Controlada (29.14.1.1.35) */
 :root {
   --disk-theme-transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  /* Variáveis Estruturais do AppShell Komposo/Disk (29.14.1.2.65 e 29.14.1.2.66) */
+  --sidebar-width: 17rem;
+  --sidebar-collapsed-width: 4.5rem;
+  --header-height: 4rem;
+  --content-max-width: 100rem;
+
+  /* Escala de Z-Index Padronizada (29.14.1.2.67) */
+  --z-content: 1;
+  --z-header: 40;
+  --z-sidebar: 45;
+  --z-overlay: 50;
+  --z-drawer: 60;
+  --z-modal: 100;
+  --z-toast: 150;
 }
 
 /* Movimento Reduzido (29.14.1.1.36) */
