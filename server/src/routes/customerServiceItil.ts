@@ -131,7 +131,7 @@ let customerTimelines = [
 ]
 
 // Chamados ITIL (Segregação SAC × Suporte a Eventos)
-let itilCases = [
+let itilCases: any[] = [
   // 1. Chamado do SAC (Consumidor / Comprador Final)
   {
     id: 'CASE-2026-10491',
@@ -289,7 +289,7 @@ customerServiceItilRouter.get('/customers', (req: Request, res: Response) => {
 // 2. Dossiê Completo do Cliente (Histórico Unificado)
 customerServiceItilRouter.get('/customers/:id', (req: Request, res: Response) => {
   const { id } = req.params
-  const customer = customers.find(c => c.id === id || c.documentRaw === id.replace(/[\.-]/g, ''))
+  const customer = customers.find(c => c.id === id || c.documentRaw === String(id).replace(/[\.-]/g, ''))
   if (!customer) {
     return res.status(404).json({ success: false, error: 'Cliente não encontrado.' })
   }

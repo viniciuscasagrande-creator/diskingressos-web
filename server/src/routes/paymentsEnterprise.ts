@@ -483,15 +483,16 @@ paymentsEnterpriseRouter.post('/:id/review-risk', (req: Request, res: Response) 
   if (!p) return res.status(404).json({ error: 'Pagamento não localizado' })
 
   p.status = decision === 'aprovar' ? 'aprovado' : 'recusado'
-  p.risk.reviewedBy = reviewerName || 'Auditor de Risco'
-  p.risk.reviewedAt = new Date().toISOString()
-  p.risk.reviewNotes = notes || 'Aprovado após checagem documental manual'
+  const riskAny = p.risk as any
+  riskAny.reviewedBy = reviewerName || 'Auditor de Risco'
+  riskAny.reviewedAt = new Date().toISOString()
+  riskAny.reviewNotes = notes || 'Aprovado após checagem documental manual'
   p.timeline.push({
     timestamp: new Date().toISOString(),
     step: decision === 'aprovar' ? 'Risco Liberado Manualmente' : 'Transação Bloqueada por Risco',
     status: decision === 'aprovar' ? 'APROVADO' : 'RECUSADO',
-    detail: `Revisão por ${p.risk.reviewedBy}: ${p.risk.reviewNotes}`,
-    actor: p.risk.reviewedBy
+    detail: `Revisão por ${riskAny.reviewedBy}: ${riskAny.reviewNotes}`,
+    actor: riskAny.reviewedBy
   })
 
   res.json({
@@ -530,10 +531,11 @@ paymentsEnterpriseRouter.post('/reconciliations/:id/resolve', (req: Request, res
   const r = reconciliations.find(x => x.id === req.params.id)
   if (!r) return res.status(404).json({ error: 'Divergência não localizada' })
 
-  r.status = 'resolvido_manualmente'
-  r.resolvedAt = new Date().toISOString()
-  r.resolvedBy = resolver || 'Controlador Financeiro'
-  r.resolutionNotes = notes || 'Ajuste compensatório efetuado'
+  const rAny = r as any
+  rAny.status = 'resolvido_manualmente'
+  rAny.resolvedAt = new Date().toISOString()
+  rAny.resolvedBy = resolver || 'Controlador Financeiro'
+  rAny.resolutionNotes = notes || 'Ajuste compensatório efetuado'
 
   res.json({
     ok: true,

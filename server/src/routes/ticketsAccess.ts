@@ -367,7 +367,7 @@ let validationLogs = [
   }
 ]
 
-let conflicts = [
+let conflicts: any[] = [
   {
     id: 'CONF-001',
     ticketId: 'TKT-2026-981240-01',
