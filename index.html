@@ -6,6 +6,25 @@
     <meta name="theme-color" content="#0F172A" />
     <title>DiskIngressos • Gestão de Eventos, Financeiro & Contabilidade</title>
     <style>html,body,#root{height:100%;margin:0}</style>
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('disk-theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var resolved = stored === 'dark' || ((!stored || stored === 'system') && prefersDark) ? 'dark' : 'light';
+          if (resolved === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+          document.documentElement.setAttribute('data-theme', resolved);
+          var metaThemeColor = document.querySelector('meta[name="theme-color"]');
+          if (metaThemeColor) {
+            metaThemeColor.setAttribute('content', resolved === 'dark' ? '#0B0F19' : '#F8FAFC');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

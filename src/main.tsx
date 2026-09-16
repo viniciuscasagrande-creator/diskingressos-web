@@ -2,7 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import ErrorBoundary from './components/ErrorBoundary'
+import { ThemeProvider } from './design-system'
 import './styles.css'
+import './design-system/tokens/tokens.css'
 import './styles/limitless-enterprise.css'
 import './styles/responsive-enterprise-360.css'
 import './styles/sidebar-enterprise.css'
@@ -25,7 +27,9 @@ try {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <ErrorBoundary>
-        <App />
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
       </ErrorBoundary>
     </React.StrictMode>,
   )

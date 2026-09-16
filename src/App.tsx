@@ -364,7 +364,7 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
   if (clean === 'eventos') return 'events'
   if (clean === 'event-support' || clean === 'app/event-support') return 'event-support'
   if (clean === 'commerce-orders' || clean === 'app/commerce-orders' || clean === 'pedidos' || clean === 'app/pedidos') return 'commerce-orders'
-  if (clean === 'developer-center' || clean === 'app/developer-center' || clean === 'desenvolvedor' || clean === 'app/desenvolvedor') return 'developer-center'
+  if (clean === 'developer-center' || clean === 'app/developer-center' || clean === 'desenvolvedor' || clean === 'app/desenvolvedor' || clean === 'desenvolvedor/design-system' || clean === 'app/desenvolvedor/design-system') return 'developer-center'
   if (clean === 'payments-hub' || clean === 'payments' || clean === 'app/payments' || clean === 'pagamentos' || clean === 'app/pagamentos') return 'payments-hub'
   if (clean === 'tickets-hub' || clean === 'tickets' || clean === 'app/tickets' || clean === 'ingressos' || clean === 'app/ingressos') return 'tickets-hub'
   if (clean === 'access-control-hub' || clean === 'access-control' || clean === 'access' || clean === 'app/access-control' || clean === 'acesso' || clean === 'app/acesso') return 'access-control-hub'
@@ -425,7 +425,7 @@ export default function App() {
       const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
       const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
       if (clean === 'commerce-orders' || clean === 'pedidos') return 'commerce-orders'
-      if (clean === 'developer-center' || clean === 'desenvolvedor') return 'developer-center'
+      if (clean === 'developer-center' || clean === 'desenvolvedor' || clean === 'desenvolvedor/design-system') return 'developer-center'
       if (clean === 'payments-hub' || clean === 'payments' || clean === 'pagamentos') return 'payments-hub'
       if (clean === 'tickets-hub' || clean === 'tickets' || clean === 'ingressos') return 'tickets-hub'
       if (clean === 'access-control-hub' || clean === 'access-control' || clean === 'access' || clean === 'acesso') return 'access-control-hub'

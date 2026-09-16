@@ -24,7 +24,8 @@ import {
   SlidersHorizontal,
   ChevronDown,
   ChevronRight,
-  X
+  X,
+  Palette
 } from 'lucide-react'
 import { developerObservabilityService } from '../../services/developerObservability.service'
 import type {
@@ -36,6 +37,7 @@ import type {
   ActiveSessionItem
 } from '../../types/iam-security.types'
 import { DeveloperImpersonationBanner } from './DeveloperImpersonationBanner'
+import { DesignSystemShowcasePage } from './DesignSystemShowcasePage'
 
 export const DeveloperCommandCenterPage: React.FC = () => {
   const [summary, setSummary] = useState<DeveloperCommandCenterSummary | null>(null)
@@ -43,7 +45,14 @@ export const DeveloperCommandCenterPage: React.FC = () => {
   const [errors, setErrors] = useState<ErrorFingerprint[]>([])
   const [queues, setQueues] = useState<QueueHealthStatus[]>([])
   const [sessions, setSessions] = useState<ActiveSessionItem[]>([])
-  const [activeTab, setActiveTab] = useState<'investigacao' | 'logs' | 'erros' | 'filas' | 'sessoes' | 'saude'>('investigacao')
+  const [activeTab, setActiveTab] = useState<'investigacao' | 'logs' | 'erros' | 'filas' | 'sessoes' | 'saude' | 'design-system'>(() => {
+    if (typeof window !== 'undefined') {
+      if (window.location.hash.includes('design-system') || window.location.pathname.includes('design-system')) {
+        return 'design-system'
+      }
+    }
+    return 'investigacao'
+  })
   
   // Rastreamento por Correlation ID
   const [searchCorrelationId, setSearchCorrelationId] = useState('COR-982736')
@@ -323,6 +332,25 @@ export const DeveloperCommandCenterPage: React.FC = () => {
         >
           <Activity className="w-4 h-4" />
           <span>Saúde dos Componentes</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('design-system')
+            try {
+              window.location.hash = '#/desenvolvedor/design-system'
+            } catch {}
+          }}
+          data-testid="tab-design-system"
+          className={`px-4 py-3 border-b-2 transition flex items-center gap-1.5 whitespace-nowrap ${
+            activeTab === 'design-system'
+              ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+              : 'border-transparent text-slate-500 hover:text-slate-900 dark:hover:text-slate-200'
+          }`}
+        >
+          <Palette className="w-4 h-4 text-orange-500" />
+          <span>Design System Disk (Komposo)</span>
         </button>
       </div>
 
@@ -865,6 +893,11 @@ export const DeveloperCommandCenterPage: React.FC = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {/* ABA: DESIGN SYSTEM DISK (KOMPOSO) */}
+      {activeTab === 'design-system' && (
+        <DesignSystemShowcasePage />
       )}
     </div>
   )
