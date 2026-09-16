@@ -159,7 +159,17 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     menuKey: 'finance',
     breadcrumb: ['Financeiro', 'Transferências'],
     context: { producer: true, event: false },
-    permissions: ['financeiro.transferencias.criar', 'financeiro.visualizar']
+    permissions: ['financeiro.transferencias.executar', 'financeiro.visualizar']
+  },
+  '/financial-core': {
+    path: '/financial-core',
+    view: 'financial-core',
+    module: 'financeiro',
+    title: 'Núcleo Financeiro & Contábil Enterprise',
+    menuKey: 'finance-dashboard',
+    breadcrumb: ['Financeiro', 'Núcleo Enterprise'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
   },
   '/app/finance-chart-accounts': {
     path: '/app/finance-chart-accounts',

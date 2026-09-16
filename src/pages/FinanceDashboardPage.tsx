@@ -200,6 +200,16 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
           </div>
 
           <div className="finance-action-buttons">
+            {onNavigate && (
+              <button
+                type="button"
+                className="tool-btn bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 font-semibold"
+                onClick={() => onNavigate('financial-core')}
+                title="Abrir Núcleo Financeiro & Contábil Enterprise"
+              >
+                <Landmark size={15} /> Núcleo Enterprise
+              </button>
+            )}
             <button className="tool-btn" onClick={exportFinancialReport} title="Exportar CSV">
               <Download size={15} /> Exportar
             </button>

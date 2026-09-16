@@ -39,6 +39,7 @@ import { commerceCoreRouter } from './routes/commerceCore.js'
 import { paymentsEnterpriseRouter } from './routes/paymentsEnterprise.js'
 import { ticketsAccessRouter } from './routes/ticketsAccess.js'
 import { customerServiceItilRouter } from './routes/customerServiceItil.js'
+import { financialAccountingCoreRouter } from './routes/financialAccountingCore.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -151,6 +152,9 @@ app.use('/api/v1/access', ticketsAccessRouter)
 app.use('/api/v1/customers-service', customerServiceItilRouter)
 app.use('/api/v1/itil', customerServiceItilRouter)
 app.use('/api/customers', customerServiceItilRouter)
+app.use('/api/v1/finance-core', financialAccountingCoreRouter)
+app.use('/api/v1/accounting-core', financialAccountingCoreRouter)
+app.use('/api/financial-core', financialAccountingCoreRouter)
 app.use('/api/communication', communicationRouter)
 app.use('/api/audit', auditRouter)
 

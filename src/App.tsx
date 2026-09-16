@@ -92,6 +92,7 @@ import { PaymentsHubPage } from './components/payments/PaymentsHubPage'
 import { TicketsHubPage } from './components/tickets/TicketsHubPage'
 import { AccessControlHubPage } from './components/access/AccessControlHubPage'
 import { CustomerSearchHubPage } from './components/customers/CustomerSearchHubPage'
+import { FinancialCoreHubPage } from './components/finance/FinancialCoreHubPage'
 
 const mobileInternalHeaderPages = new Set<PageKey>([
   'events',
@@ -206,6 +207,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'finance-gateways': 'Gateway de Pagamentos',
   'finance-pdv': 'Pontos de Venda (PDV)',
   'finance-chart-accounts': 'Plano de Contas',
+  'financial-core': 'Núcleo Financeiro & Contábil',
 
   // CONTABILIDADE (FASE 28.15.4)
   'accounting-dashboard': 'Visão Geral Contábil',
@@ -428,6 +430,7 @@ export default function App() {
       if (clean === 'tickets-hub' || clean === 'tickets' || clean === 'ingressos') return 'tickets-hub'
       if (clean === 'access-control-hub' || clean === 'access-control' || clean === 'access' || clean === 'acesso') return 'access-control-hub'
       if (clean === 'customer-search-hub' || clean === 'customers' || clean === 'clientes') return 'customer-search-hub'
+      if (clean === 'financial-core' || clean === 'finance-core' || clean === 'financeiro-core') return 'financial-core'
       if (clean.startsWith('eventos/')) {
         const parts = clean.split('/')
         const tool = parts[2] || 'dashboard'
@@ -1149,6 +1152,9 @@ export default function App() {
         )}
         {page === 'customer-search-hub' && (
           <CustomerSearchHubPage />
+        )}
+        {page === 'financial-core' && (
+          <FinancialCoreHubPage />
         )}
         {page === 'new-event' && <EventFormPage mode="new" onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'edit-event' && <EventFormPage mode="edit" event={selectedEvent} onCancel={() => setPage('events')} onSave={saveEvent} />}
