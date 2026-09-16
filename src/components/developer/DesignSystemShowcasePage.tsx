@@ -32,6 +32,7 @@ import { getChartPalette } from '../../design-system/themes/chart-theme'
 import { NavigationDiagnostic } from '../dev/NavigationDiagnostic'
 import { ContextIndicator } from '../context/ContextIndicator'
 import { NotificationMenu } from '../user/NotificationMenu'
+import { UniversalComponentsShowcase } from './UniversalComponentsShowcase'
 
 export const DesignSystemShowcasePage: React.FC = () => {
   const { theme, resolvedTheme, setTheme } = useTheme()
@@ -927,6 +928,9 @@ export const DesignSystemShowcasePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Seção da Biblioteca de Componentes Universais Komposo/Disk */}
+      <UniversalComponentsShowcase />
     </div>
   )
 }

@@ -30,6 +30,12 @@ import type {
   OrderStatus
 } from '../../types/commerce-orders.types'
 import { OrderDossier360Modal } from './OrderDossier360Modal'
+import {
+  DiskPageHeader,
+  DiskKpiCard,
+  DiskButton,
+  DiskBadge
+} from '../../design-system'
 
 interface CommerceOrdersHubPageProps {
   onNavigateToPayments?: () => void
@@ -93,15 +99,15 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'PAID':
-        return <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Pago</span>
+        return <DiskBadge variant="success" size="sm">Pago</DiskBadge>
       case 'FULFILLED':
-        return <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-teal-50 text-teal-700 border border-teal-200">Concluído</span>
+        return <DiskBadge variant="info" size="sm">Concluído</DiskBadge>
       case 'AWAITING_PAYMENT':
-        return <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200">Aguardando Pagamento</span>
+        return <DiskBadge variant="warning" size="sm">Aguardando Pagamento</DiskBadge>
       case 'REFUNDED':
-        return <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200">Estornado</span>
+        return <DiskBadge variant="danger" size="sm">Estornado</DiskBadge>
       default:
-        return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-700">{status}</span>
+        return <DiskBadge variant="neutral" size="sm">{status}</DiskBadge>
     }
   }
 
@@ -109,176 +115,145 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
     switch (channel) {
       case 'SITE':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-100 text-sky-800 flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 flex items-center gap-1">
             <Globe className="w-3 h-3" /> Site
           </span>
         )
       case 'BOX_OFFICE':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-800 flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 flex items-center gap-1">
             <Building className="w-3 h-3" /> Bilheteria
           </span>
         )
       case 'PDV':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-100 text-indigo-800 flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 flex items-center gap-1">
             <Store className="w-3 h-3" /> PDV
           </span>
         )
       case 'DISK':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
+          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 flex items-center gap-1">
             <UserCheck className="w-3 h-3" /> Produtor
           </span>
         )
       default:
-        return <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700">{channel}</span>
+        return <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">{channel}</span>
     }
   }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn" data-testid="commerce-orders-hub">
-      {/* Cabeçalho da Central Comercial */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
-        <div>
-          <div className="flex items-center gap-2 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-1">
-            <ShoppingBag className="w-4 h-4" />
-            Disk Interno • Motor Comercial & Vendas Omnichannel
+      {/* Cabeçalho da Central Comercial via DiskPageHeader */}
+      <DiskPageHeader
+        eyebrow="Disk Interno • Motor Comercial & Vendas Omnichannel"
+        title="Pedidos, Ingressos & Integridade Comercial"
+        description="Operação unificada do Commerce Core: vendas originadas pelo Site, Bilheterias, PDVs e Portal do Produtor."
+        actions={
+          <div className="flex flex-wrap items-center gap-2.5">
+            <DiskButton
+              variant="outline"
+              size="sm"
+              onClick={loadData}
+              icon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-primary' : ''}`} />}
+            >
+              Atualizar Vendas
+            </DiskButton>
+            {onNavigateToPayments && (
+              <button
+                type="button"
+                onClick={onNavigateToPayments}
+                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
+                data-testid="goto-payments-btn"
+              >
+                <CreditCard className="w-3.5 h-3.5" />
+                <span>Central de Pagamentos</span>
+              </button>
+            )}
+            {onNavigateToTickets && (
+              <button
+                type="button"
+                onClick={onNavigateToTickets}
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
+                data-testid="goto-tickets-btn"
+              >
+                <Ticket className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Ingressos & QR Codes</span>
+              </button>
+            )}
+            {onNavigateToAccess && (
+              <button
+                type="button"
+                onClick={onNavigateToAccess}
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
+                data-testid="goto-access-btn"
+              >
+                <Scan className="w-3.5 h-3.5" />
+                <span>Disk Acesso</span>
+              </button>
+            )}
+            {onNavigateToCustomers && (
+              <button
+                type="button"
+                onClick={onNavigateToCustomers}
+                className="px-3 py-1.5 bg-[var(--disk-bg-surface)] hover:bg-[var(--disk-bg-surface-hover)] text-[var(--disk-text-primary)] border border-[var(--disk-border-subtle)] text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+                data-testid="goto-customers-btn"
+              >
+                <Users className="w-3.5 h-3.5 text-[var(--disk-primary)]" />
+                <span>Central de Clientes</span>
+              </button>
+            )}
+            <span className="px-3 py-1.5 rounded-lg bg-[var(--disk-bg-surface-sunken)] border border-[var(--disk-border-subtle)] text-[var(--disk-text-secondary)] text-xs font-semibold flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-[var(--disk-primary)]" />
+              Commerce Core Homologado
+            </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-            Pedidos, Ingressos & Integridade Comercial
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Operação unificada do Commerce Core: vendas originadas pelo Site, Bilheterias, PDVs e Portal do Produtor.
-          </p>
-        </div>
+        }
+      />
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            type="button"
-            onClick={loadData}
-            className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-indigo-600' : ''}`} />
-            <span>Atualizar Vendas</span>
-          </button>
-          {onNavigateToPayments && (
-            <button
-              type="button"
-              onClick={onNavigateToPayments}
-              className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30"
-              data-testid="goto-payments-btn"
-            >
-              <CreditCard className="w-3.5 h-3.5" />
-              <span>Central de Pagamentos</span>
-            </button>
-          )}
-          {onNavigateToTickets && (
-            <button
-              type="button"
-              onClick={onNavigateToTickets}
-              className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
-              data-testid="goto-tickets-btn"
-            >
-              <Ticket className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Ingressos & QR Codes</span>
-            </button>
-          )}
-          {onNavigateToAccess && (
-            <button
-              type="button"
-              onClick={onNavigateToAccess}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
-              data-testid="goto-access-btn"
-            >
-              <Scan className="w-3.5 h-3.5" />
-              <span>Disk Acesso</span>
-            </button>
-          )}
-          {onNavigateToCustomers && (
-            <button
-              type="button"
-              onClick={onNavigateToCustomers}
-              className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
-              data-testid="goto-customers-btn"
-            >
-              <Users className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Central de Clientes</span>
-            </button>
-          )}
-          <span className="px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-indigo-600" />
-            Commerce Core Homologado
-          </span>
-        </div>
-      </div>
-
-      {/* 4 Cards de Métricas Comerciais */}
+      {/* 4 Cards de Métricas Comerciais com DiskKpiCard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Faturamento do Dia</p>
-            <p className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-              R$ {summary ? summary.todayRevenueBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '1.842.630,45'}
-            </p>
-            <p className="text-xs text-emerald-600 font-medium mt-1">381 pedidos / minuto</p>
-          </div>
-          <span className="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
-            <DollarSign className="w-6 h-6" />
-          </span>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ingressos Emitidos Hoje</p>
-            <p className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-              {summary ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '14.280'}
-            </p>
-            <p className="text-xs text-sky-600 font-medium mt-1">100% individualizados</p>
-          </div>
-          <span className="p-3 bg-sky-50 text-sky-600 rounded-xl border border-sky-100">
-            <Ticket className="w-6 h-6" />
-          </span>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Holds Ativos (Redis)</p>
-            <p className="text-2xl sm:text-3xl font-black text-indigo-600 mt-1">
-              {summary ? summary.activeHoldsCount.toLocaleString('pt-BR') : '8.291'}
-            </p>
-            <p className="text-xs text-slate-500 font-medium mt-1">Reserva atômica anti-overbooking</p>
-          </div>
-          <span className="p-3 bg-indigo-50 text-indigo-600 rounded-xl border border-indigo-100">
-            <Layers className="w-6 h-6" />
-          </span>
-        </div>
-
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Aprovação de Pagamento</p>
-            <p className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-              {summary ? `${summary.approvalRatePercentage}%` : '91.8%'}
-            </p>
-            <p className="text-xs text-emerald-600 font-medium mt-1">PIX: 98.4% • Cartão: 85.2%</p>
-          </div>
-          <span className="p-3 bg-purple-50 text-purple-600 rounded-xl border border-purple-100">
-            <CheckCircle2 className="w-6 h-6" />
-          </span>
-        </div>
+        <DiskKpiCard
+          label="Faturamento do Dia"
+          value={`R$ ${summary ? summary.todayRevenueBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '1.842.630,45'}`}
+          note="381 pedidos / minuto"
+          accent="success"
+          icon={<DollarSign className="w-5 h-5" />}
+        />
+        <DiskKpiCard
+          label="Ingressos Emitidos Hoje"
+          value={summary ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '14.280'}
+          note="100% individualizados"
+          accent="info"
+          icon={<Ticket className="w-5 h-5" />}
+        />
+        <DiskKpiCard
+          label="Holds Ativos (Redis)"
+          value={summary ? summary.activeHoldsCount.toLocaleString('pt-BR') : '8.291'}
+          note="Reserva atômica anti-overbooking"
+          accent="brand"
+          icon={<Layers className="w-5 h-5" />}
+        />
+        <DiskKpiCard
+          label="Aprovação de Pagamento"
+          value={summary ? `${summary.approvalRatePercentage}%` : '91.8%'}
+          note="PIX: 98.4% • Cartão: 85.2%"
+          accent="purple"
+          icon={<CheckCircle2 className="w-5 h-5" />}
+        />
       </div>
 
       {/* Alerta de Integridade Comercial do Core (29.8.65) */}
-      <div className="bg-slate-900 text-white p-4 rounded-xl shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-[var(--disk-bg-surface-sunken)] text-[var(--disk-text-primary)] border border-[var(--disk-border-subtle)] p-4 rounded-card shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="p-2 bg-indigo-600 rounded-lg text-white">
+          <span className="p-2 bg-[var(--disk-primary)] rounded-btn text-white">
             <ShieldCheck className="w-5 h-5" />
           </span>
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--disk-primary)]">
               Commerce Integrity Center • Monitoramento de Consistência
             </h3>
-            <p className="text-xs text-slate-300 mt-0.5">
+            <p className="text-xs text-[var(--disk-text-muted)] mt-0.5">
               Reconciliação contínua entre reservas no Redis, pagamentos de adquirentes e emissão de ingressos.
             </p>
           </div>
@@ -287,33 +262,33 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
         <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-slate-400">Inconsistências:</span>
-            <strong className="text-emerald-400">0</strong>
+            <span className="text-[var(--disk-text-muted)]">Inconsistências:</span>
+            <strong className="text-emerald-500">0</strong>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="text-slate-400">Pagamentos sem Ingresso:</span>
-            <strong className="text-amber-300">2 (Recovery)</strong>
+            <span className="text-[var(--disk-text-muted)]">Pagamentos sem Ingresso:</span>
+            <strong className="text-amber-500">2 (Recovery)</strong>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="text-slate-400">Ingressos sem Ledger:</span>
-            <strong className="text-emerald-400">0</strong>
+            <span className="text-[var(--disk-text-muted)]">Ingressos sem Ledger:</span>
+            <strong className="text-emerald-500">0</strong>
           </div>
         </div>
       </div>
 
       {/* Barra de Filtros e Busca */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <div className="bg-[var(--disk-bg-surface)] p-4 rounded-card border border-[var(--disk-border-subtle)] shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Abas de Canais de Venda */}
-        <div className="flex items-center gap-1 overflow-x-auto text-xs font-bold">
+        <div className="flex items-center gap-1 overflow-x-auto text-xs font-bold bg-[var(--disk-bg-surface-sunken)] p-1 rounded-btn border border-[var(--disk-border-subtle)]">
           <button
             type="button"
             onClick={() => setActiveChannelTab('TODOS')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
               activeChannelTab === 'TODOS'
-                ? 'bg-slate-900 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-[var(--disk-primary)] text-white shadow-xs'
+                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
             }`}
           >
             Todos os Canais
@@ -321,10 +296,10 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
           <button
             type="button"
             onClick={() => setActiveChannelTab('SITE')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
               activeChannelTab === 'SITE'
-                ? 'bg-sky-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-sky-600 text-white shadow-xs'
+                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
             }`}
           >
             Site Oficial
@@ -332,10 +307,10 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
           <button
             type="button"
             onClick={() => setActiveChannelTab('BOX_OFFICE')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
               activeChannelTab === 'BOX_OFFICE'
-                ? 'bg-purple-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-purple-600 text-white shadow-xs'
+                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
             }`}
           >
             Bilheteria
@@ -343,10 +318,10 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
           <button
             type="button"
             onClick={() => setActiveChannelTab('PDV')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
               activeChannelTab === 'PDV'
-                ? 'bg-indigo-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-indigo-600 text-white shadow-xs'
+                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
             }`}
           >
             PDV
@@ -354,10 +329,10 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
           <button
             type="button"
             onClick={() => setActiveChannelTab('DISK')}
-            className={`px-3 py-1.5 rounded-lg transition ${
+            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
               activeChannelTab === 'DISK'
-                ? 'bg-emerald-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
             }`}
           >
             Portal Produtor
@@ -367,20 +342,20 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
         {/* Busca e Status */}
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="relative flex-1 sm:w-64">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--disk-text-muted)]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Buscar pedido, cliente, CPF..."
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="w-full pl-9 pr-4 py-2 bg-[var(--disk-bg-surface-sunken)] border border-[var(--disk-border-subtle)] text-[var(--disk-text-primary)] placeholder:text-[var(--disk-text-muted)] rounded-btn text-xs focus:outline-none focus:ring-2 focus:ring-[var(--disk-primary)] transition"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none"
+            className="px-3 py-2 bg-[var(--disk-bg-surface-sunken)] border border-[var(--disk-border-subtle)] text-[var(--disk-text-primary)] rounded-btn text-xs font-medium focus:outline-none"
           >
             <option value="TODOS">Todos os Status</option>
             <option value="PAID">Pago</option>
@@ -392,10 +367,10 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
       </div>
 
       {/* Tabela de Pedidos Omnichannel */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-[var(--disk-bg-surface)] border border-[var(--disk-border-subtle)] rounded-card shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
+            <thead className="bg-[var(--disk-bg-surface-sunken)] border-b border-[var(--disk-border-subtle)] text-[var(--disk-text-muted)] font-bold uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="py-3 px-4">Pedido / Protocolo</th>
                 <th className="py-3 px-4">Canal</th>
@@ -407,35 +382,35 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
                 <th className="py-3 px-4 text-right">Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-[var(--disk-border-subtle)]">
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-slate-500 text-xs">
+                  <td colSpan={8} className="py-8 text-center text-[var(--disk-text-muted)] text-xs">
                     Nenhum pedido encontrado para os filtros selecionados.
                   </td>
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={order.id} className="hover:bg-[var(--disk-bg-surface-hover)] transition-colors">
                     <td className="py-3.5 px-4 font-mono">
-                      <p className="font-bold text-slate-900">{order.id}</p>
-                      <p className="text-[10px] text-slate-400">{order.protocol}</p>
+                      <p className="font-bold text-[var(--disk-text-primary)]">{order.id}</p>
+                      <p className="text-[10px] text-[var(--disk-text-muted)]">{order.protocol}</p>
                     </td>
                     <td className="py-3.5 px-4">
                       {getChannelBadge(order.channel)}
                     </td>
                     <td className="py-3.5 px-4">
-                      <p className="font-bold text-slate-900">{order.customerName}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">{order.customerEmail}</p>
+                      <p className="font-bold text-[var(--disk-text-primary)]">{order.customerName}</p>
+                      <p className="text-[10px] text-[var(--disk-text-muted)] font-mono">{order.customerEmail}</p>
                     </td>
                     <td className="py-3.5 px-4 max-w-xs truncate">
-                      <p className="font-semibold text-slate-800 truncate">{order.eventName}</p>
-                      <p className="text-[10px] text-slate-500">{order.sessionDate}</p>
+                      <p className="font-semibold text-[var(--disk-text-primary)] truncate">{order.eventName}</p>
+                      <p className="text-[10px] text-[var(--disk-text-muted)]">{order.sessionDate}</p>
                     </td>
-                    <td className="py-3.5 px-4 text-center font-bold text-slate-800">
+                    <td className="py-3.5 px-4 text-center font-bold text-[var(--disk-text-primary)]">
                       {order.tickets.length}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-bold text-slate-900">
+                    <td className="py-3.5 px-4 text-right font-bold text-[var(--disk-text-primary)] font-mono">
                       R$ {order.totalAmount.toFixed(2)}
                     </td>
                     <td className="py-3.5 px-4">
@@ -445,9 +420,9 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
                       <button
                         type="button"
                         onClick={() => setSelectedOrder(order)}
-                        className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-bold text-xs transition flex items-center gap-1 ml-auto"
+                        className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/50 dark:text-indigo-300 rounded-btn font-bold text-xs transition flex items-center gap-1 ml-auto cursor-pointer"
                       >
-                        <span>Dossiê Completo</span>
+                        <span>Dossiê 360°</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
