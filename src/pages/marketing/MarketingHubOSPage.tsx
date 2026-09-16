@@ -565,7 +565,7 @@ export default function MarketingHubOSPage(p: Props) {
         <div className="marketing-os-panel" style={{ background: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)' }}>
           <div className="panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>Funil de Conversão 360°</h3>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>Funil de Conversão Multicanal</h3>
               <small style={{ color: '#64748B' }}>Taxa de passagem desde o primeiro anúncio até o ingresso</small>
             </div>
             <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', background: '#EFF6FF', padding: '2px 8px', borderRadius: '999px' }}>

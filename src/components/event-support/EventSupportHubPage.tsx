@@ -327,7 +327,7 @@ export const EventSupportHubPage: React.FC = () => {
                       }}
                       className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition shadow-sm"
                     >
-                      Dossiê 360°
+                      Dossiê do Evento
                     </button>
                   </td>
                 </tr>
@@ -337,7 +337,7 @@ export const EventSupportHubPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal 360 do Dossiê */}
+      {/* Modal do Dossiê do Evento */}
       {selectedDossier && (
         <EventDossierModal
           dossier={selectedDossier}

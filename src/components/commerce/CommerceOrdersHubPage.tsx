@@ -18,7 +18,9 @@ import {
   ShieldCheck,
   ChevronRight,
   UserCheck,
-  CreditCard
+  CreditCard,
+  Users,
+  Scan
 } from 'lucide-react'
 import { commerceCoreService } from '../../services/commerceCore.service'
 import type {
@@ -31,9 +33,17 @@ import { OrderDossier360Modal } from './OrderDossier360Modal'
 
 interface CommerceOrdersHubPageProps {
   onNavigateToPayments?: () => void
+  onNavigateToTickets?: () => void
+  onNavigateToAccess?: () => void
+  onNavigateToCustomers?: () => void
 }
 
-export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({ onNavigateToPayments }) => {
+export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
+  onNavigateToPayments,
+  onNavigateToTickets,
+  onNavigateToAccess,
+  onNavigateToCustomers
+}) => {
   const [summary, setSummary] = useState<CommerceKpiSummary | null>(null)
   const [orders, setOrders] = useState<OrderRecord[]>([])
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null)
@@ -161,6 +171,39 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({ on
             >
               <CreditCard className="w-3.5 h-3.5" />
               <span>Central de Pagamentos</span>
+            </button>
+          )}
+          {onNavigateToTickets && (
+            <button
+              type="button"
+              onClick={onNavigateToTickets}
+              className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
+              data-testid="goto-tickets-btn"
+            >
+              <Ticket className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Ingressos & QR Codes</span>
+            </button>
+          )}
+          {onNavigateToAccess && (
+            <button
+              type="button"
+              onClick={onNavigateToAccess}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
+              data-testid="goto-access-btn"
+            >
+              <Scan className="w-3.5 h-3.5" />
+              <span>Disk Acesso</span>
+            </button>
+          )}
+          {onNavigateToCustomers && (
+            <button
+              type="button"
+              onClick={onNavigateToCustomers}
+              className="px-3.5 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-sm"
+              data-testid="goto-customers-btn"
+            >
+              <Users className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Central de Clientes</span>
             </button>
           )}
           <span className="px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold flex items-center gap-1.5">
@@ -404,7 +447,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({ on
                         onClick={() => setSelectedOrder(order)}
                         className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg font-bold text-xs transition flex items-center gap-1 ml-auto"
                       >
-                        <span>Dossiê 360°</span>
+                        <span>Dossiê Completo</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
@@ -416,7 +459,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({ on
         </div>
       </div>
 
-      {/* Modal do Dossiê Pedido 360° */}
+      {/* Modal do Dossiê Completo do Pedido */}
       {selectedOrder && (
         <OrderDossier360Modal
           order={selectedOrder}

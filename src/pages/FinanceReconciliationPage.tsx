@@ -282,7 +282,7 @@ export default function FinanceReconciliationPage({ events = [], notify, onNavig
             <div>
               <div className="flex items-center gap-2">
                 <h1>Conciliação Bancária & Gateways</h1>
-                <span className="rec-header-badge">Fase 26.17.9.4.3 · Núcleo ERP Financeiro</span>
+                <span className="rec-header-badge">Núcleo ERP Financeiro</span>
               </div>
               <p className="rec-header-desc">
                 Batimento tripartite em tempo real: <strong>Pedido DiskIngressos × Autorização do Gateway × Liquidação Bancária D+N</strong> com baixa contábil automática para o Ledger do evento.

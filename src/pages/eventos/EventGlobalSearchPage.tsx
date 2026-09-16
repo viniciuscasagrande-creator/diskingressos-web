@@ -247,8 +247,8 @@ export default function EventGlobalSearchPage({ event, onNavigate, notify }: Pro
       {/* Header */}
       <header className="egs-header">
         <div className="egs-header-title">
-          <span>EVENT OS · FASE 26.17.6</span>
-          <h1>Pesquisa Global 360°</h1>
+          <span>EVENT OS · BUSCA UNIFICADA</span>
+          <h1>Pesquisa Global do Evento</h1>
           <p>Busca operacional unificada por pedido, ingresso, cliente, transação, check-in, SAC, incidentes e estornos.</p>
         </div>
         <div className="egs-header-actions">

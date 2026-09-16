@@ -302,7 +302,7 @@ export default function EventDayCommandPage({ event, onNavigate, notify }: Props
         <div className="edc-header-left">
           <div className="edc-header-eyebrow">
             <span className="edc-live-dot" />
-            <span data-testid="edc-eyebrow-badge">EVENT DAY COMMAND · FASE 26.16.7</span>
+            <span data-testid="edc-eyebrow-badge">EVENT DAY COMMAND · COMANDO AO VIVO</span>
           </div>
           <h1>{event.title} • ID {event.code}</h1>
           <div className="edc-header-meta">

@@ -63,7 +63,7 @@ export default function ReadyCampaignsPage({ producerId, events, notify, initial
       const [t, a] = await Promise.all([
         getReadyCampaignTemplates().catch(() => [
           { key: 'acelerar_vendas', name: 'Acelerar Vendas', description: 'Pico promocional de 48 horas com oferta relâmpago e múltiplos canais.', objective: 'urgencia', audience: 'prospects_e_base', recommendedChannels: ['whatsapp', 'instagram', 'email'], suggestedBudgetCents: 600000, badge: '⚡ Aceleração Rápida' },
-          { key: 'lancamento_evento', name: 'Lançamento do Evento', description: 'Estratégia 360° de topo e meio de funil com 6 canais integrados.', objective: 'lancamento', audience: 'todos', recommendedChannels: ['instagram', 'google', 'tiktok', 'whatsapp', 'email', 'afiliados'], suggestedBudgetCents: 1500000, badge: 'Mais Utilizado • 360°' },
+          { key: 'lancamento_evento', name: 'Lançamento do Evento', description: 'Estratégia multicanal de topo e meio de funil com 6 canais integrados.', objective: 'lancamento', audience: 'todos', recommendedChannels: ['instagram', 'google', 'tiktok', 'whatsapp', 'email', 'afiliados'], suggestedBudgetCents: 1500000, badge: 'Mais Utilizado' },
           { key: 'virada_de_lote', name: 'Virada de Lote', description: 'Gatilho de urgência e escassez com contagem regressiva de 24 horas.', objective: 'urgencia', audience: 'visitantes_e_interessados', recommendedChannels: ['instagram', 'whatsapp', 'email'], suggestedBudgetCents: 650000, badge: 'Alta Conversão 🔥' },
           { key: 'ultimas_vagas', name: 'Últimas Vagas', description: 'Reta final de esgotamento com aviso dos últimos 100 ingressos disponíveis.', objective: 'urgencia', audience: 'publico_quente', recommendedChannels: ['instagram', 'whatsapp'], suggestedBudgetCents: 450000, badge: 'Esgotamento Final' },
           { key: 'evento_nesta_semana', name: 'Evento nesta Semana', description: 'Tração máxima nos últimos 5 dias que antecedem a data do show.', objective: 'conversao', audience: 'regional_e_quente', recommendedChannels: ['google', 'instagram', 'whatsapp'], suggestedBudgetCents: 500000, badge: 'Reta Final' },
@@ -177,7 +177,7 @@ export default function ReadyCampaignsPage({ producerId, events, notify, initial
         <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>
           <div className="kpi-top"><span>Modelos Disponíveis</span><Megaphone size={18} /></div>
           <strong style={{ color: '#0F172A', fontSize: '20px' }}>{templates.length || 8}</strong>
-          <small style={{ color: '#2563EB' }}>Estratégias 360°</small>
+          <small style={{ color: '#2563EB' }}>Estratégias Multicanal</small>
         </article>
 
         <article className="growth-kpi" style={{ background: '#FFFFFF', border: '1px solid #CBD5E1', padding: '14px' }}>

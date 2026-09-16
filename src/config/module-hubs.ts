@@ -212,7 +212,7 @@ export const FINANCE_HUBS: Record<string, ModuleHubDefinition> = {
     pageKey: 'finance-expenses' as PageKey,
     route: '/app/finance-expenses',
     title: 'Compras & Fornecedores',
-    subtitle: 'Gestão completa de fornecedores 360°, contratos, cotações e despesas operacionais',
+    subtitle: 'Gestão completa de fornecedores, contratos, cotações e despesas operacionais',
     badge: 'P2P / Suprimentos',
     categories: ['Compras & Pedidos', 'Gestão de Fornecedores', 'Contratos & Vencimentos'],
     items: [
@@ -249,7 +249,7 @@ export const FINANCE_HUBS: Record<string, ModuleHubDefinition> = {
         description: 'Base unificada de prestadores de serviços, produtoras e técnicos',
         icon: Users,
         pageKey: 'finance-expenses',
-        badge: 'Fornecedor 360°',
+        badge: 'Fornecedores',
         badgeVariant: 'primary'
       },
       {
@@ -629,7 +629,7 @@ export const MARKETING_HUBS: Record<string, ModuleHubDefinition> = {
     route: '/app/marketing/comunicacao',
     title: 'Comunicação & Automações',
     subtitle: 'WhatsApp Oficial, E-mail marketing, réguas de relacionamento e resgate de vendas',
-    badge: 'Comunicação 360°',
+    badge: 'Comunicação',
     items: [
       {
         id: 'com-whatsapp',
@@ -681,7 +681,7 @@ export const MARKETING_HUBS: Record<string, ModuleHubDefinition> = {
         description: 'Diagnóstico e monitoramento de saúde de todos os rastreadores',
         icon: Activity,
         pageKey: 'marketing-tracking',
-        badge: 'Central 360°',
+        badge: 'Central',
         badgeVariant: 'primary'
       },
       {

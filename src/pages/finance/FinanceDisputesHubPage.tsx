@@ -699,7 +699,7 @@ export default function FinanceDisputesHubPage({
         <div className="estcc-card" style={{ marginTop: 10 }}>
           <div className="estcc-card-head">
             <div>
-              <div className="estcc-card-title">Motor Enterprise de Estornos & Alçadas (Fase 25.8)</div>
+              <div className="estcc-card-title">Motor Enterprise de Estornos & Alçadas</div>
               <div className="estcc-card-desc">Workflow de aprovações multinível com limites operacionais configurados.</div>
             </div>
             <span className="estcc-badge blue">Motor Ativo</span>

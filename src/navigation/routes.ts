@@ -281,6 +281,56 @@ export const CANONICAL_ROUTES: Record<string, RouteConfig> = {
     context: { producer: false, event: false },
     permissions: ['sac.visualizar']
   },
+  '/commerce-orders': {
+    path: '/commerce-orders',
+    view: 'commerce-orders',
+    module: 'events',
+    title: 'Pedidos & Vendas',
+    menuKey: 'commerce-orders',
+    breadcrumb: ['Vendas', 'Pedidos & Vendas'],
+    context: { producer: true, event: false },
+    permissions: ['eventos.visualizar']
+  },
+  '/payments': {
+    path: '/payments',
+    view: 'payments-hub',
+    module: 'financeiro',
+    title: 'Central de Pagamentos',
+    menuKey: 'payments-hub',
+    breadcrumb: ['Financeiro', 'Pagamentos'],
+    context: { producer: true, event: false },
+    permissions: ['financeiro.visualizar']
+  },
+  '/tickets': {
+    path: '/tickets',
+    view: 'tickets-hub',
+    module: 'events',
+    title: 'Central de Ingressos & Credenciais',
+    menuKey: 'tickets-hub',
+    breadcrumb: ['Ingressos', 'Central de Ingressos'],
+    context: { producer: true, event: false },
+    permissions: ['eventos.visualizar']
+  },
+  '/access-control': {
+    path: '/access-control',
+    view: 'access-control-hub',
+    module: 'events',
+    title: 'Central de Controle de Acesso',
+    menuKey: 'access-control-hub',
+    breadcrumb: ['Acesso', 'Disk Acesso'],
+    context: { producer: true, event: false },
+    permissions: ['eventos.visualizar']
+  },
+  '/customers': {
+    path: '/customers',
+    view: 'customer-search-hub',
+    module: 'sac',
+    title: 'Central de Consulta de Clientes',
+    menuKey: 'customer-search-hub',
+    breadcrumb: ['Clientes', 'Consulta Unificada'],
+    context: { producer: false, event: false },
+    permissions: ['sac.visualizar']
+  },
   // Injeta as 12 rotas contábeis canônicas
   ...ACCOUNTING_ROUTES
 }
@@ -338,7 +388,22 @@ export const LEGACY_ROUTE_ALIASES: Record<string, string> = {
   'marketing-hub-campaigns': '/marketing/campanhas',
   'marketing-hub-communication': '/marketing/comunicacao',
   'marketing-hub-pixels': '/marketing/pixels',
-  'marketing-hub-analytics': '/marketing/analytics'
+  'marketing-hub-analytics': '/marketing/analytics',
+  'commerce-orders': '/commerce-orders',
+  'pedidos': '/commerce-orders',
+  'payments': '/payments',
+  'payments-hub': '/payments',
+  'pagamentos': '/payments',
+  'tickets': '/tickets',
+  'tickets-hub': '/tickets',
+  'ingressos': '/tickets',
+  'access-control': '/access-control',
+  'access-control-hub': '/access-control',
+  'access': '/access-control',
+  'acesso': '/access-control',
+  'customers': '/customers',
+  'customer-search-hub': '/customers',
+  'clientes': '/customers'
 }
 
 export function resolveRoute(pathOrAlias: string): RouteConfig {

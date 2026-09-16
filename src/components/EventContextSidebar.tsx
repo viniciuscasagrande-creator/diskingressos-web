@@ -20,9 +20,9 @@ type Props = {
 }
 
 const eventItems: Item[] = [
-  { key: 'event-command-center', label: 'Cockpit 360', icon: Activity },
-  { key: 'event-inventory', label: 'Inventário', icon: Boxes },
-  { key: 'event-customer-360', label: 'Customer 360', icon: ContactRound },
+  { key: 'event-command-center', label: 'Cockpit Operacional', icon: Activity },
+  { key: 'event-inventory', label: 'Inventário e Lotes', icon: Boxes },
+  { key: 'event-customer-360', label: 'Consulta de Clientes', icon: ContactRound },
   { key: 'event-live-ops', label: 'Live Operations', icon: RadioTower },
   { key: 'event-incidents', label: 'Incident Center', icon: Siren },
   { key: 'event-revenue-intel', label: 'Revenue Intelligence', icon: LineChart },

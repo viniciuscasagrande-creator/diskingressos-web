@@ -265,7 +265,7 @@ export default function TrackingIntegrationsManager({
       {/* Header Premium */}
       <div className="tracking-header-wrap">
         <div>
-          <p className="eyebrow">MARKETING INTEGRATIONS 360 · FASE 28.14</p>
+          <p className="eyebrow">INTEGRAÇÕES DE MARKETING · DISK CORE</p>
           <h2>Pixels e Conversões</h2>
           <p>
             Gerencie Pixels, APIs de conversão (CAPI) e regras granulares de rastreamento individualmente por evento.

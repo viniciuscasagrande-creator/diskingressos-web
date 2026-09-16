@@ -89,6 +89,9 @@ import { EventSupportHubPage } from './components/event-support/EventSupportHubP
 import { DeveloperCommandCenterPage } from './components/developer/DeveloperCommandCenterPage'
 import { CommerceOrdersHubPage } from './components/commerce/CommerceOrdersHubPage'
 import { PaymentsHubPage } from './components/payments/PaymentsHubPage'
+import { TicketsHubPage } from './components/tickets/TicketsHubPage'
+import { AccessControlHubPage } from './components/access/AccessControlHubPage'
+import { CustomerSearchHubPage } from './components/customers/CustomerSearchHubPage'
 
 const mobileInternalHeaderPages = new Set<PageKey>([
   'events',
@@ -120,9 +123,9 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'lots': 'Configurar Lotes',
   'participants': 'Participantes',
   'facial': 'Status Faciais',
-  'event-command-center': 'Event Cockpit 360',
-  'event-inventory': 'Inventory Engine',
-  'event-customer-360': 'Customer 360',
+  'event-command-center': 'Cockpit Operacional',
+  'event-inventory': 'Inventário Operacional',
+  'event-customer-360': 'Central de Clientes',
   'event-live-ops': 'Live Event Operations',
   'event-incidents': 'Incident Center',
   'event-revenue-intel': 'Revenue & Pricing Intelligence',
@@ -153,6 +156,9 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'commerce-orders': 'Pedidos, Ingressos & Integridade Comercial',
   'developer-center': 'Desenvolvedor • Central de Observabilidade',
   'payments-hub': 'Central de Pagamentos Enterprise',
+  'tickets-hub': 'Central de Ingressos & Credenciais',
+  'access-control-hub': 'Controle de Acesso (Disk Acesso)',
+  'customer-search-hub': 'Central de Clientes',
 
   // HUBS ENTERPRISE (FASE 28.15.8.1)
   'finance-hub-account': 'Conta Financeira',
@@ -358,6 +364,9 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
   if (clean === 'commerce-orders' || clean === 'app/commerce-orders' || clean === 'pedidos' || clean === 'app/pedidos') return 'commerce-orders'
   if (clean === 'developer-center' || clean === 'app/developer-center' || clean === 'desenvolvedor' || clean === 'app/desenvolvedor') return 'developer-center'
   if (clean === 'payments-hub' || clean === 'payments' || clean === 'app/payments' || clean === 'pagamentos' || clean === 'app/pagamentos') return 'payments-hub'
+  if (clean === 'tickets-hub' || clean === 'tickets' || clean === 'app/tickets' || clean === 'ingressos' || clean === 'app/ingressos') return 'tickets-hub'
+  if (clean === 'access-control-hub' || clean === 'access-control' || clean === 'access' || clean === 'app/access-control' || clean === 'acesso' || clean === 'app/acesso') return 'access-control-hub'
+  if (clean === 'customer-search-hub' || clean === 'customers' || clean === 'app/customers' || clean === 'clientes' || clean === 'app/clientes') return 'customer-search-hub'
   if (clean.startsWith('eventos/')) {
     const parts = clean.split('/')
     const tool = parts[2] || 'dashboard'
@@ -413,6 +422,12 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const pathWithHash = window.location.hash.startsWith('#/') ? window.location.hash.slice(2) : window.location.pathname
       const clean = pathWithHash.replace(/^\/app\//, '').replace(/^\//, '').split('?')[0].split('#')[0]
+      if (clean === 'commerce-orders' || clean === 'pedidos') return 'commerce-orders'
+      if (clean === 'developer-center' || clean === 'desenvolvedor') return 'developer-center'
+      if (clean === 'payments-hub' || clean === 'payments' || clean === 'pagamentos') return 'payments-hub'
+      if (clean === 'tickets-hub' || clean === 'tickets' || clean === 'ingressos') return 'tickets-hub'
+      if (clean === 'access-control-hub' || clean === 'access-control' || clean === 'access' || clean === 'acesso') return 'access-control-hub'
+      if (clean === 'customer-search-hub' || clean === 'customers' || clean === 'clientes') return 'customer-search-hub'
       if (clean.startsWith('eventos/')) {
         const parts = clean.split('/')
         const tool = parts[2] || 'dashboard'
@@ -529,6 +544,26 @@ export default function App() {
         } else if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') {
           setMobileNavOpen(false)
           setPage('marketing-spotify')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'commerce-orders' || clean === 'pedidos') {
+          setMobileNavOpen(false)
+          setPage('commerce-orders')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'payments-hub' || clean === 'payments' || clean === 'pagamentos') {
+          setMobileNavOpen(false)
+          setPage('payments-hub')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'tickets-hub' || clean === 'tickets' || clean === 'ingressos') {
+          setMobileNavOpen(false)
+          setPage('tickets-hub')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'access-control-hub' || clean === 'access-control' || clean === 'access' || clean === 'acesso') {
+          setMobileNavOpen(false)
+          setPage('access-control-hub')
+          window.scrollTo({ top: 0 })
+        } else if (clean === 'customer-search-hub' || clean === 'customers' || clean === 'clientes') {
+          setMobileNavOpen(false)
+          setPage('customer-search-hub')
           window.scrollTo({ top: 0 })
         } else if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') {
           setMobileNavOpen(false)
@@ -1090,7 +1125,12 @@ export default function App() {
           <EventSupportHubPage />
         )}
         {page === 'commerce-orders' && (
-          <CommerceOrdersHubPage onNavigateToPayments={() => navigate('payments-hub')} />
+          <CommerceOrdersHubPage
+            onNavigateToPayments={() => navigate('payments-hub')}
+            onNavigateToTickets={() => navigate('tickets-hub')}
+            onNavigateToAccess={() => navigate('access-control-hub')}
+            onNavigateToCustomers={() => navigate('customer-search-hub')}
+          />
         )}
         {page === 'developer-center' && (
           <DeveloperCommandCenterPage />
@@ -1100,6 +1140,15 @@ export default function App() {
             onNavigateToOrders={() => navigate('commerce-orders')}
             onNavigateToFinance={() => navigate('finance-dashboard')}
           />
+        )}
+        {page === 'tickets-hub' && (
+          <TicketsHubPage />
+        )}
+        {page === 'access-control-hub' && (
+          <AccessControlHubPage />
+        )}
+        {page === 'customer-search-hub' && (
+          <CustomerSearchHubPage />
         )}
         {page === 'new-event' && <EventFormPage mode="new" onCancel={() => setPage('events')} onSave={saveEvent} />}
         {page === 'edit-event' && <EventFormPage mode="edit" event={selectedEvent} onCancel={() => setPage('events')} onSave={saveEvent} />}

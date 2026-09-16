@@ -342,7 +342,7 @@ export default function TrackingAssignmentModal({
                 </label>
 
                 <label>
-                  Nome identificador no SafeSaff:
+                  Nome identificador no DiskIngressos:
                   <input
                     required
                     placeholder={`Ex.: ${providerMeta.name} — Campanha Principal`}
@@ -385,7 +385,7 @@ export default function TrackingAssignmentModal({
                     value={newTrackingMode}
                     onChange={e => setNewTrackingMode(e.target.value as TrackingMode)}
                   >
-                    <option value="HYBRID">Híbrido 360° (Navegador + CAPI)</option>
+                    <option value="HYBRID">Híbrido (Navegador + CAPI)</option>
                     <option value="BROWSER">Apenas Navegador (Front-end)</option>
                     <option value="SERVER">Apenas Servidor (Conversions API)</option>
                   </select>

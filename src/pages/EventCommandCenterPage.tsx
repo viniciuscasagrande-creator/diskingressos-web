@@ -178,8 +178,8 @@ export default function EventCommandCenterPage({ event, onNavigate, notify }: Pr
       {/* Hero Header */}
       <section className="event-os-hero event-os-hero-261">
         <div>
-          <p className="eyebrow">EVENT OS · FASE 26.16.2</p>
-          <h2>Event Cockpit 360 Operacional</h2>
+          <p className="eyebrow">EVENT OS · COMANDO OPERACIONAL</p>
+          <h2>Cockpit Operacional do Evento</h2>
           <p>{event.title} · Painel de comando operacional completo em tempo real.</p>
         </div>
         <div className="event-os-hero-actions">

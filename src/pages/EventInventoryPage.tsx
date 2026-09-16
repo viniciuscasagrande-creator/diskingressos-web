@@ -129,7 +129,7 @@ export default function EventInventoryPage({event,notify}:Props){
   return <div className="event-inventory-page" data-testid="event-inventory-operational">
     <section className="inventory-head">
       <div>
-        <p className="eyebrow">EVENT OS · FASE 26.16.3</p>
+        <p className="eyebrow">EVENT OS · GESTÃO DE LOTES</p>
         <h2>Inventário Operacional</h2>
         <p>Criação e edição de lotes, capacidade, disponibilidade, holds, pausa de venda e alertas de esgotamento.</p>
       </div>

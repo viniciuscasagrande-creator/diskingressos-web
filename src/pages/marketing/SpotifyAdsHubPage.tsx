@@ -200,7 +200,6 @@ export const SpotifyAdsHubPage: React.FC<SpotifyAdsHubPageProps> = ({
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-black bg-[#1DB954] px-2.5 py-0.5 rounded-full shadow-xs">
               SPOTIFY ADS V3
             </span>
-            <span className="text-[11px] text-slate-400 font-semibold">• Fase 26.17.10</span>
             <span className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md font-mono">
               Hierarquia: DiskIngressos → Produtor → Evento
             </span>

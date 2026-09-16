@@ -397,7 +397,7 @@ export default function FinancePayablesPage({ events, notify, onNavigate }: Prop
       {/* Header do Hub */}
       <header className="producer-account-hero" style={{ padding: '22px 26px' }}>
         <div>
-          <span className="eyebrow">FASE 26.17.9.4.2 · HUB OPERACIONAL</span>
+          <span className="eyebrow">HUB OPERACIONAL · CONTAS A PAGAR</span>
           <h1 style={{ fontSize: '26px' }}>Contas a Pagar por Evento</h1>
           <p>
             Gestão empresarial de compromissos com fornecedores, artistas, estrutura, ECAD e custos

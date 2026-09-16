@@ -326,7 +326,7 @@ export default function TrackingIntegrationDrawer({
                 <span>{integration.apiTokenMasked ? `Configurado (${integration.apiTokenMasked})` : 'Não configurado'}</span>
 
                 <span style={{ color: '#64748b' }}>Modo de Disparo:</span>
-                <span>{TRACKING_MODE_LABELS[assignment?.trackingMode || 'HYBRID']?.label || 'Híbrido 360°'}</span>
+                <span>{TRACKING_MODE_LABELS[assignment?.trackingMode || 'HYBRID']?.label || 'Híbrido'}</span>
 
                 <span style={{ color: '#64748b' }}>Pixel Principal:</span>
                 <span>{assignment?.isPrimary ? 'Sim, é o pixel principal deste evento.' : 'Não'}</span>

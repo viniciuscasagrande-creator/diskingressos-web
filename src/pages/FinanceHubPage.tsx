@@ -60,7 +60,7 @@ export default function FinanceHubPage({ onNavigate }: Props) {
     <div className="finance-hub finance-hub-video-model">
       <div className="finance-video-heading">
         <div>
-          <span>DISKINGRESSOS · GESTÃO FINANCEIRA 360°</span>
+          <span>DISKINGRESSOS · GESTÃO FINANCEIRA INTEGRADA</span>
           <h1>Hub Financeiro Consolidado</h1>
           <p>Acesse rapidamente todas as ferramentas financeiras, conciliações, simulações e relatórios executivos.</p>
         </div>

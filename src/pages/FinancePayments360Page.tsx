@@ -63,7 +63,7 @@ export default function FinancePayments360Page({ producerId, initialTab = 'gatew
     <div className="finance360-page">
       <header className="finance360-hero">
         <div>
-          <span className="finance360-kicker">FINANCEIRO 360° · MODELO OPERACIONAL</span>
+          <span className="finance360-kicker">MODELO OPERACIONAL FINANCEIRO</span>
           <h1>Pagamentos, Gateways, Operadoras e Taxas</h1>
           <p>
             Camada financeira completa: meios de pagamento, adquirentes, taxas negociadas, pagamentos customizados e devoluções.

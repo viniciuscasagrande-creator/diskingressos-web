@@ -255,7 +255,7 @@ export default function FinancePayoutsPage({ events, notify, onNavigate }: Props
       <section className="payout-control-shell ll-card">
         <div className="payout-control-head">
           <div>
-            <span className="eyebrow">FASE 25.5 · DISPONIBILIDADE FINANCEIRA</span>
+            <span className="eyebrow">DISPONIBILIDADE FINANCEIRA DO PRODUTOR</span>
             <h2>Repasses, Reservas & Disponibilidade Financeira</h2>
             <p>Controle executivo do dinheiro do produtor: disponível, comprometido, reservado, futuro e já repassado.</p>
           </div>

@@ -87,7 +87,7 @@ export default function FinanceSettlementHubPage({ producerId, eventId, initialT
 
       <header className="finset-hero">
         <div>
-          <span>FINANCEIRO 360° · FASE 20.3</span>
+          <span>LIQUIDAÇÃO E FECHAMENTO FINANCEIRO</span>
           <h1>Split, Repasses, Antecipações e Liquidação</h1>
           <p>Fechamento do ciclo operacional: regras de split, saldo em tempo real, repasses, antecipações e liquidação auditada.</p>
         </div>
@@ -157,7 +157,7 @@ export default function FinanceSettlementHubPage({ producerId, eventId, initialT
       </nav>
 
       {loading ? (
-        <div className="finance360-loading">Carregando ciclo financeiro 360°...</div>
+        <div className="finance360-loading">Carregando ciclo financeiro integrado...</div>
       ) : (
         <>
           {tab === 'split' && (

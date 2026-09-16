@@ -77,7 +77,7 @@ export const OrderDossier360Modal: React.FC<OrderDossier360ModalProps> = ({
         <div className="bg-slate-900 px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-white border-b border-slate-800">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-md">
-              360°
+              <ShoppingBag className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">

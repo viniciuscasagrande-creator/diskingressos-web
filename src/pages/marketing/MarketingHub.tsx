@@ -149,7 +149,7 @@ export const MarketingHub: React.FC<MarketingHubProps> = ({
           }`}
         >
           <Radio size={15} />
-          <span>Integrações (Fase 14)</span>
+          <span>Canais & Integrações</span>
         </button>
 
         <button

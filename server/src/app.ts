@@ -37,6 +37,8 @@ import { eventSupportRouter } from './routes/eventSupport.js'
 import { iamSecurityRouter } from './routes/iamSecurity.js'
 import { commerceCoreRouter } from './routes/commerceCore.js'
 import { paymentsEnterpriseRouter } from './routes/paymentsEnterprise.js'
+import { ticketsAccessRouter } from './routes/ticketsAccess.js'
+import { customerServiceItilRouter } from './routes/customerServiceItil.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -136,7 +138,7 @@ app.use('/api/marketing', marketingRouter)
 app.use('/api/automation', automationRouter)
 app.use('/api/support', supportRouter)
 app.use('/api/service', supportRouter)
-app.use('/api/v1', eventSupportRouter)
+app.use('/api/v1/event-support', eventSupportRouter)
 app.use('/api/event-support', eventSupportRouter)
 app.use('/api/v1', iamSecurityRouter)
 app.use('/api/developer', iamSecurityRouter)
@@ -144,6 +146,11 @@ app.use('/api/v1', commerceCoreRouter)
 app.use('/api/commerce', commerceCoreRouter)
 app.use('/api/v1/payments', paymentsEnterpriseRouter)
 app.use('/api/payments', paymentsEnterpriseRouter)
+app.use('/api/v1/tickets-access', ticketsAccessRouter)
+app.use('/api/v1/access', ticketsAccessRouter)
+app.use('/api/v1/customers-service', customerServiceItilRouter)
+app.use('/api/v1/itil', customerServiceItilRouter)
+app.use('/api/customers', customerServiceItilRouter)
 app.use('/api/communication', communicationRouter)
 app.use('/api/audit', auditRouter)
 

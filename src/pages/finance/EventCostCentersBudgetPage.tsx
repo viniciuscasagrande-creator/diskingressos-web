@@ -270,7 +270,7 @@ export default function EventCostCentersBudgetPage({
       {/* Hero Header */}
       <header className="producer-account-hero" style={{ padding: '24px 28px' }}>
         <div>
-          <span className="eyebrow">FASE 26.17.9.4.2 · CONTROLADORIA & ORÇAMENTO</span>
+          <span className="eyebrow">CONTROLADORIA & ORÇAMENTO OPERACIONAL</span>
           <h1 style={{ fontSize: '26px' }}>
             Centro de Custos & Resultado: {currentEvent?.title || 'Evento'}
           </h1>

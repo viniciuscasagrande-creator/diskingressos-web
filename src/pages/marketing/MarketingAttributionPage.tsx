@@ -39,7 +39,7 @@ export default function MarketingAttributionPage({ events, producerName, notify 
 
   return <div className="attribution-page" data-release={ATTRIBUTION_RELEASE}>
     <header className="attribution-head">
-      <div><span className="attribution-eyebrow">INTELIGÊNCIA DE MARKETING • FASE 25.7.2</span><h1>Central de Atribuição Multicanal</h1><p>UTM + fbclid + ttclid + gclid + campanhas + vendas + receita + ROAS em uma única visão.</p></div>
+      <div><span className="attribution-eyebrow">INTELIGÊNCIA DE MARKETING · DISK CORE</span><h1>Central de Atribuição Multicanal</h1><p>UTM + fbclid + ttclid + gclid + campanhas + vendas + receita + ROAS em uma única visão.</p></div>
       <div className="attribution-actions"><button onClick={()=>notify('Dados de atribuição sincronizados.') }><Activity size={16}/> Sincronizar</button><button className="primary" onClick={()=>notify('Relatório de atribuição preparado para exportação.')}><Download size={16}/> Exportar</button></div>
     </header>
 

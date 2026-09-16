@@ -11,6 +11,18 @@ financeErpRouter.use((req, res, next) => {
   if (req.path.includes('browser-config') || req.path.includes('/tracking/')) {
     return next()
   }
+  // Se montado em /api diretamente, não interceptar rotas de outros módulos
+  if (req.baseUrl === '/api') {
+    const isFinanceRoute =
+      req.path.startsWith('/payables') ||
+      req.path.startsWith('/receivables') ||
+      req.path.startsWith('/cashflow') ||
+      req.path.startsWith('/events') ||
+      req.path.startsWith('/producer-consolidated')
+    if (!isFinanceRoute) {
+      return next()
+    }
+  }
   return requireAuth(req as any, res, next)
 })
 

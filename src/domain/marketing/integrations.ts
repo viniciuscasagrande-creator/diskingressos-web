@@ -97,7 +97,7 @@ export const TRACKING_MODE_LABELS: Record<TrackingMode, { label: string; descrip
   HYBRID: {
     label: 'Híbrido (Navegador + API Server-side)',
     description: 'Dispara no navegador com deduplicação via ID e envia via API server-side garantida.',
-    badge: 'Híbrido 360°'
+    badge: 'Híbrido'
   },
   BROWSER: {
     label: 'Apenas Navegador (Client-side)',

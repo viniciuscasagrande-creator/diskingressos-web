@@ -85,7 +85,7 @@ export default function EventOrderInvestigationPage({
       <div className="egs-page" data-testid="order-360-loading">
         <div className="egs-state-box">
           <RefreshCw size={28} className="animate-spin text-sky-600" />
-          <h3>Carregando Jornada 360° do Pedido...</h3>
+          <h3>Carregando Jornada Completa do Pedido...</h3>
           <p>Consolidando cliente, ingressos, acessos, SAC, financeiro e histórico operacional.</p>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default function EventOrderInvestigationPage({
       <div className="egs-scope-bar order-360-security-bar">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <ShieldCheck size={16} className="text-emerald-600" />
-          <b>Jornada Operacional 360°</b>
+          <b>Jornada Operacional Completa</b>
           <span>Produtora #{event.producerId} · Evento #{event.id} ({event.code})</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -203,12 +203,12 @@ export default function EventOrderInvestigationPage({
 
       {/* 7 Connected Correlated Operational Sections */}
       <div className="order-360-sections-grid">
-        {/* Card 1: Cliente 360° */}
+        {/* Card 1: Central do Cliente */}
         <article className="order-360-card" data-testid="card-correlated-customer">
           <div className="order-360-card-head">
             <div className="order-360-card-title-wrap">
               <Users size={18} className="text-violet-600" />
-              <h3>Cliente 360°</h3>
+              <h3>Central do Cliente</h3>
             </div>
             <span className="egs-badge egs-badge-info">{customer.segment}</span>
           </div>

@@ -18,7 +18,7 @@ export const CRITICAL_BUTTON_CONTRACTS: ButtonContract[] = [
   {
     id: 'cockpit-open-customer360',
     module: 'cockpit',
-    label: 'Customer 360',
+    label: 'Consulta de Clientes',
     actionType: 'navigate',
     target: 'event-customer-360',
     requiredContext: ['eventId']

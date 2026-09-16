@@ -51,7 +51,7 @@ export default function FinanceSpread360Page({ producerId, eventId, notify, init
     <div className="spread360-page">
       <header className="spread360-hero">
         <div>
-          <span>FINANCEIRO 360° · SPREAD</span>
+          <span>SPREAD & MARGEM FINANCEIRA</span>
           <h1>Spread & Rentabilidade</h1>
           <p>Taxas, custos, adquirentes, simulações e margem financeira em um único módulo.</p>
         </div>

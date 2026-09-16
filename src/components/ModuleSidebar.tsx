@@ -21,6 +21,9 @@ export type PageKey =
   | 'commerce-orders'
   | 'developer-center'
   | 'payments-hub'
+  | 'tickets-hub'
+  | 'access-control-hub'
+  | 'customer-search-hub'
   | 'event-live-ops' | 'event-incidents' | 'event-revenue-intel' | 'event-global-search' | 'event-permission-engine' | 'event-compliance' | 'event-intelligence' | 'event-readiness' | 'event-forecast' | 'event-day-command' | 'event-producer-executive' | 'event-platform-noc'
   | 'event-tickets' | 'event-courtesy' | 'event-reports' | 'event-details' | 'event-pixel' | 'event-utm' | 'event-ga4' | 'event-traffic' | 'event-meta-ads' | 'event-remarketing' | 'event-users' | 'event-audit' | 'event-permissions'
   | 'facial'
@@ -116,7 +119,7 @@ const marketingHubItems: Item[] = [
   { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
   { key: 'marketing-hub-campaigns', label: 'Campanhas', icon: Megaphone, route: '/marketing/campanhas' },
   { key: 'marketing-hub-communication', label: 'Comunicação', icon: MessageCircle, route: '/marketing/comunicacao' },
-  { key: 'marketing-hub-pixels', label: 'Conversões & Pixels', icon: Activity, badge: '360°', route: '/marketing/pixels' },
+  { key: 'marketing-hub-pixels', label: 'Conversões & Pixels', icon: Activity, badge: 'Pixels', route: '/marketing/pixels' },
   { key: 'marketing-hub-analytics', label: 'Analytics', icon: FileSpreadsheet, route: '/marketing/analytics' },
 ]
 

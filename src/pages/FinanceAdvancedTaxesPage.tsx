@@ -59,7 +59,7 @@ export default function FinanceAdvancedTaxesPage({ producerId, eventId, notify, 
     <div className="advtx-page">
       <header className="advtx-hero">
         <div>
-          <span>FINANCEIRO 360° · ADVANCED & TAXAS</span>
+          <span>CONFIGURAÇÃO AVANÇADA DE TAXAS</span>
           <h1>Advanced & Taxas</h1>
           <p>Central operacional de gateways, adquirentes, métodos, MDR, liquidação e custos que alimentam o Spread.</p>
         </div>

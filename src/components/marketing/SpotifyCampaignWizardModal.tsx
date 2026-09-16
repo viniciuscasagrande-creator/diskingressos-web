@@ -227,7 +227,6 @@ export const SpotifyCampaignWizardModal: React.FC<Props> = ({
                 <span className="text-[10px] uppercase font-extrabold tracking-wider px-2 py-0.5 rounded-full bg-[#1DB954]/20 text-[#1DB954] border border-[#1DB954]/30">
                   Spotify Ads API v3
                 </span>
-                <span className="text-xs text-slate-400 font-semibold">• Fase 26.17.10</span>
               </div>
               <h2 className="text-lg font-bold text-white tracking-tight">
                 Assistente de Criação de Campanha de Áudio & CAPI
@@ -898,7 +897,7 @@ export const SpotifyCampaignWizardModal: React.FC<Props> = ({
               <div>
                 <h3 className="text-base font-bold text-slate-900">Rastreamento, UTMs & Spotify CAPI</h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Conversões server-side mapeadas no Motor Universal de Conversões do SafeSaff/PDT.
+                  Conversões server-side mapeadas no Motor Universal de Conversões do DiskIngressos / PDT.
                 </p>
               </div>
 

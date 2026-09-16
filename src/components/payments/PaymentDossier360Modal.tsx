@@ -112,7 +112,7 @@ export const PaymentDossier360Modal: React.FC<PaymentDossier360ModalProps> = ({
             <div className="flex items-center gap-2 mb-1">
               <Receipt className="w-5 h-5 text-indigo-400" />
               <span className="text-xs uppercase font-bold tracking-wider text-indigo-300">
-                Disk Core • Dossiê Pagamento 360°
+                Disk Core • Dossiê Completo de Pagamento
               </span>
             </div>
             <div className="flex items-center gap-3">

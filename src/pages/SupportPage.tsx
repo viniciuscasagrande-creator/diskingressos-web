@@ -606,6 +606,9 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
             <div className="ds-quick-actions-bar">
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#059669' }} /> Novo Ticket</button>
+              <button className="ds-quick-action-pill" onClick={() => onNavigate('customer-search-hub')} style={{ background: '#f5f3ff', borderColor: '#c4b5fd', color: '#6d28d9', fontWeight: 'bold' }}><Users size={14} style={{ color: '#7c3aed' }} /> Central de Clientes</button>
+              <button className="ds-quick-action-pill" onClick={() => onNavigate('tickets-hub')}><Ticket size={14} style={{ color: '#2563eb' }} /> Ingressos & QR</button>
+              <button className="ds-quick-action-pill" onClick={() => onNavigate('access-control-hub')}><ScanLine size={14} style={{ color: '#059669' }} /> Disk Acesso</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('incidents')}><AlertTriangle size={14} style={{ color: '#dc2626' }} /> Novo Incidente</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('major')}><Siren size={14} style={{ color: '#dc2626' }} /> War Room</button>
               <button className="ds-quick-action-pill" onClick={() => notify('Disparo de broadcast de suporte')}><Radio size={14} style={{ color: '#d97706' }} /> Broadcast</button>
@@ -617,7 +620,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         )}
 
         {/* ========================================================
-            TELA 2: BUSCA ID (LIGHT COCKPIT 360)
+            TELA 2: BUSCA ID (CONSULTA INTEGRADA DE CLIENTES)
             ======================================================== */}
         {activeTab === 'search360' && (
           <div className="ds-search360-container">
@@ -708,7 +711,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Bot size={18} style={{ color: '#7c3aed' }} />
-                      <strong style={{ color: '#5b21b6', fontSize: '14px' }}>Diagnóstico Disk Copilot IA (SAC 360º)</strong>
+                      <strong style={{ color: '#5b21b6', fontSize: '14px' }}>Diagnóstico Disk Copilot IA (SAC Integrado)</strong>
                     </div>
                     <span className="ds-mini-tag purple" style={{ position: 'static' }}>96% Confiança</span>
                   </div>
@@ -806,7 +809,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
                   <div className="ds-bi-card">
                     <div className="ds-bi-card-header">
-                      <h3 className="ds-bi-card-title"><Clock3 size={18} style={{ color: '#7c3aed' }} /> Linha do Tempo 360º</h3>
+                      <h3 className="ds-bi-card-title"><Clock3 size={18} style={{ color: '#7c3aed' }} /> Linha do Tempo de Interações</h3>
                     </div>
 
                     <div className="ds-cockpit-timeline">

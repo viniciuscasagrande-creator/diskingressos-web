@@ -65,7 +65,7 @@ export const mockCampaignTemplates: CampaignTemplate[] = [
     channelsCount: 6,
     targetAudience: 'Público amplo de Curitiba/Região, seguidores e fãs do artista/estilo.',
     expectedRoi: '320% a 480%',
-    badge: 'Mais Utilizado • 360°',
+    badge: 'Mais Utilizado • Integrado',
     channels: [
       { id: 'ch-201', channel: 'instagram', channelName: 'Instagram (Feed & Reels)', subchannel: 'Feed & Reels', utmSource: 'instagram', utmMedium: 'feed_reels', utmCampaign: 'lancamento_evento', budget: 4500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.2, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=instagram&utm_medium=feed_reels&utm_campaign=lancamento_evento' },
       { id: 'ch-202', channel: 'google', channelName: 'Google Ads (Search & Discovery)', subchannel: 'Search CPC', utmSource: 'google', utmMedium: 'search_cpc', utmCampaign: 'lancamento_evento', budget: 3500, spent: 0, salesCount: 0, revenue: 0, roi: 0, cpa: 0, ctr: 4.5, status: 'active', trackingUrl: 'https://diskingressos.com.br/evento/{slug}?utm_source=google&utm_medium=search_cpc&utm_campaign=lancamento_evento' },

@@ -629,7 +629,7 @@ export default function FinanceProducerAccountPage({ events, producerId, notify,
       {/* --- Hero Banner Consolidado --- */}
       <header className="producer-account-hero">
         <div>
-          <span className="eyebrow">FASE 25.3 · CONTA GRÁFICA DO PRODUTOR</span>
+          <span className="eyebrow">CONTA GRÁFICA DO PRODUTOR · LEDGER</span>
           <h1>Saldo do Produtor</h1>
           <p>
             Visão financeira derivada do Ledger: disponível, a liquidar, reservado, comprometido e já

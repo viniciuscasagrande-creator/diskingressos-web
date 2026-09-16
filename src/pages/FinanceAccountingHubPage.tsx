@@ -289,7 +289,7 @@ export default function FinanceAccountingHubPage({ events, producerId, initialTa
       <div className="fa-header">
         <div>
           {onBack && <button className="fa-back" onClick={onBack}>← Painel Principal</button>}
-          <p className="eyebrow">FASE 28.15.4 · CONSOLIDAÇÃO CONTABILIDADE + SUBROTAS</p>
+          <p className="eyebrow">CONSOLIDAÇÃO CONTÁBIL E SUBROTAS</p>
           <h2>Centro de Controle Contábil & Financeiro</h2>
           <p>Visão geral, inteligência, conciliação, rastreabilidade, DRE, balanço, fechamento, plano de contas, lançamentos, documentos, fiscal e relatórios.</p>
         </div>
@@ -1282,7 +1282,7 @@ function FinanceModal({
       <div className="fa-modal">
         <div className="fa-modal-head">
           <div>
-            <small>FASE 28.15.4</small>
+            <small>Disk Core Contábil</small>
             <h3>{title}</h3>
           </div>
           <button onClick={onClose}>

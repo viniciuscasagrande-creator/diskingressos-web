@@ -70,7 +70,7 @@ export default function FinanceOperations360Page({ producerId, eventId, initialT
 
       <header className="finops360-hero">
         <div>
-          <span>FINANCEIRO 360° · FASE 20.2</span>
+          <span>OPERAÇÕES FINANCEIRAS INTEGRADAS</span>
           <h1>Spread, Recebíveis, Conciliação e Inteligência</h1>
           <p>Operação financeira conectada às taxas das adquirentes, agenda de recebíveis e divergências reais.</p>
         </div>
