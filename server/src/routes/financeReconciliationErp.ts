@@ -1215,7 +1215,7 @@ financeReconciliationErpRouter.post('/settle-to-ledger', async (req: AuthRequest
 // =========================================================================
 financeReconciliationErpRouter.get('/audit-voucher/:id', async (req: AuthRequest, res) => {
   try {
-    const id = req.params.id
+    const id = String(req.params.id)
     initializeInitialRecords()
     const item = inMemoryReconciliationStore.get(id)
     if (!item) {

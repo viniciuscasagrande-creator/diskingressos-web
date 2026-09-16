@@ -758,7 +758,7 @@ financeTransfersRouter.post('/internal-transfers', async (req: AuthRequest, res)
 // 8. GET /api/finance/internal-transfers/:transferId
 // =========================================================================
 financeTransfersRouter.get('/internal-transfers/:transferId', async (req: AuthRequest, res) => {
-  const { transferId } = req.params
+  const transferId = String(req.params.transferId)
   const transfer = transfersStore.get(transferId)
 
   if (!transfer) {
@@ -780,7 +780,7 @@ const reverseSchema = z.object({
 
 financeTransfersRouter.post('/internal-transfers/:transferId/reverse', async (req: AuthRequest, res) => {
   try {
-    const { transferId } = req.params
+    const transferId = String(req.params.transferId)
     const p = reverseSchema.parse(req.body)
     const transfer = transfersStore.get(transferId)
 

@@ -449,7 +449,7 @@ paymentsEnterpriseRouter.get('/:id', (req: Request, res: Response) => {
 // 4. Executar Estorno Total ou Parcial
 paymentsEnterpriseRouter.post('/:id/refund', (req: Request, res: Response) => {
   const { amountCents, reason, operatorName, isPartial } = req.body
-  const p = payments.find(x => x.id === req.params.id)
+  const p = payments.find(x => x.id === req.params.id) as any
 
   if (!p) return res.status(404).json({ error: 'Pagamento não localizado' })
   if (!reason || String(reason).trim().length < 5) {

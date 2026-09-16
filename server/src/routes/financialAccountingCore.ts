@@ -5,22 +5,274 @@
 // ============================================================================
 
 import { Router, Request, Response } from 'express'
-import type {
-  ProducerFinancialAccount,
-  FinancialLedgerEntry,
-  EventTransferRecord,
-  ReceivableAgendaEntry,
-  PayableExpenseRecord,
-  PayoutBatchRecord,
-  MultiLayerReconciliationSummary,
-  ReconciliationDivergence,
-  FinancialIntegritySummary,
-  AccountingCoreStatements,
-  EventClosingChecklist,
-  EventBorderoReport,
-  FinancialSimulationRequest,
-  FinancialSimulationResult
-} from '../../src/types/finance-accounting-core.types.js'
+export interface VerifiedBankAccount {
+  id: string
+  bankName: string
+  bankCode: string
+  agency: string
+  accountNumber: string
+  accountType: 'CORRENTE' | 'POUPANCA'
+  document: string
+  holderName: string
+  status: 'VERIFICADA' | 'EM_ANALISE' | 'REJEITADA'
+  statusLabelPtBr: string
+  pixKey?: string
+  lastVerifiedAt: string
+  mfaProtected: boolean
+}
+
+export interface EventSubAccount {
+  eventId: number
+  eventName: string
+  eventDate: string
+  salesGrossCents: number
+  receivedCents: number
+  receivableCents: number
+  feesCents: number
+  transferredNetCents: number
+  paidOutCents: number
+  availableCents: number
+  status: 'EM_VENDAS' | 'REALIZADO' | 'EM_FECHAMENTO' | 'FECHADO'
+  statusLabelPtBr: string
+}
+
+export interface ProducerFinancialAccount {
+  producerId: number
+  producerName: string
+  balances: {
+    soldCents: number
+    receivedCents: number
+    inSettlementCents: number
+    receivableCents: number
+    availableCents: number
+    reservedCents: number
+    blockedCents: number
+    committedCents: number
+    inTransferCents: number
+    inPayoutCents: number
+    paidOutCents: number
+  }
+  subAccounts: EventSubAccount[]
+  bankAccount: VerifiedBankAccount
+  updatedAt: string
+}
+
+export interface FinancialLedgerEntry {
+  id: string
+  orderId?: string
+  paymentId?: string
+  producerId: number
+  eventId: number
+  eventName: string
+  entryType: string
+  entryTypeLabelPtBr: string
+  nature: 'CREDITO' | 'DEBITO'
+  accountDebit: string
+  accountCredit: string
+  amountCents: number
+  balanceSnapshotAfterCents: number
+  ruleApplied: string
+  operatorName: string
+  createdAt: string
+  channel?: string
+  verifiedHash?: string
+}
+
+export interface EventTransferRecord {
+  id: string
+  producerId: number
+  sourceEventId: number
+  sourceEventName: string
+  targetEventId: number
+  targetEventName: string
+  amountCents: number
+  status: string
+  statusLabelPtBr: string
+  reason: string
+  tier: string
+  maker: {
+    userId: number
+    userName: string
+    userEmail?: string
+    requestedAt: string
+  }
+  checker?: {
+    userId: number
+    userName: string
+    userEmail?: string
+    approvedAt: string
+  }
+  ledgerDebitId?: string
+  ledgerCreditId?: string
+  reversalTransferId?: string
+}
+
+export interface ReceivableAgendaEntry {
+  id: string
+  eventId: number
+  eventName: string
+  dueDate: string
+  amountCents: number
+  gateway: string
+  periodBucket: 'HOJE' | 'AMANHA' | '7_DIAS' | '30_DIAS' | string
+  status: 'CONFIRMADO' | 'PREVISTO' | string
+  statusLabelPtBr: string
+}
+
+export interface PayableExpenseRecord {
+  id: string
+  eventId: number
+  eventName: string
+  supplierName: string
+  supplierDocument: string
+  costCenter: string
+  costCenterLabelPtBr: string
+  amountCents: number
+  dueDate: string
+  competenceMonth: string
+  status: 'PENDENTE' | 'AUTORIZADO' | string
+  statusLabelPtBr: string
+  paymentMethod: string
+  invoiceNumber: string
+}
+
+export interface PayoutBatchRecord {
+  id: string
+  producerId: number
+  producerName: string
+  targetBank: string
+  amountCents: number
+  method: 'PIX' | 'TED_CNAB240' | string
+  status: 'SOLICITADO' | 'PROCESSANDO' | 'LIQUIDADO' | string
+  statusLabelPtBr: string
+  scheduledFor: string
+  executedAt?: string
+  maker: {
+    userId: number
+    userName: string
+    requestedAt: string
+  }
+  checker?: {
+    userId: number
+    userName: string
+    approvedAt: string
+  }
+  mfaAuthenticated: boolean
+  authenticationMethod?: string
+  subAccountSplits: {
+    eventId: number
+    eventName: string
+    amountCents: number
+  }[]
+  bankReturnReceipt?: string
+}
+
+export interface MultiLayerReconciliationSummary {
+  paymentsLayer: any
+  settlementLayer: any
+  bankLayer: any
+  payoutLayer: any
+  accountingLayer: any
+  globalHealthScorePercent: number
+  divergencesCount?: number
+  lastReconciledAt: string
+}
+
+export interface ReconciliationDivergence {
+  id: string
+  layer: string
+  orderId: string
+  eventId: number
+  eventName: string
+  expectedCents: number
+  actualCents: number
+  differenceCents: number
+  divergenceType: string
+  divergenceTypeLabelPtBr: string
+  status: string
+  statusLabelPtBr: string
+  identifiedAt: string
+  notes: string
+  resolvedAt?: string
+}
+
+export interface FinancialIntegritySummary {
+  healthScorePercent: number
+  status: string
+  statusLabelPtBr: string
+  lastAuditAt: string
+  anomaliesDetectedCount: number
+  rulesAuditedCount: number
+  activeAlerts: any[]
+}
+
+export interface AccountingCoreStatements {
+  producerId: number
+  producerName: string
+  period: string
+  competenceMonth: string
+  dreEvent: any
+  dreConsolidatedProducer: any
+  dreDiskCore: any
+  balanceSheet: any
+  periodClosed: boolean
+  closingStatusLabelPtBr: string
+}
+
+export interface EventClosingChecklist {
+  eventId: number
+  eventName: string
+  eventFinished: boolean
+  eventFinishedAt?: string
+  settlementFinished: boolean
+  allTransactionsReconciled: boolean
+  allDisputesResolved: boolean
+  producerApprovedBordero: boolean
+  closingStage: string
+  closingStageLabelPtBr: string
+  readyToArchive: boolean
+}
+
+export interface EventBorderoReport {
+  eventId: number
+  eventName: string
+  eventDate: string
+  producerName: string
+  producerDocument: string
+  venue: string
+  generatedAt: string
+  totalTicketsSold: number
+  totalComplimentaryTickets: number
+  grossBoxOfficeCents: number
+  totalDiscountsCents: number
+  netBoxOfficeCents: number
+  diskIngressosCommissionCents: number
+  creditCardFeeRetainedCents: number
+  ecadRetainedCents: number
+  productionExpensesAdvancedCents: number
+  netPayableToProducerCents: number
+  alreadyPaidOutCents: number
+  balanceRemainingToPayoutCents: number
+  lotsSummary: any[]
+  verifiedAuditHash: string
+}
+
+export interface FinancialSimulationRequest {
+  producerId: number
+  sourceEventId: number
+  targetEventId: number
+  amountCents: number
+  simulatedAt?: string
+}
+
+export interface FinancialSimulationResult {
+  simulationId: string
+  feasible: boolean
+  simulatedBalances: any
+  riskLevel: string
+  impactNotes: string[]
+  createdAt: string
+}
 
 export const financialAccountingCoreRouter = Router()
 
