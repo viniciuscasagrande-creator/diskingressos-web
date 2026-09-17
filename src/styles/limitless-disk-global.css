@@ -1,0 +1,267 @@
+/* ============================================================================
+   DISK + LIMITLESS — CONTRATO VISUAL GLOBAL V5
+   Fonte visual: assets Limitless fornecidos pelo projeto.
+   Objetivo: normalizar AppShell, sidebar, header e páginas sem alterar regras,
+   rotas, PageKeys, permissões ou dados.
+   ============================================================================ */
+
+html[data-ui-framework='limitless'] {
+  --ll-sidebar: 15.75rem;
+  --ll-sidebar-collapsed: 4rem;
+  --ll-header: 3.625rem;
+  --ll-radius: .5rem;
+  --ll-radius-sm: .375rem;
+  --ll-control: 2.25rem;
+  --ll-nav-row: 2.5rem;
+  --ll-orange: #f97316;
+}
+
+html[data-ui-framework='limitless'] body {
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-x: hidden;
+}
+
+/* Shell: uma única geometria. */
+html[data-ui-framework='limitless'] .app-shell {
+  --sidebar-width: var(--ll-sidebar) !important;
+  --sidebar-collapsed-width: var(--ll-sidebar-collapsed) !important;
+  --header-height: var(--ll-header) !important;
+  --content-max-width: 100rem !important;
+  width: 100%;
+  min-width: 0;
+}
+
+html[data-ui-framework='limitless'] .global-topbar {
+  min-height: var(--ll-header) !important;
+  height: var(--ll-header) !important;
+  padding-inline: 1rem !important;
+  gap: .75rem !important;
+  box-shadow: none !important;
+}
+
+html[data-ui-framework='limitless'] .global-topbar button,
+html[data-ui-framework='limitless'] .global-topbar input,
+html[data-ui-framework='limitless'] .global-topbar select {
+  min-height: var(--ll-control);
+}
+
+/* Sidebar canônica Limitless: proporção compacta e previsível. */
+html[data-ui-framework='limitless'] #main-module-sidebar.module-sidebar,
+html[data-ui-framework='limitless'] .event-context-sidebar {
+  flex: 0 0 var(--ll-sidebar) !important;
+  width: var(--ll-sidebar) !important;
+  min-width: var(--ll-sidebar) !important;
+  max-width: var(--ll-sidebar) !important;
+  height: calc(100vh - var(--ll-header)) !important;
+  top: 0 !important;
+  position: sticky !important;
+  overflow: hidden !important;
+  border-right: 1px solid var(--disk-border, rgba(148,163,184,.16)) !important;
+  box-shadow: none !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .safesaff-sidebar-header,
+html[data-ui-framework='limitless'] #main-module-sidebar .sidebar-top-bar {
+  min-height: 3rem !important;
+  height: 3rem !important;
+  padding: .5rem .625rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: .375rem !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav {
+  padding: .375rem .5rem .75rem !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: calc(100% - 3rem) !important;
+  scrollbar-width: thin;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-caption {
+  margin: .375rem .625rem .25rem !important;
+  padding: 0 !important;
+  min-height: 1.25rem !important;
+  font-size: .625rem !important;
+  line-height: 1.25rem !important;
+  letter-spacing: .08em !important;
+  font-weight: 700 !important;
+  opacity: .62;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav-item,
+html[data-ui-framework='limitless'] #main-module-sidebar .collapsible-section-head {
+  width: 100% !important;
+  min-height: var(--ll-nav-row) !important;
+  height: auto !important;
+  margin: 1px 0 !important;
+  padding: .5rem .625rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: .625rem !important;
+  border: 0 !important;
+  border-radius: var(--ll-radius-sm) !important;
+  font-size: .8125rem !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+  box-shadow: none !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav-item.indent {
+  padding-left: 2.25rem !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav-icon,
+html[data-ui-framework='limitless'] #main-module-sidebar .collapsible-section-icon {
+  width: 1.125rem !important;
+  min-width: 1.125rem !important;
+  height: 1.125rem !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  margin: 0 !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav-icon svg,
+html[data-ui-framework='limitless'] #main-module-sidebar .collapsible-section-icon svg {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav-label,
+html[data-ui-framework='limitless'] #main-module-sidebar .collapsible-section-label {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .nav-item-badge {
+  margin-left: auto !important;
+  font-size: .625rem !important;
+  line-height: 1 !important;
+  padding: .25rem .375rem !important;
+  border-radius: 999px !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav-item.active {
+  background: rgba(249,115,22,.14) !important;
+  color: var(--ll-orange) !important;
+  box-shadow: inset 2px 0 0 var(--ll-orange) !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar .module-nav-item:hover,
+html[data-ui-framework='limitless'] #main-module-sidebar .collapsible-section-head:hover {
+  background: var(--disk-bg-hover, rgba(148,163,184,.08)) !important;
+}
+
+/* Colapso verdadeiro: 64px, ícones centralizados e sem textos fantasmas. */
+html[data-ui-framework='limitless'] .app-shell.sidebar-collapsed #main-module-sidebar,
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed {
+  flex-basis: var(--ll-sidebar-collapsed) !important;
+  width: var(--ll-sidebar-collapsed) !important;
+  min-width: var(--ll-sidebar-collapsed) !important;
+  max-width: var(--ll-sidebar-collapsed) !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .module-nav-label,
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-label,
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-chevron,
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .nav-item-badge,
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .module-caption,
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .safesaff-sidebar-home span {
+  display: none !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .module-nav-item,
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-head {
+  justify-content: center !important;
+  padding-inline: .5rem !important;
+  gap: 0 !important;
+}
+
+html[data-ui-framework='limitless'] #main-module-sidebar.safesaff-sidebar--collapsed .module-nav-item.indent {
+  padding-left: .5rem !important;
+}
+
+/* Conteúdo: elimina colunas comprimidas e limites herdados. */
+html[data-ui-framework='limitless'] #main-app-content {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  overflow-x: hidden !important;
+}
+
+html[data-ui-framework='limitless'] #main-app-content > .disk-content-container {
+  width: 100% !important;
+  max-width: 100rem !important;
+  min-width: 0 !important;
+  padding: 1.25rem 1.5rem 2rem !important;
+}
+
+html[data-ui-framework='limitless'] #main-app-content .disk-page-header,
+html[data-ui-framework='limitless'] #main-app-content .page-header,
+html[data-ui-framework='limitless'] #main-app-content [data-testid='disk-page-header'] {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html[data-ui-framework='limitless'] #main-app-content h1 {
+  font-size: clamp(1.5rem, 2vw, 2rem) !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.025em !important;
+  max-width: none !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+html[data-ui-framework='limitless'] #main-app-content p {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+/* Componentes existentes ganham acabamento Limitless sem exigir reescrita. */
+html[data-ui-framework='limitless'] #main-app-content :is(.card, .disk-card, [class*='rounded-xl'][class*='border']) {
+  border-radius: var(--ll-radius) !important;
+}
+
+html[data-ui-framework='limitless'] #main-app-content :is(button, input, select, textarea) {
+  border-radius: var(--ll-radius-sm);
+}
+
+html[data-ui-framework='limitless'] #main-app-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+html[data-ui-framework='limitless'] #main-app-content thead th {
+  font-size: .6875rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Mobile: drawer proporcional e conteúdo sem largura fixa. */
+@media (max-width: 767px) {
+  html[data-ui-framework='limitless'] .global-topbar {
+    padding-inline: .75rem !important;
+  }
+  html[data-ui-framework='limitless'] #main-module-sidebar.module-sidebar,
+  html[data-ui-framework='limitless'] .event-context-sidebar {
+    position: fixed !important;
+    top: var(--ll-header) !important;
+    left: 0 !important;
+    width: min(19rem, 88vw) !important;
+    min-width: min(19rem, 88vw) !important;
+    max-width: min(19rem, 88vw) !important;
+    height: calc(100dvh - var(--ll-header)) !important;
+    z-index: 1002 !important;
+  }
+  html[data-ui-framework='limitless'] #main-app-content > .disk-content-container {
+    padding: 1rem .875rem 1.5rem !important;
+  }
+}

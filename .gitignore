@@ -17,3 +17,6 @@ playwright-report/
 test-results/
 blob-report/
 
+# Limitless raw template reference
+vendor/
+

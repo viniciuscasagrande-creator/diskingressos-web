@@ -19,7 +19,7 @@ export const MainContent: React.FC<MainContentProps> = ({
 }) => {
   return (
     <main
-      className={`content phase6-content disk-main-content flex-1 w-full min-w-0 min-h-[calc(100vh-var(--header-height,4rem))] bg-background text-foreground transition-colors overflow-x-hidden ${className}`}
+      className={`content phase6-content disk-main-content disk-limitless-page flex-1 w-full min-w-0 min-h-[calc(100vh-var(--header-height,4rem))] bg-background text-foreground transition-colors overflow-x-hidden ${className}`}
       id="main-app-content"
       data-testid="main-app-content"
       role="main"
