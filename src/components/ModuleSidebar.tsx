@@ -19,6 +19,7 @@ export type PageKey =
   | 'profile-dashboard' | 'global-dashboard' | 'events' | 'operations' | 'new-event' | 'lots' | 'participants' | 'edit-event' | 'event-command-center' | 'event-inventory' | 'event-customer-360' | 'event-dashboard'
   | 'event-support'
   | 'commerce-orders'
+  | 'commercial-hub'
   | 'developer-center'
   | 'payments-hub'
   | 'tickets-hub'
@@ -76,6 +77,7 @@ type Item = {
 const mainItems: Item[] = [
   { key: 'profile-dashboard', label: 'Dashboard', icon: BarChart3 },
   { key: 'events', label: 'Todos os Eventos', icon: Ticket },
+  { key: 'commercial-hub', label: 'Comercial', icon: Scale },
   { key: 'commerce-orders', label: 'Pedidos & Vendas', icon: ShoppingBag },
   { key: 'event-support', label: 'Suporte a Eventos', icon: Layers },
   { key: 'developer-center', label: 'Desenvolvedor', icon: Terminal },

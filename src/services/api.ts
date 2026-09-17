@@ -21,6 +21,8 @@ let token=readStoredToken()
 export function setApiToken(value:string,remember=false){token=value;if(typeof window!=='undefined'){sessionStorage.removeItem(tokenKey);localStorage.removeItem(tokenKey);sessionStorage.removeItem(legacyTokenKey);localStorage.removeItem(legacyTokenKey);(remember?localStorage:sessionStorage).setItem(tokenKey,value)}}
 export function clearApiToken(){token='';if(typeof window!=='undefined'){sessionStorage.removeItem(tokenKey);localStorage.removeItem(tokenKey);sessionStorage.removeItem(legacyTokenKey);localStorage.removeItem(legacyTokenKey)}}
 export function hasStoredToken(){return !!token}
+export function getApiToken(){return token}
+export function getAuthHeader(): Record<string, string>{return token ? { Authorization: `Bearer ${token}` } : {}}
 export function getApiBaseUrl(){return API}
 async function request<T>(path:string,options:RequestInit={}){const r=await fetch(`${API}${path}`,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`}:{}) ,...(options.headers||{})}});const data=await r.json().catch(()=>({}));if(r.status===401){clearApiToken()}if(!r.ok)throw new Error(data.message||'Erro na API');return data as T}
 export async function login(email:string,password:string){return request<{token:string;user:AppUser}>('/auth/login',{method:'POST',body:JSON.stringify({email,password})})}

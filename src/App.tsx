@@ -94,6 +94,7 @@ import { TicketsHubPage } from './components/tickets/TicketsHubPage'
 import { AccessControlHubPage } from './components/access/AccessControlHubPage'
 import { CustomerSearchHubPage } from './components/customers/CustomerSearchHubPage'
 import { FinancialCoreHubPage } from './components/finance/FinancialCoreHubPage'
+import { CommercialHubPage } from './pages/commercial/CommercialHubPage'
 
 const mobileInternalHeaderPages = new Set<PageKey>([
   'events',
@@ -155,6 +156,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-audit': 'Logs do Evento',
   'event-permissions': 'Permissões do Evento',
   'event-commercial-conditions': 'Condições Comerciais do Evento',
+  'commercial-hub': 'Comercial • Gestão de Taxas e Acordos',
   'event-support': 'Suporte a Eventos & Event Builder',
   'commerce-orders': 'Pedidos, Ingressos & Integridade Comercial',
   'developer-center': 'Desenvolvedor • Central de Observabilidade',
@@ -364,6 +366,7 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
     return firstPageFor(user)
   }
   if (clean === 'eventos') return 'events'
+  if (clean === 'commercial-hub' || clean === 'app/commercial-hub' || clean === 'comercial' || clean === 'app/comercial') return 'commercial-hub'
   if (clean === 'event-support' || clean === 'app/event-support') return 'event-support'
   if (clean === 'commerce-orders' || clean === 'app/commerce-orders' || clean === 'pedidos' || clean === 'app/pedidos') return 'commerce-orders'
   if (clean === 'developer-center' || clean === 'app/developer-center' || clean === 'desenvolvedor' || clean === 'app/desenvolvedor' || clean === 'desenvolvedor/design-system' || clean === 'app/desenvolvedor/design-system') return 'developer-center'
@@ -1113,6 +1116,16 @@ export default function App() {
             onDashboard={openDashboard}
             onOpen={openEventContext}
             onNavigate={navigate}
+          />
+        )}
+        {page === 'commercial-hub' && (
+          <CommercialHubPage
+            onNavigate={navigate}
+            onSelectEvent={(eventId) => {
+              const ev = events.find(e => e.id === eventId)
+              if (ev) openEventContext(ev)
+            }}
+            notify={notify}
           />
         )}
         {page === 'event-support' && (
