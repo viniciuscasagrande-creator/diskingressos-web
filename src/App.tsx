@@ -1128,6 +1128,7 @@ export default function App() {
         )}
         {page === 'commercial-hub' && (
           <CommercialHubPage
+            producerId={scopedProducerId}
             onNavigate={navigate}
             onSelectEvent={(eventId) => {
               const ev = events.find(e => e.id === eventId)

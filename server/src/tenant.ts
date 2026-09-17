@@ -1,8 +1,13 @@
 import type { AuthRequest } from './middleware/auth.js'
 import { globalAdmin } from './auth.js'
 
+function isCommercialOrAdmin(role?: string): boolean {
+  if (!role) return false
+  return globalAdmin(role) || role === 'commercial' || role === 'commercial-admin'
+}
+
 export function requestedProducerId(req: AuthRequest): number | undefined {
-  if (!globalAdmin(req.auth!.role)) return req.auth!.producerId ?? -1
+  if (!isCommercialOrAdmin(req.auth?.role)) return req.auth!.producerId ?? -1
   const raw = req.query.producerId
   if (raw === undefined || raw === '' || raw === 'all') return undefined
   const id = Number(raw)
@@ -10,11 +15,11 @@ export function requestedProducerId(req: AuthRequest): number | undefined {
 }
 
 export function writeProducerId(req: AuthRequest, bodyProducerId?: number): number | null {
-  return globalAdmin(req.auth!.role) ? (bodyProducerId ?? null) : (req.auth!.producerId ?? null)
+  return isCommercialOrAdmin(req.auth?.role) ? (bodyProducerId ?? null) : (req.auth!.producerId ?? null)
 }
 
 export function ownsProducer(req: AuthRequest, producerId: number): boolean {
-  return globalAdmin(req.auth!.role) || req.auth!.producerId === producerId
+  return isCommercialOrAdmin(req.auth?.role) || req.auth!.producerId === producerId
 }
 
 export function tenantWhere(user: { role: string; producerId?: number | null }, queryProducerId?: any): any {

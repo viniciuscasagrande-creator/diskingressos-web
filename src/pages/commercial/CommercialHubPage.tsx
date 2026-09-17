@@ -132,6 +132,7 @@ interface DashboardResponse {
 }
 
 interface CommercialHubPageProps {
+  producerId?: number | null
   onNavigate?: (page: PageKey, context?: any) => void
   onSelectEvent?: (eventId: number) => void
   notify?: (msg: string) => void
@@ -148,6 +149,7 @@ const moneyCompact = (cents: number) => {
 }
 
 export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
+  producerId,
   onNavigate,
   onSelectEvent,
   notify
@@ -194,7 +196,10 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/commercial/dashboard', {
+      const params = new URLSearchParams()
+      if (producerId && producerId > 0) params.append('producerId', String(producerId))
+      const url = `/api/commercial/dashboard${params.toString() ? `?${params.toString()}` : ''}`
+      const res = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
           ...getAuthHeader()
@@ -202,14 +207,18 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
       })
 
       if (!res.ok) {
-        throw new Error(`Erro na API (${res.status})`)
+        const errorData = await res.json().catch(() => ({}))
+        if (res.status === 401) {
+          throw new Error('Sua sessão expirou ou não está autenticada. Faça login novamente para carregar o Comercial.')
+        }
+        throw new Error(errorData.message || `Erro na API (${res.status})`)
       }
 
       const json = await res.json()
       setData(json)
     } catch (err: any) {
       console.error('[CommercialHub] Erro:', err)
-      setError('Não foi possível carregar as informações comerciais. Tente novamente.')
+      setError(err?.message || 'Não foi possível carregar as informações comerciais. Tente novamente.')
     } finally {
       setLoading(false)
     }
@@ -217,7 +226,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 
   useEffect(() => {
     fetchDashboard()
-  }, [])
+  }, [producerId])
 
   // Pesquisa Global: Resultados Separados em Tempo Real
   const searchResults = useMemo(() => {
