@@ -247,3 +247,143 @@ html.dark .growth-table td {
   .growth-intro { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
 }
 
+
+/* ============================================================================
+   DISK MASTER VISUAL — RECOVERY V3
+   Base: Marketing restaurado. Esta camada moderniza o shell sem reorganizar,
+   esconder ou remover funções. O conteúdo funcional continua sendo o original.
+   ============================================================================ */
+
+/* Densidade e hierarquia do mockup aprovado */
+.app-shell[data-visual-contract="disk-master-komposo"] {
+  --disk-master-content-gap: 16px;
+  --disk-master-card-radius: 12px;
+  background: var(--disk-bg-app) !important;
+}
+
+.disk-main-content {
+  background:
+    radial-gradient(circle at 88% 0%, color-mix(in srgb, var(--disk-color-primary) 5%, transparent), transparent 30rem),
+    var(--disk-bg-app) !important;
+}
+.disk-content-container { min-width: 0; }
+
+/* Header único, compacto e sem segunda faixa visual */
+.global-topbar {
+  min-height: var(--header-height) !important;
+  height: var(--header-height) !important;
+  padding-inline: 16px !important;
+  background: color-mix(in srgb, var(--disk-bg-surface) 96%, transparent) !important;
+  border-bottom: 1px solid var(--disk-border-default) !important;
+  box-shadow: none !important;
+}
+.global-topbar .navbar-logo { max-height: 28px !important; }
+
+/* Sidebar canônica: o próprio componente funcional recebe o visual aprovado */
+#main-module-sidebar.module-sidebar {
+  width: var(--sidebar-width) !important;
+  flex: 0 0 var(--sidebar-width) !important;
+  background: var(--disk-bg-surface) !important;
+  border-right: 1px solid var(--disk-border-default) !important;
+  box-shadow: none !important;
+}
+#main-module-sidebar.safesaff-sidebar--collapsed {
+  width: var(--sidebar-collapsed-width) !important;
+  flex-basis: var(--sidebar-collapsed-width) !important;
+}
+#main-module-sidebar .safesaff-sidebar-header {
+  min-height: 52px !important;
+  padding: 8px 10px !important;
+  border-bottom: 1px solid var(--disk-border-subtle) !important;
+}
+#main-module-sidebar .module-caption {
+  color: var(--disk-text-muted) !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  letter-spacing: .09em !important;
+  padding: 14px 12px 7px !important;
+}
+#main-module-sidebar .module-nav { padding: 6px 8px 18px !important; }
+#main-module-sidebar .module-nav-item,
+#main-module-sidebar .collapsible-section-head {
+  min-height: 38px !important;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  color: var(--disk-text-secondary) !important;
+  background: transparent !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  margin: 2px 0 !important;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease !important;
+}
+#main-module-sidebar .module-nav-item:hover,
+#main-module-sidebar .collapsible-section-head:hover,
+#main-module-sidebar .collapsible-section-head.open {
+  background: var(--disk-bg-hover) !important;
+  color: var(--disk-text-primary) !important;
+}
+#main-module-sidebar .module-nav-item.active {
+  background: var(--disk-color-primary-subtle) !important;
+  color: var(--disk-color-primary) !important;
+  border-color: var(--disk-color-primary-subtle-border) !important;
+  box-shadow: inset 3px 0 0 var(--disk-color-primary) !important;
+}
+#main-module-sidebar .module-nav-item.active .module-nav-icon { color: var(--disk-color-primary) !important; }
+#main-module-sidebar .nav-item-badge {
+  border: 1px solid var(--disk-border-default) !important;
+  background: var(--disk-bg-muted) !important;
+  color: var(--disk-text-muted) !important;
+  border-radius: 999px !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+}
+
+/* Superfícies nativas: dark não é "fundo preto + cartões brancos" */
+html.dark :is(
+  .profile-hero,.profile-kpi,.profile-section,.profile-shortcut,.profile-event-list,.profile-event-row,
+  .card,.panel,.widget,.box,.tile,.table-card,.chart-card,.metric-card,.dashboard-kpi-card,
+  .finance-kpi,.finance-card,.balance-card,.hub-card,.event-card,.summary-card,.content-card,
+  .stat-card,.kpi-card,.report-card,.filter-card,.form-card,.section-card,.module-card,
+  .marketing-os-panel,.campaign-card,.automation-card,.utm-card,.analytics-card
+) {
+  background: var(--disk-bg-surface) !important;
+  color: var(--disk-text-primary) !important;
+  border-color: var(--disk-border-default) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.02), 0 8px 24px rgba(0,0,0,.10) !important;
+}
+
+/* Páginas: remove sensação de documento antigo e melhora hierarquia */
+#main-app-content :is(.page-header,.disk-page-header,.module-titlebar) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+#main-app-content :is(h1,.page-title,.module-title) {
+  color: var(--disk-text-primary) !important;
+  letter-spacing: -.02em;
+}
+#main-app-content :is(.page-subtitle,.module-subtitle) { color: var(--disk-text-muted) !important; }
+
+/* Tabelas seguem a mesma superfície, com cabeçalho discreto */
+#main-app-content table { background: var(--disk-bg-surface); }
+#main-app-content thead { background: var(--disk-bg-muted) !important; }
+#main-app-content tbody tr:hover { background: var(--disk-bg-hover) !important; }
+
+/* Mobile real: uma coluna, header limpo e sidebar como drawer */
+@media (max-width: 767px) {
+  .global-topbar { padding-inline: 10px !important; gap: 8px !important; }
+  .disk-content-container { padding: 12px !important; }
+  #main-app-content :is(.profile-dashboard,.dashboard-grid,.kpi-grid,.cards-grid) { gap: 12px !important; }
+  .profile-hero { padding: 18px !important; gap: 12px !important; }
+  .profile-hero h2 { font-size: 22px !important; }
+  .profile-section { padding: 16px !important; }
+  .profile-kpi { padding: 15px !important; }
+  .profile-kpi > strong { font-size: 23px !important; }
+  #main-module-sidebar.module-sidebar { width: min(86vw, 300px) !important; flex-basis: auto !important; }
+}
+
+/* Light: sombras e contraste equivalentes ao mockup claro */
+html.light :is(.profile-hero,.profile-kpi,.profile-section,.card,.panel,.table-card,.chart-card,.finance-card,.marketing-os-panel),
+html[data-theme="light"] :is(.profile-hero,.profile-kpi,.profile-section,.card,.panel,.table-card,.chart-card,.finance-card,.marketing-os-panel) {
+  box-shadow: var(--disk-master-shadow) !important;
+}

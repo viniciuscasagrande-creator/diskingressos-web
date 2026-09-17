@@ -127,7 +127,7 @@ const marketingItems: Item[] = [
   { key: 'marketing-coupons', label: 'Cupons & Descontos', icon: Tags },
   { key: 'marketing-utm-central', label: 'Central UTM & Links', icon: Link2, badge: 'UTM / QR' },
   { key: 'marketing-affiliates', label: 'Afiliados & Promoters', icon: UsersRound },
-  { key: 'marketing-tracking', label: 'Pixels & Conversões', icon: Activity, badge: '360°' },
+  { key: 'marketing-tracking', label: 'Pixels & Conversões', icon: Activity, badge: 'Multi-pixel' },
   { key: 'marketing-spotify-ads', label: 'Spotify Ads', icon: Headphones, badge: 'Áudio' },
   { key: 'marketing-attribution', label: 'Atribuição Multicanal', icon: Scale },
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }

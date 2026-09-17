@@ -159,12 +159,13 @@ export const AppShell: React.FC<AppShellProps> = ({
         effectiveSidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''
       } ${effectiveMobileNavOpen ? 'mobile-nav-open sidebar-mobile-expanded' : ''}`}
       data-testid="disk-app-shell"
+      data-visual-contract="disk-master-komposo"
       style={
         {
-          '--sidebar-width': '17rem',
-          '--sidebar-collapsed-width': '4.5rem',
-          '--header-height': '4rem',
-          '--content-max-width': '100rem'
+          '--sidebar-width': '16rem',
+          '--sidebar-collapsed-width': '4.25rem',
+          '--header-height': '3.75rem',
+          '--content-max-width': '96rem'
         } as React.CSSProperties
       }
     >
