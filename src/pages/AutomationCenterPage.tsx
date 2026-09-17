@@ -3,11 +3,11 @@ import { Bot, Mail, MessageCircle, Play, Plus, Send, Workflow, Zap } from 'lucid
 import type { EventItem } from '../data/events'
 import { createAutomationFlow, createMessageTemplate, getAutomationExecutions, getAutomationFlows, getMessageTemplates, testAutomationFlow, updateAutomationFlow, type AutomationExecution, type AutomationFlow, type MessageTemplate } from '../services/api'
 
-type Props={producerId:number|null;events:EventItem[];mode:'automations'|'whatsapp'|'email';notify:(m:string)=>void}
+type Props={producerId:number|null;events:EventItem[];mode:'automations'|'whatsapp'|'email';selectedEventId?:number|'all'|null;notify:(m:string)=>void}
 const triggers=[['purchase_confirmed','Compra confirmada'],['cart_abandoned','Carrinho abandonado'],['last_lot','Último lote'],['birthday','Aniversário'],['post_event','Pós-evento'],['payment_pending','Pagamento pendente']]
-export default function AutomationCenterPage({producerId,events,mode,notify}:Props){
+export default function AutomationCenterPage({producerId,events,mode,selectedEventId,notify}:Props){
  const [flows,setFlows]=useState<AutomationFlow[]>([]);const [templates,setTemplates]=useState<MessageTemplate[]>([]);const [execs,setExecs]=useState<AutomationExecution[]>([])
- const [flow,setFlow]=useState({name:'',trigger:'cart_abandoned',channel:mode==='email'?'email':mode==='whatsapp'?'whatsapp':'multicanal',audience:'compradores',delayMinutes:'30',eventId:''})
+ const [flow,setFlow]=useState({name:'',trigger:'cart_abandoned',channel:mode==='email'?'email':mode==='whatsapp'?'whatsapp':'multicanal',audience:'compradores',delayMinutes:'30',eventId:selectedEventId && selectedEventId !== 'all' ? String(selectedEventId) : ''})
  const [tpl,setTpl]=useState({name:'',subject:'',body:'',eventId:''})
  const channel=mode==='automations'?undefined:mode
  const load=()=>Promise.all([getAutomationFlows(producerId||undefined),getMessageTemplates(producerId||undefined,undefined,channel),getAutomationExecutions(producerId||undefined)]).then(([f,t,e])=>{setFlows(f);setTemplates(t);setExecs(e)}).catch(e=>notify(e.message))

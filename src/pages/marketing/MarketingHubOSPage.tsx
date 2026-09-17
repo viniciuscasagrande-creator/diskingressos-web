@@ -615,7 +615,8 @@ export default function MarketingHubOSPage(p: Props) {
               icon={CalendarDays}
               items={[
                 ['Campanhas', 'marketing-campaigns'],
-                ['Campanhas Prontas', 'marketing-ready-campaigns']
+                ['Campanhas Prontas', 'marketing-ready-campaigns'],
+                ['Status Real', 'marketing-status-real']
               ]}
               onNavigate={onNavigate}
               notify={notify}
@@ -630,6 +631,7 @@ export default function MarketingHubOSPage(p: Props) {
                 ['Spotify Ads', 'marketing-spotify-ads'],
                 ['WhatsApp', 'marketing-whatsapp'],
                 ['E-mail Marketing', 'marketing-email'],
+                ['Automações', 'marketing-automations'],
                 ['Influenciadores', 'marketing-influencers']
               ]}
               onNavigate={onNavigate}
@@ -642,6 +644,7 @@ export default function MarketingHubOSPage(p: Props) {
                 ['Central UTM', 'marketing-utm-central'],
                 ['Conversões', 'marketing-conversions'],
                 ['Pixels e Conversões', 'marketing-tracking'],
+                ['Atribuição', 'marketing-attribution'],
                 ['Relatórios & ROI', 'marketing-reports']
               ]}
               onNavigate={onNavigate}

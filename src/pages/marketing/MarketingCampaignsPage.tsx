@@ -19,6 +19,7 @@ interface MarketingCampaignsPageProps {
   events: EventItem[]
   notify?: (msg: string) => void
   initialEventId?: number
+  openWizardOnInit?: boolean
 }
 
 const channelMeta: Record<MarketingChannel, { label: string; color: string; bg: string; border: string }> = {
@@ -47,7 +48,7 @@ const statusMeta: Record<CampaignStatus, { label: string; bg: string; color: str
   finished: { label: 'Finalizada', bg: '#F3F4F6', color: '#374151', border: '#E5E7EB' }
 }
 
-export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ events, notify, initialEventId }) => {
+export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ events, notify, initialEventId, openWizardOnInit }) => {
   const [activeTab, setActiveTab] = useState<'campaigns' | 'templates' | 'monitoring'>('campaigns')
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>(mockMarketingCampaigns)
   const [templates] = useState<CampaignTemplate[]>(mockCampaignTemplates)
@@ -60,7 +61,7 @@ export const MarketingCampaignsPage: React.FC<MarketingCampaignsPageProps> = ({ 
 
   // Modals & Drawers
   const [selectedCampaignForDrilldown, setSelectedCampaignForDrilldown] = useState<MarketingCampaign | null>(null)
-  const [isWizardOpen, setIsWizardOpen] = useState(false)
+  const [isWizardOpen, setIsWizardOpen] = useState(Boolean(openWizardOnInit))
   const [wizardSelectedTemplate, setWizardSelectedTemplate] = useState<CampaignTemplate | null>(null)
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null)
 

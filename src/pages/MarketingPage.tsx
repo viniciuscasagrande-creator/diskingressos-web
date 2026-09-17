@@ -232,7 +232,7 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
     }
 
     if (mode === 'campaigns' || mode === 'create') {
-      return <MarketingCampaignsPage events={events} initialEventId={selectedEventId} notify={notify} />
+      return <MarketingCampaignsPage events={events} initialEventId={selectedEventId} openWizardOnInit={mode === 'create'} notify={notify} />
     }
 
     if (mode === 'meta-ads') {
@@ -266,15 +266,15 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
 
     /* 2. COMUNICAÇÃO & RELACIONAMENTO */
     if (mode === 'whatsapp') {
-      return <WhatsAppMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
+      return <WhatsAppMarketingPage producerId={producerId} producerName={producerName} events={events} selectedEventId={selectedEventId} notify={notify} />
     }
 
     if (mode === 'email') {
-      return <EmailMarketingPage producerId={producerId} producerName={producerName} events={events} notify={notify} />
+      return <EmailMarketingPage producerId={producerId} producerName={producerName} events={events} selectedEventId={selectedEventId} notify={notify} />
     }
 
     if (mode === 'automations') {
-      return <AutomationCenterPage producerId={producerId} events={events} mode={mode} notify={notify} />
+      return <AutomationCenterPage producerId={producerId} events={events} mode={mode} selectedEventId={selectedEventId} notify={notify} />
     }
 
     if (mode === 'crm') {
@@ -291,7 +291,7 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
 
     /* 3. PROMOÇÃO & FIDELIZAÇÃO */
     if (mode === 'coupons') {
-      return <CouponsPromoPage events={events as any} producerId={producerId} notify={notify} />
+      return <CouponsPromoPage events={events as any} producerId={producerId || undefined} selectedEventId={selectedEventId} notify={notify} />
     }
 
     if (mode === 'cashback') {

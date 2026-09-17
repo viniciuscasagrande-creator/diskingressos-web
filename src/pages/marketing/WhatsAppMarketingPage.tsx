@@ -11,6 +11,7 @@ interface Props {
   producerId: number | null
   producerName: string
   events: EventItem[]
+  selectedEventId?: number | 'all'
   notify: (msg: string) => void
 }
 
@@ -127,8 +128,8 @@ const mockTemplates: WhatsAppTemplate[] = [
   }
 ]
 
-export default function WhatsAppMarketingPage({ producerId, producerName, events, notify }: Props) {
-  const [selectedEventId, setSelectedEventId] = useState<number | 'all'>('all')
+export default function WhatsAppMarketingPage({ producerId, producerName, events, selectedEventId: initialSelectedEventId, notify }: Props) {
+  const [selectedEventId, setSelectedEventId] = useState<number | 'all'>(initialSelectedEventId || 'all')
   const [period, setPeriod] = useState<'7d' | '14d' | '30d' | 'all'>('30d')
   const [activeTab, setActiveTab] = useState<'campanhas' | 'templates' | 'automacoes' | 'historico' | 'audiencias'>('campanhas')
   const [statusFilter, setStatusFilter] = useState<string>('todas')

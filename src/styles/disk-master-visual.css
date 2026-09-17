@@ -195,11 +195,36 @@ html.dark :is(
   .profile-hero,.profile-kpi,.profile-section,.profile-shortcut,.profile-event-list,.profile-event-row,
   .dashboard-card,.dashboard-card-premium,.dashboard-panel,.dashboard-widget,.dashboard-section,
   .info-card,.data-card,.detail-card,.overview-card,.analytics-card,.action-card,
-  .list-card,.table-wrapper,.content-panel,.section-card,.module-card
+  .list-card,.table-wrapper,.content-panel,.section-card,.module-card,
+  .growth-context, .growth-kpi, .growth-panel, .finance-module-card,
+  .marketing-os-panel, .module-col, .utm-modal-card-v2, .feature-empty,
+  .traffic-item, .phase12-form, .phase13-template, .attribution-page,
+  .attribution-kpis article, .attribution-grid article, .delivery-stat-card,
+  .campaign-summary-banner, .campaign-delivery-monitoring-card, .spotify-hub-card,
+  .campaign-filter-card
 ) {
   background: var(--disk-bg-surface) !important;
   border-color: var(--disk-border-default) !important;
   color: var(--disk-text-primary) !important;
+}
+
+html.dark :is(.growth-kpi strong, .growth-context strong, .panel-head h3, .growth-intro h2, .marketing-os-panel h3, .module-col h4) {
+  color: var(--disk-text-primary) !important;
+}
+
+html.dark :is(.growth-context select, .growth-page select, .growth-page input, .growth-page textarea) {
+  background-color: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+html.dark .growth-table th {
+  color: var(--disk-text-muted) !important;
+  border-bottom-color: var(--disk-border-default) !important;
+}
+html.dark .growth-table td {
+  color: var(--disk-text-primary) !important;
+  border-bottom-color: var(--disk-border-subtle) !important;
 }
 
 /* Mobile: evita colisão de breadcrumb/título e aproxima o shell do master aprovado. */
@@ -216,4 +241,9 @@ html.dark :is(
   .profile-event-main strong { white-space: normal !important; }
   .module-titlebar { min-height: auto !important; height: auto !important; }
   .module-titlebar h1, .module-titlebar h2 { line-height: 1.2 !important; }
+  .growth-kpis { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .module-columns { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .growth-context { padding: 12px !important; gap: 10px !important; }
+  .growth-intro { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
 }
+

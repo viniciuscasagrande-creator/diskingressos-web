@@ -115,13 +115,22 @@ const accountingHubItems: Item[] = [
   { key: 'accounting-relatorios', label: 'Relatórios', icon: Download, route: '/contabilidade/relatorios', menuKey: 'accounting-relatorios' },
 ]
 
-// 4. MARKETING: 5 HUBS ESTRATÉGICOS (FASE 28.15.8.1)
-const marketingHubItems: Item[] = [
+// 4. MARKETING OPERACIONAL DIRETO (RESTAURAÇÃO CONTROLADA)
+const marketingItems: Item[] = [
   { key: 'marketing-dashboard', label: 'Dashboard Marketing', icon: BarChart3 },
-  { key: 'marketing-hub-campaigns', label: 'Campanhas', icon: Megaphone, route: '/marketing/campanhas' },
-  { key: 'marketing-hub-communication', label: 'Comunicação', icon: MessageCircle, route: '/marketing/comunicacao' },
-  { key: 'marketing-hub-pixels', label: 'Conversões & Pixels', icon: Activity, badge: 'Pixels', route: '/marketing/pixels' },
-  { key: 'marketing-hub-analytics', label: 'Analytics', icon: FileSpreadsheet, route: '/marketing/analytics' },
+  { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
+  { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
+  { key: 'marketing-status-real', label: 'Status Real', icon: Activity, badge: 'Ao Vivo' },
+  { key: 'marketing-whatsapp', label: 'WhatsApp Marketing', icon: MessageCircle, badge: 'Oficial' },
+  { key: 'marketing-email', label: 'E-mail Marketing', icon: Mail },
+  { key: 'marketing-automations', label: 'Automações & Jornadas', icon: Zap },
+  { key: 'marketing-coupons', label: 'Cupons & Descontos', icon: Tags },
+  { key: 'marketing-utm-central', label: 'Central UTM & Links', icon: Link2, badge: 'UTM / QR' },
+  { key: 'marketing-affiliates', label: 'Afiliados & Promoters', icon: UsersRound },
+  { key: 'marketing-tracking', label: 'Pixels & Conversões', icon: Activity, badge: '360°' },
+  { key: 'marketing-spotify-ads', label: 'Spotify Ads', icon: Headphones, badge: 'Áudio' },
+  { key: 'marketing-attribution', label: 'Atribuição Multicanal', icon: Scale },
+  { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]
 
 function isFinanceHubItemActive(itemKey: PageKey, currentPage: PageKey): boolean {
@@ -169,20 +178,12 @@ function isAccountingHubItemActive(itemKey: PageKey, currentPage: PageKey): bool
   return itemKey === currentPage
 }
 
-function isMarketingHubItemActive(itemKey: PageKey, currentPage: PageKey): boolean {
+function isMarketingItemActive(itemKey: PageKey, currentPage: PageKey): boolean {
   if (itemKey === 'marketing-dashboard') return currentPage === 'marketing-dashboard' || currentPage === 'marketing-hub'
-  if (itemKey === 'marketing-hub-campaigns' || itemKey === 'marketing-campaigns') {
-    return ['marketing-hub-campaigns', 'marketing-campaigns', 'marketing-status-real', 'marketing-real-status', 'marketing-ready-campaigns', 'marketing-create', 'marketing-coupons', 'marketing-utm-central', 'marketing-links', 'marketing-affiliates', 'marketing-influencers', 'marketing-cashback', 'marketing-coins', 'marketing-gamification', 'marketing-referral'].includes(currentPage)
-  }
-  if (itemKey === 'marketing-hub-communication' || itemKey === 'marketing-communications') {
-    return ['marketing-hub-communication', 'marketing-communications', 'marketing-whatsapp', 'marketing-email', 'marketing-automations', 'marketing-crm', 'marketing-audiences', 'marketing-remarketing', 'marketing-recovery'].includes(currentPage)
-  }
-  if (itemKey === 'marketing-hub-pixels' || itemKey === 'marketing-tracking') {
-    return ['marketing-hub-pixels', 'marketing-tracking', 'marketing-conversions', 'marketing-meta-ads', 'marketing-google-ads', 'marketing-tiktok-ads', 'marketing-spotify', 'marketing-spotify-ads', 'marketing-attribution'].includes(currentPage)
-  }
-  if (itemKey === 'marketing-hub-analytics' || itemKey === 'marketing-reports') {
-    return ['marketing-hub-analytics', 'marketing-reports', 'marketing-channel-performance', 'marketing-campaign-ranking', 'marketing-funnel-insights'].includes(currentPage)
-  }
+  if (itemKey === 'marketing-campaigns') return currentPage === 'marketing-campaigns' || currentPage === 'marketing-create'
+  if (itemKey === 'marketing-status-real') return currentPage === 'marketing-status-real' || currentPage === 'marketing-real-status'
+  if (itemKey === 'marketing-spotify-ads') return currentPage === 'marketing-spotify-ads' || currentPage === 'marketing-spotify'
+  if (itemKey === 'marketing-utm-central') return currentPage === 'marketing-utm-central' || currentPage === 'marketing-links'
   return itemKey === currentPage
 }
 
@@ -398,16 +399,17 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             if (!isMarketingActive) setOpenMarketing(false)
           }}
         >
-          {marketingHubItems.map((it, index) => (
+          {marketingItems.map((it, index) => (
             <NavItem
-              key={`mkt-hub-${it.key}-${index}`}
+              key={`mkt-${it.key}-${index}`}
               item={it}
-              active={isMarketingHubItemActive(it.key, page)}
+              active={isMarketingItemActive(it.key, page)}
               onNavigate={onNavigate}
               indent
             />
           ))}
         </CollapsibleSection>
+
 
         {/* Section: Remarketing */}
         <CollapsibleSection

@@ -12,6 +12,7 @@ interface Props {
   producerId: number | null
   producerName: string
   events: EventItem[]
+  selectedEventId?: number | 'all'
   notify: (msg: string) => void
 }
 
@@ -114,8 +115,8 @@ const mockEmailTemplates: EmailTemplate[] = [
   }
 ]
 
-export default function EmailMarketingPage({ producerId, producerName, events, notify }: Props) {
-  const [selectedEventId, setSelectedEventId] = useState<number | 'all'>('all')
+export default function EmailMarketingPage({ producerId, producerName, events, selectedEventId: initialSelectedEventId, notify }: Props) {
+  const [selectedEventId, setSelectedEventId] = useState<number | 'all'>(initialSelectedEventId || 'all')
   const [period, setPeriod] = useState<'7d' | '14d' | '30d' | 'all'>('30d')
   const [activeTab, setActiveTab] = useState<'campanhas' | 'templates' | 'testes_ab' | 'historico' | 'segmentacao'>('campanhas')
   const [statusFilter, setStatusFilter] = useState<string>('todas')

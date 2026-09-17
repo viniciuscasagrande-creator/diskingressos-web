@@ -14,10 +14,11 @@ import { Modal } from '../../components/ui/Modal';
 interface CouponsPromoPageProps {
   events: EventItem[];
   producerId?: number;
+  selectedEventId?: number | 'all';
   notify?: (msg: string) => void;
 }
 
-export const CouponsPromoPage: React.FC<CouponsPromoPageProps> = ({ events, notify }) => {
+export const CouponsPromoPage: React.FC<CouponsPromoPageProps> = ({ events, selectedEventId, notify }) => {
   const [coupons, setCoupons] = useState<CouponPromo[]>(mockCoupons);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export const CouponsPromoPage: React.FC<CouponsPromoPageProps> = ({ events, noti
   const [code, setCode] = useState('');
   const [discountType, setDiscountType] = useState<'percentage' | 'fixed'>('percentage');
   const [discountValue, setDiscountValue] = useState('10');
-  const [eventId, setEventId] = useState<string>('all');
+  const [eventId, setEventId] = useState<string>(selectedEventId && selectedEventId !== 'all' ? String(selectedEventId) : 'all');
   const [maxUses, setMaxUses] = useState('100');
   const [validUntil, setValidUntil] = useState('31/12/2026');
 
