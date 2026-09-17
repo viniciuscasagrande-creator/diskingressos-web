@@ -12,9 +12,10 @@ export interface DiskPageHeaderProps {
   subtitle?: string
   eyebrow?: string
   badge?: ReactNode
+  badgeTone?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'purple' | 'neutral'
   badges?: ReactNode[]
   actions?: ReactNode
-  breadcrumbs?: DiskBreadcrumbItem[]
+  breadcrumbs?: (string | DiskBreadcrumbItem)[]
   className?: string
 }
 
@@ -23,6 +24,7 @@ export const DiskPageHeader: React.FC<DiskPageHeaderProps> = ({
   subtitle,
   eyebrow,
   badge,
+  badgeTone,
   badges = [],
   actions,
   breadcrumbs,
@@ -36,7 +38,8 @@ export const DiskPageHeader: React.FC<DiskPageHeaderProps> = ({
       {/* Breadcrumbs se houver */}
       {breadcrumbs && breadcrumbs.length > 0 && (
         <nav className="flex items-center gap-1.5 text-xs text-[var(--disk-text-muted,#64748b)] mb-2 overflow-x-auto py-0.5">
-          {breadcrumbs.map((crumb, idx) => {
+          {breadcrumbs.map((rawCrumb, idx) => {
+            const crumb = typeof rawCrumb === 'string' ? { label: rawCrumb } : rawCrumb
             const isLast = idx === breadcrumbs.length - 1
             return (
               <React.Fragment key={crumb.label + idx}>

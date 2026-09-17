@@ -41,6 +41,12 @@ import { getFinanceDashboardSummary, type FinanceDashboardSummary } from '../ser
 import { navigateWithFinanceDrilldown } from '../utils/financeDrilldown'
 import FinanceOptionCarousel from '../components/finance/FinanceOptionCarousel'
 import { LimitlessPage } from '../integrations/limitless/LimitlessPage'
+import {
+  DiskPageHeader,
+  DiskKpiCard,
+  DiskCard,
+  DiskCardHeader
+} from '../components/ui/disk'
 
 type Props = {
   events: EventItem[]
@@ -157,28 +163,15 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
       className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn"
     >
       <div className="finance-command" data-finance-release="25.3.3-navigation-rail-financial-typography-2026-09-02">
-        {/* Header Limitless */}
-        <div className="card border-0 shadow-none bg-transparent mb-2">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[var(--ll-border)]">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="badge badge-subtle-primary">
-                  Módulo Financeiro Oficial
-                </span>
-                <span className="badge badge-subtle-success">
-                  Core Contábil & Financeiro
-                </span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[var(--ll-text)] flex items-center gap-2.5">
-                <Landmark className="text-[var(--ll-primary)] w-7 h-7" />
-                Dashboard Financeiro
-              </h1>
-              <p className="text-xs sm:text-sm text-[var(--ll-text-2)] mt-1 leading-relaxed">
-                Controle de saldos, recebíveis, taxas, pagamentos, repasses e liquidações.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-center">
+        {/* Header Limitless V7 */}
+        <DiskPageHeader
+          breadcrumbs={['Financeiro', 'Visão Geral']}
+          badge="Módulo Financeiro Oficial"
+          badgeTone="primary"
+          title="Dashboard Financeiro"
+          subtitle="Controle de saldos, recebíveis, taxas, pagamentos, repasses e liquidações."
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
               <select
                 value={eventId ?? ''}
                 onChange={e => setEventId(e.target.value ? Number(e.target.value) : undefined)}
@@ -217,8 +210,8 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
                 <span>Solicitar Repasse</span>
               </button>
             </div>
-          </div>
-        </div>
+          }
+        />
 
         {/* Carousel de navegação interna */}
         <div className="card p-2 shadow-sm mb-4">
@@ -269,71 +262,55 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
           </div>
         )}
 
-        {/* 6 KPI Cards no Estilo Limitless */}
+        {/* 6 KPI Cards no Padrão V7 DiskKpiCard */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
-          <Kpi
-            icon={WalletCards}
+          <DiskKpiCard
+            icon={<WalletCards size={18} />}
             label="Saldo disponível"
             value={brl(summary?.availableBalanceCents)}
-            sub="Disponível para repasse"
-            tone="blue"
-            page="finance"
-            onNavigate={onNavigate}
-            eventName={selectedEventName}
+            note="Disponível para repasse"
+            accent="info"
+            onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance', { eventName: selectedEventName, source: 'finance-dashboard', label: 'Saldo disponível' })}
           />
-          <Kpi
-            icon={Clock3}
+          <DiskKpiCard
+            icon={<Clock3 size={18} />}
             label="Saldo futuro"
             value={brl(summary?.futureBalanceCents)}
-            sub="Recebíveis previstos"
-            tone="green"
-            page="finance-receivables"
-            onNavigate={onNavigate}
-            status="open"
-            eventName={selectedEventName}
+            note="Recebíveis previstos"
+            accent="success"
+            onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-receivables', { status: 'open', eventName: selectedEventName, source: 'finance-dashboard', label: 'Saldo futuro' })}
           />
-          <Kpi
-            icon={BanknoteArrowUp}
+          <DiskKpiCard
+            icon={<BanknoteArrowUp size={18} />}
             label="A pagar"
             value={brl(summary?.payablesCents)}
-            sub="Obrigações em aberto"
-            tone="orange"
-            page="finance-payables"
-            onNavigate={onNavigate}
-            status="open"
-            eventName={selectedEventName}
+            note="Obrigações em aberto"
+            accent="warning"
+            onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-payables', { status: 'open', eventName: selectedEventName, source: 'finance-dashboard', label: 'A pagar' })}
           />
-          <Kpi
-            icon={HandCoins}
+          <DiskKpiCard
+            icon={<HandCoins size={18} />}
             label="Repasses pendentes"
             value={brl(summary?.pendingPayoutsCents)}
-            sub={`${summary?.pendingPayoutsCount || 0} solicitação(ões)`}
-            tone="purple"
-            page="finance-payouts"
-            onNavigate={onNavigate}
-            status="pending"
-            eventName={selectedEventName}
+            note={`${summary?.pendingPayoutsCount || 0} solicitação(ões)`}
+            accent="purple"
+            onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-payouts', { status: 'pending', eventName: selectedEventName, source: 'finance-dashboard', label: 'Repasses pendentes' })}
           />
-          <Kpi
-            icon={Percent}
+          <DiskKpiCard
+            icon={<Percent size={18} />}
             label="Margem média Spread"
             value={`${((summary?.avgMarginBps || 0) / 100).toFixed(2)}%`}
-            sub={`${summary?.spreadSimulations || 0} simulações`}
-            tone="cyan"
-            page="finance-spread"
-            onNavigate={onNavigate}
-            eventName={selectedEventName}
+            note={`${summary?.spreadSimulations || 0} simulações`}
+            accent="sky"
+            onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-spread', { eventName: selectedEventName, source: 'finance-dashboard', label: 'Margem média Spread' })}
           />
-          <Kpi
-            icon={AlertTriangle}
+          <DiskKpiCard
+            icon={<AlertTriangle size={18} />}
             label="Divergências"
             value={String(summary?.divergences ?? 0)}
-            sub="Exigem conciliação"
-            tone="red"
-            page="finance-reconciliation"
-            onNavigate={onNavigate}
-            status="divergent"
-            eventName={selectedEventName}
+            note="Exigem conciliação"
+            accent="danger"
+            onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-reconciliation', { status: 'divergent', eventName: selectedEventName, source: 'finance-dashboard', label: 'Divergências' })}
           />
         </section>
 
@@ -362,7 +339,7 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
         </section>
 
         {/* Busca */}
-        <div className="card p-2.5 shadow-sm mb-6">
+        <DiskCard className="p-2.5 shadow-xs mb-6">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ll-text-muted)]" />
             <input
@@ -372,18 +349,18 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
               className="form-control w-full pl-10 pr-4 text-xs sm:text-sm"
             />
           </div>
-        </div>
+        </DiskCard>
 
         {/* Seções de Atalhos */}
         <div className="space-y-6">
           {groups.map(
             g =>
               g.items.length > 0 && (
-                <section className="card p-4 shadow-sm" key={g.title}>
-                  <div className="card-header border-0 px-0 pt-0 pb-3 flex items-center justify-between">
+                <DiskCard className="p-4 shadow-xs" key={g.title}>
+                  <div className="border-0 px-0 pt-0 pb-3 flex items-center justify-between">
                     <div>
-                      <h2 className="card-title text-sm font-bold">{g.title}</h2>
-                      <p className="text-xs text-[var(--ll-text-muted)]">{g.subtitle}</p>
+                      <h2 className="text-sm font-bold text-[var(--disk-text-primary,#0f172a)]">{g.title}</h2>
+                      <p className="text-xs text-[var(--disk-text-muted,#64748b)]">{g.subtitle}</p>
                     </div>
                     <span className="badge badge-subtle-primary">{g.items.length} funções</span>
                   </div>
@@ -392,7 +369,7 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
                       <Card key={i.title} item={i} onNavigate={onNavigate} />
                     ))}
                   </div>
-                </section>
+                </DiskCard>
               )
           )}
         </div>
@@ -420,54 +397,7 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
   )
 }
 
-function Kpi({
-  icon: Icon,
-  label,
-  value,
-  sub,
-  tone,
-  page,
-  onNavigate,
-  status,
-  eventName
-}: {
-  icon: any
-  label: string
-  value: string
-  sub: string
-  tone: Tone
-  page: PageKey
-  onNavigate: (p: PageKey) => void
-  status?: string
-  eventName?: string
-}) {
-  const open = () => navigateWithFinanceDrilldown(onNavigate, page, { status, eventName, source: 'finance-dashboard', label })
-  return (
-    <article
-      className="kpi-card-limitless cursor-pointer"
-      role="button"
-      tabIndex={0}
-      aria-label={`Abrir ${label}`}
-      title={`Abrir ${label}`}
-      onClick={open}
-      onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          open()
-        }
-      }}
-    >
-      <div className="min-w-0">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--ll-text-muted)] block truncate">{label}</span>
-        <strong className="text-base sm:text-lg font-black text-[var(--ll-text)] block font-mono truncate">{value}</strong>
-        <span className="text-[10px] text-[var(--ll-text-muted)] block truncate">{sub}</span>
-      </div>
-      <div className="w-9 h-9 rounded-lg bg-[var(--ll-primary)]/10 text-[var(--ll-primary)] flex items-center justify-center shrink-0">
-        <Icon size={18} />
-      </div>
-    </article>
-  )
-}
+
 
 function HealthLink({
   page,
