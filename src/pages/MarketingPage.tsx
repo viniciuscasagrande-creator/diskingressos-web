@@ -23,6 +23,7 @@ import MarketingReportsPage from './marketing/MarketingReportsPage'
 import MarketingAttributionPage from './marketing/MarketingAttributionPage'
 import SpotifyAdsHubPage from './marketing/SpotifyAdsHubPage'
 import { CampaignRealStatusPage } from './marketing/status-real/CampaignRealStatusPage'
+import { LimitlessPage } from '../integrations/limitless/LimitlessPage'
 import {
   createMarketingCampaign, getMarketingCampaigns, getResolvedTracking,
   getTrackingConfigs, saveTrackingConfig, updateMarketingCampaign,
@@ -364,18 +365,20 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
   }
 
   return (
-    <div className="marketing-subpage-wrapper">
-      <div className="flex items-center gap-2 mb-3">
-        <button
-          onClick={() => (onNavigate ? onNavigate('marketing-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
-        >
-          <ArrowLeft size={14} className="text-[#06B6D4]" />
-          <span>Voltar ao Menu Marketing</span>
-        </button>
+    <LimitlessPage dataTestId="marketing-submodule-page">
+      <div className="marketing-subpage-wrapper">
+        <div className="flex items-center gap-2 mb-3">
+          <button
+            onClick={() => (onNavigate ? onNavigate('marketing-dashboard') : window.history.back())}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
+          >
+            <ArrowLeft size={14} className="text-[#06B6D4]" />
+            <span>Voltar ao Menu Marketing</span>
+          </button>
+        </div>
+        {renderSubmodule()}
       </div>
-      {renderSubmodule()}
-    </div>
+    </LimitlessPage>
   )
 }
 

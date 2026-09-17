@@ -35,6 +35,7 @@ import {
 } from 'lucide-react'
 import type { PageKey } from '../../components/ModuleSidebar'
 import { getAuthHeader } from '../../services/api'
+import { LimitlessPage } from '../../integrations/limitless/LimitlessPage'
 
 // Interfaces dos dados 100% reais do Core
 interface CommercialEventItem {
@@ -382,65 +383,69 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6" data-testid="commercial-hub-page">
+    <LimitlessPage dataTestId="commercial-hub-page" className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn">
       {/* 1. Header com Título e Botão de Atualizar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1e293b] pb-5">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20">
-              Painel de Operação Comercial
-            </span>
-            <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              Dados 100% Reais
-            </span>
+      <div className="card border-0 shadow-none bg-transparent mb-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[var(--ll-border)]">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="badge badge-subtle-primary">
+                Painel de Operação Comercial
+              </span>
+              <span className="badge badge-subtle-success">
+                Dados 100% Reais
+              </span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[var(--ll-text)] flex items-center gap-2.5">
+              <Scale className="text-[var(--ll-primary)] w-7 h-7" />
+              Dashboard Comercial
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--ll-text-2)] mt-1 leading-relaxed">
+              Localize produtores ou eventos, acompanhe a situação contratual e gerencie as taxas Disk, spread e antecipações.
+            </p>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
-            <Scale className="text-orange-500" size={28} />
-            Dashboard Comercial
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Localize produtores ou eventos, acompanhe a situação contratual e gerencie as taxas Disk, spread e antecipações.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={fetchDashboard}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm font-medium transition"
-          >
-            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
-            Atualizar Informações
-          </button>
+          <div className="flex items-center gap-3 shrink-0 self-start md:self-center">
+            <button
+              onClick={fetchDashboard}
+              disabled={loading}
+              className="btn-primary flex items-center gap-2 text-xs cursor-pointer shadow-sm disabled:opacity-50"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <span>Atualizar Informações</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* 2. PESQUISA COMERCIAL GLOBAL (no topo) */}
       <div className="relative">
-        <div className="relative">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-orange-400" />
-          <input
-            type="text"
-            value={globalSearch}
-            onChange={e => setGlobalSearch(e.target.value)}
-            placeholder="Pesquisar produtor, evento, ID do evento, CNPJ/CPF, responsável ou contrato..."
-            className="w-full pl-11 pr-10 py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-600 focus:border-orange-500 text-sm text-white placeholder-slate-400 focus:outline-none transition shadow-lg"
-          />
-          {globalSearch && (
-            <button
-              onClick={() => setGlobalSearch('')}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-            >
-              <X size={18} />
-            </button>
-          )}
+        <div className="card p-2.5 shadow-sm">
+          <div className="relative">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ll-primary)]" />
+            <input
+              type="text"
+              value={globalSearch}
+              onChange={e => setGlobalSearch(e.target.value)}
+              placeholder="Pesquisar produtor, evento, ID do evento, CNPJ/CPF, responsável ou contrato..."
+              className="form-control w-full pl-10 pr-10 text-xs sm:text-sm"
+            />
+            {globalSearch && (
+              <button
+                onClick={() => setGlobalSearch('')}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Dropdown de Resultados da Pesquisa Global */}
         {globalSearch.trim() && (
-          <div className="absolute top-full left-0 right-0 z-40 mt-2 p-3 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl space-y-3 max-h-96 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 z-40 mt-2 p-3 card shadow-2xl space-y-3 max-h-96 overflow-y-auto">
             {searchResults.events.length === 0 && searchResults.producers.length === 0 ? (
-              <div className="p-4 text-center text-xs text-slate-400">
+              <div className="p-4 text-center text-xs text-[var(--ll-text-muted)]">
                 Nenhum produtor ou evento encontrado para &ldquo;{globalSearch}&rdquo;.
               </div>
             ) : (
@@ -448,8 +453,8 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
                 {/* Produtores Encontrados */}
                 {searchResults.producers.length > 0 && (
                   <div>
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
-                      <Building2 size={13} className="text-orange-400" />
+                    <div className="text-[11px] font-bold text-[var(--ll-text-muted)] uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
+                      <Building2 className="w-3.5 h-3.5 text-[var(--ll-primary)]" />
                       Produtores ({searchResults.producers.length})
                     </div>
                     <div className="space-y-1">
@@ -460,18 +465,18 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
                             setSelectedProducer(prod)
                             setGlobalSearch('')
                           }}
-                          className="w-full text-left p-2.5 rounded-lg hover:bg-slate-800 transition flex items-center justify-between group"
+                          className="w-full text-left p-2.5 rounded-lg hover:bg-[var(--ll-muted)] transition flex items-center justify-between group cursor-pointer"
                         >
                           <div>
-                            <div className="font-semibold text-white group-hover:text-orange-400 transition text-sm">
+                            <div className="font-semibold text-[var(--ll-text)] group-hover:text-[var(--ll-primary)] transition text-sm">
                               {prod.name}
                             </div>
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs text-[var(--ll-text-muted)]">
                               CNPJ: {prod.document} • Resp: {prod.responsibleName} • {prod.totalEventsCount} eventos
                             </div>
                           </div>
-                          <span className="text-xs text-orange-400 flex items-center gap-1">
-                            Abrir Ficha <ChevronRight size={13} />
+                          <span className="text-xs text-[var(--ll-primary)] font-semibold flex items-center gap-1">
+                            Abrir Ficha <ChevronRight className="w-3.5 h-3.5" />
                           </span>
                         </button>
                       ))}
@@ -481,9 +486,9 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 
                 {/* Eventos Encontrados */}
                 {searchResults.events.length > 0 && (
-                  <div className="pt-2 border-t border-slate-800">
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
-                      <Scale size={13} className="text-emerald-400" />
+                  <div className="pt-2 border-t border-[var(--ll-border)]">
+                    <div className="text-[11px] font-bold text-[var(--ll-text-muted)] uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
+                      <Scale className="w-3.5 h-3.5 text-emerald-500" />
                       Eventos ({searchResults.events.length})
                     </div>
                     <div className="space-y-1">
@@ -494,18 +499,18 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
                             setSelectedEventDossier(ev)
                             setGlobalSearch('')
                           }}
-                          className="w-full text-left p-2.5 rounded-lg hover:bg-slate-800 transition flex items-center justify-between group"
+                          className="w-full text-left p-2.5 rounded-lg hover:bg-[var(--ll-muted)] transition flex items-center justify-between group cursor-pointer"
                         >
                           <div>
-                            <div className="font-semibold text-white group-hover:text-emerald-400 transition text-sm">
+                            <div className="font-semibold text-[var(--ll-text)] group-hover:text-emerald-500 transition text-sm">
                               {ev.eventTitle}
                             </div>
-                            <div className="text-xs text-slate-400">
+                            <div className="text-xs text-[var(--ll-text-muted)]">
                               {ev.eventCode} • {ev.producerName} • Status: {ev.eventStatus} • Taxa: {ev.serviceFeeType === 'percentage' ? `${(ev.serviceFeeBps / 100).toFixed(1)}%` : `R$ ${(ev.serviceFeeFixedCents / 100).toFixed(2)}`}
                             </div>
                           </div>
-                          <span className="text-xs text-emerald-400 flex items-center gap-1">
-                            Condições <ChevronRight size={13} />
+                          <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                            Condições <ChevronRight className="w-3.5 h-3.5" />
                           </span>
                         </button>
                       ))}
@@ -520,105 +525,105 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 
       {/* Tratamento de Erro e Estado de Carregamento */}
       {loading ? (
-        <div className="p-16 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
-          <RefreshCw size={28} className="animate-spin text-orange-500" />
+        <div className="p-16 text-center text-[var(--ll-text-muted)] flex flex-col items-center justify-center gap-3">
+          <RefreshCw className="w-7 h-7 animate-spin text-[var(--ll-primary)]" />
           <span className="text-sm font-medium">Consultando dados comerciais reais do Core...</span>
         </div>
       ) : error ? (
-        <div className="p-8 text-center text-rose-400 bg-rose-950/20 border border-rose-800/40 rounded-xl flex flex-col items-center justify-center gap-3">
-          <AlertTriangle size={28} />
+        <div className="p-6 text-center text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl flex flex-col items-center justify-center gap-3">
+          <AlertTriangle className="w-7 h-7" />
           <span className="font-semibold text-base">{error}</span>
           <button
             onClick={fetchDashboard}
-            className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition"
+            className="btn-primary text-xs"
           >
             Tentar novamente
           </button>
         </div>
       ) : !data ? (
-        <div className="p-12 text-center text-slate-400">
-          Nenhum dado disponível.
+        <div className="p-12 text-center text-[var(--ll-text-muted)]">
+          Nenhum dado comercial disponível.
         </div>
       ) : (
         <>
           {/* 3. OS 12 INDICADORES OPERACIONAIS REAIS */}
           <div className="space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-              <BarChart3 size={15} className="text-orange-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--ll-text-muted)] flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-[var(--ll-primary)]" />
               Indicadores Operacionais Comerciais
             </h2>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Eventos Ativos</div>
-                <div className="text-xl font-bold text-white mt-1">{data.kpis.activeEvents}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Em operação</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Eventos Ativos</div>
+                <div className="text-xl font-black text-[var(--ll-text)] mt-1">{data.kpis.activeEvents}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Em operação</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Em Configuração</div>
-                <div className="text-xl font-bold text-amber-400 mt-1">{data.kpis.configuringEvents}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Não publicados</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Em Configuração</div>
+                <div className="text-xl font-black text-amber-500 mt-1">{data.kpis.configuringEvents}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Não publicados</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Publicados</div>
-                <div className="text-xl font-bold text-emerald-400 mt-1">{data.kpis.publishedEvents}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Vendas abertas</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Publicados</div>
+                <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{data.kpis.publishedEvents}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Vendas abertas</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Encerrados</div>
-                <div className="text-xl font-bold text-slate-400 mt-1">{data.kpis.closedEvents}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Finalizados</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Encerrados</div>
+                <div className="text-xl font-black text-[var(--ll-text-muted)] mt-1">{data.kpis.closedEvents}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Finalizados</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Produtores Ativos</div>
-                <div className="text-xl font-bold text-blue-400 mt-1">{data.kpis.activeProducers}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Com eventos</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Produtores Ativos</div>
+                <div className="text-xl font-black text-blue-600 dark:text-blue-400 mt-1">{data.kpis.activeProducers}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Com eventos</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Vendas Atuais</div>
-                <div className="text-xl font-bold text-emerald-400 mt-1">{moneyCompact(data.kpis.currentSalesCents)}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Total vendido</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Vendas Atuais</div>
+                <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{moneyCompact(data.kpis.currentSalesCents)}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Total vendido</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Ingressos Vendidos</div>
-                <div className="text-xl font-bold text-white mt-1">{data.kpis.ticketsSold.toLocaleString('pt-BR')}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Consolidado</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Ingressos Vendidos</div>
+                <div className="text-xl font-black text-[var(--ll-text)] mt-1">{data.kpis.ticketsSold.toLocaleString('pt-BR')}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Consolidado</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Taxas Disk</div>
-                <div className="text-xl font-bold text-orange-400 mt-1">{moneyCompact(data.kpis.diskFeesCents)}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Receita de taxas</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Taxas Disk</div>
+                <div className="text-xl font-black text-[var(--ll-primary)] mt-1">{moneyCompact(data.kpis.diskFeesCents)}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Receita de taxas</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Spread</div>
-                <div className="text-xl font-bold text-purple-400 mt-1">{moneyCompact(data.kpis.spreadCents)}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Operações ativas</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Spread</div>
+                <div className="text-xl font-black text-purple-600 dark:text-purple-400 mt-1">{moneyCompact(data.kpis.spreadCents)}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Operações ativas</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Advanced</div>
-                <div className="text-xl font-bold text-amber-400 mt-1">{moneyCompact(data.kpis.advancedActiveCents)}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Antecipações</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Advanced</div>
+                <div className="text-xl font-black text-amber-500 mt-1">{moneyCompact(data.kpis.advancedActiveCents)}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Antecipações</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">A Receber</div>
-                <div className="text-xl font-bold text-cyan-400 mt-1">{moneyCompact(data.kpis.receivablesCents)}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Previsto</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">A Receber</div>
+                <div className="text-xl font-black text-cyan-600 dark:text-cyan-400 mt-1">{moneyCompact(data.kpis.receivablesCents)}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Previsto</div>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <div className="text-[11px] text-slate-400 uppercase font-semibold">Pendências</div>
-                <div className="text-xl font-bold text-rose-400 mt-1">{data.kpis.commercialIssuesCount}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">Atenção exigida</div>
+              <div className="card p-3.5 shadow-sm">
+                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Pendências</div>
+                <div className="text-xl font-black text-rose-500 mt-1">{data.kpis.commercialIssuesCount}</div>
+                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Atenção exigida</div>
               </div>
             </div>
           </div>
@@ -626,8 +631,8 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
           {/* 4. ALERTAS COMERCIAIS ("Atenção Necessária") */}
           {data.alerts && data.alerts.length > 0 && (
             <div className="space-y-2">
-              <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <AlertCircle size={15} className="text-amber-400" />
+              <div className="text-xs font-bold uppercase tracking-wider text-[var(--ll-text-muted)] flex items-center gap-1.5">
+                <AlertCircle className="w-4 h-4 text-amber-500" />
                 Atenção Necessária Hoje
               </div>
 
@@ -635,24 +640,24 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
                 {data.alerts.map(alert => {
                   const borderClass =
                     alert.severity === 'danger'
-                      ? 'border-rose-800/60 bg-rose-950/20 text-rose-400'
+                      ? 'border-l-4 border-l-rose-500'
                       : alert.severity === 'warning'
-                      ? 'border-amber-800/60 bg-amber-950/20 text-amber-400'
+                      ? 'border-l-4 border-l-amber-500'
                       : alert.severity === 'info'
-                      ? 'border-blue-800/60 bg-blue-950/20 text-blue-400'
-                      : 'border-slate-800 bg-slate-900/80 text-slate-300'
+                      ? 'border-l-4 border-l-sky-500'
+                      : 'border-l-4 border-l-[var(--ll-border)]'
 
                   return (
                     <button
                       key={alert.id}
                       onClick={() => setEventFilter(alert.filterKey as any)}
-                      className={`p-3 rounded-xl border text-left hover:scale-[1.01] transition space-y-1 ${borderClass}`}
+                      className={`card p-3 text-left hover:shadow-md transition space-y-1 cursor-pointer ${borderClass}`}
                     >
-                      <div className="font-semibold text-xs flex items-center justify-between">
+                      <div className="font-bold text-xs flex items-center justify-between text-[var(--ll-text)]">
                         <span>{alert.title}</span>
-                        <ChevronRight size={13} />
+                        <ChevronRight className="w-3.5 h-3.5 text-[var(--ll-text-muted)]" />
                       </div>
-                      <p className="text-[11px] text-slate-400">{alert.description}</p>
+                      <p className="text-[11px] text-[var(--ll-text-2)]">{alert.description}</p>
                     </button>
                   )
                 })}
@@ -661,111 +666,83 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
           )}
 
           {/* 5. SEÇÃO CENTRAL: EVENTOS — SITUAÇÃO COMERCIAL */}
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+          <div className="card overflow-hidden shadow-sm">
+            <div className="card-header flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <div className="flex items-center gap-2">
-                <Scale size={18} className="text-orange-400" />
-                <h2 className="text-base font-bold text-white">Eventos — Situação Comercial</h2>
+                <Scale className="w-4 h-4 text-[var(--ll-primary)]" />
+                <h2 className="card-title text-sm font-bold">Eventos — Situação Comercial</h2>
               </div>
 
-              {/* Filtros da Tabela */}
-              <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto">
+              {/* Filtros da Tabela com Segmented Tabs Limitless */}
+              <div className="limitless-tabs overflow-x-auto w-full sm:w-auto">
                 <button
                   onClick={() => setEventFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                    eventFilter === 'all'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                  className={`limitless-tab-btn ${eventFilter === 'all' ? 'active' : ''}`}
                 >
                   Todos ({data.events.length})
                 </button>
                 <button
                   onClick={() => setEventFilter('ativos')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                    eventFilter === 'ativos'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                  className={`limitless-tab-btn ${eventFilter === 'ativos' ? 'active' : ''}`}
                 >
                   Ativos ({data.kpis.activeEvents})
                 </button>
                 <button
                   onClick={() => setEventFilter('configuracao')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                    eventFilter === 'configuracao'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                  className={`limitless-tab-btn ${eventFilter === 'configuracao' ? 'active' : ''}`}
                 >
                   Configuração ({data.kpis.configuringEvents})
                 </button>
                 <button
                   onClick={() => setEventFilter('publicados')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                    eventFilter === 'publicados'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                  className={`limitless-tab-btn ${eventFilter === 'publicados' ? 'active' : ''}`}
                 >
                   Publicados ({data.kpis.publishedEvents})
                 </button>
                 <button
                   onClick={() => setEventFilter('com_pendencia')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                    eventFilter === 'com_pendencia'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                  className={`limitless-tab-btn ${eventFilter === 'com_pendencia' ? 'active' : ''}`}
                 >
                   Com Pendência ({data.kpis.commercialIssuesCount})
                 </button>
                 <button
                   onClick={() => setEventFilter('advanced')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                    eventFilter === 'advanced'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                  className={`limitless-tab-btn ${eventFilter === 'advanced' ? 'active' : ''}`}
                 >
                   Advanced
                 </button>
                 <button
                   onClick={() => setEventFilter('spread')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                    eventFilter === 'spread'
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
-                  }`}
+                  className={`limitless-tab-btn ${eventFilter === 'spread' ? 'active' : ''}`}
                 >
                   Spread
                 </button>
               </div>
             </div>
 
-            {/* Tabela Operacional */}
-            <div className="bg-slate-900/90 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+            {/* Tabela Operacional Limitless */}
+            <div>
               {filteredEvents.length === 0 ? (
-                <div className="p-12 text-center text-slate-400">
+                <div className="p-12 text-center text-[var(--ll-text-muted)] text-xs">
                   Nenhum evento encontrado para o filtro selecionado.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-slate-950/80 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <table className="table">
+                    <thead>
                       <tr>
-                        <th className="py-3 px-4">EVENTO</th>
-                        <th className="py-3 px-4">PRODUTOR</th>
-                        <th className="py-3 px-4">STATUS</th>
-                        <th className="py-3 px-4">VENDAS</th>
-                        <th className="py-3 px-4">TAXA</th>
-                        <th className="py-3 px-4">SPREAD</th>
-                        <th className="py-3 px-4">ADVANCED</th>
-                        <th className="py-3 px-4">SITUAÇÃO</th>
-                        <th className="py-3 px-4 text-right">AÇÃO</th>
+                        <th>EVENTO</th>
+                        <th>PRODUTOR</th>
+                        <th>STATUS</th>
+                        <th>VENDAS</th>
+                        <th>TAXA</th>
+                        <th>SPREAD</th>
+                        <th>ADVANCED</th>
+                        <th>SITUAÇÃO</th>
+                        <th className="text-right">AÇÃO</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/60">
+                    <tbody>
                       {filteredEvents.map(ev => {
                         const feeDisplay =
                           ev.serviceFeeType === 'percentage'
@@ -774,18 +751,15 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 
                         const situationBadge =
                           ev.situation === 'regular' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span className="badge badge-subtle-success">
                               Regular
                             </span>
                           ) : ev.situation === 'sem_taxa' ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+                            <span className="badge badge-subtle-danger">
                               Sem Taxa
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                            <span className="badge badge-subtle-warning">
                               Pendente
                             </span>
                           )
@@ -794,73 +768,73 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
                           <tr
                             key={ev.eventId}
                             onClick={() => setSelectedEventDossier(ev)}
-                            className="hover:bg-slate-800/50 transition cursor-pointer group"
+                            className="cursor-pointer group"
                           >
-                            <td className="py-3 px-4">
-                              <div className="font-semibold text-white group-hover:text-orange-400 transition">
+                            <td>
+                              <div className="font-bold text-[var(--ll-text)] group-hover:text-[var(--ll-primary)] transition">
                                 {ev.eventTitle}
                               </div>
-                              <div className="text-xs text-slate-500 font-mono">
+                              <div className="text-[10px] text-[var(--ll-text-muted)] font-mono">
                                 {ev.eventCode}
                               </div>
                             </td>
 
-                            <td className="py-3 px-4 text-slate-300">
+                            <td className="text-[var(--ll-text-2)]">
                               <div className="flex items-center gap-1.5">
-                                <Building2 size={13} className="text-slate-500" />
+                                <Building2 className="w-3.5 h-3.5 text-[var(--ll-text-muted)]" />
                                 <span>{ev.producerName}</span>
                               </div>
                             </td>
 
-                            <td className="py-3 px-4">
-                              <span className="text-xs text-slate-300 capitalize font-medium">
+                            <td>
+                              <span className="text-xs text-[var(--ll-text-2)] capitalize font-medium">
                                 {ev.eventStatus}
                               </span>
                             </td>
 
-                            <td className="py-3 px-4 font-mono font-medium text-white">
+                            <td className="font-mono font-bold text-[var(--ll-text)]">
                               {ev.salesGrossCents > 0 ? moneyCompact(ev.salesGrossCents) : '—'}
                             </td>
 
-                            <td className="py-3 px-4 font-mono font-medium">
+                            <td className="font-mono font-medium">
                               {ev.hasAgreement ? (
-                                <span className="text-emerald-400">{feeDisplay}</span>
+                                <span className="text-emerald-600 dark:text-emerald-400 font-bold">{feeDisplay}</span>
                               ) : (
-                                <span className="text-rose-400/90 text-xs italic">Não definida</span>
+                                <span className="text-rose-500 text-xs italic">Não definida</span>
                               )}
                             </td>
 
-                            <td className="py-3 px-4 font-mono text-xs">
+                            <td className="font-mono text-xs">
                               {ev.spreadEnabled ? (
-                                <span className="text-purple-400 font-medium">
+                                <span className="text-purple-600 dark:text-purple-400 font-semibold">
                                   {(ev.spreadBps / 100).toFixed(1)}%
                                 </span>
                               ) : (
-                                <span className="text-slate-500">—</span>
+                                <span className="text-[var(--ll-text-muted)]">—</span>
                               )}
                             </td>
 
-                            <td className="py-3 px-4 text-xs">
+                            <td className="text-xs">
                               {ev.hasActiveAdvance ? (
-                                <span className="text-emerald-400 font-medium">Ativo</span>
+                                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Ativo</span>
                               ) : ev.advancedEnabled ? (
-                                <span className="text-amber-400 font-medium">Elegível</span>
+                                <span className="text-amber-500 font-semibold">Elegível</span>
                               ) : (
-                                <span className="text-slate-500">—</span>
+                                <span className="text-[var(--ll-text-muted)]">—</span>
                               )}
                             </td>
 
-                            <td className="py-3 px-4">
+                            <td>
                               {situationBadge}
                             </td>
 
-                            <td className="py-3 px-4 text-right space-x-2" onClick={e => e.stopPropagation()}>
+                            <td className="text-right space-x-2" onClick={e => e.stopPropagation()}>
                               <button
                                 onClick={() => handleOpenFeeModal(ev)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-orange-600/90 hover:bg-orange-500 text-white text-xs font-medium transition"
+                                className="px-2.5 py-1 bg-[var(--ll-primary)] hover:bg-[var(--ll-primary-hover)] text-white text-xs font-semibold rounded-lg transition inline-flex items-center gap-1 cursor-pointer"
                                 title="Definir ou ajustar taxa comercial deste evento"
                               >
-                                <Edit3 size={12} />
+                                <Edit3 className="w-3 h-3" />
                                 <span>{ev.hasAgreement ? 'Ajustar' : 'Definir'}</span>
                               </button>
                             </td>
@@ -873,88 +847,91 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
               )}
             </div>
           </div>
+
         </>
       )}
 
       {/* 6. MODAL DA FICHA DO PRODUTOR (quando selecionado) */}
       {selectedProducer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 space-y-5 shadow-2xl my-8">
-            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="card max-w-3xl w-full shadow-2xl my-8 overflow-hidden">
+            <div className="card-header pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-lg">
+                <div className="w-12 h-12 rounded-xl bg-[var(--ll-primary)]/10 border border-[var(--ll-primary)]/20 flex items-center justify-center text-[var(--ll-primary)] font-black text-lg">
                   {selectedProducer.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white">{selectedProducer.name}</h3>
-                  <div className="text-xs text-slate-400 mt-0.5">
-                    Responsável: <span className="text-slate-200">{selectedProducer.responsibleName}</span> • Documento: <span className="font-mono text-slate-200">{selectedProducer.document}</span>
+                  <h3 className="text-lg font-bold text-[var(--ll-text)]">{selectedProducer.name}</h3>
+                  <div className="text-xs text-[var(--ll-text-muted)] mt-0.5">
+                    Responsável: <span className="font-semibold text-[var(--ll-text)]">{selectedProducer.responsibleName}</span> • Documento: <span className="font-mono text-[var(--ll-text)]">{selectedProducer.document}</span>
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedProducer(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                className="p-1.5 rounded-lg text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:bg-[var(--ll-muted)] transition cursor-pointer"
               >
-                <X size={20} />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Métricas Consolidadas do Produtor */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-slate-400 block">Eventos Totais</span>
-                <span className="text-lg font-bold text-white">{selectedProducer.totalEventsCount}</span>
-                <span className="text-[10px] text-slate-500 block">
-                  {selectedProducer.activeEventsCount} ativos • {selectedProducer.configuringEventsCount} config • {selectedProducer.closedEventsCount} encerrados
-                </span>
+            <div className="card-body space-y-4">
+              {/* Métricas Consolidadas do Produtor */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
+                  <span className="text-[var(--ll-text-muted)] font-semibold block">Eventos Totais</span>
+                  <span className="text-lg font-black text-[var(--ll-text)]">{selectedProducer.totalEventsCount}</span>
+                  <span className="text-[10px] text-[var(--ll-text-muted)] block mt-0.5">
+                    {selectedProducer.activeEventsCount} ativos • {selectedProducer.configuringEventsCount} config
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
+                  <span className="text-[var(--ll-text-muted)] font-semibold block">Vendas Acumuladas</span>
+                  <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{money(selectedProducer.totalSalesCents)}</span>
+                </div>
+
+                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
+                  <span className="text-[var(--ll-text-muted)] font-semibold block">Taxas Disk Geradas</span>
+                  <span className="text-lg font-black text-[var(--ll-primary)]">{money(selectedProducer.totalDiskFeesCents)}</span>
+                </div>
+
+                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
+                  <span className="text-[var(--ll-text-muted)] font-semibold block">Spread Acumulado</span>
+                  <span className="text-lg font-black text-purple-600 dark:text-purple-400">{money(selectedProducer.totalSpreadCents)}</span>
+                </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-slate-400 block">Vendas Acumuladas</span>
-                <span className="text-lg font-bold text-emerald-400">{money(selectedProducer.totalSalesCents)}</span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-slate-400 block">Taxas Disk Geradas</span>
-                <span className="text-lg font-bold text-orange-400">{money(selectedProducer.totalDiskFeesCents)}</span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-slate-950/60 border border-slate-800">
-                <span className="text-slate-400 block">Spread Acumulado</span>
-                <span className="text-lg font-bold text-purple-400">{money(selectedProducer.totalSpreadCents)}</span>
-              </div>
-            </div>
-
-            {/* Lista de Eventos do Produtor */}
-            <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                Eventos Desta Produtora ({selectedProducer.events.length})
-              </h4>
-              <div className="max-h-60 overflow-y-auto divide-y divide-slate-800/60 rounded-lg border border-slate-800 bg-slate-950/40">
-                {selectedProducer.events.map(ev => (
-                  <div
-                    key={ev.eventId}
-                    onClick={() => {
-                      setSelectedProducer(null)
-                      handleOpenEventContext(ev.eventId)
-                    }}
-                    className="p-3 hover:bg-slate-800/60 transition cursor-pointer flex items-center justify-between"
-                  >
-                    <div>
-                      <div className="font-semibold text-white text-sm hover:text-orange-400">
-                        {ev.eventTitle}
+              {/* Lista de Eventos do Produtor */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider">
+                  Eventos Desta Produtora ({selectedProducer.events.length})
+                </h4>
+                <div className="max-h-60 overflow-y-auto divide-y divide-[var(--ll-border)] rounded-lg border border-[var(--ll-border)] bg-[var(--ll-muted)]">
+                  {selectedProducer.events.map(ev => (
+                    <div
+                      key={ev.eventId}
+                      onClick={() => {
+                        setSelectedProducer(null)
+                        handleOpenEventContext(ev.eventId)
+                      }}
+                      className="p-3 hover:bg-[var(--ll-surface)] transition cursor-pointer flex items-center justify-between"
+                    >
+                      <div>
+                        <div className="font-bold text-[var(--ll-text)] text-sm hover:text-[var(--ll-primary)]">
+                          {ev.eventTitle}
+                        </div>
+                        <div className="text-xs text-[var(--ll-text-muted)] font-mono">
+                          {ev.eventCode} • Vendas: {moneyCompact(ev.salesGrossCents)} • Taxa: {ev.feeDisplay}
+                        </div>
                       </div>
-                      <div className="text-xs text-slate-400 font-mono">
-                        {ev.eventCode} • Vendas: {moneyCompact(ev.salesGrossCents)} • Taxa: {ev.feeDisplay}
-                      </div>
+                      <button className="px-2.5 py-1 rounded bg-[var(--ll-surface)] border border-[var(--ll-border)] text-xs text-[var(--ll-text)] hover:bg-[var(--ll-primary)] hover:text-white transition flex items-center gap-1 cursor-pointer">
+                        <span>Abrir Operação</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
                     </div>
-                    <button className="px-2.5 py-1 rounded bg-slate-800 text-xs text-slate-300 hover:text-white flex items-center gap-1">
-                      <span>Abrir Operação</span>
-                      <ChevronRight size={13} />
-                    </button>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -963,100 +940,102 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 
       {/* 7. MODAL DO DOSSIÊ DE CONDIÇÕES COMERCIAIS DO EVENTO */}
       {selectedEventDossier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
-            <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="card max-w-2xl w-full shadow-2xl my-8 overflow-hidden">
+            <div className="card-header pb-4">
               <div>
-                <div className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-1">
+                <div className="text-xs font-bold text-[var(--ll-primary)] uppercase tracking-wider mb-1">
                   Ficha Comercial do Evento
                 </div>
-                <h3 className="text-xl font-bold text-white">{selectedEventDossier.eventTitle}</h3>
-                <div className="text-xs text-slate-400 mt-0.5">
-                  <span className="font-mono text-slate-200">{selectedEventDossier.eventCode}</span> • Produtora: <span className="text-slate-200">{selectedEventDossier.producerName}</span>
+                <h3 className="text-lg font-bold text-[var(--ll-text)]">{selectedEventDossier.eventTitle}</h3>
+                <div className="text-xs text-[var(--ll-text-muted)] mt-0.5">
+                  <span className="font-mono text-[var(--ll-text)]">{selectedEventDossier.eventCode}</span> • Produtora: <span className="font-semibold text-[var(--ll-text)]">{selectedEventDossier.producerName}</span>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedEventDossier(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+                className="p-1.5 rounded-lg text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:bg-[var(--ll-muted)] transition cursor-pointer"
               >
-                <X size={20} />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Painel Estruturado de Condições Comerciais */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              {/* Taxa de Serviço */}
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <span className="font-semibold text-white block">Taxa de Serviço Disk</span>
-                <div className="text-lg font-bold text-emerald-400">
-                  {selectedEventDossier.serviceFeeType === 'percentage'
-                    ? `${(selectedEventDossier.serviceFeeBps / 100).toFixed(1)}%`
-                    : `R$ ${(selectedEventDossier.serviceFeeFixedCents / 100).toFixed(2)}`}
+            <div className="card-body space-y-4">
+              {/* Painel Estruturado de Condições Comerciais */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                {/* Taxa de Serviço */}
+                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
+                  <span className="font-bold text-[var(--ll-text)] block">Taxa de Serviço Disk</span>
+                  <div className="text-lg font-black text-emerald-600 dark:text-emerald-400">
+                    {selectedEventDossier.serviceFeeType === 'percentage'
+                      ? `${(selectedEventDossier.serviceFeeBps / 100).toFixed(1)}%`
+                      : `R$ ${(selectedEventDossier.serviceFeeFixedCents / 100).toFixed(2)}`}
+                  </div>
+                  <span className="text-[var(--ll-text-muted)] block">
+                    Paga por: {selectedEventDossier.serviceFeePaidBy === 'buyer' ? 'Comprador' : 'Produtor'}
+                  </span>
                 </div>
-                <span className="text-slate-400 block">
-                  Paga por: {selectedEventDossier.serviceFeePaidBy === 'buyer' ? 'Comprador' : 'Produtor'}
-                </span>
+
+                {/* Spread */}
+                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
+                  <span className="font-bold text-[var(--ll-text)] block">Spread Comercial</span>
+                  <div className="text-lg font-black text-purple-600 dark:text-purple-400">
+                    {selectedEventDossier.spreadEnabled ? `${(selectedEventDossier.spreadBps / 100).toFixed(1)}%` : 'Inativo'}
+                  </div>
+                  <span className="text-[var(--ll-text-muted)] block">
+                    {selectedEventDossier.spreadEnabled ? 'Operação de spread contratada' : 'Sem spread configurado'}
+                  </span>
+                </div>
+
+                {/* Advanced */}
+                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
+                  <span className="font-bold text-[var(--ll-text)] block">Advanced (Antecipação)</span>
+                  <div className="text-lg font-black text-amber-500">
+                    {selectedEventDossier.advancedEnabled ? 'Habilitado' : 'Desabilitado'}
+                  </div>
+                  <span className="text-[var(--ll-text-muted)] block">
+                    {selectedEventDossier.hasActiveAdvance ? 'Possui contratos de antecipação em vigor' : 'Sem operações ativas'}
+                  </span>
+                </div>
+
+                {/* Repasse & Contrato */}
+                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
+                  <span className="font-bold text-[var(--ll-text)] block">Repasse & Contrato</span>
+                  <div className="text-sm font-bold text-[var(--ll-text)]">
+                    Prazo: D+{selectedEventDossier.payoutTermsDays} ({selectedEventDossier.payoutModel})
+                  </div>
+                  <span className="text-[var(--ll-text-muted)] font-mono block">
+                    {selectedEventDossier.contractNumber} (v{selectedEventDossier.currentVersion})
+                  </span>
+                </div>
               </div>
 
-              {/* Spread */}
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <span className="font-semibold text-white block">Spread Comercial</span>
-                <div className="text-lg font-bold text-purple-400">
-                  {selectedEventDossier.spreadEnabled ? `${(selectedEventDossier.spreadBps / 100).toFixed(1)}%` : 'Inativo'}
-                </div>
-                <span className="text-slate-400 block">
-                  {selectedEventDossier.spreadEnabled ? 'Operação de spread contratada' : 'Sem spread configurado'}
-                </span>
+              {/* Ações Rápidas */}
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--ll-border)]">
+                <button
+                  onClick={() => {
+                    const ev = selectedEventDossier
+                    setSelectedEventDossier(null)
+                    handleOpenFeeModal(ev)
+                  }}
+                  className="btn-primary text-xs flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Editar Condições / Nova Negociação</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    const eventId = selectedEventDossier.eventId
+                    setSelectedEventDossier(null)
+                    handleOpenEventContext(eventId)
+                  }}
+                  className="btn-light text-xs flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>Abrir Gestão do Evento</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </button>
               </div>
-
-              {/* Advanced */}
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <span className="font-semibold text-white block">Advanced (Antecipação)</span>
-                <div className="text-lg font-bold text-amber-400">
-                  {selectedEventDossier.advancedEnabled ? 'Habilitado' : 'Desabilitado'}
-                </div>
-                <span className="text-slate-400 block">
-                  {selectedEventDossier.hasActiveAdvance ? 'Possui contratos de antecipação em vigor' : 'Sem operações ativas'}
-                </span>
-              </div>
-
-              {/* Repasse & Contrato */}
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
-                <span className="font-semibold text-white block">Repasse & Contrato</span>
-                <div className="text-sm font-bold text-white">
-                  Prazo: D+{selectedEventDossier.payoutTermsDays} ({selectedEventDossier.payoutModel})
-                </div>
-                <span className="text-slate-400 font-mono block">
-                  {selectedEventDossier.contractNumber} (v{selectedEventDossier.currentVersion})
-                </span>
-              </div>
-            </div>
-
-            {/* Ações Rápidas */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800">
-              <button
-                onClick={() => {
-                  const ev = selectedEventDossier
-                  setSelectedEventDossier(null)
-                  handleOpenFeeModal(ev)
-                }}
-                className="px-4 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold transition flex items-center gap-1.5"
-              >
-                <Edit3 size={14} />
-                <span>Editar Condições / Nova Negociação</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  const eventId = selectedEventDossier.eventId
-                  setSelectedEventDossier(null)
-                  handleOpenEventContext(eventId)
-                }}
-                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition flex items-center gap-1.5"
-              >
-                <span>Abrir Gestão do Evento</span>
-                <ExternalLink size={14} />
-              </button>
             </div>
           </div>
         </div>
@@ -1064,271 +1043,274 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 
       {/* 8. MODAL PARA DEFINIR / AJUSTAR TAXA COMERCIAL */}
       {editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="card max-w-2xl w-full shadow-2xl my-8 overflow-hidden">
+            <div className="card-header pb-4">
               <div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-orange-400 uppercase tracking-wider mb-1">
-                  <Scale size={14} />
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--ll-primary)] uppercase tracking-wider mb-1">
+                  <Scale className="w-4 h-4" />
                   Autonomia Comercial • Definição de Taxa
                 </div>
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-bold text-[var(--ll-text)]">
                   {editingItem.eventTitle}
                 </h3>
-                <p className="text-xs text-slate-400">
-                  Código: <span className="font-mono text-slate-300">{editingItem.eventCode}</span> • Produtora: <span className="text-slate-300">{editingItem.producerName}</span>
+                <p className="text-xs text-[var(--ll-text-muted)]">
+                  Código: <span className="font-mono text-[var(--ll-text)]">{editingItem.eventCode}</span> • Produtora: <span className="font-semibold text-[var(--ll-text)]">{editingItem.producerName}</span>
                 </p>
               </div>
               <button
                 onClick={() => setEditingItem(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                className="p-1.5 rounded-lg text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:bg-[var(--ll-muted)] transition cursor-pointer"
               >
-                <X size={20} />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {modalError && (
-              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 flex items-center gap-2">
-                <AlertCircle size={16} className="shrink-0" />
-                <span>{modalError}</span>
-              </div>
-            )}
+            <div className="card-body">
+              {modalError && (
+                <div className="p-3 mb-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-500 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{modalError}</span>
+                </div>
+              )}
 
-            <form onSubmit={handleSaveFee} className="space-y-4">
-              {/* Modelo e Valor da Taxa */}
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
-                <label className="text-xs font-semibold text-white uppercase tracking-wider block">
-                  1. Taxa de Serviço Disk
-                </label>
+              <form onSubmit={handleSaveFee} className="space-y-4">
+                {/* Modelo e Valor da Taxa */}
+                <div className="p-4 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-3">
+                  <label className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider block">
+                    1. Taxa de Serviço Disk
+                  </label>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-xs text-slate-400 block mb-1">Modelo de Cobrança</label>
-                    <select
-                      value={serviceFeeType}
-                      onChange={e => setServiceFeeType(e.target.value as 'percentage' | 'fixed')}
-                      className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500"
-                    >
-                      <option value="percentage">Percentual (%) sobre o valor do ingresso</option>
-                      <option value="fixed">Valor Fixo (R$) por ingresso emitido</option>
-                    </select>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Modelo de Cobrança</label>
+                      <select
+                        value={serviceFeeType}
+                        onChange={e => setServiceFeeType(e.target.value as 'percentage' | 'fixed')}
+                        className="form-select w-full text-xs font-medium cursor-pointer"
+                      >
+                        <option value="percentage">Percentual (%) sobre o valor do ingresso</option>
+                        <option value="fixed">Valor Fixo (R$) por ingresso emitido</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">
+                        {serviceFeeType === 'percentage' ? 'Percentual da Taxa (%)' : 'Valor Fixo (R$)'}
+                      </label>
+                      <div className="relative">
+                        {serviceFeeType === 'percentage' ? (
+                          <>
+                            <input
+                              type="number"
+                              step="0.1"
+                              min="0"
+                              max="50"
+                              value={serviceFeePercent}
+                              onChange={e => setServiceFeePercent(e.target.value)}
+                              className="form-control w-full pr-8 text-xs font-mono"
+                            />
+                            <Percent className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ll-text-muted)]" />
+                          </>
+                        ) : (
+                          <>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ll-text-muted)] text-xs font-mono">R$</span>
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={serviceFeeFixed}
+                              onChange={e => setServiceFeeFixed(e.target.value)}
+                              className="form-control w-full pl-9 text-xs font-mono"
+                            />
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   <div>
-                    <label className="text-xs text-slate-400 block mb-1">
-                      {serviceFeeType === 'percentage' ? 'Percentual da Taxa (%)' : 'Valor Fixo (R$)'}
-                    </label>
-                    <div className="relative">
-                      {serviceFeeType === 'percentage' ? (
-                        <>
+                    <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Quem Arca com a Taxa de Serviço?</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setServiceFeePaidBy('buyer')}
+                        className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition cursor-pointer ${
+                          serviceFeePaidBy === 'buyer'
+                            ? 'bg-[var(--ll-primary)]/10 border-[var(--ll-primary)] text-[var(--ll-primary)] font-bold'
+                            : 'bg-[var(--ll-surface)] border-[var(--ll-border)] text-[var(--ll-text-2)] hover:text-[var(--ll-text)]'
+                        }`}
+                      >
+                        <strong className="block font-bold">Comprador</strong>
+                        <span className="text-[11px] text-[var(--ll-text-muted)]">Taxa somada no checkout</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setServiceFeePaidBy('producer')}
+                        className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition cursor-pointer ${
+                          serviceFeePaidBy === 'producer'
+                            ? 'bg-[var(--ll-primary)]/10 border-[var(--ll-primary)] text-[var(--ll-primary)] font-bold'
+                            : 'bg-[var(--ll-surface)] border-[var(--ll-border)] text-[var(--ll-text-2)] hover:text-[var(--ll-text)]'
+                        }`}
+                      >
+                        <strong className="block font-bold">Produtor</strong>
+                        <span className="text-[11px] text-[var(--ll-text-muted)]">Descontada do repasse</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Spread & Advanced */}
+                <div className="p-4 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-3">
+                  <label className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider block">
+                    2. Spread e Antecipação (Advanced)
+                  </label>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="p-3 rounded-lg bg-[var(--ll-surface)] border border-[var(--ll-border)] space-y-2">
+                      <label className="flex items-center justify-between text-xs text-[var(--ll-text)] font-semibold cursor-pointer">
+                        <span>Spread Comercial</span>
+                        <input
+                          type="checkbox"
+                          checked={spreadEnabled}
+                          onChange={e => setSpreadEnabled(e.target.checked)}
+                          className="rounded border-[var(--ll-border)] text-[var(--ll-primary)] focus:ring-0 cursor-pointer"
+                        />
+                      </label>
+                      {spreadEnabled && (
+                        <div className="pt-1">
+                          <label className="text-[11px] text-[var(--ll-text-muted)] block mb-1">Percentual (%)</label>
                           <input
                             type="number"
                             step="0.1"
                             min="0"
-                            max="50"
-                            value={serviceFeePercent}
-                            onChange={e => setServiceFeePercent(e.target.value)}
-                            className="w-full pl-3 pr-8 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500 font-mono"
+                            value={spreadPercent}
+                            onChange={e => setSpreadPercent(e.target.value)}
+                            className="form-control w-full text-xs font-mono"
                           />
-                          <Percent size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        </>
-                      ) : (
-                        <>
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono">R$</span>
-                          <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={serviceFeeFixed}
-                            onChange={e => setServiceFeeFixed(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500 font-mono"
-                          />
-                        </>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-3 rounded-lg bg-[var(--ll-surface)] border border-[var(--ll-border)] space-y-2">
+                      <label className="flex items-center justify-between text-xs text-[var(--ll-text)] font-semibold cursor-pointer">
+                        <span>Habilitar Advanced</span>
+                        <input
+                          type="checkbox"
+                          checked={advancedEnabled}
+                          onChange={e => setAdvancedEnabled(e.target.checked)}
+                          className="rounded border-[var(--ll-border)] text-[var(--ll-primary)] focus:ring-0 cursor-pointer"
+                        />
+                      </label>
+                      {advancedEnabled && (
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          <div>
+                            <label className="text-[11px] text-[var(--ll-text-muted)] block mb-0.5">Taxa (%)</label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              value={advancedRate}
+                              onChange={e => setAdvancedRate(e.target.value)}
+                              className="form-control w-full text-xs font-mono"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[11px] text-[var(--ll-text-muted)] block mb-0.5">Limite (%)</label>
+                            <input
+                              type="number"
+                              step="5"
+                              value={advancedMax}
+                              onChange={e => setAdvancedMax(e.target.value)}
+                              className="form-control w-full text-xs font-mono"
+                            />
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="text-xs text-slate-400 block mb-1">Quem Arca com a Taxa de Serviço?</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setServiceFeePaidBy('buyer')}
-                      className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition ${
-                        serviceFeePaidBy === 'buyer'
-                          ? 'bg-orange-500/10 border-orange-500 text-orange-400'
-                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <strong className="block font-semibold">Comprador</strong>
-                      <span className="text-[11px] text-slate-500">Taxa somada no checkout</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setServiceFeePaidBy('producer')}
-                      className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition ${
-                        serviceFeePaidBy === 'producer'
-                          ? 'bg-orange-500/10 border-orange-500 text-orange-400'
-                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <strong className="block font-semibold">Produtor</strong>
-                      <span className="text-[11px] text-slate-500">Descontada do repasse</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Spread & Advanced */}
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
-                <label className="text-xs font-semibold text-white uppercase tracking-wider block">
-                  2. Spread e Antecipação (Advanced)
-                </label>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-2">
-                    <label className="flex items-center justify-between text-xs text-slate-200 cursor-pointer">
-                      <span className="font-semibold">Spread Comercial</span>
-                      <input
-                        type="checkbox"
-                        checked={spreadEnabled}
-                        onChange={e => setSpreadEnabled(e.target.checked)}
-                        className="rounded border-slate-700 text-orange-600 focus:ring-0"
-                      />
-                    </label>
-                    {spreadEnabled && (
-                      <div className="pt-1">
-                        <label className="text-[11px] text-slate-400 block mb-1">Percentual (%)</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Prazo de Repasse</label>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-[var(--ll-text-muted)]">D+</span>
                         <input
                           type="number"
-                          step="0.1"
                           min="0"
-                          value={spreadPercent}
-                          onChange={e => setSpreadPercent(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded bg-slate-950 border border-slate-700 text-xs text-white font-mono"
+                          max="60"
+                          value={payoutTermsDays}
+                          onChange={e => setPayoutTermsDays(e.target.value)}
+                          className="form-control w-20 text-xs font-mono"
                         />
+                        <span className="text-xs text-[var(--ll-text-muted)]">dias úteis</span>
                       </div>
-                    )}
-                  </div>
+                    </div>
 
-                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-2">
-                    <label className="flex items-center justify-between text-xs text-slate-200 cursor-pointer">
-                      <span className="font-semibold">Habilitar Advanced</span>
+                    <div>
+                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Número do Contrato</label>
                       <input
-                        type="checkbox"
-                        checked={advancedEnabled}
-                        onChange={e => setAdvancedEnabled(e.target.checked)}
-                        className="rounded border-slate-700 text-orange-600 focus:ring-0"
+                        type="text"
+                        placeholder="CTR-..."
+                        value={contractNumber}
+                        onChange={e => setContractNumber(e.target.value)}
+                        className="form-control w-full text-xs font-mono"
                       />
-                    </label>
-                    {advancedEnabled && (
-                      <div className="grid grid-cols-2 gap-2 pt-1">
-                        <div>
-                          <label className="text-[11px] text-slate-400 block mb-0.5">Taxa (%)</label>
-                          <input
-                            type="number"
-                            step="0.1"
-                            value={advancedRate}
-                            onChange={e => setAdvancedRate(e.target.value)}
-                            className="w-full px-2 py-1 rounded bg-slate-950 border border-slate-700 text-xs text-white font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-[11px] text-slate-400 block mb-0.5">Limite (%)</label>
-                          <input
-                            type="number"
-                            step="5"
-                            value={advancedMax}
-                            onChange={e => setAdvancedMax(e.target.value)}
-                            className="w-full px-2 py-1 rounded bg-slate-950 border border-slate-700 text-xs text-white font-mono"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  <div>
-                    <label className="text-xs text-slate-400 block mb-1">Prazo de Repasse</label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-slate-400">D+</span>
-                      <input
-                        type="number"
-                        min="0"
-                        max="60"
-                        value={payoutTermsDays}
-                        onChange={e => setPayoutTermsDays(e.target.value)}
-                        className="w-20 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono"
-                      />
-                      <span className="text-xs text-slate-500">dias úteis</span>
                     </div>
                   </div>
-
-                  <div>
-                    <label className="text-xs text-slate-400 block mb-1">Número do Contrato</label>
-                    <input
-                      type="text"
-                      placeholder="CTR-..."
-                      value={contractNumber}
-                      onChange={e => setContractNumber(e.target.value)}
-                      className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white font-mono"
-                    />
-                  </div>
                 </div>
-              </div>
 
-              {/* Justificativa Comercial Obrigatória */}
-              <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
-                <label className="text-xs font-semibold text-white uppercase tracking-wider block">
-                  3. Justificativa Comercial Obrigatória
-                </label>
-                <textarea
-                  required
-                  rows={2}
-                  value={changeReason}
-                  onChange={e => setChangeReason(e.target.value)}
-                  placeholder="Ex: Condição comercial de 10% acordada com o produtor conforme proposta..."
-                  className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-orange-500"
-                />
-              </div>
+                {/* Justificativa Comercial Obrigatória */}
+                <div className="p-4 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-2">
+                  <label className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider block">
+                    3. Justificativa Comercial Obrigatória
+                  </label>
+                  <textarea
+                    required
+                    rows={2}
+                    value={changeReason}
+                    onChange={e => setChangeReason(e.target.value)}
+                    placeholder="Ex: Condição comercial de 10% acordada com o produtor conforme proposta..."
+                    className="form-control w-full text-xs"
+                  />
+                </div>
 
-              {/* Ações */}
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setEditingItem(null)}
-                  disabled={modalLoading}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={modalLoading}
-                  className="px-5 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold transition shadow-lg shadow-orange-900/40 flex items-center gap-2"
-                >
-                  {modalLoading ? (
-                    <>
-                      <RefreshCw size={14} className="animate-spin" />
-                      <span>Gravando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 size={14} />
-                      <span>Salvar Condições</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
+                {/* Ações */}
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingItem(null)}
+                    disabled={modalLoading}
+                    className="btn-light text-xs font-semibold cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={modalLoading}
+                    className="btn-primary text-xs font-semibold cursor-pointer flex items-center gap-2"
+                  >
+                    {modalLoading ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                        <span>Gravando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Salvar Condições</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </LimitlessPage>
   )
 }
 
 export default CommercialHubPage
+

@@ -13,6 +13,7 @@ import {
 } from '../../services/api'
 import { CampaignDeliveryMonitoringTable } from '../../components/marketing/CampaignDeliveryMonitoringTable'
 import { MarketingCampaignHealthCard } from '../../components/marketing/MarketingCampaignHealthCard'
+import { LimitlessPage } from '../../integrations/limitless/LimitlessPage'
 
 type Props = {
   events: EventItem[]
@@ -181,7 +182,8 @@ export default function MarketingHubOSPage(p: Props) {
   ]
 
   return (
-    <section className="growth-page marketing-os-page">
+    <LimitlessPage dataTestId="marketing-dashboard-page">
+      <section className="growth-page marketing-os-page">
       <div className="flex items-center gap-2 mb-3">
         <button
           onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}
@@ -778,6 +780,7 @@ export default function MarketingHubOSPage(p: Props) {
         </div>
       </div>
     </section>
+    </LimitlessPage>
   )
 }
 

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import { financeSummary, type SystemTier } from '../data/finance'
+import { LimitlessPage } from '../integrations/limitless/LimitlessPage'
 
 type Props = {
   events: EventItem[]
@@ -95,7 +96,8 @@ export default function AccountingDashboardPage({ events, notify, onNavigate }: 
   }
 
   return (
-    <div className="finance-dashboard-wrapper">
+    <LimitlessPage dataTestId="accounting-dashboard-page">
+      <div className="finance-dashboard-wrapper">
       {/* Header Section */}
       <section className="finance-header-section card-surface">
         <div className="finance-header-left">
@@ -302,5 +304,6 @@ export default function AccountingDashboardPage({ events, notify, onNavigate }: 
         </div>
       </section>
     </div>
+    </LimitlessPage>
   )
 }

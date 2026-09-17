@@ -1,0 +1,617 @@
+/* Disk + Limitless bridge
+   Escopo seguro: aplique .disk-limitless-page somente nas páginas migradas.
+   Não importa bootstrap/layout globais do Limitless para evitar quebrar AppShell/React. */
+
+.disk-limitless-page {
+  --ll-primary: var(--disk-primary, var(--disk-color-primary, #f97316));
+  --ll-primary-hover: var(--disk-primary-hover, #ea580c);
+  --ll-bg: var(--disk-bg-app, #f8fafc);
+  --ll-surface: var(--disk-bg-surface, #ffffff);
+  --ll-elevated: var(--disk-bg-elevated, #ffffff);
+  --ll-muted: var(--disk-bg-muted, #f1f5f9);
+  --ll-text: var(--disk-text-primary, #0f172a);
+  --ll-text-2: var(--disk-text-secondary, #475569);
+  --ll-text-muted: var(--disk-text-muted, #94a3b8);
+  --ll-border: var(--disk-border, #e2e8f0);
+  --ll-border-subtle: var(--disk-border-subtle, #cbd5e1);
+  width: 100%;
+  min-width: 0;
+  color: var(--ll-text);
+}
+
+.dark .disk-limitless-page,
+[data-theme='dark'] .disk-limitless-page {
+  --ll-bg: var(--disk-bg-app, #0f172a);
+  --ll-surface: var(--disk-bg-surface, #1e293b);
+  --ll-elevated: var(--disk-bg-elevated, #334155);
+  --ll-muted: var(--disk-bg-muted, #17212f);
+  --ll-text: var(--disk-text-primary, #f8fafc);
+  --ll-text-2: var(--disk-text-secondary, #cbd5e1);
+  --ll-text-muted: var(--disk-text-muted, #64748b);
+  --ll-border: var(--disk-border, rgba(148, 163, 184, 0.18));
+  --ll-border-subtle: var(--disk-border-subtle, rgba(148, 163, 184, 0.12));
+}
+
+/* Limitless Cards */
+.disk-limitless-page .card {
+  background: var(--ll-surface);
+  color: var(--ll-text);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.disk-limitless-page .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--ll-border);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.disk-limitless-page .card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ll-text);
+  margin: 0;
+}
+
+.disk-limitless-page .card-body {
+  padding: 1.25rem;
+}
+
+.disk-limitless-page .card-footer {
+  background: var(--ll-muted);
+  border-top: 1px solid var(--ll-border);
+  padding: 0.875rem 1.25rem;
+}
+
+/* Limitless Tables */
+.disk-limitless-page .table {
+  width: 100%;
+  color: var(--ll-text);
+  border-collapse: collapse;
+}
+
+.disk-limitless-page .table thead th {
+  background: var(--ll-muted);
+  color: var(--ll-text-2);
+  border-bottom: 1px solid var(--ll-border);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+}
+
+.disk-limitless-page .table td {
+  border-bottom: 1px solid var(--ll-border);
+  padding: 0.875rem 1rem;
+  vertical-align: middle;
+}
+
+.disk-limitless-page .table tbody tr:hover {
+  background: rgba(249, 115, 22, 0.04);
+}
+
+/* Limitless Buttons & Controls */
+.disk-limitless-page .btn-primary {
+  background: var(--ll-primary);
+  border: 1px solid var(--ll-primary);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.disk-limitless-page .btn-primary:hover {
+  background: var(--ll-primary-hover);
+  border-color: var(--ll-primary-hover);
+}
+
+.disk-limitless-page .btn-light {
+  background: var(--ll-muted);
+  border: 1px solid var(--ll-border);
+  color: var(--ll-text);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+
+.disk-limitless-page .badge-primary,
+.disk-limitless-page .bg-primary {
+  background: var(--ll-primary) !important;
+  color: #ffffff !important;
+}
+
+/* Badges Limitless */
+.disk-limitless-page .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  line-height: 1;
+}
+
+.disk-limitless-page .badge-subtle-success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.dark .disk-limitless-page .badge-subtle-success,
+[data-theme='dark'] .disk-limitless-page .badge-subtle-success {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.disk-limitless-page .badge-subtle-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+.dark .disk-limitless-page .badge-subtle-warning,
+[data-theme='dark'] .disk-limitless-page .badge-subtle-warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.disk-limitless-page .badge-subtle-danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.dark .disk-limitless-page .badge-subtle-danger,
+[data-theme='dark'] .disk-limitless-page .badge-subtle-danger {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.disk-limitless-page .badge-subtle-info {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.25);
+}
+.dark .disk-limitless-page .badge-subtle-info,
+[data-theme='dark'] .disk-limitless-page .badge-subtle-info {
+  background: rgba(14, 165, 233, 0.18);
+  color: #38bdf8;
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+.disk-limitless-page .badge-subtle-primary {
+  background: rgba(249, 115, 22, 0.12);
+  color: #ea580c;
+  border: 1px solid rgba(249, 115, 22, 0.25);
+}
+.dark .disk-limitless-page .badge-subtle-primary,
+[data-theme='dark'] .disk-limitless-page .badge-subtle-primary {
+  background: rgba(249, 115, 22, 0.18);
+  color: #fb923c;
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.disk-limitless-page .badge-subtle-indigo {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4f46e5;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+.dark .disk-limitless-page .badge-subtle-indigo,
+[data-theme='dark'] .disk-limitless-page .badge-subtle-indigo {
+  background: rgba(99, 102, 241, 0.18);
+  color: #818cf8;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.disk-limitless-page .badge-subtle-purple {
+  background: rgba(168, 85, 247, 0.12);
+  color: #9333ea;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+.dark .disk-limitless-page .badge-subtle-purple,
+[data-theme='dark'] .disk-limitless-page .badge-subtle-purple {
+  background: rgba(168, 85, 247, 0.18);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.disk-limitless-page .form-control,
+.disk-limitless-page .form-select {
+  background: var(--ll-elevated);
+  color: var(--ll-text);
+  border: 1px solid var(--ll-border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.disk-limitless-page .form-control:focus,
+.disk-limitless-page .form-select:focus {
+  border-color: var(--ll-primary);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+}
+
+.disk-limitless-page .page-header {
+  margin: 0 0 1.5rem;
+}
+
+.disk-limitless-page .content {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  padding: 0;
+}
+
+/* Limitless Stat Cards (KPIs) */
+.disk-limitless-page .kpi-card-limitless {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.disk-limitless-page .kpi-card-limitless:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Limitless Segmented Tabs / Pills */
+.disk-limitless-page .limitless-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--ll-muted);
+  padding: 0.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--ll-border);
+}
+
+.disk-limitless-page .limitless-tab-btn {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--ll-text-2);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.disk-limitless-page .limitless-tab-btn:hover {
+  color: var(--ll-text);
+}
+
+.disk-limitless-page .limitless-tab-btn.active {
+  background: var(--ll-surface);
+  color: var(--ll-text);
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 767px) {
+  .disk-limitless-page .card-body,
+  .disk-limitless-page .card-header {
+    padding: 0.875rem;
+  }
+  .disk-limitless-page .kpi-card-limitless {
+    padding: 1rem;
+  }
+}
+
+/* =========================================================================
+   CONTABILIDADE (FA-PAGE) EM PADRÃO LIMITLESS
+   ========================================================================= */
+.disk-limitless-page .fa-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.disk-limitless-page .fa-header {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.disk-limitless-page .fa-header h2 {
+  color: var(--ll-text);
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0.35rem;
+}
+
+.disk-limitless-page .fa-header p {
+  color: var(--ll-text-2);
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+.disk-limitless-page .fa-tabs {
+  display: flex;
+  gap: 0.375rem;
+  overflow-x: auto;
+  padding: 0.375rem;
+  background: var(--ll-muted);
+  border: 1px solid var(--ll-border);
+  border-radius: 10px;
+}
+
+.disk-limitless-page .fa-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  border: 0;
+  background: transparent;
+  color: var(--ll-text-2);
+  padding: 0.5rem 0.85rem;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.disk-limitless-page .fa-tabs button:hover {
+  color: var(--ll-text);
+}
+
+.disk-limitless-page .fa-tabs button.active {
+  background: var(--ll-surface);
+  color: var(--ll-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--ll-border);
+}
+
+.disk-limitless-page .fa-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.disk-limitless-page .fa-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 8px;
+  padding: 0 0.75rem;
+  min-width: 280px;
+}
+
+.disk-limitless-page .fa-search input {
+  border: none;
+  background: transparent;
+  color: var(--ll-text);
+  font-size: 0.8125rem;
+  height: 38px;
+  width: 100%;
+  outline: none;
+}
+
+.disk-limitless-page .fa-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.disk-limitless-page .fa-kpi {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.disk-limitless-page .fa-kpi:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.disk-limitless-page .fa-kpi > span {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(249, 115, 22, 0.12);
+  color: var(--ll-primary);
+}
+
+.disk-limitless-page .fa-kpi small {
+  font-size: 0.75rem;
+  color: var(--ll-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.disk-limitless-page .fa-kpi strong {
+  font-size: 1.25rem;
+  color: var(--ll-text);
+  font-weight: 800;
+}
+
+.disk-limitless-page .fa-panel {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.disk-limitless-page .fa-panel-head h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ll-text);
+  margin: 0;
+}
+
+.disk-limitless-page .fa-panel-head p {
+  font-size: 0.8125rem;
+  color: var(--ll-text-2);
+  margin: 0.25rem 0 0;
+}
+
+.disk-limitless-page .fa-table th {
+  background: var(--ll-muted);
+  color: var(--ll-text-2);
+  border-bottom: 1px solid var(--ll-border);
+}
+
+.disk-limitless-page .fa-table td {
+  border-bottom: 1px solid var(--ll-border);
+  color: var(--ll-text);
+}
+
+.disk-limitless-page .fa-table tr:hover td {
+  background: rgba(249, 115, 22, 0.04);
+}
+
+.disk-limitless-page .fa-line {
+  border-bottom: 1px solid var(--ll-border);
+  color: var(--ll-text);
+}
+
+.disk-limitless-page .fa-line.strong {
+  background: var(--ll-muted);
+  color: var(--ll-text);
+}
+
+.disk-limitless-page .fa-health-row {
+  border: 1px solid var(--ll-border);
+  background: var(--ll-surface);
+}
+
+/* =========================================================================
+   MARKETING (MARKETING-OS-PAGE) EM PADRÃO LIMITLESS
+   ========================================================================= */
+.disk-limitless-page .marketing-os-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.disk-limitless-page .marketing-os-head {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.disk-limitless-page .marketing-os-head h2 {
+  color: var(--ll-text);
+  font-size: 1.375rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0.35rem;
+}
+
+.disk-limitless-page .marketing-os-head p {
+  color: var(--ll-text-2);
+  font-size: 0.8125rem;
+  margin: 0;
+}
+
+.disk-limitless-page .marketing-os-context {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.disk-limitless-page .marketing-os-context label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.disk-limitless-page .marketing-os-context select {
+  background: var(--ll-elevated);
+  color: var(--ll-text);
+  border: 1px solid var(--ll-border);
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8125rem;
+}
+
+.disk-limitless-page .marketing-os-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.disk-limitless-page .marketing-os-kpi {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.disk-limitless-page .marketing-os-kpi:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.disk-limitless-page .marketing-os-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(249, 115, 22, 0.12);
+  color: var(--ll-primary);
+  flex-shrink: 0;
+}
+
+.disk-limitless-page .marketing-os-panel {
+  background: var(--ll-surface);
+  border: 1px solid var(--ll-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}

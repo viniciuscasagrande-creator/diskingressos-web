@@ -1,26 +1,22 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import {
-  ShoppingBag,
   Search,
-  Filter,
   Layers,
   CheckCircle2,
-  Clock,
-  AlertTriangle,
-  FileText,
   DollarSign,
   Ticket,
   Store,
   Globe,
   Building,
   RefreshCw,
-  ExternalLink,
   ShieldCheck,
   ChevronRight,
   UserCheck,
   CreditCard,
   Users,
-  Scan
+  Scan,
+  ArrowUpRight,
+  AlertCircle
 } from 'lucide-react'
 import { commerceCoreService } from '../../services/commerceCore.service'
 import type {
@@ -30,12 +26,7 @@ import type {
   OrderStatus
 } from '../../types/commerce-orders.types'
 import { OrderDossier360Modal } from './OrderDossier360Modal'
-import {
-  DiskPageHeader,
-  DiskKpiCard,
-  DiskButton,
-  DiskBadge
-} from '../../design-system'
+import { LimitlessPage } from '../../integrations/limitless/LimitlessPage'
 
 interface CommerceOrdersHubPageProps {
   onNavigateToPayments?: () => void
@@ -99,15 +90,31 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'PAID':
-        return <DiskBadge variant="success" size="sm">Pago</DiskBadge>
+        return (
+          <span className="badge badge-subtle-success">
+            <CheckCircle2 className="w-3 h-3" /> Pago
+          </span>
+        )
       case 'FULFILLED':
-        return <DiskBadge variant="info" size="sm">Concluído</DiskBadge>
+        return (
+          <span className="badge badge-subtle-info">
+            <CheckCircle2 className="w-3 h-3" /> Concluído
+          </span>
+        )
       case 'AWAITING_PAYMENT':
-        return <DiskBadge variant="warning" size="sm">Aguardando Pagamento</DiskBadge>
+        return (
+          <span className="badge badge-subtle-warning">
+            <AlertCircle className="w-3 h-3" /> Aguardando Pagamento
+          </span>
+        )
       case 'REFUNDED':
-        return <DiskBadge variant="danger" size="sm">Estornado</DiskBadge>
+        return (
+          <span className="badge badge-subtle-danger">
+            <AlertCircle className="w-3 h-3" /> Estornado
+          </span>
+        )
       default:
-        return <DiskBadge variant="neutral" size="sm">{status}</DiskBadge>
+        return <span className="badge badge-subtle-primary">{status}</span>
     }
   }
 
@@ -115,77 +122,77 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
     switch (channel) {
       case 'SITE':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300 flex items-center gap-1">
+          <span className="badge badge-subtle-info">
             <Globe className="w-3 h-3" /> Site
           </span>
         )
       case 'BOX_OFFICE':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 flex items-center gap-1">
+          <span className="badge badge-subtle-purple">
             <Building className="w-3 h-3" /> Bilheteria
           </span>
         )
       case 'PDV':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 flex items-center gap-1">
+          <span className="badge badge-subtle-indigo">
             <Store className="w-3 h-3" /> PDV
           </span>
         )
       case 'DISK':
         return (
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 flex items-center gap-1">
+          <span className="badge badge-subtle-success">
             <UserCheck className="w-3 h-3" /> Produtor
           </span>
         )
       default:
-        return <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">{channel}</span>
+        return <span className="badge">{channel}</span>
     }
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn" data-testid="commerce-orders-hub">
-      {/* Cabeçalho da Central de Vendas Omnichannel com layout fluido e não esmagável */}
-      <div className="border-b border-[var(--disk-border-subtle)] pb-5 space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+    <LimitlessPage dataTestId="commerce-orders-hub" className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn">
+      {/* Page Header Limitless */}
+      <div className="card border-0 shadow-none bg-transparent mb-2">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[var(--ll-border)]">
           <div className="min-w-0 max-w-3xl">
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="badge badge-subtle-primary">
                 Operação Omnichannel • Vendas & Ingressos
               </span>
-              <span className="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
+              <span className="badge badge-subtle-info">
+                <ShieldCheck className="w-3.5 h-3.5" />
                 Commerce Core Homologado
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[var(--disk-text-primary)] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--ll-text)]">
               Pedidos, Ingressos & Integridade Operacional
             </h1>
-            <p className="text-xs sm:text-sm text-[var(--disk-text-secondary)] mt-1 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[var(--ll-text-2)] mt-1 leading-relaxed">
               Operação unificada do Commerce Core: vendas originadas pelo Site, Bilheterias, PDVs e Portal do Produtor.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5 shrink-0 self-start lg:self-center">
-            <DiskButton
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={loadData}
               disabled={loading}
-              icon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-primary' : ''}`} />}
+              className="btn-primary flex items-center gap-2 text-xs cursor-pointer shadow-sm disabled:opacity-50"
             >
-              Atualizar Vendas
-            </DiskButton>
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <span>Atualizar Vendas</span>
+            </button>
           </div>
         </div>
 
         {/* Toolbar de Acesso Rápido aos Módulos Operacionais Conectados */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--disk-border-subtle)]/60">
-          <span className="text-xs font-semibold text-[var(--disk-text-muted)] mr-1">Acesso direto:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-3">
+          <span className="text-xs font-semibold text-[var(--ll-text-muted)] mr-1">Navegação rápida:</span>
           {onNavigateToPayments && (
             <button
               type="button"
               onClick={onNavigateToPayments}
-              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5 shadow-xs cursor-pointer"
               data-testid="goto-payments-btn"
             >
               <CreditCard className="w-3.5 h-3.5" />
@@ -196,7 +203,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
             <button
               type="button"
               onClick={onNavigateToTickets}
-              className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5 shadow-xs cursor-pointer"
               data-testid="goto-tickets-btn"
             >
               <Ticket className="w-3.5 h-3.5" />
@@ -207,7 +214,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
             <button
               type="button"
               onClick={onNavigateToAccess}
-              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5 shadow-xs cursor-pointer"
               data-testid="goto-access-btn"
             >
               <Scan className="w-3.5 h-3.5" />
@@ -218,232 +225,269 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
             <button
               type="button"
               onClick={onNavigateToCustomers}
-              className="px-3 py-1.5 bg-[var(--disk-bg-surface)] hover:bg-[var(--disk-bg-surface-hover)] text-[var(--disk-text-primary)] border border-[var(--disk-border-subtle)] text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              className="px-3 py-1.5 bg-[var(--ll-surface)] hover:bg-[var(--ll-muted)] text-[var(--ll-text)] border border-[var(--ll-border)] text-xs font-semibold rounded-lg transition flex items-center gap-1.5 shadow-xs cursor-pointer"
               data-testid="goto-customers-btn"
             >
-              <Users className="w-3.5 h-3.5 text-[var(--disk-primary)]" />
+              <Users className="w-3.5 h-3.5 text-[var(--ll-primary)]" />
               <span>Central de Clientes</span>
             </button>
           )}
         </div>
       </div>
 
-      {/* 4 Cards de Métricas Reais com DiskKpiCard */}
+      {/* 4 Cards de Métricas Reais no Estilo Limitless */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <DiskKpiCard
-          label="Faturamento do Dia"
-          value={summary ? `R$ ${summary.todayRevenueBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'R$ 0,00'}
-          note={summary && summary.ordersPerMinute > 0 ? `${summary.ordersPerMinute} pedidos / minuto` : 'Dados reais do banco'}
-          accent="success"
-          icon={<DollarSign className="w-5 h-5" />}
-        />
-        <DiskKpiCard
-          label="Ingressos Emitidos Hoje"
-          value={summary ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '0'}
-          note="Consolidado no banco"
-          accent="info"
-          icon={<Ticket className="w-5 h-5" />}
-        />
-        <DiskKpiCard
-          label="Holds Ativos (Redis)"
-          value={summary ? summary.activeHoldsCount.toLocaleString('pt-BR') : '0'}
-          note="Reserva atômica anti-overbooking"
-          accent="brand"
-          icon={<Layers className="w-5 h-5" />}
-        />
-        <DiskKpiCard
-          label="Aprovação de Pagamento"
-          value={summary && summary.approvalRatePercentage > 0 ? `${summary.approvalRatePercentage.toFixed(1)}%` : '0%'}
-          note="Conversão real de checkout"
-          accent="purple"
-          icon={<CheckCircle2 className="w-5 h-5" />}
-        />
-      </div>
-
-      {/* Alerta de Integridade Comercial do Core (29.8.65) */}
-      <div className="bg-[var(--disk-bg-surface-sunken)] text-[var(--disk-text-primary)] border border-[var(--disk-border-subtle)] p-4 rounded-card shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="p-2 bg-[var(--disk-primary)] rounded-btn text-white">
-            <ShieldCheck className="w-5 h-5" />
-          </span>
+        {/* Card 1: Faturamento */}
+        <div className="kpi-card-limitless">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--disk-primary)]">
-              Commerce Integrity Center • Monitoramento de Consistência
-            </h3>
-            <p className="text-xs text-[var(--disk-text-muted)] mt-0.5">
-              Reconciliação contínua entre reservas no Redis, pagamentos de adquirentes e emissão de ingressos.
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--ll-text-muted)]">
+              Faturamento do Dia
+            </span>
+            <div className="text-xl lg:text-2xl font-black mt-1 text-[var(--ll-text)]">
+              {summary ? `R$ ${summary.todayRevenueBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'R$ 0,00'}
+            </div>
+            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1 flex items-center gap-1">
+              <ArrowUpRight className="w-3 h-3" />
+              {summary && summary.ordersPerMinute > 0 ? `${summary.ordersPerMinute} pedidos / min` : 'Dados reais do banco'}
             </p>
           </div>
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <DollarSign className="w-6 h-6" />
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
-          <div className="flex items-center gap-1.5">
-            <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.inconsistentOrders ?? 0) > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-            <span className="text-[var(--disk-text-muted)]">Inconsistências:</span>
-            <strong className={(summary?.integrityAlerts?.inconsistentOrders ?? 0) > 0 ? 'text-rose-400' : 'text-emerald-500'}>
-              {summary?.integrityAlerts?.inconsistentOrders ?? 0}
-            </strong>
+        {/* Card 2: Ingressos */}
+        <div className="kpi-card-limitless">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--ll-text-muted)]">
+              Ingressos Emitidos Hoje
+            </span>
+            <div className="text-xl lg:text-2xl font-black mt-1 text-[var(--ll-text)]">
+              {summary ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '0'}
+            </div>
+            <p className="text-[11px] text-[var(--ll-text-muted)] font-medium mt-1">
+              Consolidado em tempo real
+            </p>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.paymentsWithoutTickets ?? 0) > 0 ? 'bg-amber-400' : 'bg-emerald-500'}`} />
-            <span className="text-[var(--disk-text-muted)]">Pagamentos sem Ingresso:</span>
-            <strong className={(summary?.integrityAlerts?.paymentsWithoutTickets ?? 0) > 0 ? 'text-amber-400' : 'text-emerald-500'}>
-              {summary?.integrityAlerts?.paymentsWithoutTickets ?? 0}
-            </strong>
+          <div className="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+            <Ticket className="w-6 h-6" />
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.ticketsWithoutLedger ?? 0) > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
-            <span className="text-[var(--disk-text-muted)]">Ingressos sem Ledger:</span>
-            <strong className={(summary?.integrityAlerts?.ticketsWithoutLedger ?? 0) > 0 ? 'text-rose-400' : 'text-emerald-500'}>
-              {summary?.integrityAlerts?.ticketsWithoutLedger ?? 0}
-            </strong>
+        </div>
+
+        {/* Card 3: Holds Ativos */}
+        <div className="kpi-card-limitless">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--ll-text-muted)]">
+              Holds Ativos (Redis)
+            </span>
+            <div className="text-xl lg:text-2xl font-black mt-1 text-[var(--ll-text)]">
+              {summary ? summary.activeHoldsCount.toLocaleString('pt-BR') : '0'}
+            </div>
+            <p className="text-[11px] text-orange-600 dark:text-orange-400 font-medium mt-1">
+              Reserva anti-overbooking
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
+            <Layers className="w-6 h-6" />
+          </div>
+        </div>
+
+        {/* Card 4: Aprovação */}
+        <div className="kpi-card-limitless">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--ll-text-muted)]">
+              Aprovação de Checkout
+            </span>
+            <div className="text-xl lg:text-2xl font-black mt-1 text-[var(--ll-text)]">
+              {summary && summary.approvalRatePercentage > 0 ? `${summary.approvalRatePercentage.toFixed(1)}%` : '0%'}
+            </div>
+            <p className="text-[11px] text-purple-600 dark:text-purple-400 font-medium mt-1">
+              Conversão de pagamentos
+            </p>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+        </div>
+      </div>
+
+      {/* Alerta de Integridade Comercial do Core (Estilo Limitless Callout) */}
+      <div className="card p-4 bg-[var(--ll-surface)] border-l-4 border-l-[var(--ll-primary)] shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-[var(--ll-primary)] text-white flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--ll-primary)]">
+                Commerce Integrity Center • Monitoramento de Consistência
+              </h3>
+              <p className="text-xs text-[var(--ll-text-2)] mt-0.5">
+                Reconciliação contínua entre reservas no Redis, pagamentos de adquirentes e emissão de ingressos.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--ll-muted)]">
+              <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.inconsistentOrders ?? 0) > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+              <span className="text-[var(--ll-text-muted)]">Inconsistências:</span>
+              <strong className={(summary?.integrityAlerts?.inconsistentOrders ?? 0) > 0 ? 'text-rose-500' : 'text-emerald-600 dark:text-emerald-400'}>
+                {summary?.integrityAlerts?.inconsistentOrders ?? 0}
+              </strong>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--ll-muted)]">
+              <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.paymentsWithoutTickets ?? 0) > 0 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+              <span className="text-[var(--ll-text-muted)]">Sem Ingresso:</span>
+              <strong className={(summary?.integrityAlerts?.paymentsWithoutTickets ?? 0) > 0 ? 'text-amber-500' : 'text-emerald-600 dark:text-emerald-400'}>
+                {summary?.integrityAlerts?.paymentsWithoutTickets ?? 0}
+              </strong>
+            </div>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[var(--ll-muted)]">
+              <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.ticketsWithoutLedger ?? 0) > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+              <span className="text-[var(--ll-text-muted)]">Sem Ledger:</span>
+              <strong className={(summary?.integrityAlerts?.ticketsWithoutLedger ?? 0) > 0 ? 'text-rose-500' : 'text-emerald-600 dark:text-emerald-400'}>
+                {summary?.integrityAlerts?.ticketsWithoutLedger ?? 0}
+              </strong>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Barra de Filtros e Busca */}
-      <div className="bg-[var(--disk-bg-surface)] p-4 rounded-card border border-[var(--disk-border-subtle)] shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        {/* Abas de Canais de Venda */}
-        <div className="flex items-center gap-1 overflow-x-auto text-xs font-bold bg-[var(--disk-bg-surface-sunken)] p-1 rounded-btn border border-[var(--disk-border-subtle)]">
-          <button
-            type="button"
-            onClick={() => setActiveChannelTab('TODOS')}
-            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
-              activeChannelTab === 'TODOS'
-                ? 'bg-[var(--disk-primary)] text-white shadow-xs'
-                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
-            }`}
-          >
-            Todos os Canais
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveChannelTab('SITE')}
-            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
-              activeChannelTab === 'SITE'
-                ? 'bg-sky-600 text-white shadow-xs'
-                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
-            }`}
-          >
-            Site Oficial
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveChannelTab('BOX_OFFICE')}
-            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
-              activeChannelTab === 'BOX_OFFICE'
-                ? 'bg-purple-600 text-white shadow-xs'
-                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
-            }`}
-          >
-            Bilheteria
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveChannelTab('PDV')}
-            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
-              activeChannelTab === 'PDV'
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
-            }`}
-          >
-            PDV
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveChannelTab('DISK')}
-            className={`px-3 py-1.5 rounded-btn transition cursor-pointer ${
-              activeChannelTab === 'DISK'
-                ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-[var(--disk-text-secondary)] hover:text-[var(--disk-text-primary)]'
-            }`}
-          >
-            Portal Produtor
-          </button>
-        </div>
-
-        {/* Busca e Status */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--disk-text-muted)]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar pedido, cliente, CPF..."
-              className="w-full pl-9 pr-4 py-2 bg-[var(--disk-bg-surface-sunken)] border border-[var(--disk-border-subtle)] text-[var(--disk-text-primary)] placeholder:text-[var(--disk-text-muted)] rounded-btn text-xs focus:outline-none focus:ring-2 focus:ring-[var(--disk-primary)] transition"
-            />
+      {/* Barra de Filtros e Busca (Estilo Limitless Card) */}
+      <div className="card p-3 shadow-sm">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          {/* Abas de Canais de Venda em Segmented Control */}
+          <div className="limitless-tabs overflow-x-auto">
+            <button
+              type="button"
+              onClick={() => setActiveChannelTab('TODOS')}
+              className={`limitless-tab-btn ${activeChannelTab === 'TODOS' ? 'active' : ''}`}
+            >
+              Todos os Canais
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveChannelTab('SITE')}
+              className={`limitless-tab-btn ${activeChannelTab === 'SITE' ? 'active' : ''}`}
+            >
+              Site Oficial
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveChannelTab('BOX_OFFICE')}
+              className={`limitless-tab-btn ${activeChannelTab === 'BOX_OFFICE' ? 'active' : ''}`}
+            >
+              Bilheteria
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveChannelTab('PDV')}
+              className={`limitless-tab-btn ${activeChannelTab === 'PDV' ? 'active' : ''}`}
+            >
+              PDV
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveChannelTab('DISK')}
+              className={`limitless-tab-btn ${activeChannelTab === 'DISK' ? 'active' : ''}`}
+            >
+              Portal Produtor
+            </button>
           </div>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="px-3 py-2 bg-[var(--disk-bg-surface-sunken)] border border-[var(--disk-border-subtle)] text-[var(--disk-text-primary)] rounded-btn text-xs font-medium focus:outline-none"
-          >
-            <option value="TODOS">Todos os Status</option>
-            <option value="PAID">Pago</option>
-            <option value="FULFILLED">Concluído</option>
-            <option value="AWAITING_PAYMENT">Aguardando Pagamento</option>
-            <option value="REFUNDED">Estornado</option>
-          </select>
+          {/* Busca e Status */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="w-4 h-4 absolute left-3 top-2.5 text-[var(--ll-text-muted)]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar pedido, cliente, CPF..."
+                className="form-control w-full pl-9 pr-4 text-xs"
+              />
+            </div>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+              className="form-select text-xs font-medium cursor-pointer"
+            >
+              <option value="TODOS">Todos os Status</option>
+              <option value="PAID">Pago</option>
+              <option value="FULFILLED">Concluído</option>
+              <option value="AWAITING_PAYMENT">Aguardando Pagamento</option>
+              <option value="REFUNDED">Estornado</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Tabela de Pedidos Omnichannel */}
-      <div className="bg-[var(--disk-bg-surface)] border border-[var(--disk-border-subtle)] rounded-card shadow-xs overflow-hidden">
+      {/* Tabela de Pedidos Omnichannel no Estilo Limitless */}
+      <div className="card overflow-hidden shadow-sm">
+        <div className="card-header">
+          <h2 className="card-title text-sm font-bold flex items-center gap-2">
+            <span>Listagem de Pedidos Omnichannel</span>
+            <span className="badge badge-subtle-primary">
+              {filteredOrders.length} {filteredOrders.length === 1 ? 'pedido' : 'pedidos'}
+            </span>
+          </h2>
+        </div>
+
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead className="bg-[var(--disk-bg-surface-sunken)] border-b border-[var(--disk-border-subtle)] text-[var(--disk-text-muted)] font-bold uppercase tracking-wider text-[10px]">
+          <table className="table">
+            <thead>
               <tr>
-                <th className="py-3 px-4">Pedido / Protocolo</th>
-                <th className="py-3 px-4">Canal</th>
-                <th className="py-3 px-4">Cliente / Comprador</th>
-                <th className="py-3 px-4">Evento & Sessão</th>
-                <th className="py-3 px-4 text-center">Ingressos</th>
-                <th className="py-3 px-4 text-right">Valor Total</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Ação</th>
+                <th>Pedido / Protocolo</th>
+                <th>Canal</th>
+                <th>Cliente / Comprador</th>
+                <th>Evento & Sessão</th>
+                <th className="text-center">Ingressos</th>
+                <th className="text-right">Valor Total</th>
+                <th>Status</th>
+                <th className="text-right">Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--disk-border-subtle)]">
+            <tbody>
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-[var(--disk-text-muted)] text-xs">
+                  <td colSpan={8} className="py-12 text-center text-[var(--ll-text-muted)] text-xs">
                     Nenhum pedido encontrado para os filtros selecionados.
                   </td>
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-[var(--disk-bg-surface-hover)] transition-colors">
-                    <td className="py-3.5 px-4 font-mono">
-                      <p className="font-bold text-[var(--disk-text-primary)]">{order.id}</p>
-                      <p className="text-[10px] text-[var(--disk-text-muted)]">{order.protocol}</p>
+                  <tr key={order.id}>
+                    <td className="font-mono">
+                      <p className="font-bold text-[var(--ll-text)]">{order.id}</p>
+                      <p className="text-[10px] text-[var(--ll-text-muted)]">{order.protocol}</p>
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td>
                       {getChannelBadge(order.channel)}
                     </td>
-                    <td className="py-3.5 px-4">
-                      <p className="font-bold text-[var(--disk-text-primary)]">{order.customerName}</p>
-                      <p className="text-[10px] text-[var(--disk-text-muted)] font-mono">{order.customerEmail}</p>
+                    <td>
+                      <p className="font-bold text-[var(--ll-text)]">{order.customerName}</p>
+                      <p className="text-[10px] text-[var(--ll-text-muted)] font-mono">{order.customerEmail}</p>
                     </td>
-                    <td className="py-3.5 px-4 max-w-xs truncate">
-                      <p className="font-semibold text-[var(--disk-text-primary)] truncate">{order.eventName}</p>
-                      <p className="text-[10px] text-[var(--disk-text-muted)]">{order.sessionDate}</p>
+                    <td className="max-w-xs truncate">
+                      <p className="font-semibold text-[var(--ll-text)] truncate">{order.eventName}</p>
+                      <p className="text-[10px] text-[var(--ll-text-muted)]">{order.sessionDate}</p>
                     </td>
-                    <td className="py-3.5 px-4 text-center font-bold text-[var(--disk-text-primary)]">
+                    <td className="text-center font-bold text-[var(--ll-text)]">
                       {order.tickets.length}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-bold text-[var(--disk-text-primary)] font-mono">
+                    <td className="text-right font-bold text-[var(--ll-text)] font-mono">
                       R$ {order.totalAmount.toFixed(2)}
                     </td>
-                    <td className="py-3.5 px-4">
+                    <td>
                       {getStatusBadge(order.status)}
                     </td>
-                    <td className="py-3.5 px-4 text-right">
+                    <td className="text-right">
                       <button
                         type="button"
                         onClick={() => setSelectedOrder(order)}
-                        className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/50 dark:text-indigo-300 rounded-btn font-bold text-xs transition flex items-center gap-1 ml-auto cursor-pointer"
+                        className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/50 dark:text-indigo-300 rounded-lg font-bold text-xs transition flex items-center gap-1 ml-auto cursor-pointer"
                       >
                         <span>Dossiê do Pedido</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -466,6 +510,8 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
           onOrderUpdated={loadData}
         />
       )}
-    </div>
+    </LimitlessPage>
   )
 }
+export default CommerceOrdersHubPage
+

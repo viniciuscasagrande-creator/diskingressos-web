@@ -27,6 +27,7 @@ import {
   type AccountingTabKey
 } from '../navigation/accounting-routes'
 import { AccountingController } from '../accounting/accounting-controller'
+import { LimitlessPage } from '../integrations/limitless/LimitlessPage'
 
 export type Tab = AccountingTabKey
 
@@ -281,11 +282,12 @@ export default function FinanceAccountingHubPage({ events, producerId, initialTa
   }
 
   return (
-    <section
-      id="view-accounting-disk"
-      data-view="accounting-disk"
-      className="fa-page"
-    >
+    <LimitlessPage dataTestId="finance-accounting-hub">
+      <section
+        id="view-accounting-disk"
+        data-view="accounting-disk"
+        className="fa-page"
+      >
       <div className="fa-header">
         <div>
           {onBack && <button className="fa-back" onClick={onBack}>← Painel Principal</button>}
@@ -646,7 +648,8 @@ export default function FinanceAccountingHubPage({ events, producerId, initialTa
           }}
         />
       )}
-    </section>
+      </section>
+    </LimitlessPage>
   )
 }
 
