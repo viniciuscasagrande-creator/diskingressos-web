@@ -27,6 +27,9 @@ test.describe('Motor Comercial por Evento — Hub & Condições Imutáveis', () 
     await expect(page.getByText('2. Snapshot Imutável de Venda')).toBeVisible()
     await expect(page.getByText('3. Antecipação Segura (Advanced)')).toBeVisible()
 
+    // Valida que o Comercial NÃO tem autonomia para cadastrar eventos
+    await expect(page.getByRole('button', { name: /Novo Evento/i })).not.toBeVisible()
+
     // Valida presença da tabela de acordos comerciais
     const table = page.locator('table')
     await expect(table).toBeVisible()
@@ -34,5 +37,15 @@ test.describe('Motor Comercial por Evento — Hub & Condições Imutáveis', () 
     await expect(page.getByText('Taxa de Serviço Disk')).toBeVisible()
     await expect(page.getByText('Spread')).toBeVisible()
     await expect(page.getByText('Advanced (Antecipação)')).toBeVisible()
+
+    // Valida botão de autonomia comercial para definir taxa
+    const btnTaxa = page.locator('button:has-text("Definir Taxa"), button:has-text("Ajustar Taxa")').first()
+    await expect(btnTaxa).toBeVisible()
+
+    // Valida aba de Consulta de Produtores
+    const tabProdutores = page.getByRole('button', { name: /Consulta de Produtores/i })
+    await expect(tabProdutores).toBeVisible()
+    await tabProdutores.click()
+    await expect(page.getByText(/produtoras no cadastro/i)).toBeVisible()
   })
 })

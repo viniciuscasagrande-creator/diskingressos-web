@@ -133,9 +133,9 @@ commercialRouter.post('/events/:eventId/agreement', async (req: AuthRequest, res
       return res.status(404).json({ message: 'Evento não encontrado.' })
     }
 
-    // Regra de segurança: alteração de taxas requer perfil Disk Admin ou permissão comercial
+    // Regra de segurança: alteração de taxas requer perfil Disk Admin, Comercial ou Gestão de Produtora autorizada
     const isAdmin = globalAdmin(req.auth!.role)
-    const isCommercialAdmin = req.auth!.role === 'commercial-admin' || req.auth!.role === 'admin' || req.auth!.role === 'admin-master'
+    const isCommercialAdmin = req.auth!.role === 'commercial-admin' || req.auth!.role === 'admin' || req.auth!.role === 'admin-master' || req.auth!.role === 'producer-admin'
 
     if (!isAdmin && !isCommercialAdmin) {
       return res.status(403).json({
