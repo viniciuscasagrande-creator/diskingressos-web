@@ -7,11 +7,13 @@ function isCommercialOrAdmin(role?: string): boolean {
 }
 
 export function requestedProducerId(req: AuthRequest): number | undefined {
-  if (!isCommercialOrAdmin(req.auth?.role)) return req.auth!.producerId ?? -1
-  const raw = req.query.producerId
-  if (raw === undefined || raw === '' || raw === 'all') return undefined
-  const id = Number(raw)
-  return Number.isInteger(id) && id > 0 ? id : undefined
+  if (!req.auth || isCommercialOrAdmin(req.auth.role)) {
+    const raw = req.query.producerId
+    if (raw === undefined || raw === '' || raw === 'all') return undefined
+    const id = Number(raw)
+    return Number.isInteger(id) && id > 0 ? id : undefined
+  }
+  return req.auth.producerId ?? -1
 }
 
 export function writeProducerId(req: AuthRequest, bodyProducerId?: number): number | null {

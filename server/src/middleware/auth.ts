@@ -6,4 +6,11 @@ export function requireAuth(req:AuthRequest,res:Response,next:NextFunction){
   if(!raw?.startsWith('Bearer ')) return res.status(401).json({message:'Não autenticado.'})
   try{req.auth=verifyToken(raw.slice(7));next()}catch{return res.status(401).json({message:'Sessão inválida ou expirada.'})}
 }
+export function optionalAuth(req:AuthRequest,_res:Response,next:NextFunction){
+  const raw=req.headers.authorization
+  if(raw?.startsWith('Bearer ')){
+    try{req.auth=verifyToken(raw.slice(7))}catch{}
+  }
+  next()
+}
 export function requireRoles(...roles:string[]){return (req:AuthRequest,res:Response,next:NextFunction)=>req.auth&&roles.includes(req.auth.role)?next():res.status(403).json({message:'Sem permissão.'})}

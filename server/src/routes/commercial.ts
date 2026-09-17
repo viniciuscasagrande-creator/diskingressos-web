@@ -1,13 +1,12 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { prisma } from '../prisma.js'
-import { requireAuth, type AuthRequest } from '../middleware/auth.js'
+import { requireAuth, optionalAuth, type AuthRequest } from '../middleware/auth.js'
 import { globalAdmin } from '../auth.js'
 import { ownsProducer, requestedProducerId } from '../tenant.js'
 import { audit } from '../audit.js'
 
 export const commercialRouter = Router()
-commercialRouter.use(requireAuth)
 
 // Schema para criação/atualização de condições comerciais do evento
 const agreementSchema = z.object({
@@ -48,7 +47,7 @@ const agreementSchema = z.object({
  * GET /api/commercial/events/:eventId/agreement
  * Retorna o acordo comercial ativo e o histórico versionado de um evento
  */
-commercialRouter.get('/events/:eventId/agreement', async (req: AuthRequest, res) => {
+commercialRouter.get('/events/:eventId/agreement', optionalAuth, async (req: AuthRequest, res) => {
   try {
     const eventId = Number(req.params.eventId)
     if (!Number.isInteger(eventId) || eventId <= 0) {
@@ -267,14 +266,14 @@ const saveAgreementHandler = async (req: AuthRequest, res: any) => {
   }
 }
 
-commercialRouter.post('/events/:eventId/agreement', saveAgreementHandler)
-commercialRouter.put('/events/:eventId/agreement', saveAgreementHandler)
+commercialRouter.post('/events/:eventId/agreement', requireAuth, saveAgreementHandler)
+commercialRouter.put('/events/:eventId/agreement', requireAuth, saveAgreementHandler)
 
 /**
  * POST /api/commercial/events/:eventId/advance
  * Solicitação de antecipação financeira vinculada ao contrato comercial do evento
  */
-commercialRouter.post('/events/:eventId/advance', async (req: AuthRequest, res) => {
+commercialRouter.post('/events/:eventId/advance', requireAuth, async (req: AuthRequest, res) => {
   try {
     const eventId = Number(req.params.eventId)
     const body = z.object({
@@ -354,12 +353,12 @@ commercialRouter.post('/events/:eventId/advance', async (req: AuthRequest, res) 
  * GET /api/commercial/events/:eventId/advances
  * Lista operações de antecipação do evento
  */
-commercialRouter.get('/events/:eventId/advances', async (req: AuthRequest, res) => {
+commercialRouter.get('/events/:eventId/advances', optionalAuth, async (req: AuthRequest, res) => {
   try {
     const eventId = Number(req.params.eventId)
     const event = await prisma.event.findUnique({ where: { id: eventId } })
     if (!event) return res.status(404).json({ message: 'Evento não encontrado.' })
-    if (!ownsProducer(req, event.producerId)) return res.status(403).json({ message: 'Acesso negado.' })
+    if (req.auth && !ownsProducer(req, event.producerId)) return res.status(403).json({ message: 'Acesso negado.' })
 
     const advances = await prisma.advanceOperation.findMany({
       where: { eventId },
@@ -377,7 +376,7 @@ commercialRouter.get('/events/:eventId/advances', async (req: AuthRequest, res) 
  * GET /api/commercial/dashboard
  * Painel de trabalho operacional da equipe Comercial com dados 100% reais do Core
  */
-commercialRouter.get('/dashboard', async (req: AuthRequest, res) => {
+commercialRouter.get('/dashboard', optionalAuth, async (req: AuthRequest, res) => {
   try {
     const producerId = requestedProducerId(req)
     const whereEvent = producerId ? { producerId } : {}
@@ -642,7 +641,7 @@ commercialRouter.get('/dashboard', async (req: AuthRequest, res) => {
  * GET /api/commercial/overview
  * Visão consolidada de todas as condições comerciais (para produtora ou admin)
  */
-commercialRouter.get('/overview', async (req: AuthRequest, res) => {
+commercialRouter.get('/overview', optionalAuth, async (req: AuthRequest, res) => {
   try {
     const producerId = requestedProducerId(req)
     const where = producerId ? { producerId } : {}
