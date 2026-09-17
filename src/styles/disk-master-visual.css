@@ -125,3 +125,95 @@ html.dark [style*="border-color: rgb(203, 213, 225)"] { border-color: var(--disk
 
 /* Light garante retorno completo das superfícies quando o usuário alterna do escuro. */
 html.light .app-shell, html[data-theme="light"] .app-shell { background: var(--disk-bg-app) !important; color: var(--disk-text-primary) !important; }
+
+/* ============================================================================
+   CORREÇÃO DE PRODUÇÃO — Dashboard por perfil + legado estrutural
+   Evidência 2026-09-17: html.dark ativo, porém cards profile-* permaneciam claros.
+   ============================================================================ */
+.profile-dashboard {
+  color: var(--disk-text-primary) !important;
+  width: 100%;
+  min-width: 0;
+}
+.profile-hero,
+.profile-kpi,
+.profile-section,
+.profile-shortcut,
+.profile-event-list,
+.profile-event-row {
+  background: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+  box-shadow: var(--disk-master-shadow);
+}
+.profile-scope-card {
+  background: var(--disk-bg-muted) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+.profile-hero h2,
+.profile-scope-card strong,
+.profile-kpi > strong,
+.profile-section-head h3,
+.profile-shortcut strong,
+.profile-event-main strong,
+.event-sales strong {
+  color: var(--disk-text-primary) !important;
+}
+.profile-hero p,
+.profile-scope-card span,
+.profile-scope-card small,
+.profile-kpi > span,
+.profile-kpi > small,
+.profile-shortcut small,
+.profile-event-main small,
+.event-sales small,
+.empty-profile,
+.profile-dashboard .eyebrow {
+  color: var(--disk-text-muted) !important;
+}
+.profile-shortcut:hover,
+.profile-event-row:hover {
+  background: var(--disk-bg-hover) !important;
+  border-color: var(--disk-border-strong, var(--disk-border-default)) !important;
+}
+.profile-shortcut .shortcut-icon {
+  background: color-mix(in srgb, var(--disk-primary) 13%, var(--disk-bg-surface)) !important;
+  color: var(--disk-primary) !important;
+}
+.profile-event-list { overflow: hidden; }
+.profile-event-row { box-shadow: none; border-bottom-color: var(--disk-border-subtle) !important; }
+.profile-access-note {
+  background: color-mix(in srgb, var(--disk-info, #3b82f6) 10%, var(--disk-bg-surface)) !important;
+  border-color: color-mix(in srgb, var(--disk-info, #3b82f6) 24%, var(--disk-border-default)) !important;
+  color: var(--disk-text-primary) !important;
+}
+.profile-access-note p { color: var(--disk-text-secondary) !important; }
+
+/* Componentes antigos que usam nomes próprios de superfície. */
+html.dark :is(
+  .profile-hero,.profile-kpi,.profile-section,.profile-shortcut,.profile-event-list,.profile-event-row,
+  .dashboard-card,.dashboard-card-premium,.dashboard-panel,.dashboard-widget,.dashboard-section,
+  .info-card,.data-card,.detail-card,.overview-card,.analytics-card,.action-card,
+  .list-card,.table-wrapper,.content-panel,.section-card,.module-card
+) {
+  background: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+/* Mobile: evita colisão de breadcrumb/título e aproxima o shell do master aprovado. */
+@media (max-width: 767px) {
+  .profile-dashboard { gap: 12px !important; }
+  .profile-hero { padding: 18px !important; gap: 14px !important; border-radius: 12px !important; }
+  .profile-hero h2 { font-size: 22px !important; line-height: 1.2 !important; }
+  .profile-scope-card { min-width: 0 !important; width: 100% !important; padding: 14px 16px !important; }
+  .profile-kpis { grid-template-columns: 1fr !important; gap: 12px !important; }
+  .profile-kpi { padding: 16px !important; border-radius: 12px !important; }
+  .profile-section { padding: 16px !important; border-radius: 12px !important; }
+  .profile-shortcuts { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .profile-event-row { grid-template-columns: 8px minmax(0,1fr) 72px !important; }
+  .profile-event-main strong { white-space: normal !important; }
+  .module-titlebar { min-height: auto !important; height: auto !important; }
+  .module-titlebar h1, .module-titlebar h2 { line-height: 1.2 !important; }
+}
