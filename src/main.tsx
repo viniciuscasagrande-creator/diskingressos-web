@@ -12,11 +12,12 @@ import './styles/disk-master-visual.css'
 import './styles/limitless-disk-bridge.css'
 import './styles/limitless-disk-global.css'
 import './styles/disk-limitless-shell-v6.css'
+import './styles/disk-limitless-v7.css'
 
 document.documentElement.dataset.uiFramework = 'limitless'
 document.documentElement.dataset.marketingIntegrationsRelease = '25.7-marketing-integrations-360-2026-09-02'
 document.documentElement.dataset.responsiveRelease = '25.6-responsive-enterprise-360-2026-09-02'
-document.documentElement.dataset.diskMasterVisual = '2026-09-17-limitless-shell-v6'
+document.documentElement.dataset.diskMasterVisual = '2026-09-17-limitless-v7-pedidos'
 
 document.documentElement.dataset.sidebarRelease = '25.7.1.1-sidebar-typography-hotfix-2026-09-02'
 document.documentElement.dataset.cartScopeRelease = '25.8.1-abandoned-cart-tenant-event-scope-2026-09-02'
