@@ -83,7 +83,7 @@ commerceCoreRouter.get('/commerce/orders', async (req: Request, res: Response) =
       ]
     }
 
-    const orders = await prisma.order.findMany({
+    const orders: any[] = await (prisma.order as any).findMany({
       where,
       include: {
         event: { select: { id: true, title: true, code: true, date: true, venue: true } },
@@ -166,8 +166,8 @@ commerceCoreRouter.get('/commerce/orders', async (req: Request, res: Response) =
  */
 commerceCoreRouter.get('/commerce/orders/:id', async (req: Request, res: Response) => {
   try {
-    const code = req.params.id
-    const order = await prisma.order.findFirst({
+    const code = String(req.params.id || '')
+    const order: any = await (prisma.order as any).findFirst({
       where: {
         OR: [
           { code },
