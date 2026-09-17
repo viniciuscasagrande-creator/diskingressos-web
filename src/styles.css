@@ -1,14 +1,61 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
 
-:root{
-  font-family:'Plus Jakarta Sans',Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  color:#0e1726;background:#f2f5f9;font-synthesis:none;text-rendering:optimizeLegibility;
-  --sidebar:#222a36;--sidebar2:#1e2530;--blue:#1677ff;--border:#d9e0e9;--muted:#718096;
+@theme {
+  --color-background: var(--disk-bg-app);
+  --color-foreground: var(--disk-text-primary);
+  --color-surface: var(--disk-bg-surface);
+  --color-surface-elevated: var(--disk-bg-elevated);
+  --color-surface-sunken: var(--disk-bg-muted);
+  --color-border: var(--disk-border-default);
+  --color-border-subtle: var(--disk-border-subtle);
+  --color-border-strong: var(--disk-border-strong);
+  --color-primary: var(--disk-color-primary);
+  --color-primary-hover: var(--disk-color-primary-hover);
+  --color-primary-foreground: var(--disk-color-primary-foreground);
+  --color-muted: var(--disk-bg-muted);
+  --color-muted-foreground: var(--disk-text-muted);
+  --color-card: var(--disk-bg-surface);
+  --color-card-foreground: var(--disk-text-primary);
+  --color-popover: var(--disk-bg-surface);
+  --color-popover-foreground: var(--disk-text-primary);
+  --color-accent: var(--disk-bg-hover);
+  --color-accent-foreground: var(--disk-text-primary);
+  --color-destructive: var(--disk-color-danger);
+  --color-destructive-foreground: #ffffff;
+  --color-success: var(--disk-color-success);
+  --color-warning: var(--disk-color-warning);
+  --color-info: var(--disk-color-info);
 }
-*{box-sizing:border-box} button,input{font:inherit} button{cursor:pointer}
-body{background:#f2f5f9}.app-shell{min-height:100vh;display:flex!important;flex-direction:column!important}
+
+:root {
+  font-family: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--disk-text-primary);
+  background: var(--disk-bg-app);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --sidebar: #222a36;
+  --sidebar2: #1e2530;
+  --blue: #1677ff;
+  --border: #d9e0e9;
+  --muted: #718096;
+}
+* { box-sizing: border-box; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+body {
+  background: var(--disk-bg-app);
+  color: var(--disk-text-primary);
+}
+.app-shell {
+  min-height: 100vh;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: var(--disk-bg-app);
+  color: var(--disk-text-primary);
+}
 .topbar{grid-column:1/-1;display:grid;grid-template-columns:286px 1fr auto;align-items:center;background:var(--sidebar2);color:white;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:20}
 .brand{height:100%;display:flex;align-items:center;gap:11px;padding:0 22px;font-weight:800;font-size:20px}.brand-mark{font-size:25px;font-weight:900;font-style:italic;letter-spacing:-2px}
 .search-wrap{justify-self:center;width:min(610px,50vw);height:46px;border:1px solid #3c4655;border-radius:24px;display:flex;align-items:center;gap:12px;padding:0 16px;color:#b7c0cd;background:#252d3a}.search-wrap input{flex:1;border:0;outline:0;background:transparent;color:white;font-size:15px}.search-wrap input::placeholder{color:#9ba7b7}
@@ -10135,26 +10182,194 @@ body{background:#f2f5f9}.app-shell{min-height:100vh;display:flex!important;flex-
 .event-remarketing-security-strip{display:flex;align-items:center;gap:10px;margin:12px 0 14px;padding:10px 12px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:10px;color:#1d4ed8;font-size:12px}.event-remarketing-security-strip strong{font-weight:800}.event-remarketing-security-strip span{color:#475569}.event-remarketing-tabs{display:flex;align-items:center;gap:4px;overflow-x:auto;margin:14px 0;padding:4px;border-bottom:1px solid #e2e8f0}.event-remarketing-tabs button{white-space:nowrap;border:0;background:transparent;color:#64748b;font-size:12px;font-weight:700;padding:9px 12px;border-radius:8px;cursor:pointer}.event-remarketing-tabs button:hover{background:#f8fafc;color:#0f172a}.event-remarketing-tabs button.active{background:#eff6ff;color:#2563eb}.event-remarketing-actions{margin-top:4px}.event-remarketing-overview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.recovery-center-embedded{padding-top:0}.recovery-center-embedded>.growth-intro{margin-top:0}.event-remarketing-functional .recovery-center-embedded .growth-page{padding-top:0}@media(max-width:900px){.event-remarketing-overview-grid{grid-template-columns:1fr}.event-remarketing-tabs{scrollbar-width:none}.event-remarketing-tabs::-webkit-scrollbar{display:none}}@media(max-width:600px){.event-remarketing-security-strip{align-items:flex-start}.event-remarketing-tabs button{min-height:44px}}
 
 /* ==========================================================================
+/* ==========================================================================
    FASE 29.14.1.3.1 — COMPONENTES UNIVERSAIS: HARMONIZAÇÃO DE TOKENS SEMÂNTICOS
+   FASE 29.14.1.3.3 — HARMONIZAÇÃO GLOBAL DE MODO ESCURO E COMPONENTES
    ========================================================================== */
-.dark body {
+.dark body,
+[data-theme="dark"] body {
   background-color: var(--disk-bg-app);
   color: var(--disk-text-primary);
 }
-.dark .phase6-content {
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+.dark .app-shell,
+[data-theme="dark"] .app-shell {
+  background-color: var(--disk-bg-app) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+.dark .global-topbar,
+[data-theme="dark"] .global-topbar {
+  background-color: var(--disk-bg-surface) !important;
+  border-bottom: 1px solid var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+.dark .phase6-shell,
+[data-theme="dark"] .phase6-shell {
+  background: var(--disk-bg-app) !important;
+}
+
+.dark .phase6-content,
+[data-theme="dark"] .phase6-content {
   background: transparent !important;
   color: inherit !important;
 }
-.dark .module-titlebar {
+
+.dark .module-titlebar,
+[data-theme="dark"] .module-titlebar {
   background: var(--disk-bg-surface) !important;
   border-color: var(--disk-border-default) !important;
   color: var(--disk-text-primary) !important;
 }
-.dark .module-titlebar h1 {
+
+.dark .module-titlebar h1,
+[data-theme="dark"] .module-titlebar h1 {
   color: var(--disk-text-primary) !important;
 }
-.dark .scope-pill {
+
+.dark .scope-pill,
+[data-theme="dark"] .scope-pill {
   background: var(--disk-bg-hover) !important;
   border-color: var(--disk-border-strong) !important;
   color: var(--disk-color-primary) !important;
 }
+
+.dark .card-surface,
+.dark .hub-card,
+.dark .form-card,
+.dark .table-card,
+.dark .insight-card,
+.dark .terminal-card,
+.dark .finance-chart-card,
+.dark .balance-card,
+.dark .cash-summary,
+.dark .event-card,
+.dark .closing-card,
+.dark .pos-panel,
+.dark .pos-table-card,
+[data-theme="dark"] .card-surface,
+[data-theme="dark"] .hub-card,
+[data-theme="dark"] .form-card,
+[data-theme="dark"] .table-card,
+[data-theme="dark"] .insight-card,
+[data-theme="dark"] .terminal-card,
+[data-theme="dark"] .finance-chart-card,
+[data-theme="dark"] .balance-card,
+[data-theme="dark"] .cash-summary,
+[data-theme="dark"] .event-card,
+[data-theme="dark"] .closing-card,
+[data-theme="dark"] .pos-panel,
+[data-theme="dark"] .pos-table-card {
+  background-color: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+.dark .hub-card-copy strong,
+.dark .finance-kpi strong,
+.dark .transaction-desc strong,
+.dark .compact-metrics b,
+.dark .event-hero-main h1,
+.dark .page-head h1,
+.dark .section-title h2,
+.dark .dash-kpi strong,
+.dark .sold-cell strong,
+.dark .lot-name strong,
+.dark .person-cell strong,
+[data-theme="dark"] .hub-card-copy strong,
+[data-theme="dark"] .finance-kpi strong,
+[data-theme="dark"] .transaction-desc strong,
+[data-theme="dark"] .compact-metrics b,
+[data-theme="dark"] .event-hero-main h1,
+[data-theme="dark"] .page-head h1,
+[data-theme="dark"] .section-title h2,
+[data-theme="dark"] .dash-kpi strong,
+[data-theme="dark"] .sold-cell strong,
+[data-theme="dark"] .lot-name strong,
+[data-theme="dark"] .person-cell strong {
+  color: var(--disk-text-primary) !important;
+}
+
+.dark .hub-card-copy small,
+.dark .page-subtitle,
+.dark .eyebrow,
+.dark .section-title p,
+.dark .event-hero-main p,
+.dark .transaction-desc small,
+.dark .finance-kpi small,
+.dark .dash-kpi small,
+.dark .metric span,
+.dark .card-footer,
+[data-theme="dark"] .hub-card-copy small,
+[data-theme="dark"] .page-subtitle,
+[data-theme="dark"] .eyebrow,
+[data-theme="dark"] .section-title p,
+[data-theme="dark"] .event-hero-main p,
+[data-theme="dark"] .transaction-desc small,
+[data-theme="dark"] .finance-kpi small,
+[data-theme="dark"] .dash-kpi small,
+[data-theme="dark"] .metric span,
+[data-theme="dark"] .card-footer {
+  color: var(--disk-text-muted) !important;
+}
+
+.dark .tool-btn,
+.dark .secondary-btn,
+.dark .view-switch button,
+.dark .status-tabs button,
+.dark .finance-filterbar select,
+.dark .filter-icon-btn,
+.dark .pos-filterbar select,
+.dark .participant-filters select,
+.dark .event-selector-card select,
+[data-theme="dark"] .tool-btn,
+[data-theme="dark"] .secondary-btn,
+[data-theme="dark"] .view-switch button,
+[data-theme="dark"] .status-tabs button,
+[data-theme="dark"] .finance-filterbar select,
+[data-theme="dark"] .filter-icon-btn,
+[data-theme="dark"] .pos-filterbar select,
+[data-theme="dark"] .participant-filters select,
+[data-theme="dark"] .event-selector-card select {
+  background-color: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+.dark .lots-table th,
+.dark .finance-table th,
+.dark .pos-sales-table th,
+.dark .participants-table th,
+[data-theme="dark"] .lots-table th,
+[data-theme="dark"] .finance-table th,
+[data-theme="dark"] .pos-sales-table th,
+[data-theme="dark"] .participants-table th {
+  background-color: var(--disk-bg-muted) !important;
+  color: var(--disk-text-muted) !important;
+}
+
+.dark .lots-table td,
+.dark .finance-table td,
+.dark .pos-sales-table td,
+.dark .participants-table td,
+[data-theme="dark"] .lots-table td,
+[data-theme="dark"] .finance-table td,
+[data-theme="dark"] .pos-sales-table td,
+[data-theme="dark"] .participants-table td {
+  border-color: var(--disk-border-subtle) !important;
+  color: var(--disk-text-secondary) !important;
+}
+
+.dark .app-footer,
+[data-theme="dark"] .app-footer {
+  background-color: var(--disk-bg-surface) !important;
+  border-top: 1px solid var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
