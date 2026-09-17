@@ -14,6 +14,11 @@ import {
 import { CampaignDeliveryMonitoringTable } from '../../components/marketing/CampaignDeliveryMonitoringTable'
 import { MarketingCampaignHealthCard } from '../../components/marketing/MarketingCampaignHealthCard'
 import { LimitlessPage } from '../../integrations/limitless/LimitlessPage'
+import {
+  DiskPageHeader,
+  DiskKpiCard,
+  DiskCard
+} from '../../components/ui/disk'
 
 type Props = {
   events: EventItem[]
@@ -182,69 +187,67 @@ export default function MarketingHubOSPage(p: Props) {
   ]
 
   return (
-    <LimitlessPage dataTestId="marketing-dashboard-page">
-      <section className="growth-page marketing-os-page">
-      <div className="flex items-center gap-2 mb-3">
-        <button
-          onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#1e293b] hover:bg-[#334155] text-slate-300 hover:text-white border border-slate-700/80 transition cursor-pointer"
-        >
-          <ArrowLeft size={14} className="text-[#06B6D4]" />
-          <span>Voltar ao Dashboard</span>
-        </button>
-      </div>
-
-      {/* 1. Header & Uniform Quick Action Buttons */}
-      <div className="marketing-os-head">
-        <div>
-          <p className="eyebrow">MARKETING OS · DASHBOARD UNIFICADO</p>
-          <h2>Dashboard Marketing</h2>
-          <p>Central de comando unificada para aquisição, campanhas, conversão, atribuição e inteligência de vendas.</p>
-        </div>
-
-        {/* 5 Proportional & Uniform Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5 pt-2 md:pt-0">
-          <button
-            onClick={() => nav(onNavigate, notify, 'marketing-create', 'Nova Campanha')}
-            className="h-10 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-blue-600 cursor-pointer min-w-[145px]"
-          >
-            <Plus className="w-4 h-4 shrink-0" />
-            <span>Nova Campanha</span>
-          </button>
-
-          <button
-            onClick={() => nav(onNavigate, notify, 'marketing-whatsapp', 'WhatsApp Marketing')}
-            className="h-10 px-4 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-emerald-600 cursor-pointer min-w-[155px]"
-          >
-            <MessageCircle className="w-4 h-4 shrink-0" />
-            <span>Disparo WhatsApp</span>
-          </button>
-
-          <button
-            onClick={() => nav(onNavigate, notify, 'marketing-email', 'E-mail Marketing')}
-            className="h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-indigo-600 cursor-pointer min-w-[145px]"
-          >
-            <Mail className="w-4 h-4 shrink-0" />
-            <span>Disparo E-mail</span>
-          </button>
-
-          <button
-            onClick={() => nav(onNavigate, notify, 'marketing-ready-campaigns', 'Campanhas Prontas')}
-            className="h-10 px-4 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-amber-600 cursor-pointer min-w-[155px]"
-          >
-            <Zap className="w-4 h-4 shrink-0" />
-            <span>Campanha Pronta</span>
-          </button>
-
-          <button
-            onClick={() => nav(onNavigate, notify, 'marketing-reports', 'Relatórios')}
-            className="h-10 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 border border-slate-900 cursor-pointer min-w-[160px]"
-          >
-            <FileText className="w-4 h-4 shrink-0" />
-            <span>Relatório Executivo</span>
-          </button>
-        </div>
-      </div>
+    <LimitlessPage dataTestId="marketing-dashboard-page" className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn">
+      {/* 1. Header V7 Oficial */}
+      <DiskPageHeader
+        breadcrumbs={['Marketing', 'Visão Geral']}
+        badge="Marketing OS"
+        badgeTone="primary"
+        title="Dashboard Marketing"
+        subtitle="Central de comando unificada para aquisição, campanhas, conversão, atribuição e inteligência de vendas."
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}
+              className="btn-light text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <ArrowLeft size={14} />
+              <span>Voltar</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => nav(onNavigate, notify, 'marketing-create', 'Nova Campanha')}
+              className="btn-primary text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <Plus size={14} />
+              <span>Nova Campanha</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => nav(onNavigate, notify, 'marketing-whatsapp', 'WhatsApp Marketing')}
+              className="btn-light text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <MessageCircle size={14} className="text-emerald-500" />
+              <span>WhatsApp</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => nav(onNavigate, notify, 'marketing-email', 'E-mail Marketing')}
+              className="btn-light text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <Mail size={14} className="text-indigo-500" />
+              <span>E-mail</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => nav(onNavigate, notify, 'marketing-ready-campaigns', 'Campanhas Prontas')}
+              className="btn-light text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <Zap size={14} className="text-amber-500" />
+              <span>Campanha Pronta</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => nav(onNavigate, notify, 'marketing-reports', 'Relatórios')}
+              className="btn-light text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <FileText size={14} />
+              <span>Relatórios</span>
+            </button>
+          </div>
+        }
+      />
 
       {/* Banner Oficial Spotify Ads & CAPI */}
       <div className="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-[#121212] border border-emerald-500/30 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg mb-4">
@@ -276,67 +279,88 @@ export default function MarketingHubOSPage(p: Props) {
       </div>
 
       {/* 2. Context Filters */}
-      <div className="marketing-os-context">
-        <label>
-          <span>Produtora</span>
-          <strong>{producerName}</strong>
-        </label>
-        <label>
-          <span>Evento</span>
-          <select value={eventId} onChange={e => setEventId(e.target.value)}>
-            <option value="all">Todos os eventos ({events.length})</option>
-            {events.map(e => (
-              <option key={e.id} value={e.id}>
-                {e.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span>Período</span>
-          <select value={period} onChange={e => setPeriod(e.target.value)}>
-            <option value="7">Últimos 7 dias</option>
-            <option value="30">Últimos 30 dias</option>
-            <option value="90">Últimos 90 dias</option>
-            <option value="year">Ano 2026</option>
-          </select>
-        </label>
-      </div>
+      <DiskCard className="p-3 shadow-xs mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="text-[var(--disk-text-muted,#64748b)] font-semibold">Produtora:</span>
+            <strong className="text-[var(--disk-text-primary,#0f172a)] font-bold">{producerName}</strong>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[var(--disk-text-muted,#64748b)]">Evento:</span>
+              <select value={eventId} onChange={e => setEventId(e.target.value)} className="form-select text-xs cursor-pointer">
+                <option value="all">Todos os eventos ({events.length})</option>
+                {events.map(e => (
+                  <option key={e.id} value={e.id}>
+                    {e.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[var(--disk-text-muted,#64748b)]">Período:</span>
+              <select value={period} onChange={e => setPeriod(e.target.value)} className="form-select text-xs cursor-pointer">
+                <option value="7">Últimos 7 dias</option>
+                <option value="30">Últimos 30 dias</option>
+                <option value="90">Últimos 90 dias</option>
+                <option value="year">Ano 2026</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </DiskCard>
 
       {warning && (
-        <div className="marketing-os-warning">
+        <div className="card p-3 mb-4 bg-amber-500/10 border-l-4 border-l-amber-500 text-amber-600 dark:text-amber-400 text-xs flex items-center gap-2">
           <AlertTriangle size={15} />
-          {warning}
+          <span>{warning}</span>
         </div>
       )}
 
-      {/* 3. Top 6 KPIs */}
-      <div className="marketing-os-kpis">
-        {[
-          ['Investimento', money(k.spent || 3845000), TrendingUp],
-          ['Receita atribuída', money(k.revenue || 41280000), TicketPercent],
-          ['ROAS médio', `${k.roas ? k.roas.toFixed(2) : '10.73'}x`, BarChart3],
-          ['CPA médio', money(k.cpa || 1308), Activity],
-          ['Vendas / conversões', String(k.conv || 2940), Users],
-          ['Conversão', pct(k.rate || 34.0), Target]
-        ].map(([label, value, I]: any) => (
-          <div className="marketing-os-kpi" key={label}>
-            <span className="marketing-os-icon">
-              <I size={18} />
-            </span>
-            <div>
-              <small>{label}</small>
-              <strong>{loading ? '—' : value}</strong>
-              <em>
-                {label === 'ROAS médio'
-                  ? `${k.active.length || 15} campanhas ativas`
-                  : label === 'Conversão'
-                  ? `${k.clicks ? k.clicks.toLocaleString('pt-BR') : '8.640'} cliques`
-                  : 'Dados do contexto selecionado'}
-              </em>
-            </div>
-          </div>
-        ))}
+      {/* 3. Top 6 KPIs V7 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
+        <DiskKpiCard
+          icon={<TrendingUp size={18} />}
+          label="Investimento"
+          value={loading ? '—' : money(k.spent || 3845000)}
+          note="Dados do contexto"
+          accent="info"
+        />
+        <DiskKpiCard
+          icon={<TicketPercent size={18} />}
+          label="Receita atribuída"
+          value={loading ? '—' : money(k.revenue || 41280000)}
+          note="Atribuição direta"
+          accent="success"
+        />
+        <DiskKpiCard
+          icon={<BarChart3 size={18} />}
+          label="ROAS médio"
+          value={loading ? '—' : `${k.roas ? k.roas.toFixed(2) : '10.73'}x`}
+          note={`${k.active.length || 15} campanhas ativas`}
+          accent="purple"
+        />
+        <DiskKpiCard
+          icon={<Activity size={18} />}
+          label="CPA médio"
+          value={loading ? '—' : money(k.cpa || 1308)}
+          note="Custo por aquisição"
+          accent="warning"
+        />
+        <DiskKpiCard
+          icon={<Users size={18} />}
+          label="Vendas / conversões"
+          value={loading ? '—' : String(k.conv || 2940)}
+          note="Conversões confirmadas"
+          accent="primary"
+        />
+        <DiskKpiCard
+          icon={<Target size={18} />}
+          label="Conversão"
+          value={loading ? '—' : pct(k.rate || 34.0)}
+          note={`${k.clicks ? k.clicks.toLocaleString('pt-BR') : '8.640'} cliques`}
+          accent="emerald"
+        />
       </div>
 
       {/* CARD EXECUTIVO: STATUS REAL DAS CAMPANHAS (FASE 28.13.1) */}
@@ -779,7 +803,6 @@ export default function MarketingHubOSPage(p: Props) {
           </div>
         </div>
       </div>
-    </section>
     </LimitlessPage>
   )
 }

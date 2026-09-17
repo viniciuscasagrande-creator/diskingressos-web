@@ -10,6 +10,7 @@ export interface DiskBreadcrumbItem {
 export interface DiskPageHeaderProps {
   title: string
   subtitle?: string
+  description?: string
   eyebrow?: string
   badge?: ReactNode
   badgeTone?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'purple' | 'neutral'
@@ -22,6 +23,7 @@ export interface DiskPageHeaderProps {
 export const DiskPageHeader: React.FC<DiskPageHeaderProps> = ({
   title,
   subtitle,
+  description,
   eyebrow,
   badge,
   badgeTone,
@@ -30,6 +32,7 @@ export const DiskPageHeader: React.FC<DiskPageHeaderProps> = ({
   breadcrumbs,
   className = ''
 }) => {
+  const displaySubtitle = subtitle || description
   return (
     <div
       className={`disk-page-header mb-6 pb-4 border-b border-[var(--disk-border-default,#e2e8f0)] ${className}`}
@@ -86,9 +89,9 @@ export const DiskPageHeader: React.FC<DiskPageHeaderProps> = ({
           </h1>
 
           {/* Subtitle */}
-          {subtitle && (
+          {displaySubtitle && (
             <p className="text-xs sm:text-sm text-[var(--disk-text-secondary,#475569)] mt-1 leading-relaxed">
-              {subtitle}
+              {displaySubtitle}
             </p>
           )}
         </div>

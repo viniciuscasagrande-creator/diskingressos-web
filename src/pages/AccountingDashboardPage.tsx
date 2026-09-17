@@ -7,6 +7,13 @@ import {
 import type { EventItem } from '../data/events'
 import { financeSummary, type SystemTier } from '../data/finance'
 import { LimitlessPage } from '../integrations/limitless/LimitlessPage'
+import {
+  DiskPageHeader,
+  DiskKpiCard,
+  DiskCard,
+  DiskCardHeader,
+  DiskCardBody
+} from '../components/ui/disk'
 
 type Props = {
   events: EventItem[]
@@ -96,214 +103,178 @@ export default function AccountingDashboardPage({ events, notify, onNavigate }: 
   }
 
   return (
-    <LimitlessPage dataTestId="accounting-dashboard-page">
-      <div className="finance-dashboard-wrapper">
-      {/* Header Section */}
-      <section className="finance-header-section card-surface">
-        <div className="finance-header-left">
-          <span className="eyebrow">CONTABILIDADE SOCIETÁRIA & FISCAL</span>
-          <div className="finance-title-row">
-            <h1>Dashboard Contábil Integrado</h1>
-            <span className="pipeline-status-badge" style={{ background: '#EFF6FF', color: '#1D4ED8', borderColor: '#BFDBFE' }}>
+    <LimitlessPage dataTestId="accounting-dashboard-page" className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn">
+      {/* 1. Header V7 Oficial */}
+      <DiskPageHeader
+        breadcrumbs={['Contabilidade', 'Dashboard']}
+        badge="Contabilidade Societária & Fiscal"
+        badgeTone="primary"
+        title="Dashboard Contábil Integrado"
+        subtitle="Escrituração contábil em tempo real conectada diretamente às vendas do e-commerce, deduções de taxas, liquidações de repasses e fechamento de competência."
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="badge badge-subtle-info text-xs font-semibold py-1 px-2.5 flex items-center gap-1.5">
               <Sparkles size={13} /> Partidas Dobradas Automáticas
             </span>
-          </div>
-          <p className="page-subtitle">
-            Escrituração contábil em tempo real conectada diretamente às vendas do e-commerce, deduções de taxas, liquidações de repasses e fechamento de competência.
-          </p>
-        </div>
-
-        <div className="finance-header-controls">
-          <div className="finance-select-group">
-            <span>Nível do Módulo</span>
-            <select value={tier} onChange={e => setTier(e.target.value as any)}>
+            <select
+              value={tier}
+              onChange={e => setTier(e.target.value as any)}
+              className="form-select text-xs font-medium cursor-pointer"
+            >
               <option value="standard">Standard (Básico)</option>
               <option value="advanced">Advanced (DRE + Diário)</option>
               <option value="expert">Expert (SPED + Auditoria)</option>
             </select>
-          </div>
-
-          <div className="finance-action-buttons">
-            <button className="tool-btn" onClick={exportSpedECD} title="Gerar SPED">
-              <Download size={15} /> Exportar SPED ECD
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* KPI Cards Strip */}
-      <section className="finance-kpis-grid">
-        <article className="finance-kpi-card card-surface kpi-blue">
-          <div className="kpi-icon-wrap">
-            <Building2 size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Ativo Total</span>
-            <strong className="kpi-value">{brl(totalAssets)}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag active">Circulante + Permanente</span>
-            </div>
-          </div>
-        </article>
-
-        <article className="finance-kpi-card card-surface kpi-orange">
-          <div className="kpi-icon-wrap">
-            <Scale size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Passivo Circulante</span>
-            <strong className="kpi-value">{brl(totalLiabilities)}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag warning">Repasses a Pagar</span>
-            </div>
-          </div>
-        </article>
-
-        <article className="finance-kpi-card card-surface kpi-green">
-          <div className="kpi-icon-wrap">
-            <ShieldCheck size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Patrimônio Líquido</span>
-            <strong className="kpi-value">{brl(totalEquity)}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag positive">Capital Social + Reservas</span>
-            </div>
-          </div>
-        </article>
-
-        <article className="finance-kpi-card card-surface kpi-purple">
-          <div className="kpi-icon-wrap">
-            <Calculator size={24} />
-          </div>
-          <div className="kpi-body">
-            <span className="kpi-label">Lucro Líquido Exercício</span>
-            <strong className="kpi-value">{brl(252900.90)}</strong>
-            <div className="kpi-footer">
-              <span className="kpi-tag positive">Margem de 21.4%</span>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      {/* DRE & Journal Two Column Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '20px', marginTop: '4px' }}>
-        {/* DRE Sintética */}
-        <section className="card-surface" style={{ padding: '24px', borderRadius: '12px' }}>
-          <div className="card-heading">
-            <div>
-              <h3>Demonstração do Resultado (DRE)</h3>
-              <p>Apuração de competência do mês 08/2026</p>
-            </div>
-            <span className="kpi-tag positive">Auditado</span>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
-            {dreItems.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '8px 10px',
-                  borderRadius: '6px',
-                  background: item.isHighlight ? '#ECFDF5' : item.isBold ? '#F8FAFC' : 'transparent',
-                  border: item.isHighlight ? '1px solid #A7F3D0' : 'none',
-                  fontSize: item.isHighlight ? '14px' : '13px',
-                  fontWeight: item.isBold ? 700 : 500,
-                  color: item.isHighlight ? '#065F46' : '#0F172A'
-                }}
-              >
-                <span>{item.label}</span>
-                <strong style={{ color: item.isHighlight ? '#059669' : item.isNegative ? '#EF4444' : '#0F172A' }}>
-                  {item.isNegative ? `- ${brl(Math.abs(item.value))}` : brl(item.value)}
-                </strong>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Livro Diário & Partidas Dobradas */}
-        <section className="card-surface" style={{ padding: '24px', borderRadius: '12px' }}>
-          <div className="card-heading">
-            <div>
-              <h3>Livro Diário — Últimos Lançamentos</h3>
-              <p>Escrituração automática por Partidas Dobradas</p>
-            </div>
             <button
-              className="text-action"
-              onClick={() => onNavigate?.('accounting-journal')}
-              style={{ fontSize: '12px', fontWeight: 700 }}
+              type="button"
+              className="btn-light text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
+              onClick={exportSpedECD}
+              title="Gerar SPED"
             >
-              Ver Diário Completo →
+              <Download size={14} />
+              <span>Exportar SPED ECD</span>
             </button>
           </div>
+        }
+      />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
-            {journalEntries.map(lct => (
-              <div
-                key={lct.id}
-                style={{
-                  padding: '12px 14px',
-                  borderRadius: '8px',
-                  border: '1px solid #E2E8F0',
-                  background: '#FFFFFF'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 800, color: '#1C79EF' }}>{lct.id}</span>
-                    <small style={{ color: '#64748B' }}>{lct.date}</small>
-                  </div>
-                  <strong style={{ fontSize: '13px', color: '#0F172A' }}>{brl(lct.amount)}</strong>
-                </div>
-
-                <div style={{ fontSize: '12px', fontWeight: 600, color: '#0F172A', marginBottom: '6px' }}>
-                  {lct.description}
-                </div>
-
-                <div style={{ fontSize: '11px', color: '#64748B', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <div><span style={{ color: '#059669', fontWeight: 700 }}>[D]</span> {lct.debitAccount}</div>
-                  <div><span style={{ color: '#DC2626', fontWeight: 700 }}>[C]</span> {lct.creditAccount}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+      {/* 2. KPI Cards Strip no Padrão V7 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <DiskKpiCard
+          icon={<Building2 size={20} />}
+          label="Ativo Total"
+          value={brl(totalAssets)}
+          note="Circulante + Permanente"
+          accent="info"
+        />
+        <DiskKpiCard
+          icon={<Scale size={20} />}
+          label="Passivo Circulante"
+          value={brl(totalLiabilities)}
+          note="Repasses a Pagar"
+          accent="warning"
+        />
+        <DiskKpiCard
+          icon={<ShieldCheck size={20} />}
+          label="Patrimônio Líquido"
+          value={brl(totalEquity)}
+          note="Capital Social + Reservas"
+          accent="success"
+        />
+        <DiskKpiCard
+          icon={<Calculator size={20} />}
+          label="Lucro Líquido Exercício"
+          value={brl(252900.90)}
+          note="Margem de 21.4%"
+          accent="purple"
+        />
       </div>
 
-      {/* Accounting Quick Navigation Strip */}
-      <section
-        className="card-surface"
-        style={{
-          marginTop: '20px',
-          padding: '20px',
-          borderRadius: '12px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '12px'
-        }}
-      >
-        <div>
-          <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#0F172A' }}>
-            Módulos da Fase 18 — Contabilidade em Operação
-          </h4>
-          <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748B' }}>
-            Acesse rapidamente o Plano de Contas, Livro Diário, Livro Razão, Balancete e Fechamento.
-          </p>
-        </div>
+      {/* 3. DRE & Livro Diário */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* DRE Sintética */}
+        <DiskCard className="p-4 shadow-xs">
+          <DiskCardHeader
+            title="Demonstração do Resultado (DRE)"
+            subtitle="Apuração de competência do mês 08/2026"
+            action={<span className="badge badge-subtle-success">Auditado</span>}
+          />
+          <DiskCardBody className="px-0 pb-0">
+            <div className="space-y-1.5 mt-2">
+              {dreItems.map((item, index) => (
+                <div
+                  key={index}
+                  className={`flex items-center justify-between p-2 rounded-lg text-xs transition ${
+                    item.isHighlight
+                      ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold'
+                      : item.isBold
+                      ? 'bg-[var(--disk-bg-muted,#f8fafc)] font-bold text-[var(--disk-text-primary,#0f172a)]'
+                      : 'text-[var(--disk-text-secondary,#475569)] hover:bg-[var(--disk-bg-hover,#f1f5f9)]'
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  <strong className={`font-mono ${
+                    item.isHighlight
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : item.isNegative
+                      ? 'text-rose-600 dark:text-rose-400'
+                      : 'text-[var(--disk-text-primary,#0f172a)]'
+                  }`}>
+                    {item.isNegative ? `- ${brl(Math.abs(item.value))}` : brl(item.value)}
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </DiskCardBody>
+        </DiskCard>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button className="tool-btn" onClick={() => onNavigate?.('accounting-chart')}>Plano de Contas</button>
-          <button className="tool-btn" onClick={() => onNavigate?.('accounting-journal')}>Livro Diário</button>
-          <button className="tool-btn" onClick={() => onNavigate?.('accounting-ledger')}>Livro Razão</button>
-          <button className="tool-btn" onClick={() => onNavigate?.('accounting-trial-balance')}>Balancete</button>
-          <button className="tool-btn" onClick={() => onNavigate?.('accounting-closing')}>Fechamento Fiscal</button>
+        {/* Livro Diário & Partidas Dobradas */}
+        <DiskCard className="p-4 shadow-xs">
+          <DiskCardHeader
+            title="Livro Diário — Últimos Lançamentos"
+            subtitle="Escrituração automática por Partidas Dobradas"
+            action={
+              <button
+                type="button"
+                className="btn-light text-xs font-semibold py-1 px-2.5 cursor-pointer flex items-center gap-1"
+                onClick={() => onNavigate?.('accounting-journal')}
+              >
+                <span>Ver Diário Completo</span>
+                <ArrowRight size={13} />
+              </button>
+            }
+          />
+          <DiskCardBody className="px-0 pb-0">
+            <div className="space-y-2.5 mt-2">
+              {journalEntries.map(lct => (
+                <div
+                  key={lct.id}
+                  className="p-3 rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] hover:shadow-xs transition"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-sky-600 dark:text-sky-400 font-mono">{lct.id}</span>
+                      <small className="text-[11px] text-[var(--disk-text-muted,#64748b)]">{lct.date}</small>
+                    </div>
+                    <strong className="text-xs font-mono font-bold text-[var(--disk-text-primary,#0f172a)]">{brl(lct.amount)}</strong>
+                  </div>
+
+                  <div className="text-xs font-semibold text-[var(--disk-text-primary,#0f172a)] mb-1.5 truncate">
+                    {lct.description}
+                  </div>
+
+                  <div className="text-[11px] text-[var(--disk-text-muted,#64748b)] flex flex-col gap-0.5">
+                    <div><span className="text-emerald-600 dark:text-emerald-400 font-bold">[D]</span> {lct.debitAccount}</div>
+                    <div><span className="text-rose-600 dark:text-rose-400 font-bold">[C]</span> {lct.creditAccount}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DiskCardBody>
+        </DiskCard>
+      </div>
+
+      {/* 4. Accounting Quick Navigation Strip */}
+      <DiskCard className="p-4 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h4 className="text-sm font-bold text-[var(--disk-text-primary,#0f172a)] m-0">
+              Módulos da Fase 18 — Contabilidade em Operação
+            </h4>
+            <p className="text-xs text-[var(--disk-text-muted,#64748b)] mt-0.5">
+              Acesse rapidamente o Plano de Contas, Livro Diário, Livro Razão, Balancete e Fechamento.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" className="btn-light text-xs font-semibold px-3 py-1.5 cursor-pointer shadow-xs" onClick={() => onNavigate?.('accounting-chart')}>Plano de Contas</button>
+            <button type="button" className="btn-light text-xs font-semibold px-3 py-1.5 cursor-pointer shadow-xs" onClick={() => onNavigate?.('accounting-journal')}>Livro Diário</button>
+            <button type="button" className="btn-light text-xs font-semibold px-3 py-1.5 cursor-pointer shadow-xs" onClick={() => onNavigate?.('accounting-ledger')}>Livro Razão</button>
+            <button type="button" className="btn-light text-xs font-semibold px-3 py-1.5 cursor-pointer shadow-xs" onClick={() => onNavigate?.('accounting-trial-balance')}>Balancete</button>
+            <button type="button" className="btn-light text-xs font-semibold px-3 py-1.5 cursor-pointer shadow-xs" onClick={() => onNavigate?.('accounting-closing')}>Fechamento Fiscal</button>
+          </div>
         </div>
-      </section>
-    </div>
+      </DiskCard>
     </LimitlessPage>
   )
 }

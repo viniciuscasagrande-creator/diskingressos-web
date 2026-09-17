@@ -31,6 +31,7 @@ export interface DiskCardHeaderProps extends Omit<HTMLAttributes<HTMLDivElement>
   subtitle?: ReactNode
   badge?: ReactNode
   actions?: ReactNode
+  action?: ReactNode
   className?: string
 }
 
@@ -39,10 +40,12 @@ export const DiskCardHeader: React.FC<DiskCardHeaderProps> = ({
   subtitle,
   badge,
   actions,
+  action,
   children,
   className = '',
   ...props
 }) => {
+  const headerActions = actions || action
   return (
     <div
       className={`disk-card-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 mb-4 border-b border-[var(--disk-border-subtle,#f1f5f9)] ${className}`}
@@ -67,9 +70,9 @@ export const DiskCardHeader: React.FC<DiskCardHeaderProps> = ({
           )}
         </div>
       ) : null}
-      {actions && (
+      {headerActions && (
         <div className="flex items-center gap-2 shrink-0">
-          {actions}
+          {headerActions}
         </div>
       )}
       {children}

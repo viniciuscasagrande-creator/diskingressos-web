@@ -13,6 +13,11 @@ import {
   RotateCcw, ShoppingCart, SendHorizontal, Paperclip, Check, AlertOctagon, Terminal, Award, X, QrCode, ArrowLeft
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
+import { LimitlessPage } from '../integrations/limitless/LimitlessPage'
+import {
+  DiskPageHeader,
+  DiskKpiCard
+} from '../components/ui/disk'
 
 export type ServiceTab =
   | 'hub'
@@ -299,61 +304,78 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   }, [mode])
 
   return (
-    <div className="disk-service-shell">
-      <div className="disk-service-inner">
-        
-        {/* Topbar / Greeting */}
-        <header className="ds-topbar">
-          <div className="ds-topbar-left">
-            <div className="flex items-center gap-3">
+    <LimitlessPage className="p-4 md:p-6 space-y-6">
+      <DiskPageHeader
+        title={`Cockpit SAC & Atendimento — ${producerName || 'Disk Service'}`}
+        description="Visão integrada, gestão de chamados, conformidade SLA e inteligência operacional"
+        breadcrumbs={['DiskIngressos', 'SAC', 'Cockpit Operacional']}
+        badge="SAC 360°"
+        badgeTone="info"
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            {onNavigate && (
               <button
-                onClick={() => onNavigate ? onNavigate('profile-dashboard') : window.history.back()}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-white hover:bg-[#334155] text-slate-200 border border-slate-200 transition cursor-pointer"
+                type="button"
+                onClick={() => onNavigate('profile-dashboard')}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 transition cursor-pointer"
                 title="Voltar ao Painel Principal"
               >
-                <ArrowLeft size={14} className="text-[#06B6D4]" />
-                <span>Voltar ao Dashboard</span>
+                <ArrowLeft size={14} className="text-cyan-400" />
+                <span className="hidden sm:inline">Painel</span>
               </button>
-              <h1 className="m-0 text-xl font-bold">👋 Bem-vindo de volta, {producerName || 'Fernando'}!</h1>
-            </div>
-            <p>Visão integrada e cockpit de alta performance do SAC Disk Service</p>
-          </div>
+            )}
 
-          <div className="ds-topbar-right">
-            <div className="ds-search-box" style={{ width: '380px' }}>
-              <Search size={16} />
+            <div className="relative flex items-center">
               <input
                 type="text"
-                placeholder="Buscar CPF, pedido, nome, fone, e-mail..."
+                placeholder="Buscar CPF, pedido, nome, fone..."
                 value={globalSearchInput}
                 onChange={e => setGlobalSearchInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleGlobalSearch()}
+                className="h-8 pl-8 pr-16 text-xs bg-slate-900/60 text-slate-100 border border-slate-700/60 rounded-md focus:outline-hidden focus:border-cyan-500 w-44 sm:w-60 md:w-72"
               />
+              <Search size={14} className="absolute left-2.5 text-slate-400 pointer-events-none" />
               <button
+                type="button"
                 onClick={() => handleGlobalSearch()}
-                style={{ background: '#2563eb', color: '#fff', border: 0, borderRadius: '12px', padding: '4px 10px', fontSize: '11px', fontWeight: 800, cursor: 'pointer' }}
+                className="absolute right-1 px-2 py-0.5 text-[10px] font-bold bg-sky-600 hover:bg-sky-500 text-white rounded cursor-pointer"
               >
                 Buscar
               </button>
             </div>
 
-            <div className="ds-icon-btn" onClick={() => notify('12 notificações ativas: 1 War Room P1, 3 alertas de SLA e 8 novos chamados')}>
-              <Bell size={18} />
-              <span className="ds-badge-count-pill">12</span>
-            </div>
+            <button
+              type="button"
+              onClick={() => notify('12 notificações ativas: 1 War Room P1, 3 alertas de SLA e 8 novos chamados')}
+              className="relative p-2 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 cursor-pointer"
+              title="Notificações"
+            >
+              <Bell size={16} />
+              <span className="absolute -top-1 -right-1 px-1.5 py-0.2 text-[9px] font-bold rounded-full bg-rose-600 text-white">12</span>
+            </button>
 
-            <div className="ds-icon-btn" onClick={() => setActiveTab('knowledge')}>
-              <HelpCircle size={18} />
-            </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab('knowledge')}
+              className="p-2 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 cursor-pointer"
+              title="Base de Conhecimento"
+            >
+              <HelpCircle size={16} />
+            </button>
 
-            <div className="ds-user-profile" onClick={() => notify('Perfil operacional: Vinicius Casagrande (Admin Master)')}>
-              <div className="ds-user-avatar">
-                {producerName ? producerName.slice(0, 2).toUpperCase() : 'VC'}
-                <span className="online-dot" />
-              </div>
+            <div
+              className="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-600/30 text-cyan-400 font-bold text-xs border border-cyan-500/40 cursor-pointer"
+              onClick={() => notify('Perfil operacional: Vinicius Casagrande (Admin Master)')}
+              title="Perfil Operacional"
+            >
+              {producerName ? producerName.slice(0, 2).toUpperCase() : 'VC'}
             </div>
           </div>
-        </header>
+        }
+      />
+
+      <div className="disk-service-shell" style={{ padding: 0, background: 'transparent' }}>
+        <div className="disk-service-inner" style={{ padding: 0 }}>
 
         {/* Top Launcher Carousel com Controles de Navegação (Sem Live Ops) */}
         <div className="ds-launcher-wrapper">
@@ -590,13 +612,49 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               <h2 className="ds-section-title">VISÃO GERAL DA OPERAÇÃO SAC</h2>
             </div>
 
-            <div className="ds-stats-strip">
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Ticket size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Tickets Abertos</span><div className="ds-stat-val-row"><span className="ds-stat-val">128</span><span className="ds-stat-delta green">-12% vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Clock3 size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Atrasados (SLA)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#d97706' }}>18</span><span className="ds-stat-delta orange">+4% vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Smile size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">CSAT (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#059669' }}>4.6/5</span><span className="ds-stat-delta green">+0.3 vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><TrendingUp size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">NPS (Hoje)</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#059669' }}>53+</span><span className="ds-stat-delta green">+5 vs ontem</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Clock3 size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">Conformidade SLA</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#0284c7' }}>92.4%</span><span className="ds-stat-delta green">Meta: 90%</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Shield size={20} /></div><div className="ds-stat-content"><span className="ds-stat-label">P1 Ativos</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#dc2626' }}>3</span><span className="ds-stat-delta red">+1 vs ontem</span></div></div></div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              <DiskKpiCard
+                icon={<Ticket size={20} />}
+                label="Tickets Abertos"
+                value="128"
+                note="-12% vs ontem"
+                accent="info"
+              />
+              <DiskKpiCard
+                icon={<Clock3 size={20} />}
+                label="Atrasados (SLA)"
+                value="18"
+                note="+4% vs ontem"
+                accent="warning"
+              />
+              <DiskKpiCard
+                icon={<Smile size={20} />}
+                label="CSAT (Hoje)"
+                value="4.6/5"
+                note="+0.3 vs ontem"
+                accent="success"
+              />
+              <DiskKpiCard
+                icon={<TrendingUp size={20} />}
+                label="NPS (Hoje)"
+                value="53+"
+                note="+5 vs ontem"
+                accent="success"
+              />
+              <DiskKpiCard
+                icon={<Clock3 size={20} />}
+                label="Conformidade SLA"
+                value="92.4%"
+                note="Meta: 90%"
+                accent="sky"
+              />
+              <DiskKpiCard
+                icon={<Shield size={20} />}
+                label="P1 Ativos"
+                value="3"
+                note="+1 vs ontem"
+                accent="danger"
+              />
             </div>
 
             {/* ACESSOS RÁPIDOS */}
@@ -2077,5 +2135,6 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
       </div>
     </div>
+    </LimitlessPage>
   )
 }
