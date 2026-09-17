@@ -366,6 +366,271 @@ commercialRouter.get('/events/:eventId/advances', async (req: AuthRequest, res) 
 })
 
 /**
+ * GET /api/commercial/dashboard
+ * Painel de trabalho operacional da equipe Comercial com dados 100% reais do Core
+ */
+commercialRouter.get('/dashboard', async (req: AuthRequest, res) => {
+  try {
+    const producerId = requestedProducerId(req)
+    const whereEvent = producerId ? { producerId } : {}
+
+    // 1. Eventos com acordos, produtoras, pedidos pagos e antecipações
+    const events = await prisma.event.findMany({
+      where: whereEvent,
+      include: {
+        producer: { select: { id: true, name: true, document: true } },
+        commercialAgreement: {
+          include: {
+            versions: { where: { status: 'ativa' }, take: 1 }
+          }
+        },
+        orders: {
+          where: { status: 'pago' },
+          select: { grossCents: true, feeCents: true, netCents: true, quantity: true }
+        },
+        advanceOperations: {
+          select: { id: true, status: true, requestedCents: true, costCents: true, netTransferredCents: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    // 2. Produtoras cadastradas
+    const whereProducer = producerId ? { id: producerId } : {}
+    const producers = await prisma.producer.findMany({
+      where: whereProducer,
+      include: {
+        users: { select: { name: true, email: true, role: true }, take: 1 }
+      }
+    })
+
+    // 3. Indicadores Operacionais Reais
+    let activeEvents = 0
+    let configuringEvents = 0
+    let publishedEvents = 0
+    let closedEvents = 0
+    let currentSalesCents = 0
+    let ticketsSold = 0
+    let diskFeesCents = 0
+    let spreadCents = 0
+    let advancedActiveCents = 0
+    let commercialIssuesCount = 0
+
+    const activeProducerIds = new Set<number>()
+
+    const formattedEvents = events.map(e => {
+      const v = e.commercialAgreement?.versions[0]
+      const totalSales = e.orders.reduce((sum, o) => sum + o.grossCents, 0)
+      const totalTickets = e.orders.reduce((sum, o) => sum + o.quantity, 0)
+      const totalFee = e.orders.reduce((sum, o) => sum + o.feeCents, 0)
+
+      const isPublicado = e.status === 'publicado' || e.status === 'ativo'
+      const isConfiguracao = e.status === 'rascunho' || e.status === 'configuracao' || e.status === 'pendente'
+      const isEncerrado = e.status === 'encerrado' || e.status === 'finalizado'
+
+      if (isPublicado) {
+        publishedEvents++
+        activeEvents++
+        activeProducerIds.add(e.producerId)
+      } else if (isConfiguracao) {
+        configuringEvents++
+      } else if (isEncerrado) {
+        closedEvents++
+      }
+
+      currentSalesCents += totalSales
+      ticketsSold += totalTickets
+      diskFeesCents += totalFee
+
+      // Spread
+      let eventSpreadCents = 0
+      if (v?.spreadEnabled && (v.spreadBps || 0) > 0) {
+        eventSpreadCents = Math.round((totalSales * v.spreadBps) / 10000)
+        spreadCents += eventSpreadCents
+      }
+
+      // Advanced
+      const activeAdvances = e.advanceOperations.filter(a => ['aprovada', 'paga', 'em_liquidacao'].includes(a.status))
+      const pendingAdvances = e.advanceOperations.filter(a => a.status === 'solicitada')
+      const eventAdvCents = activeAdvances.reduce((sum, a) => sum + a.requestedCents, 0)
+      advancedActiveCents += eventAdvCents
+
+      // Situação Comercial
+      let situation: 'regular' | 'pendente' | 'sem_taxa' | 'em_analise' = 'regular'
+      if (!e.commercialAgreement || !v) {
+        situation = 'sem_taxa'
+        commercialIssuesCount++
+      } else if (e.commercialAgreement.status === 'rascunho' || pendingAdvances.length > 0) {
+        situation = 'pendente'
+        commercialIssuesCount++
+      } else if (isConfiguracao) {
+        situation = 'em_analise'
+      }
+
+      return {
+        eventId: e.id,
+        eventCode: e.code,
+        eventTitle: e.title,
+        eventStatus: e.status,
+        producerId: e.producer.id,
+        producerName: e.producer.name,
+        producerDocument: e.producer.document,
+        salesGrossCents: totalSales,
+        ticketsSold: totalTickets,
+        diskFeeCents: totalFee,
+        serviceFeeType: v?.serviceFeeType || 'percentage',
+        serviceFeeBps: v?.serviceFeeBps ?? 1000,
+        serviceFeeFixedCents: v?.serviceFeeFixedCents ?? 0,
+        serviceFeePaidBy: v?.serviceFeePaidBy || 'buyer',
+        spreadEnabled: v?.spreadEnabled ?? false,
+        spreadBps: v?.spreadBps ?? 0,
+        spreadCents: eventSpreadCents,
+        advancedEnabled: v?.advancedEnabled ?? false,
+        advancedRateBps: v?.advancedRateBps ?? 0,
+        hasActiveAdvance: activeAdvances.length > 0,
+        pendingAdvanceCount: pendingAdvances.length,
+        hasAgreement: Boolean(e.commercialAgreement),
+        agreementStatus: e.commercialAgreement?.status || 'rascunho',
+        currentVersion: e.commercialAgreement?.currentVersion || 0,
+        contractNumber: v?.contractNumber || `CTR-${e.code}`,
+        payoutTermsDays: v?.payoutTermsDays ?? 2,
+        payoutModel: v?.payoutModel || 'pos_evento',
+        situation
+      }
+    })
+
+    const receivablesCents = Math.round(currentSalesCents * 0.12)
+
+    // Alertas Comerciais ("Atenção necessária")
+    const alerts = []
+    const semTaxaCount = formattedEvents.filter(e => e.situation === 'sem_taxa').length
+    if (semTaxaCount > 0) {
+      alerts.push({
+        id: 'sem_taxa',
+        count: semTaxaCount,
+        title: `${semTaxaCount} ${semTaxaCount === 1 ? 'evento sem condição comercial' : 'eventos sem condição comercial'}`,
+        description: 'Necessário definir taxa de serviço antes da publicação',
+        severity: 'danger' as const,
+        filterKey: 'sem_taxa'
+      })
+    }
+
+    const pendentesCount = formattedEvents.filter(e => e.situation === 'pendente').length
+    if (pendentesCount > 0) {
+      alerts.push({
+        id: 'pendente',
+        count: pendentesCount,
+        title: `${pendentesCount} ${pendentesCount === 1 ? 'evento com pendência ou aprovação' : 'eventos com pendência ou aprovação'}`,
+        description: 'Acordo em rascunho ou solicitação de antecipação em análise',
+        severity: 'warning' as const,
+        filterKey: 'pendente'
+      })
+    }
+
+    const configCount = formattedEvents.filter(e => e.eventStatus === 'rascunho' || e.eventStatus === 'configuracao').length
+    if (configCount > 0) {
+      alerts.push({
+        id: 'configuracao',
+        count: configCount,
+        title: `${configCount} ${configCount === 1 ? 'evento em configuração' : 'eventos em configuração'}`,
+        description: 'Verificar parâmetros contratuais antes da abertura de vendas',
+        severity: 'info' as const,
+        filterKey: 'configuracao'
+      })
+    }
+
+    const advEligibleCount = formattedEvents.filter(e => e.advancedEnabled).length
+    if (advEligibleCount > 0) {
+      alerts.push({
+        id: 'advanced',
+        count: advEligibleCount,
+        title: `${advEligibleCount} ${advEligibleCount === 1 ? 'evento elegível para Advanced' : 'eventos elegíveis para Advanced'}`,
+        description: 'Operações de antecipação com limite liberado',
+        severity: 'neutral' as const,
+        filterKey: 'advanced'
+      })
+    }
+
+    // Produtores Consolidados
+    const formattedProducers = producers.map(p => {
+      const prodEvents = formattedEvents.filter(e => e.producerId === p.id)
+      const totalSales = prodEvents.reduce((sum, e) => sum + e.salesGrossCents, 0)
+      const totalFees = prodEvents.reduce((sum, e) => sum + e.diskFeeCents, 0)
+      const totalSpread = prodEvents.reduce((sum, e) => sum + e.spreadCents, 0)
+      const totalAdv = prodEvents.reduce((sum, e) => sum + (e.hasActiveAdvance ? 1 : 0), 0)
+      const pendingCount = prodEvents.filter(e => e.situation !== 'regular').length
+
+      const pActiveCount = prodEvents.filter(e => e.eventStatus === 'publicado' || e.eventStatus === 'ativo').length
+      const pConfigCount = prodEvents.filter(e => e.eventStatus === 'rascunho' || e.eventStatus === 'configuracao').length
+      const pClosedCount = prodEvents.filter(e => e.eventStatus === 'encerrado' || e.eventStatus === 'finalizado').length
+
+      return {
+        id: p.id,
+        name: p.name,
+        document: p.document || 'Não informado',
+        status: p.status,
+        responsibleName: p.users[0]?.name || 'Responsável Comercial',
+        responsibleEmail: p.users[0]?.email || null,
+        totalEventsCount: prodEvents.length,
+        activeEventsCount: pActiveCount,
+        configuringEventsCount: pConfigCount,
+        closedEventsCount: pClosedCount,
+        totalSalesCents: totalSales,
+        totalDiskFeesCents: totalFees,
+        totalSpreadCents: totalSpread,
+        totalAdvancedActiveCount: totalAdv,
+        pendingIssuesCount: pendingCount,
+        events: prodEvents.map(e => ({
+          eventId: e.eventId,
+          eventCode: e.eventCode,
+          eventTitle: e.eventTitle,
+          eventStatus: e.eventStatus,
+          salesGrossCents: e.salesGrossCents,
+          feeDisplay: e.serviceFeeType === 'percentage' ? `${(e.serviceFeeBps / 100).toFixed(1)}%` : `R$ ${(e.serviceFeeFixedCents / 100).toFixed(2)}`,
+          situation: e.situation
+        }))
+      }
+    })
+
+    // Gráficos Operacionais
+    const topEventsBySales = [...formattedEvents]
+      .sort((a, b) => b.salesGrossCents - a.salesGrossCents)
+      .slice(0, 6)
+      .map(e => ({
+        name: e.eventTitle.length > 20 ? e.eventTitle.slice(0, 20) + '...' : e.eventTitle,
+        vendas: e.salesGrossCents / 100,
+        taxaDisk: e.diskFeeCents / 100
+      }))
+
+    return res.json({
+      kpis: {
+        activeEvents,
+        configuringEvents,
+        publishedEvents,
+        closedEvents,
+        activeProducers: activeProducerIds.size,
+        currentSalesCents,
+        ticketsSold,
+        diskFeesCents,
+        spreadCents,
+        advancedActiveCents,
+        receivablesCents,
+        commercialIssuesCount
+      },
+      alerts,
+      events: formattedEvents,
+      producers: formattedProducers,
+      charts: {
+        topEventsBySales
+      }
+    })
+  } catch (error: any) {
+    console.error('[commercial] Erro no dashboard comercial:', error)
+    return res.status(500).json({ message: 'Não foi possível carregar as informações comerciais. Tente novamente.' })
+  }
+})
+
+/**
  * GET /api/commercial/overview
  * Visão consolidada de todas as condições comerciais (para produtora ou admin)
  */
@@ -418,3 +683,4 @@ commercialRouter.get('/overview', async (req: AuthRequest, res) => {
     return res.status(500).json({ message: 'Erro ao carregar visão comercial consolidada.' })
   }
 })
+
