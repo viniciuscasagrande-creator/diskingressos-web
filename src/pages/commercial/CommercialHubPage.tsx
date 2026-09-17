@@ -2,40 +2,30 @@ import React, { useEffect, useState, useMemo } from 'react'
 import {
   Scale,
   Search,
-  Filter,
   RefreshCw,
-  ArrowUpRight,
-  ShieldCheck,
   Percent,
-  DollarSign,
-  TrendingUp,
-  Clock,
-  Layers,
-  FileCheck,
   AlertCircle,
   Building2,
-  Calendar,
-  Sparkles,
-  ChevronRight,
-  Lock,
-  X,
   Edit3,
-  SlidersHorizontal,
-  Info,
   CheckCircle2,
-  Users,
-  AlertTriangle,
-  Receipt,
-  PiggyBank,
-  Hourglass,
-  CheckCircle,
   BarChart3,
   ExternalLink,
-  ChevronDown
+  ChevronRight,
+  X,
+  ShieldCheck
 } from 'lucide-react'
 import type { PageKey } from '../../components/ModuleSidebar'
 import { getAuthHeader } from '../../services/api'
-import { LimitlessPage } from '../../integrations/limitless/LimitlessPage'
+import {
+  DiskPageHeader,
+  DiskKpiCard,
+  DiskCard,
+  DiskDataTable,
+  DiskStatusBadge,
+  DiskModal,
+  DiskEmptyState,
+  type DiskTableColumn
+} from '../../components/ui/disk'
 
 // Interfaces dos dados 100% reais do Core
 interface CommercialEventItem {
@@ -169,30 +159,38 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       id: 'sem_taxa',
       count: 2,
       title: 'Eventos sem taxa de serviço configurada',
-      description: '2 eventos publicados precisam ter o percentual ou valor fixo da taxa Disk definidos.',
+      description: 'Defina a taxa comercial antes do início das vendas oficiais.',
       severity: 'danger',
       filterKey: 'sem_taxa'
     },
     {
-      id: 'spread',
+      id: 'pendencias',
+      count: 2,
+      title: 'Pendências de aprovação contratual',
+      description: 'Contratos pendentes de aceite pelo produtor responsável.',
+      severity: 'warning',
+      filterKey: 'com_pendencia'
+    },
+    {
+      id: 'advanced',
       count: 3,
-      title: 'Eventos com Spread configurado',
-      description: '3 eventos possuem split de spread comercial ativo.',
+      title: 'Operações elegíveis para Antecipação (Advanced)',
+      description: 'Produtores com limite disponível para solicitação de antecipação.',
       severity: 'info',
-      filterKey: 'spread'
+      filterKey: 'advanced'
     }
   ],
   events: [
     {
-      eventId: 1,
-      eventCode: 'EVT-2026-001',
+      eventId: 101,
+      eventCode: 'EVT-101',
       eventTitle: 'Festival de Inverno Curitiba 2026',
       eventStatus: 'publicado',
       producerId: 1,
-      producerName: 'DiskIngressos Produções',
-      producerDocument: '04.829.144/0001-90',
+      producerName: 'Seven Entretenimento',
+      producerDocument: '12.345.678/0001-90',
       salesGrossCents: 18500000,
-      ticketsSold: 1420,
+      ticketsSold: 1650,
       diskFeeCents: 1850000,
       serviceFeeType: 'percentage',
       serviceFeeBps: 1000,
@@ -206,23 +204,23 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       hasActiveAdvance: true,
       pendingAdvanceCount: 0,
       hasAgreement: true,
-      agreementStatus: 'ativa',
+      agreementStatus: 'ativo',
       currentVersion: 2,
-      contractNumber: 'CTR-2026-001',
+      contractNumber: 'CTR-2026-089',
       payoutTermsDays: 2,
       payoutModel: 'pos_evento',
       situation: 'regular'
     },
     {
-      eventId: 2,
-      eventCode: 'EVT-2026-002',
-      eventTitle: 'Iron Maiden Symphonic Live',
+      eventId: 102,
+      eventCode: 'EVT-102',
+      eventTitle: 'Iron Maiden Symphonic Experience',
       eventStatus: 'publicado',
-      producerId: 2,
-      producerName: 'Prime Entretenimento',
-      producerDocument: '11.234.567/0001-88',
+      producerId: 1,
+      producerName: 'Seven Entretenimento',
+      producerDocument: '12.345.678/0001-90',
       salesGrossCents: 14200000,
-      ticketsSold: 1100,
+      ticketsSold: 1200,
       diskFeeCents: 1420000,
       serviceFeeType: 'percentage',
       serviceFeeBps: 1000,
@@ -236,23 +234,23 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       hasActiveAdvance: false,
       pendingAdvanceCount: 0,
       hasAgreement: true,
-      agreementStatus: 'ativa',
+      agreementStatus: 'ativo',
       currentVersion: 1,
-      contractNumber: 'CTR-2026-002',
+      contractNumber: 'CTR-2026-092',
       payoutTermsDays: 2,
       payoutModel: 'pos_evento',
       situation: 'regular'
     },
     {
-      eventId: 3,
-      eventCode: 'EVT-2026-003',
-      eventTitle: 'Sunset Eletrônico Warung',
+      eventId: 103,
+      eventCode: 'EVT-103',
+      eventTitle: 'Sunset Eletrônico Warung Tour',
       eventStatus: 'publicado',
-      producerId: 3,
-      producerName: 'Seven Entretenimento',
-      producerDocument: '22.345.678/0001-99',
+      producerId: 2,
+      producerName: 'CWB Brasil Produções',
+      producerDocument: '98.765.432/0001-10',
       salesGrossCents: 9800000,
-      ticketsSold: 920,
+      ticketsSold: 850,
       diskFeeCents: 980000,
       serviceFeeType: 'percentage',
       serviceFeeBps: 1000,
@@ -262,31 +260,31 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       spreadBps: 200,
       spreadCents: 196000,
       advancedEnabled: true,
-      advancedRateBps: 200,
-      hasActiveAdvance: true,
+      advancedRateBps: 250,
+      hasActiveAdvance: false,
       pendingAdvanceCount: 1,
       hasAgreement: true,
-      agreementStatus: 'ativa',
+      agreementStatus: 'ativo',
       currentVersion: 1,
-      contractNumber: 'CTR-2026-003',
-      payoutTermsDays: 5,
-      payoutModel: 'semanal',
-      situation: 'pendente'
+      contractNumber: 'CTR-2026-104',
+      payoutTermsDays: 2,
+      payoutModel: 'pos_evento',
+      situation: 'regular'
     },
     {
-      eventId: 4,
-      eventCode: 'EVT-2026-004',
+      eventId: 104,
+      eventCode: 'EVT-104',
       eventTitle: 'Festival Sertanejo Curitiba',
-      eventStatus: 'configuracao',
-      producerId: 4,
-      producerName: 'CWB Brasil',
-      producerDocument: '33.456.789/0001-11',
+      eventStatus: 'em_configuracao',
+      producerId: 3,
+      producerName: 'Prime Live Eventos',
+      producerDocument: '45.123.789/0001-55',
       salesGrossCents: 3500000,
-      ticketsSold: 480,
+      ticketsSold: 350,
       diskFeeCents: 350000,
-      serviceFeeType: 'fixed',
-      serviceFeeBps: 0,
-      serviceFeeFixedCents: 500,
+      serviceFeeType: 'percentage',
+      serviceFeeBps: 1000,
+      serviceFeeFixedCents: 0,
       serviceFeePaidBy: 'buyer',
       spreadEnabled: false,
       spreadBps: 0,
@@ -298,25 +296,25 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       hasAgreement: false,
       agreementStatus: 'pendente',
       currentVersion: 0,
-      contractNumber: '',
-      payoutTermsDays: 2,
-      payoutModel: 'pos_evento',
+      contractNumber: 'CTR-2026-118',
+      payoutTermsDays: 5,
+      payoutModel: 'semanal',
       situation: 'sem_taxa'
     },
     {
-      eventId: 5,
-      eventCode: 'EVT-2026-005',
+      eventId: 105,
+      eventCode: 'EVT-105',
       eventTitle: 'Stand-up Comedy Gala',
-      eventStatus: 'publicado',
-      producerId: 5,
-      producerName: 'Risorama Produções',
-      producerDocument: '44.567.890/0001-22',
+      eventStatus: 'em_configuracao',
+      producerId: 4,
+      producerName: 'Opus Entretenimento',
+      producerDocument: '67.890.123/0001-44',
       salesGrossCents: 2250000,
-      ticketsSold: 330,
+      ticketsSold: 200,
       diskFeeCents: 225000,
-      serviceFeeType: 'percentage',
-      serviceFeeBps: 1000,
-      serviceFeeFixedCents: 0,
+      serviceFeeType: 'fixed',
+      serviceFeeBps: 0,
+      serviceFeeFixedCents: 500,
       serviceFeePaidBy: 'producer',
       spreadEnabled: false,
       spreadBps: 0,
@@ -325,111 +323,92 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       advancedRateBps: 0,
       hasActiveAdvance: false,
       pendingAdvanceCount: 0,
-      hasAgreement: true,
-      agreementStatus: 'ativa',
-      currentVersion: 1,
-      contractNumber: 'CTR-2026-005',
+      hasAgreement: false,
+      agreementStatus: 'pendente',
+      currentVersion: 0,
+      contractNumber: 'CTR-2026-121',
       payoutTermsDays: 2,
       payoutModel: 'pos_evento',
-      situation: 'regular'
+      situation: 'sem_taxa'
     }
   ],
   producers: [
     {
       id: 1,
-      name: 'DiskIngressos Produções',
-      document: '04.829.144/0001-90',
+      name: 'Seven Entretenimento',
+      document: '12.345.678/0001-90',
       status: 'ativo',
-      responsibleName: 'Vinicius Casagrande',
-      responsibleEmail: 'vinicius@diskingressos.com.br',
+      responsibleName: 'Carlos Eduardo Seven',
+      responsibleEmail: 'carlos@seven.art.br',
       totalEventsCount: 4,
       activeEventsCount: 2,
       configuringEventsCount: 1,
       closedEventsCount: 1,
-      totalSalesCents: 18500000,
-      totalDiskFeesCents: 1850000,
+      totalSalesCents: 32700000,
+      totalDiskFeesCents: 3270000,
       totalSpreadCents: 277500,
       totalAdvancedActiveCount: 1,
       pendingIssuesCount: 0,
       events: [
         {
-          eventId: 1,
-          eventCode: 'EVT-2026-001',
+          eventId: 101,
+          eventCode: 'EVT-101',
           eventTitle: 'Festival de Inverno Curitiba 2026',
           eventStatus: 'publicado',
           salesGrossCents: 18500000,
-          feeDisplay: '10%',
+          feeDisplay: '10.0%',
+          situation: 'regular'
+        },
+        {
+          eventId: 102,
+          eventCode: 'EVT-102',
+          eventTitle: 'Iron Maiden Symphonic Experience',
+          eventStatus: 'publicado',
+          salesGrossCents: 14200000,
+          feeDisplay: '10.0%',
           situation: 'regular'
         }
       ]
     },
     {
       id: 2,
-      name: 'Prime Entretenimento',
-      document: '11.234.567/0001-88',
+      name: 'CWB Brasil Produções',
+      document: '98.765.432/0001-10',
       status: 'ativo',
-      responsibleName: 'Mac Lovio Solek',
-      responsibleEmail: 'mac@prime.com.br',
-      totalEventsCount: 6,
-      activeEventsCount: 3,
-      configuringEventsCount: 0,
-      closedEventsCount: 3,
-      totalSalesCents: 14200000,
-      totalDiskFeesCents: 1420000,
-      totalSpreadCents: 0,
+      responsibleName: 'Mariana Guimarães',
+      responsibleEmail: 'mariana@cwbbrasil.com.br',
+      totalEventsCount: 3,
+      activeEventsCount: 1,
+      configuringEventsCount: 1,
+      closedEventsCount: 1,
+      totalSalesCents: 9800000,
+      totalDiskFeesCents: 980000,
+      totalSpreadCents: 196000,
       totalAdvancedActiveCount: 0,
       pendingIssuesCount: 0,
       events: [
         {
-          eventId: 2,
-          eventCode: 'EVT-2026-002',
-          eventTitle: 'Iron Maiden Symphonic Live',
+          eventId: 103,
+          eventCode: 'EVT-103',
+          eventTitle: 'Sunset Eletrônico Warung Tour',
           eventStatus: 'publicado',
-          salesGrossCents: 14200000,
-          feeDisplay: '10%',
+          salesGrossCents: 9800000,
+          feeDisplay: '10.0%',
           situation: 'regular'
         }
       ]
     },
     {
       id: 3,
-      name: 'Seven Entretenimento',
-      document: '22.345.678/0001-99',
+      name: 'Prime Live Eventos',
+      document: '45.123.789/0001-55',
       status: 'ativo',
-      responsibleName: 'Gian Zambon',
-      responsibleEmail: 'gian@seven.art.br',
-      totalEventsCount: 3,
-      activeEventsCount: 2,
-      configuringEventsCount: 0,
-      closedEventsCount: 1,
-      totalSalesCents: 9800000,
-      totalDiskFeesCents: 980000,
-      totalSpreadCents: 196000,
-      totalAdvancedActiveCount: 1,
-      pendingIssuesCount: 1,
-      events: [
-        {
-          eventId: 3,
-          eventCode: 'EVT-2026-003',
-          eventTitle: 'Sunset Eletrônico Warung',
-          eventStatus: 'publicado',
-          salesGrossCents: 9800000,
-          feeDisplay: '10%',
-          situation: 'pendente'
-        }
-      ]
-    },
-    {
-      id: 4,
-      name: 'CWB Brasil',
-      document: '33.456.789/0001-11',
-      status: 'ativo',
-      responsibleName: 'João Guilherme',
-      responsibleEmail: 'joao@cwbbrasil.com.br',
-      totalEventsCount: 5,
+      responsibleName: 'Rodrigo Fontoura',
+      responsibleEmail: 'rodrigo@primelive.com.br',
+      totalEventsCount: 2,
       activeEventsCount: 1,
       configuringEventsCount: 1,
-      closedEventsCount: 3,
+      closedEventsCount: 0,
       totalSalesCents: 3500000,
       totalDiskFeesCents: 350000,
       totalSpreadCents: 0,
@@ -437,41 +416,13 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       pendingIssuesCount: 1,
       events: [
         {
-          eventId: 4,
-          eventCode: 'EVT-2026-004',
+          eventId: 104,
+          eventCode: 'EVT-104',
           eventTitle: 'Festival Sertanejo Curitiba',
-          eventStatus: 'configuracao',
+          eventStatus: 'em_configuracao',
           salesGrossCents: 3500000,
-          feeDisplay: 'R$ 5,00',
+          feeDisplay: 'Não definida',
           situation: 'sem_taxa'
-        }
-      ]
-    },
-    {
-      id: 5,
-      name: 'Risorama Produções',
-      document: '44.567.890/0001-22',
-      status: 'ativo',
-      responsibleName: 'Diogo Portugal',
-      responsibleEmail: 'diogo@risorama.com.br',
-      totalEventsCount: 2,
-      activeEventsCount: 1,
-      configuringEventsCount: 0,
-      closedEventsCount: 1,
-      totalSalesCents: 2250000,
-      totalDiskFeesCents: 225000,
-      totalSpreadCents: 0,
-      totalAdvancedActiveCount: 0,
-      pendingIssuesCount: 0,
-      events: [
-        {
-          eventId: 5,
-          eventCode: 'EVT-2026-005',
-          eventTitle: 'Stand-up Comedy Gala',
-          eventStatus: 'publicado',
-          salesGrossCents: 2250000,
-          feeDisplay: '10% (Produtor)',
-          situation: 'regular'
         }
       ]
     }
@@ -495,7 +446,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 }) => {
   const [data, setData] = useState<DashboardResponse>(DEFAULT_COMMERCIAL_DATA)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
 
   // Pesquisa Comercial Global (no topo)
   const [globalSearch, setGlobalSearch] = useState('')
@@ -504,6 +455,10 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
   const [eventFilter, setEventFilter] = useState<
     'all' | 'ativos' | 'configuracao' | 'publicados' | 'encerrados' | 'com_pendencia' | 'sem_taxa' | 'advanced' | 'spread'
   >('all')
+
+  // Paginação dos eventos
+  const [eventPage, setEventPage] = useState(1)
+  const [eventPageSize, setEventPageSize] = useState(10)
 
   // Produtor selecionado para a Ficha do Produtor (modal)
   const [selectedProducer, setSelectedProducer] = useState<CommercialProducerItem | null>(null)
@@ -564,6 +519,11 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
     fetchDashboard()
   }, [producerId])
 
+  // Reseta para a primeira página ao alterar o filtro de eventos
+  useEffect(() => {
+    setEventPage(1)
+  }, [eventFilter])
+
   // Pesquisa Global: Resultados Separados em Tempo Real
   const searchResults = useMemo(() => {
     if (!data || !globalSearch.trim()) return { events: [], producers: [] }
@@ -573,7 +533,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
       e.eventTitle.toLowerCase().includes(q) ||
       e.eventCode.toLowerCase().includes(q) ||
       e.producerName.toLowerCase().includes(q) ||
-      e.contractNumber.toLowerCase().includes(q) ||
+      e.contractNumber?.toLowerCase().includes(q) ||
       String(e.eventId).includes(q)
     )
 
@@ -586,25 +546,25 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
     return { events, producers }
   }, [data, globalSearch])
 
-  // Filtragem da tabela "Eventos — Situação Comercial"
+  // Filtragem de Eventos da Tabela
   const filteredEvents = useMemo(() => {
     if (!data) return []
-    let list = data.events
+    let list = [...data.events]
 
     if (eventFilter === 'ativos') {
-      list = list.filter(e => e.eventStatus === 'publicado' || e.eventStatus === 'ativo')
+      list = list.filter(e => e.eventStatus === 'ativo' || e.eventStatus === 'publicado')
     } else if (eventFilter === 'configuracao') {
-      list = list.filter(e => e.eventStatus === 'rascunho' || e.eventStatus === 'configuracao')
+      list = list.filter(e => e.eventStatus === 'em_configuracao' || e.eventStatus === 'rascunho')
     } else if (eventFilter === 'publicados') {
       list = list.filter(e => e.eventStatus === 'publicado')
     } else if (eventFilter === 'encerrados') {
-      list = list.filter(e => e.eventStatus === 'encerrado' || e.eventStatus === 'finalizado')
+      list = list.filter(e => e.eventStatus === 'encerrado')
     } else if (eventFilter === 'com_pendencia') {
       list = list.filter(e => e.situation !== 'regular')
     } else if (eventFilter === 'sem_taxa') {
-      list = list.filter(e => e.situation === 'sem_taxa')
+      list = list.filter(e => !e.hasAgreement || e.situation === 'sem_taxa')
     } else if (eventFilter === 'advanced') {
-      list = list.filter(e => e.advancedEnabled)
+      list = list.filter(e => e.advancedEnabled || e.hasActiveAdvance)
     } else if (eventFilter === 'spread') {
       list = list.filter(e => e.spreadEnabled)
     }
@@ -612,27 +572,32 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
     return list
   }, [data, eventFilter])
 
-  // Abre modal para definir taxa
+  // Dados paginados para exibição
+  const paginatedEvents = useMemo(() => {
+    const start = (eventPage - 1) * eventPageSize
+    return filteredEvents.slice(start, start + eventPageSize)
+  }, [filteredEvents, eventPage, eventPageSize])
+
+  // Abre Modal de Taxa Preenchido
   const handleOpenFeeModal = (item: CommercialEventItem) => {
     setEditingItem(item)
-    setModalError(null)
-
     setServiceFeeType(item.serviceFeeType || 'percentage')
     setServiceFeePercent(item.serviceFeeBps ? (item.serviceFeeBps / 100).toFixed(1) : '10.0')
     setServiceFeeFixed(item.serviceFeeFixedCents ? (item.serviceFeeFixedCents / 100).toFixed(2) : '5.00')
     setServiceFeePaidBy(item.serviceFeePaidBy || 'buyer')
-    setSpreadEnabled(item.spreadEnabled || false)
+    setSpreadEnabled(Boolean(item.spreadEnabled))
     setSpreadPercent(item.spreadBps ? (item.spreadBps / 100).toFixed(1) : '1.5')
-    setAdvancedEnabled(item.advancedEnabled || false)
+    setAdvancedEnabled(Boolean(item.advancedEnabled))
     setAdvancedRate(item.advancedRateBps ? (item.advancedRateBps / 100).toFixed(1) : '2.5')
     setAdvancedMax('70')
     setPayoutTermsDays(String(item.payoutTermsDays || 2))
     setPayoutModel((item.payoutModel as any) || 'pos_evento')
     setContractNumber(item.contractNumber || `CTR-${item.eventCode}`)
-    setChangeReason(item.hasAgreement ? 'Ajuste de taxa comercial' : 'Definição de taxa comercial de serviço')
+    setChangeReason('')
+    setModalError(null)
   }
 
-  // Salva taxa
+  // Submissão do Formulário de Taxa
   const handleSaveFee = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingItem) return
@@ -717,100 +682,227 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
     }
   }
 
-  return (
-    <LimitlessPage dataTestId="commercial-hub-page" className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn">
-      {/* 1. Header com Título e Botão de Atualizar */}
-      <div className="card border-0 shadow-none bg-transparent mb-2">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[var(--ll-border)]">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="badge badge-subtle-primary">
-                Painel de Operação Comercial
-              </span>
-              <span className="badge badge-subtle-success">
-                Dados 100% Reais
-              </span>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[var(--ll-text)] flex items-center gap-2.5">
-              <Scale className="text-[var(--ll-primary)] w-7 h-7" />
-              Dashboard Comercial
-            </h1>
-            <p className="text-xs sm:text-sm text-[var(--ll-text-2)] mt-1 leading-relaxed">
-              Localize produtores ou eventos, acompanhe a situação contratual e gerencie as taxas Disk, spread e antecipações.
-            </p>
+  // Colunas da Tabela de Eventos
+  const eventColumns: DiskTableColumn<CommercialEventItem>[] = [
+    {
+      key: 'eventTitle',
+      header: 'Evento',
+      render: (ev) => (
+        <div
+          onClick={() => setSelectedEventDossier(ev)}
+          className="cursor-pointer group"
+        >
+          <div className="font-bold text-[var(--disk-text-primary,#0f172a)] group-hover:text-[var(--disk-color-primary,#f97316)] transition text-xs">
+            {ev.eventTitle}
           </div>
-
-          <div className="flex items-center gap-3 shrink-0 self-start md:self-center">
-            <button
-              onClick={fetchDashboard}
-              disabled={loading}
-              className="btn-primary flex items-center gap-2 text-xs cursor-pointer shadow-sm disabled:opacity-50"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-              <span>Atualizar Informações</span>
-            </button>
+          <div className="text-[10px] text-[var(--disk-text-muted,#64748b)] font-mono">
+            {ev.eventCode}
           </div>
         </div>
-      </div>
+      )
+    },
+    {
+      key: 'producerName',
+      header: 'Produtora',
+      render: (ev) => (
+        <div className="flex items-center gap-1.5 text-xs text-[var(--disk-text-secondary,#475569)]">
+          <Building2 className="w-3.5 h-3.5 text-[var(--disk-text-muted,#64748b)] shrink-0" />
+          <span className="truncate max-w-[160px]">{ev.producerName}</span>
+        </div>
+      )
+    },
+    {
+      key: 'eventStatus',
+      header: 'Status',
+      width: '120px',
+      render: (ev) => (
+        <span className="text-xs text-[var(--disk-text-secondary,#475569)] capitalize font-medium">
+          {ev.eventStatus}
+        </span>
+      )
+    },
+    {
+      key: 'salesGrossCents',
+      header: 'Vendas',
+      align: 'right',
+      width: '120px',
+      render: (ev) => (
+        <span className="font-mono font-bold text-xs text-[var(--disk-text-primary,#0f172a)]">
+          {ev.salesGrossCents > 0 ? moneyCompact(ev.salesGrossCents) : '—'}
+        </span>
+      )
+    },
+    {
+      key: 'fee',
+      header: 'Taxa Disk',
+      width: '110px',
+      render: (ev) => {
+        const feeDisplay =
+          ev.serviceFeeType === 'percentage'
+            ? `${(ev.serviceFeeBps / 100).toFixed(1)}%`
+            : `R$ ${(ev.serviceFeeFixedCents / 100).toFixed(2)}`
+        return ev.hasAgreement ? (
+          <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono text-xs">
+            {feeDisplay}
+          </span>
+        ) : (
+          <span className="text-rose-500 text-xs italic font-medium">Não definida</span>
+        )
+      }
+    },
+    {
+      key: 'spread',
+      header: 'Spread',
+      align: 'center',
+      width: '90px',
+      render: (ev) =>
+        ev.spreadEnabled ? (
+          <span className="text-purple-600 dark:text-purple-400 font-bold font-mono text-xs">
+            {(ev.spreadBps / 100).toFixed(1)}%
+          </span>
+        ) : (
+          <span className="text-[var(--disk-text-muted,#64748b)] text-xs">—</span>
+        )
+    },
+    {
+      key: 'advanced',
+      header: 'Advanced',
+      align: 'center',
+      width: '100px',
+      render: (ev) =>
+        ev.hasActiveAdvance ? (
+          <DiskStatusBadge status="ATIVO" label="Ativo" tone="success" />
+        ) : ev.advancedEnabled ? (
+          <DiskStatusBadge status="PENDING" label="Elegível" tone="warning" />
+        ) : (
+          <span className="text-[var(--disk-text-muted,#64748b)] text-xs">—</span>
+        )
+    },
+    {
+      key: 'situation',
+      header: 'Situação',
+      width: '120px',
+      render: (ev) =>
+        ev.situation === 'regular' ? (
+          <DiskStatusBadge status="PAID" label="Regular" tone="success" />
+        ) : ev.situation === 'sem_taxa' ? (
+          <DiskStatusBadge status="REFUNDED" label="Sem Taxa" tone="danger" />
+        ) : (
+          <DiskStatusBadge status="AWAITING_PAYMENT" label="Pendente" tone="warning" />
+        )
+    },
+    {
+      key: 'actions',
+      header: 'Ação',
+      align: 'right',
+      width: '110px',
+      render: (ev) => (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            handleOpenFeeModal(ev)
+          }}
+          className="px-2.5 py-1 bg-[var(--disk-color-primary,#f97316)] hover:bg-[var(--disk-color-primary-hover,#ea580c)] text-white text-xs font-semibold rounded-lg transition inline-flex items-center gap-1 cursor-pointer"
+          title="Definir ou ajustar taxa comercial deste evento"
+        >
+          <Edit3 className="w-3 h-3" />
+          <span>{ev.hasAgreement ? 'Ajustar' : 'Definir'}</span>
+        </button>
+      )
+    }
+  ]
 
-      {/* 2. PESQUISA COMERCIAL GLOBAL (no topo) */}
+  return (
+    <div
+      className="commercial-hub-container p-4 sm:p-6 lg:p-8 space-y-6 max-w-full mx-auto"
+      data-testid="commercial-hub-page"
+      data-visual-standard="disk-limitless-v7"
+    >
+      {/* 1. Header Canônico com DiskPageHeader */}
+      <DiskPageHeader
+        title="Dashboard Comercial"
+        subtitle="Localize produtores ou eventos, acompanhe a situação contratual e gerencie as taxas Disk, spread e antecipações."
+        eyebrow="Painel de Operação Comercial"
+        badge={
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <ShieldCheck className="w-3 h-3" />
+            Dados 100% Reais
+          </span>
+        }
+        actions={
+          <button
+            type="button"
+            onClick={fetchDashboard}
+            disabled={loading}
+            className="px-3.5 py-2 text-xs font-bold rounded-lg bg-[var(--disk-color-primary,#f97316)] text-white hover:bg-[var(--disk-color-primary-hover,#ea580c)] shadow-xs transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            data-testid="refresh-commercial-btn"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <span>Atualizar Informações</span>
+          </button>
+        }
+      />
+
+      {/* 2. Pesquisa Comercial Global */}
       <div className="relative">
-        <div className="card p-2.5 shadow-sm">
+        <DiskCard className="p-2.5">
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ll-primary)]" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--disk-color-primary,#f97316)] pointer-events-none" />
             <input
               type="text"
               value={globalSearch}
-              onChange={e => setGlobalSearch(e.target.value)}
+              onChange={(e) => setGlobalSearch(e.target.value)}
               placeholder="Pesquisar produtor, evento, ID do evento, CNPJ/CPF, responsável ou contrato..."
-              className="form-control w-full pl-10 pr-10 text-xs sm:text-sm"
+              className="w-full pl-10 pr-10 py-1.5 text-xs sm:text-sm rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-[var(--disk-text-primary,#0f172a)] placeholder:text-[var(--disk-text-disabled,#94a3b8)] focus:outline-none focus:border-[var(--disk-color-primary,#f97316)] transition"
             />
             {globalSearch && (
               <button
+                type="button"
                 onClick={() => setGlobalSearch('')}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--disk-text-muted,#64748b)] hover:text-[var(--disk-text-primary,#0f172a)] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
           </div>
-        </div>
+        </DiskCard>
 
         {/* Dropdown de Resultados da Pesquisa Global */}
         {globalSearch.trim() && (
-          <div className="absolute top-full left-0 right-0 z-40 mt-2 p-3 card shadow-2xl space-y-3 max-h-96 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 z-40 mt-2 p-3 rounded-xl border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] shadow-2xl space-y-3 max-h-96 overflow-y-auto">
             {searchResults.events.length === 0 && searchResults.producers.length === 0 ? (
-              <div className="p-4 text-center text-xs text-[var(--ll-text-muted)]">
+              <div className="p-4 text-center text-xs text-[var(--disk-text-muted,#64748b)]">
                 Nenhum produtor ou evento encontrado para &ldquo;{globalSearch}&rdquo;.
               </div>
             ) : (
               <>
-                {/* Produtores Encontrados */}
                 {searchResults.producers.length > 0 && (
                   <div>
-                    <div className="text-[11px] font-bold text-[var(--ll-text-muted)] uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
-                      <Building2 className="w-3.5 h-3.5 text-[var(--ll-primary)]" />
+                    <div className="text-[11px] font-bold text-[var(--disk-text-muted,#64748b)] uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
+                      <Building2 className="w-3.5 h-3.5 text-[var(--disk-color-primary,#f97316)]" />
                       Produtores ({searchResults.producers.length})
                     </div>
                     <div className="space-y-1">
-                      {searchResults.producers.map(prod => (
+                      {searchResults.producers.map((prod) => (
                         <button
                           key={prod.id}
+                          type="button"
                           onClick={() => {
                             setSelectedProducer(prod)
                             setGlobalSearch('')
                           }}
-                          className="w-full text-left p-2.5 rounded-lg hover:bg-[var(--ll-muted)] transition flex items-center justify-between group cursor-pointer"
+                          className="w-full text-left p-2.5 rounded-lg hover:bg-[var(--disk-bg-muted,#f1f5f9)] transition flex items-center justify-between group cursor-pointer"
                         >
                           <div>
-                            <div className="font-semibold text-[var(--ll-text)] group-hover:text-[var(--ll-primary)] transition text-sm">
+                            <div className="font-semibold text-[var(--disk-text-primary,#0f172a)] group-hover:text-[var(--disk-color-primary,#f97316)] transition text-xs sm:text-sm">
                               {prod.name}
                             </div>
-                            <div className="text-xs text-[var(--ll-text-muted)]">
+                            <div className="text-[11px] text-[var(--disk-text-muted,#64748b)]">
                               CNPJ: {prod.document} • Resp: {prod.responsibleName} • {prod.totalEventsCount} eventos
                             </div>
                           </div>
-                          <span className="text-xs text-[var(--ll-primary)] font-semibold flex items-center gap-1">
+                          <span className="text-xs text-[var(--disk-color-primary,#f97316)] font-semibold flex items-center gap-1">
                             Abrir Ficha <ChevronRight className="w-3.5 h-3.5" />
                           </span>
                         </button>
@@ -819,29 +911,32 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
                   </div>
                 )}
 
-                {/* Eventos Encontrados */}
                 {searchResults.events.length > 0 && (
-                  <div className="pt-2 border-t border-[var(--ll-border)]">
-                    <div className="text-[11px] font-bold text-[var(--ll-text-muted)] uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
+                  <div className="pt-2 border-t border-[var(--disk-border-subtle,#f1f5f9)]">
+                    <div className="text-[11px] font-bold text-[var(--disk-text-muted,#64748b)] uppercase tracking-wider mb-2 flex items-center gap-1.5 px-2">
                       <Scale className="w-3.5 h-3.5 text-emerald-500" />
                       Eventos ({searchResults.events.length})
                     </div>
                     <div className="space-y-1">
-                      {searchResults.events.map(ev => (
+                      {searchResults.events.map((ev) => (
                         <button
                           key={ev.eventId}
+                          type="button"
                           onClick={() => {
                             setSelectedEventDossier(ev)
                             setGlobalSearch('')
                           }}
-                          className="w-full text-left p-2.5 rounded-lg hover:bg-[var(--ll-muted)] transition flex items-center justify-between group cursor-pointer"
+                          className="w-full text-left p-2.5 rounded-lg hover:bg-[var(--disk-bg-muted,#f1f5f9)] transition flex items-center justify-between group cursor-pointer"
                         >
                           <div>
-                            <div className="font-semibold text-[var(--ll-text)] group-hover:text-emerald-500 transition text-sm">
+                            <div className="font-semibold text-[var(--disk-text-primary,#0f172a)] group-hover:text-emerald-500 transition text-xs sm:text-sm">
                               {ev.eventTitle}
                             </div>
-                            <div className="text-xs text-[var(--ll-text-muted)]">
-                              {ev.eventCode} • {ev.producerName} • Status: {ev.eventStatus} • Taxa: {ev.serviceFeeType === 'percentage' ? `${(ev.serviceFeeBps / 100).toFixed(1)}%` : `R$ ${(ev.serviceFeeFixedCents / 100).toFixed(2)}`}
+                            <div className="text-[11px] text-[var(--disk-text-muted,#64748b)]">
+                              {ev.eventCode} • {ev.producerName} • Status: {ev.eventStatus} • Taxa:{' '}
+                              {ev.serviceFeeType === 'percentage'
+                                ? `${(ev.serviceFeeBps / 100).toFixed(1)}%`
+                                : `R$ ${(ev.serviceFeeFixedCents / 100).toFixed(2)}`}
                             </div>
                           </div>
                           <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
@@ -858,794 +953,539 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
         )}
       </div>
 
-      {/* Tratamento de Erro e Estado de Carregamento */}
-      {loading && !data ? (
-        <div className="p-16 text-center text-[var(--ll-text-muted)] flex flex-col items-center justify-center gap-3">
-          <RefreshCw className="w-7 h-7 animate-spin text-[var(--ll-primary)]" />
-          <span className="text-sm font-medium">Consultando dados comerciais reais do Core...</span>
+      {/* 3. OS 12 INDICADORES OPERACIONAIS REAIS (Limitless V7) */}
+      <div className="space-y-3">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--disk-text-muted,#64748b)] flex items-center gap-2">
+          <BarChart3 className="w-4 h-4 text-[var(--disk-color-primary,#f97316)]" />
+          Indicadores Operacionais Comerciais
+        </h2>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+          <DiskKpiCard
+            label="Eventos Ativos"
+            value={data.kpis.activeEvents}
+            note="Em operação"
+            accent="neutral"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Em Configuração"
+            value={data.kpis.configuringEvents}
+            note="Não publicados"
+            accent="warning"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Publicados"
+            value={data.kpis.publishedEvents}
+            note="Vendas abertas"
+            accent="success"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Encerrados"
+            value={data.kpis.closedEvents}
+            note="Finalizados"
+            accent="neutral"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Produtores Ativos"
+            value={data.kpis.activeProducers}
+            note="Com eventos"
+            accent="info"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Vendas Atuais"
+            value={moneyCompact(data.kpis.currentSalesCents)}
+            note="Total vendido"
+            accent="success"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Ingressos Vendidos"
+            value={data.kpis.ticketsSold.toLocaleString('pt-BR')}
+            note="Consolidado"
+            accent="neutral"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Taxas Disk"
+            value={moneyCompact(data.kpis.diskFeesCents)}
+            note="Receita de taxas"
+            accent="primary"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Spread"
+            value={moneyCompact(data.kpis.spreadCents)}
+            note="Operações ativas"
+            accent="purple"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Advanced"
+            value={moneyCompact(data.kpis.advancedActiveCents)}
+            note="Antecipações"
+            accent="warning"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="A Receber"
+            value={moneyCompact(data.kpis.receivablesCents)}
+            note="Previsto"
+            accent="info"
+            loading={loading}
+          />
+          <DiskKpiCard
+            label="Pendências"
+            value={data.kpis.commercialIssuesCount}
+            note="Atenção exigida"
+            accent="danger"
+            loading={loading}
+          />
         </div>
-      ) : error && !data ? (
-        <div className="p-6 text-center text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl flex flex-col items-center justify-center gap-3">
-          <AlertTriangle className="w-7 h-7" />
-          <span className="font-semibold text-base">{error}</span>
-          <button
-            onClick={fetchDashboard}
-            className="btn-primary text-xs"
-          >
-            Tentar novamente
-          </button>
-        </div>
-      ) : !data ? (
-        <div className="p-12 text-center text-[var(--ll-text-muted)]">
-          Nenhum dado comercial disponível.
-        </div>
-      ) : (
-        <>
-          {/* 3. OS 12 INDICADORES OPERACIONAIS REAIS */}
-          <div className="space-y-3">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--ll-text-muted)] flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-[var(--ll-primary)]" />
-              Indicadores Operacionais Comerciais
-            </h2>
+      </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Eventos Ativos</div>
-                <div className="text-xl font-black text-[var(--ll-text)] mt-1">{data.kpis.activeEvents}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Em operação</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Em Configuração</div>
-                <div className="text-xl font-black text-amber-500 mt-1">{data.kpis.configuringEvents}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Não publicados</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Publicados</div>
-                <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{data.kpis.publishedEvents}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Vendas abertas</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Encerrados</div>
-                <div className="text-xl font-black text-[var(--ll-text-muted)] mt-1">{data.kpis.closedEvents}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Finalizados</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Produtores Ativos</div>
-                <div className="text-xl font-black text-blue-600 dark:text-blue-400 mt-1">{data.kpis.activeProducers}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Com eventos</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Vendas Atuais</div>
-                <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">{moneyCompact(data.kpis.currentSalesCents)}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Total vendido</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Ingressos Vendidos</div>
-                <div className="text-xl font-black text-[var(--ll-text)] mt-1">{data.kpis.ticketsSold.toLocaleString('pt-BR')}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Consolidado</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Taxas Disk</div>
-                <div className="text-xl font-black text-[var(--ll-primary)] mt-1">{moneyCompact(data.kpis.diskFeesCents)}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Receita de taxas</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Spread</div>
-                <div className="text-xl font-black text-purple-600 dark:text-purple-400 mt-1">{moneyCompact(data.kpis.spreadCents)}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Operações ativas</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Advanced</div>
-                <div className="text-xl font-black text-amber-500 mt-1">{moneyCompact(data.kpis.advancedActiveCents)}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Antecipações</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">A Receber</div>
-                <div className="text-xl font-black text-cyan-600 dark:text-cyan-400 mt-1">{moneyCompact(data.kpis.receivablesCents)}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Previsto</div>
-              </div>
-
-              <div className="card p-3.5 shadow-sm">
-                <div className="text-[11px] text-[var(--ll-text-muted)] uppercase font-bold tracking-wider">Pendências</div>
-                <div className="text-xl font-black text-rose-500 mt-1">{data.kpis.commercialIssuesCount}</div>
-                <div className="text-[11px] text-[var(--ll-text-muted)] mt-0.5">Atenção exigida</div>
-              </div>
-            </div>
+      {/* 4. ALERTAS COMERCIAIS ("Atenção Necessária Hoje") */}
+      {data.alerts && data.alerts.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-xs font-bold uppercase tracking-wider text-[var(--disk-text-muted,#64748b)] flex items-center gap-1.5">
+            <AlertCircle className="w-4 h-4 text-amber-500" />
+            Atenção Necessária Hoje
           </div>
 
-          {/* 4. ALERTAS COMERCIAIS ("Atenção Necessária") */}
-          {data.alerts && data.alerts.length > 0 && (
-            <div className="space-y-2">
-              <div className="text-xs font-bold uppercase tracking-wider text-[var(--ll-text-muted)] flex items-center gap-1.5">
-                <AlertCircle className="w-4 h-4 text-amber-500" />
-                Atenção Necessária Hoje
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {data.alerts.map((alert) => {
+              const borderAccent =
+                alert.severity === 'danger'
+                  ? 'border-l-4 border-l-rose-500'
+                  : alert.severity === 'warning'
+                  ? 'border-l-4 border-l-amber-500'
+                  : 'border-l-4 border-l-sky-500'
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {data.alerts.map(alert => {
-                  const borderClass =
-                    alert.severity === 'danger'
-                      ? 'border-l-4 border-l-rose-500'
-                      : alert.severity === 'warning'
-                      ? 'border-l-4 border-l-amber-500'
-                      : alert.severity === 'info'
-                      ? 'border-l-4 border-l-sky-500'
-                      : 'border-l-4 border-l-[var(--ll-border)]'
-
-                  return (
-                    <button
-                      key={alert.id}
-                      onClick={() => setEventFilter(alert.filterKey as any)}
-                      className={`card p-3 text-left hover:shadow-md transition space-y-1 cursor-pointer ${borderClass}`}
-                    >
-                      <div className="font-bold text-xs flex items-center justify-between text-[var(--ll-text)]">
-                        <span>{alert.title}</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-[var(--ll-text-muted)]" />
-                      </div>
-                      <p className="text-[11px] text-[var(--ll-text-2)]">{alert.description}</p>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* 5. SEÇÃO CENTRAL: EVENTOS — SITUAÇÃO COMERCIAL */}
-          <div className="card overflow-hidden shadow-sm">
-            <div className="card-header flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Scale className="w-4 h-4 text-[var(--ll-primary)]" />
-                <h2 className="card-title text-sm font-bold">Eventos — Situação Comercial</h2>
-              </div>
-
-              {/* Filtros da Tabela com Segmented Tabs Limitless */}
-              <div className="limitless-tabs overflow-x-auto w-full sm:w-auto">
+              return (
                 <button
-                  onClick={() => setEventFilter('all')}
-                  className={`limitless-tab-btn ${eventFilter === 'all' ? 'active' : ''}`}
+                  key={alert.id}
+                  type="button"
+                  onClick={() => setEventFilter(alert.filterKey as any)}
+                  className={`disk-card p-3.5 text-left hover:shadow-md transition space-y-1 cursor-pointer ${borderAccent}`}
                 >
-                  Todos ({data.events.length})
+                  <div className="font-bold text-xs flex items-center justify-between text-[var(--disk-text-primary,#0f172a)]">
+                    <span>{alert.title}</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-[var(--disk-text-muted,#64748b)]" />
+                  </div>
+                  <p className="text-[11px] text-[var(--disk-text-secondary,#475569)]">
+                    {alert.description}
+                  </p>
                 </button>
-                <button
-                  onClick={() => setEventFilter('ativos')}
-                  className={`limitless-tab-btn ${eventFilter === 'ativos' ? 'active' : ''}`}
-                >
-                  Ativos ({data.kpis.activeEvents})
-                </button>
-                <button
-                  onClick={() => setEventFilter('configuracao')}
-                  className={`limitless-tab-btn ${eventFilter === 'configuracao' ? 'active' : ''}`}
-                >
-                  Configuração ({data.kpis.configuringEvents})
-                </button>
-                <button
-                  onClick={() => setEventFilter('publicados')}
-                  className={`limitless-tab-btn ${eventFilter === 'publicados' ? 'active' : ''}`}
-                >
-                  Publicados ({data.kpis.publishedEvents})
-                </button>
-                <button
-                  onClick={() => setEventFilter('com_pendencia')}
-                  className={`limitless-tab-btn ${eventFilter === 'com_pendencia' ? 'active' : ''}`}
-                >
-                  Com Pendência ({data.kpis.commercialIssuesCount})
-                </button>
-                <button
-                  onClick={() => setEventFilter('advanced')}
-                  className={`limitless-tab-btn ${eventFilter === 'advanced' ? 'active' : ''}`}
-                >
-                  Advanced
-                </button>
-                <button
-                  onClick={() => setEventFilter('spread')}
-                  className={`limitless-tab-btn ${eventFilter === 'spread' ? 'active' : ''}`}
-                >
-                  Spread
-                </button>
-              </div>
-            </div>
-
-            {/* Tabela Operacional Limitless */}
-            <div>
-              {filteredEvents.length === 0 ? (
-                <div className="p-12 text-center text-[var(--ll-text-muted)] text-xs">
-                  Nenhum evento encontrado para o filtro selecionado.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>EVENTO</th>
-                        <th>PRODUTOR</th>
-                        <th>STATUS</th>
-                        <th>VENDAS</th>
-                        <th>TAXA</th>
-                        <th>SPREAD</th>
-                        <th>ADVANCED</th>
-                        <th>SITUAÇÃO</th>
-                        <th className="text-right">AÇÃO</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredEvents.map(ev => {
-                        const feeDisplay =
-                          ev.serviceFeeType === 'percentage'
-                            ? `${(ev.serviceFeeBps / 100).toFixed(1)}%`
-                            : `R$ ${(ev.serviceFeeFixedCents / 100).toFixed(2)}`
-
-                        const situationBadge =
-                          ev.situation === 'regular' ? (
-                            <span className="badge badge-subtle-success">
-                              Regular
-                            </span>
-                          ) : ev.situation === 'sem_taxa' ? (
-                            <span className="badge badge-subtle-danger">
-                              Sem Taxa
-                            </span>
-                          ) : (
-                            <span className="badge badge-subtle-warning">
-                              Pendente
-                            </span>
-                          )
-
-                        return (
-                          <tr
-                            key={ev.eventId}
-                            onClick={() => setSelectedEventDossier(ev)}
-                            className="cursor-pointer group"
-                          >
-                            <td>
-                              <div className="font-bold text-[var(--ll-text)] group-hover:text-[var(--ll-primary)] transition">
-                                {ev.eventTitle}
-                              </div>
-                              <div className="text-[10px] text-[var(--ll-text-muted)] font-mono">
-                                {ev.eventCode}
-                              </div>
-                            </td>
-
-                            <td className="text-[var(--ll-text-2)]">
-                              <div className="flex items-center gap-1.5">
-                                <Building2 className="w-3.5 h-3.5 text-[var(--ll-text-muted)]" />
-                                <span>{ev.producerName}</span>
-                              </div>
-                            </td>
-
-                            <td>
-                              <span className="text-xs text-[var(--ll-text-2)] capitalize font-medium">
-                                {ev.eventStatus}
-                              </span>
-                            </td>
-
-                            <td className="font-mono font-bold text-[var(--ll-text)]">
-                              {ev.salesGrossCents > 0 ? moneyCompact(ev.salesGrossCents) : '—'}
-                            </td>
-
-                            <td className="font-mono font-medium">
-                              {ev.hasAgreement ? (
-                                <span className="text-emerald-600 dark:text-emerald-400 font-bold">{feeDisplay}</span>
-                              ) : (
-                                <span className="text-rose-500 text-xs italic">Não definida</span>
-                              )}
-                            </td>
-
-                            <td className="font-mono text-xs">
-                              {ev.spreadEnabled ? (
-                                <span className="text-purple-600 dark:text-purple-400 font-semibold">
-                                  {(ev.spreadBps / 100).toFixed(1)}%
-                                </span>
-                              ) : (
-                                <span className="text-[var(--ll-text-muted)]">—</span>
-                              )}
-                            </td>
-
-                            <td className="text-xs">
-                              {ev.hasActiveAdvance ? (
-                                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Ativo</span>
-                              ) : ev.advancedEnabled ? (
-                                <span className="text-amber-500 font-semibold">Elegível</span>
-                              ) : (
-                                <span className="text-[var(--ll-text-muted)]">—</span>
-                              )}
-                            </td>
-
-                            <td>
-                              {situationBadge}
-                            </td>
-
-                            <td className="text-right space-x-2" onClick={e => e.stopPropagation()}>
-                              <button
-                                onClick={() => handleOpenFeeModal(ev)}
-                                className="px-2.5 py-1 bg-[var(--ll-primary)] hover:bg-[var(--ll-primary-hover)] text-white text-xs font-semibold rounded-lg transition inline-flex items-center gap-1 cursor-pointer"
-                                title="Definir ou ajustar taxa comercial deste evento"
-                              >
-                                <Edit3 className="w-3 h-3" />
-                                <span>{ev.hasAgreement ? 'Ajustar' : 'Definir'}</span>
-                              </button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+              )
+            })}
           </div>
-
-        </>
+        </div>
       )}
 
-      {/* 6. MODAL DA FICHA DO PRODUTOR (quando selecionado) */}
+      {/* 5. TABELA OFICIAL DE EVENTOS COM DISKDATATABLE */}
+      <div className="space-y-3">
+        {/* Abas Segmentadas de Filtro */}
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center p-1 bg-[var(--disk-bg-muted,#f1f5f9)] rounded-lg border border-[var(--disk-border-subtle,#f1f5f9)] shrink-0">
+            {[
+              { key: 'all', label: `Todos (${data.events.length})` },
+              { key: 'ativos', label: `Ativos (${data.kpis.activeEvents})` },
+              { key: 'configuracao', label: `Configuração (${data.kpis.configuringEvents})` },
+              { key: 'publicados', label: `Publicados (${data.kpis.publishedEvents})` },
+              { key: 'com_pendencia', label: `Com Pendência (${data.kpis.commercialIssuesCount})` },
+              { key: 'advanced', label: 'Advanced' },
+              { key: 'spread', label: 'Spread' }
+            ].map((tab) => {
+              const isActive = eventFilter === tab.key
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setEventFilter(tab.key as any)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'bg-[var(--disk-bg-surface,#ffffff)] text-[var(--disk-text-primary,#0f172a)] shadow-xs font-bold'
+                      : 'text-[var(--disk-text-secondary,#475569)] hover:text-[var(--disk-text-primary,#0f172a)] bg-transparent'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <DiskDataTable
+          columns={eventColumns}
+          data={paginatedEvents}
+          keyExtractor={(ev) => ev.eventId}
+          loading={loading}
+          cardTitle={
+            <div className="flex items-center gap-2">
+              <Scale className="w-4 h-4 text-[var(--disk-color-primary,#f97316)]" />
+              <span>Eventos — Situação Comercial</span>
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[var(--disk-color-primary,#f97316)]/10 text-[var(--disk-color-primary,#f97316)]">
+                {filteredEvents.length} {filteredEvents.length === 1 ? 'evento' : 'eventos'}
+              </span>
+            </div>
+          }
+          emptyState={
+            <DiskEmptyState
+              icon={<Scale className="w-6 h-6" />}
+              title="Nenhum evento encontrado"
+              description="Nenhum evento corresponde ao filtro comercial selecionado."
+            />
+          }
+          pagination={{
+            currentPage: eventPage,
+            pageSize: eventPageSize,
+            totalItems: filteredEvents.length,
+            onPageChange: setEventPage,
+            onPageSizeChange: (newSize) => {
+              setEventPageSize(newSize)
+              setEventPage(1)
+            },
+            pageSizeOptions: [10, 25, 50]
+          }}
+        />
+      </div>
+
+      {/* 6. MODAL DA FICHA DO PRODUTOR */}
       {selectedProducer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="card max-w-3xl w-full shadow-2xl my-8 overflow-hidden">
-            <div className="card-header pb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-[var(--ll-primary)]/10 border border-[var(--ll-primary)]/20 flex items-center justify-center text-[var(--ll-primary)] font-black text-lg">
-                  {selectedProducer.name.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-[var(--ll-text)]">{selectedProducer.name}</h3>
-                  <div className="text-xs text-[var(--ll-text-muted)] mt-0.5">
-                    Responsável: <span className="font-semibold text-[var(--ll-text)]">{selectedProducer.responsibleName}</span> • Documento: <span className="font-mono text-[var(--ll-text)]">{selectedProducer.document}</span>
-                  </div>
+        <DiskModal
+          isOpen={Boolean(selectedProducer)}
+          onClose={() => setSelectedProducer(null)}
+          size="xl"
+          title={
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[var(--disk-color-primary,#f97316)]/10 border border-[var(--disk-color-primary,#f97316)]/20 flex items-center justify-center text-[var(--disk-color-primary,#f97316)] font-black text-base">
+                {selectedProducer.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-bold text-[var(--disk-text-primary,#0f172a)]">
+                  {selectedProducer.name}
+                </h3>
+                <div className="text-xs text-[var(--disk-text-muted,#64748b)]">
+                  CNPJ: {selectedProducer.document} • Resp: {selectedProducer.responsibleName}
                 </div>
               </div>
-              <button
-                onClick={() => setSelectedProducer(null)}
-                className="p-1.5 rounded-lg text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:bg-[var(--ll-muted)] transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+            </div>
+          }
+        >
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] font-semibold block">Eventos Totais</span>
+                <span className="text-lg font-black text-[var(--disk-text-primary,#0f172a)]">{selectedProducer.totalEventsCount}</span>
+                <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block mt-0.5">
+                  {selectedProducer.activeEventsCount} ativos • {selectedProducer.configuringEventsCount} config
+                </span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] font-semibold block">Vendas Acumuladas</span>
+                <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{money(selectedProducer.totalSalesCents)}</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] font-semibold block">Taxas Disk Geradas</span>
+                <span className="text-lg font-black text-[var(--disk-color-primary,#f97316)]">{money(selectedProducer.totalDiskFeesCents)}</span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] font-semibold block">Spread Acumulado</span>
+                <span className="text-lg font-black text-purple-600 dark:text-purple-400">{money(selectedProducer.totalSpreadCents)}</span>
+              </div>
             </div>
 
-            <div className="card-body space-y-4">
-              {/* Métricas Consolidadas do Produtor */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
-                  <span className="text-[var(--ll-text-muted)] font-semibold block">Eventos Totais</span>
-                  <span className="text-lg font-black text-[var(--ll-text)]">{selectedProducer.totalEventsCount}</span>
-                  <span className="text-[10px] text-[var(--ll-text-muted)] block mt-0.5">
-                    {selectedProducer.activeEventsCount} ativos • {selectedProducer.configuringEventsCount} config
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
-                  <span className="text-[var(--ll-text-muted)] font-semibold block">Vendas Acumuladas</span>
-                  <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{money(selectedProducer.totalSalesCents)}</span>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
-                  <span className="text-[var(--ll-text-muted)] font-semibold block">Taxas Disk Geradas</span>
-                  <span className="text-lg font-black text-[var(--ll-primary)]">{money(selectedProducer.totalDiskFeesCents)}</span>
-                </div>
-
-                <div className="p-3 rounded-lg bg-[var(--ll-muted)] border border-[var(--ll-border)]">
-                  <span className="text-[var(--ll-text-muted)] font-semibold block">Spread Acumulado</span>
-                  <span className="text-lg font-black text-purple-600 dark:text-purple-400">{money(selectedProducer.totalSpreadCents)}</span>
-                </div>
-              </div>
-
-              {/* Lista de Eventos do Produtor */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider">
-                  Eventos Desta Produtora ({selectedProducer.events.length})
-                </h4>
-                <div className="max-h-60 overflow-y-auto divide-y divide-[var(--ll-border)] rounded-lg border border-[var(--ll-border)] bg-[var(--ll-muted)]">
-                  {selectedProducer.events.map(ev => (
-                    <div
-                      key={ev.eventId}
-                      onClick={() => {
-                        setSelectedProducer(null)
-                        handleOpenEventContext(ev.eventId)
-                      }}
-                      className="p-3 hover:bg-[var(--ll-surface)] transition cursor-pointer flex items-center justify-between"
-                    >
-                      <div>
-                        <div className="font-bold text-[var(--ll-text)] text-sm hover:text-[var(--ll-primary)]">
-                          {ev.eventTitle}
-                        </div>
-                        <div className="text-xs text-[var(--ll-text-muted)] font-mono">
-                          {ev.eventCode} • Vendas: {moneyCompact(ev.salesGrossCents)} • Taxa: {ev.feeDisplay}
-                        </div>
+            <div className="space-y-2">
+              <h4 className="text-xs font-bold text-[var(--disk-text-primary,#0f172a)] uppercase tracking-wider">
+                Eventos Desta Produtora ({selectedProducer.events.length})
+              </h4>
+              <div className="max-h-60 overflow-y-auto divide-y divide-[var(--disk-border-subtle,#f1f5f9)] rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)]">
+                {selectedProducer.events.map((ev) => (
+                  <div
+                    key={ev.eventId}
+                    onClick={() => {
+                      setSelectedProducer(null)
+                      const fullEv = data.events.find((e) => e.eventId === ev.eventId)
+                      if (fullEv) setSelectedEventDossier(fullEv)
+                    }}
+                    className="p-3 hover:bg-[var(--disk-bg-hover,#f8fafc)] transition flex items-center justify-between cursor-pointer group"
+                  >
+                    <div>
+                      <div className="font-semibold text-xs text-[var(--disk-text-primary,#0f172a)] group-hover:text-[var(--disk-color-primary,#f97316)] transition">
+                        {ev.eventTitle}
                       </div>
-                      <button className="px-2.5 py-1 rounded bg-[var(--ll-surface)] border border-[var(--ll-border)] text-xs text-[var(--ll-text)] hover:bg-[var(--ll-primary)] hover:text-white transition flex items-center gap-1 cursor-pointer">
-                        <span>Abrir Operação</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="text-[10px] text-[var(--disk-text-muted,#64748b)] font-mono">
+                        {ev.eventCode} • Vendas: {moneyCompact(ev.salesGrossCents)} • Taxa: {ev.feeDisplay}
+                      </div>
                     </div>
-                  ))}
-                </div>
+                    <span className="text-xs text-[var(--disk-color-primary,#f97316)] font-semibold flex items-center gap-1">
+                      Ver Condições <ChevronRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
+        </DiskModal>
       )}
 
       {/* 7. MODAL DO DOSSIÊ DE CONDIÇÕES COMERCIAIS DO EVENTO */}
       {selectedEventDossier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="card max-w-2xl w-full shadow-2xl my-8 overflow-hidden">
-            <div className="card-header pb-4">
-              <div>
-                <div className="text-xs font-bold text-[var(--ll-primary)] uppercase tracking-wider mb-1">
-                  Ficha Comercial do Evento
-                </div>
-                <h3 className="text-lg font-bold text-[var(--ll-text)]">{selectedEventDossier.eventTitle}</h3>
-                <div className="text-xs text-[var(--ll-text-muted)] mt-0.5">
-                  <span className="font-mono text-[var(--ll-text)]">{selectedEventDossier.eventCode}</span> • Produtora: <span className="font-semibold text-[var(--ll-text)]">{selectedEventDossier.producerName}</span>
-                </div>
-              </div>
+        <DiskModal
+          isOpen={Boolean(selectedEventDossier)}
+          onClose={() => setSelectedEventDossier(null)}
+          size="xl"
+          title={
+            <div className="flex items-center gap-2">
+              <Scale className="w-5 h-5 text-[var(--disk-color-primary,#f97316)]" />
+              <span>Dossiê de Condições Comerciais • {selectedEventDossier.eventTitle}</span>
+            </div>
+          }
+          subtitle={`Código: ${selectedEventDossier.eventCode} • Produtora: ${selectedEventDossier.producerName}`}
+          footer={
+            <div className="flex items-center justify-between w-full">
               <button
-                onClick={() => setSelectedEventDossier(null)}
-                className="p-1.5 rounded-lg text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:bg-[var(--ll-muted)] transition cursor-pointer"
+                type="button"
+                onClick={() => {
+                  const ev = selectedEventDossier
+                  setSelectedEventDossier(null)
+                  handleOpenFeeModal(ev)
+                }}
+                className="px-3.5 py-2 rounded-lg bg-[var(--disk-color-primary,#f97316)] text-white text-xs font-bold hover:bg-[var(--disk-color-primary-hover,#ea580c)] transition flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
-                <X className="w-5 h-5" />
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>Editar Condições / Nova Negociação</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const eventId = selectedEventDossier.eventId
+                  setSelectedEventDossier(null)
+                  handleOpenEventContext(eventId)
+                }}
+                className="px-3 py-1.5 rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-xs font-semibold hover:bg-[var(--disk-bg-muted,#f1f5f9)] transition flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Abrir Gestão do Evento</span>
+                <ExternalLink className="w-3.5 h-3.5" />
               </button>
             </div>
-
-            <div className="card-body space-y-4">
-              {/* Painel Estruturado de Condições Comerciais */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                {/* Taxa de Serviço */}
-                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
-                  <span className="font-bold text-[var(--ll-text)] block">Taxa de Serviço Disk</span>
-                  <div className="text-lg font-black text-emerald-600 dark:text-emerald-400">
-                    {selectedEventDossier.serviceFeeType === 'percentage'
-                      ? `${(selectedEventDossier.serviceFeeBps / 100).toFixed(1)}%`
-                      : `R$ ${(selectedEventDossier.serviceFeeFixedCents / 100).toFixed(2)}`}
-                  </div>
-                  <span className="text-[var(--ll-text-muted)] block">
-                    Paga por: {selectedEventDossier.serviceFeePaidBy === 'buyer' ? 'Comprador' : 'Produtor'}
-                  </span>
-                </div>
-
-                {/* Spread */}
-                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
-                  <span className="font-bold text-[var(--ll-text)] block">Spread Comercial</span>
-                  <div className="text-lg font-black text-purple-600 dark:text-purple-400">
-                    {selectedEventDossier.spreadEnabled ? `${(selectedEventDossier.spreadBps / 100).toFixed(1)}%` : 'Inativo'}
-                  </div>
-                  <span className="text-[var(--ll-text-muted)] block">
-                    {selectedEventDossier.spreadEnabled ? 'Operação de spread contratada' : 'Sem spread configurado'}
-                  </span>
-                </div>
-
-                {/* Advanced */}
-                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
-                  <span className="font-bold text-[var(--ll-text)] block">Advanced (Antecipação)</span>
-                  <div className="text-lg font-black text-amber-500">
-                    {selectedEventDossier.advancedEnabled ? 'Habilitado' : 'Desabilitado'}
-                  </div>
-                  <span className="text-[var(--ll-text-muted)] block">
-                    {selectedEventDossier.hasActiveAdvance ? 'Possui contratos de antecipação em vigor' : 'Sem operações ativas'}
-                  </span>
-                </div>
-
-                {/* Repasse & Contrato */}
-                <div className="p-3.5 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-1">
-                  <span className="font-bold text-[var(--ll-text)] block">Repasse & Contrato</span>
-                  <div className="text-sm font-bold text-[var(--ll-text)]">
-                    Prazo: D+{selectedEventDossier.payoutTermsDays} ({selectedEventDossier.payoutModel})
-                  </div>
-                  <span className="text-[var(--ll-text-muted)] font-mono block">
-                    {selectedEventDossier.contractNumber} (v{selectedEventDossier.currentVersion})
-                  </span>
-                </div>
+          }
+        >
+          <div className="space-y-4 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Taxa de Serviço</span>
+                <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                  {selectedEventDossier.serviceFeeType === 'percentage'
+                    ? `${(selectedEventDossier.serviceFeeBps / 100).toFixed(1)}%`
+                    : `R$ ${(selectedEventDossier.serviceFeeFixedCents / 100).toFixed(2)}`}
+                </span>
+                <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block">
+                  Paga pelo: {selectedEventDossier.serviceFeePaidBy === 'buyer' ? 'Comprador' : 'Produtor'}
+                </span>
               </div>
 
-              {/* Ações Rápidas */}
-              <div className="flex items-center justify-between pt-3 border-t border-[var(--ll-border)]">
-                <button
-                  onClick={() => {
-                    const ev = selectedEventDossier
-                    setSelectedEventDossier(null)
-                    handleOpenFeeModal(ev)
-                  }}
-                  className="btn-primary text-xs flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Edit3 className="w-3.5 h-3.5" />
-                  <span>Editar Condições / Nova Negociação</span>
-                </button>
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Spread Comercial</span>
+                <span className="text-base font-black text-purple-600 dark:text-purple-400">
+                  {selectedEventDossier.spreadEnabled ? `${(selectedEventDossier.spreadBps / 100).toFixed(1)}%` : 'Inativo'}
+                </span>
+                <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block">
+                  {selectedEventDossier.spreadEnabled ? money(selectedEventDossier.spreadCents) : 'Sem operações'}
+                </span>
+              </div>
 
-                <button
-                  onClick={() => {
-                    const eventId = selectedEventDossier.eventId
-                    setSelectedEventDossier(null)
-                    handleOpenEventContext(eventId)
-                  }}
-                  className="btn-light text-xs flex items-center gap-1.5 cursor-pointer"
-                >
-                  <span>Abrir Gestão do Evento</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </button>
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Advanced (Antecipação)</span>
+                <span className="text-base font-black text-amber-500">
+                  {selectedEventDossier.advancedEnabled ? `${(selectedEventDossier.advancedRateBps / 100).toFixed(1)}% a.m.` : 'Inativo'}
+                </span>
+                <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block">
+                  {selectedEventDossier.hasActiveAdvance ? 'Operação ativa' : 'Sem saldo antecipado'}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
+                <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Prazo de Repasse</span>
+                <span className="text-base font-black text-[var(--disk-text-primary,#0f172a)]">
+                  D+{selectedEventDossier.payoutTermsDays}
+                </span>
+                <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block">
+                  Modelo: {selectedEventDossier.payoutModel === 'pos_evento' ? 'Pós-evento' : selectedEventDossier.payoutModel}
+                </span>
               </div>
             </div>
           </div>
-        </div>
+        </DiskModal>
       )}
 
       {/* 8. MODAL PARA DEFINIR / AJUSTAR TAXA COMERCIAL */}
       {editingItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="card max-w-2xl w-full shadow-2xl my-8 overflow-hidden">
-            <div className="card-header pb-4">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-bold text-[var(--ll-primary)] uppercase tracking-wider mb-1">
-                  <Scale className="w-4 h-4" />
-                  Autonomia Comercial • Definição de Taxa
-                </div>
-                <h3 className="text-lg font-bold text-[var(--ll-text)]">
-                  {editingItem.eventTitle}
-                </h3>
-                <p className="text-xs text-[var(--ll-text-muted)]">
-                  Código: <span className="font-mono text-[var(--ll-text)]">{editingItem.eventCode}</span> • Produtora: <span className="font-semibold text-[var(--ll-text)]">{editingItem.producerName}</span>
-                </p>
-              </div>
-              <button
-                onClick={() => setEditingItem(null)}
-                className="p-1.5 rounded-lg text-[var(--ll-text-muted)] hover:text-[var(--ll-text)] hover:bg-[var(--ll-muted)] transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+        <DiskModal
+          isOpen={Boolean(editingItem)}
+          onClose={() => setEditingItem(null)}
+          size="lg"
+          title={
+            <div className="flex items-center gap-2">
+              <Scale className="w-5 h-5 text-[var(--disk-color-primary,#f97316)]" />
+              <span>Autonomia Comercial • {editingItem.eventTitle}</span>
             </div>
+          }
+          subtitle={`Código: ${editingItem.eventCode} • Produtora: ${editingItem.producerName}`}
+        >
+          {modalError && (
+            <div className="p-3 mb-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-500 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{modalError}</span>
+            </div>
+          )}
 
-            <div className="card-body">
-              {modalError && (
-                <div className="p-3 mb-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-500 flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{modalError}</span>
-                </div>
-              )}
+          <form onSubmit={handleSaveFee} className="space-y-4">
+            <div className="p-4 rounded-xl bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)] space-y-3">
+              <label className="text-xs font-bold text-[var(--disk-text-primary,#0f172a)] uppercase tracking-wider block">
+                1. Taxa de Serviço Disk
+              </label>
 
-              <form onSubmit={handleSaveFee} className="space-y-4">
-                {/* Modelo e Valor da Taxa */}
-                <div className="p-4 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-3">
-                  <label className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider block">
-                    1. Taxa de Serviço Disk
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-[var(--disk-text-muted,#64748b)] font-semibold block mb-1">
+                    Modelo de Cobrança
                   </label>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Modelo de Cobrança</label>
-                      <select
-                        value={serviceFeeType}
-                        onChange={e => setServiceFeeType(e.target.value as 'percentage' | 'fixed')}
-                        className="form-select w-full text-xs font-medium cursor-pointer"
-                      >
-                        <option value="percentage">Percentual (%) sobre o valor do ingresso</option>
-                        <option value="fixed">Valor Fixo (R$) por ingresso emitido</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">
-                        {serviceFeeType === 'percentage' ? 'Percentual da Taxa (%)' : 'Valor Fixo (R$)'}
-                      </label>
-                      <div className="relative">
-                        {serviceFeeType === 'percentage' ? (
-                          <>
-                            <input
-                              type="number"
-                              step="0.1"
-                              min="0"
-                              max="50"
-                              value={serviceFeePercent}
-                              onChange={e => setServiceFeePercent(e.target.value)}
-                              className="form-control w-full pr-8 text-xs font-mono"
-                            />
-                            <Percent className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ll-text-muted)]" />
-                          </>
-                        ) : (
-                          <>
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ll-text-muted)] text-xs font-mono">R$</span>
-                            <input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              value={serviceFeeFixed}
-                              onChange={e => setServiceFeeFixed(e.target.value)}
-                              className="form-control w-full pl-9 text-xs font-mono"
-                            />
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Quem Arca com a Taxa de Serviço?</label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setServiceFeePaidBy('buyer')}
-                        className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition cursor-pointer ${
-                          serviceFeePaidBy === 'buyer'
-                            ? 'bg-[var(--ll-primary)]/10 border-[var(--ll-primary)] text-[var(--ll-primary)] font-bold'
-                            : 'bg-[var(--ll-surface)] border-[var(--ll-border)] text-[var(--ll-text-2)] hover:text-[var(--ll-text)]'
-                        }`}
-                      >
-                        <strong className="block font-bold">Comprador</strong>
-                        <span className="text-[11px] text-[var(--ll-text-muted)]">Taxa somada no checkout</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setServiceFeePaidBy('producer')}
-                        className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition cursor-pointer ${
-                          serviceFeePaidBy === 'producer'
-                            ? 'bg-[var(--ll-primary)]/10 border-[var(--ll-primary)] text-[var(--ll-primary)] font-bold'
-                            : 'bg-[var(--ll-surface)] border-[var(--ll-border)] text-[var(--ll-text-2)] hover:text-[var(--ll-text)]'
-                        }`}
-                      >
-                        <strong className="block font-bold">Produtor</strong>
-                        <span className="text-[11px] text-[var(--ll-text-muted)]">Descontada do repasse</span>
-                      </button>
-                    </div>
-                  </div>
+                  <select
+                    value={serviceFeeType}
+                    onChange={(e) => setServiceFeeType(e.target.value as 'percentage' | 'fixed')}
+                    className="w-full py-1.5 px-3 rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-xs font-medium cursor-pointer"
+                  >
+                    <option value="percentage">Percentual (%) sobre o valor do ingresso</option>
+                    <option value="fixed">Valor Fixo (R$) por ingresso emitido</option>
+                  </select>
                 </div>
 
-                {/* Spread & Advanced */}
-                <div className="p-4 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-3">
-                  <label className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider block">
-                    2. Spread e Antecipação (Advanced)
+                <div>
+                  <label className="text-xs text-[var(--disk-text-muted,#64748b)] font-semibold block mb-1">
+                    {serviceFeeType === 'percentage' ? 'Percentual da Taxa (%)' : 'Valor Fixo (R$)'}
                   </label>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="p-3 rounded-lg bg-[var(--ll-surface)] border border-[var(--ll-border)] space-y-2">
-                      <label className="flex items-center justify-between text-xs text-[var(--ll-text)] font-semibold cursor-pointer">
-                        <span>Spread Comercial</span>
-                        <input
-                          type="checkbox"
-                          checked={spreadEnabled}
-                          onChange={e => setSpreadEnabled(e.target.checked)}
-                          className="rounded border-[var(--ll-border)] text-[var(--ll-primary)] focus:ring-0 cursor-pointer"
-                        />
-                      </label>
-                      {spreadEnabled && (
-                        <div className="pt-1">
-                          <label className="text-[11px] text-[var(--ll-text-muted)] block mb-1">Percentual (%)</label>
-                          <input
-                            type="number"
-                            step="0.1"
-                            min="0"
-                            value={spreadPercent}
-                            onChange={e => setSpreadPercent(e.target.value)}
-                            className="form-control w-full text-xs font-mono"
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-3 rounded-lg bg-[var(--ll-surface)] border border-[var(--ll-border)] space-y-2">
-                      <label className="flex items-center justify-between text-xs text-[var(--ll-text)] font-semibold cursor-pointer">
-                        <span>Habilitar Advanced</span>
-                        <input
-                          type="checkbox"
-                          checked={advancedEnabled}
-                          onChange={e => setAdvancedEnabled(e.target.checked)}
-                          className="rounded border-[var(--ll-border)] text-[var(--ll-primary)] focus:ring-0 cursor-pointer"
-                        />
-                      </label>
-                      {advancedEnabled && (
-                        <div className="grid grid-cols-2 gap-2 pt-1">
-                          <div>
-                            <label className="text-[11px] text-[var(--ll-text-muted)] block mb-0.5">Taxa (%)</label>
-                            <input
-                              type="number"
-                              step="0.1"
-                              value={advancedRate}
-                              onChange={e => setAdvancedRate(e.target.value)}
-                              className="form-control w-full text-xs font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-[11px] text-[var(--ll-text-muted)] block mb-0.5">Limite (%)</label>
-                            <input
-                              type="number"
-                              step="5"
-                              value={advancedMax}
-                              onChange={e => setAdvancedMax(e.target.value)}
-                              className="form-control w-full text-xs font-mono"
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                    <div>
-                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Prazo de Repasse</label>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-[var(--ll-text-muted)]">D+</span>
+                  <div className="relative">
+                    {serviceFeeType === 'percentage' ? (
+                      <>
                         <input
                           type="number"
+                          step="0.1"
                           min="0"
-                          max="60"
-                          value={payoutTermsDays}
-                          onChange={e => setPayoutTermsDays(e.target.value)}
-                          className="form-control w-20 text-xs font-mono"
+                          max="50"
+                          value={serviceFeePercent}
+                          onChange={(e) => setServiceFeePercent(e.target.value)}
+                          className="w-full pr-8 py-1.5 px-3 rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-xs font-mono"
                         />
-                        <span className="text-xs text-[var(--ll-text-muted)]">dias úteis</span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-xs text-[var(--ll-text-muted)] font-semibold block mb-1">Número do Contrato</label>
-                      <input
-                        type="text"
-                        placeholder="CTR-..."
-                        value={contractNumber}
-                        onChange={e => setContractNumber(e.target.value)}
-                        className="form-control w-full text-xs font-mono"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Justificativa Comercial Obrigatória */}
-                <div className="p-4 rounded-xl bg-[var(--ll-muted)] border border-[var(--ll-border)] space-y-2">
-                  <label className="text-xs font-bold text-[var(--ll-text)] uppercase tracking-wider block">
-                    3. Justificativa Comercial Obrigatória
-                  </label>
-                  <textarea
-                    required
-                    rows={2}
-                    value={changeReason}
-                    onChange={e => setChangeReason(e.target.value)}
-                    placeholder="Ex: Condição comercial de 10% acordada com o produtor conforme proposta..."
-                    className="form-control w-full text-xs"
-                  />
-                </div>
-
-                {/* Ações */}
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setEditingItem(null)}
-                    disabled={modalLoading}
-                    className="btn-light text-xs font-semibold cursor-pointer"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={modalLoading}
-                    className="btn-primary text-xs font-semibold cursor-pointer flex items-center gap-2"
-                  >
-                    {modalLoading ? (
-                      <>
-                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                        <span>Gravando...</span>
+                        <Percent className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-[var(--disk-text-muted,#64748b)]" />
                       </>
                     ) : (
                       <>
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Salvar Condições</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--disk-text-muted,#64748b)] text-xs font-mono">
+                          R$
+                        </span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={serviceFeeFixed}
+                          onChange={(e) => setServiceFeeFixed(e.target.value)}
+                          className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-xs font-mono"
+                        />
                       </>
                     )}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-[var(--disk-text-muted,#64748b)] font-semibold block mb-1">
+                  Quem Arca com a Taxa de Serviço?
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setServiceFeePaidBy('buyer')}
+                    className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition cursor-pointer ${
+                      serviceFeePaidBy === 'buyer'
+                        ? 'bg-[var(--disk-color-primary,#f97316)]/10 border-[var(--disk-color-primary,#f97316)] text-[var(--disk-color-primary,#f97316)] font-bold'
+                        : 'bg-[var(--disk-bg-surface,#ffffff)] border-[var(--disk-border-default,#e2e8f0)] text-[var(--disk-text-secondary,#475569)]'
+                    }`}
+                  >
+                    <strong className="block font-bold">Comprador</strong>
+                    <span className="text-[11px] text-[var(--disk-text-muted,#64748b)]">Taxa somada no checkout</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setServiceFeePaidBy('producer')}
+                    className={`py-2 px-3 rounded-lg text-xs font-medium border text-left transition cursor-pointer ${
+                      serviceFeePaidBy === 'producer'
+                        ? 'bg-[var(--disk-color-primary,#f97316)]/10 border-[var(--disk-color-primary,#f97316)] text-[var(--disk-color-primary,#f97316)] font-bold'
+                        : 'bg-[var(--disk-bg-surface,#ffffff)] border-[var(--disk-border-default,#e2e8f0)] text-[var(--disk-text-secondary,#475569)]'
+                    }`}
+                  >
+                    <strong className="block font-bold">Produtor</strong>
+                    <span className="text-[11px] text-[var(--disk-text-muted,#64748b)]">Descontada do repasse</span>
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
-          </div>
-        </div>
+
+            <div className="p-4 rounded-xl bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)] space-y-3">
+              <label className="text-xs font-bold text-[var(--disk-text-primary,#0f172a)] uppercase tracking-wider block">
+                2. Justificativa Comercial Obrigatória
+              </label>
+              <textarea
+                required
+                rows={2}
+                value={changeReason}
+                onChange={(e) => setChangeReason(e.target.value)}
+                placeholder="Ex: Condição comercial de 10% acordada com o produtor conforme proposta..."
+                className="w-full p-2 text-xs rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-[var(--disk-text-primary,#0f172a)]"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setEditingItem(null)}
+                disabled={modalLoading}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] cursor-pointer"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={modalLoading}
+                className="px-4 py-1.5 text-xs font-bold rounded-lg bg-[var(--disk-color-primary,#f97316)] text-white hover:bg-[var(--disk-color-primary-hover,#ea580c)] cursor-pointer flex items-center gap-2 shadow-xs"
+              >
+                {modalLoading ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Gravando...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Salvar Condições</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </DiskModal>
       )}
-    </LimitlessPage>
+    </div>
   )
 }
 
 export default CommercialHubPage
-
