@@ -820,3 +820,62 @@
   .estcc-info-grid, .estcc-form-grid { grid-template-columns: 1fr; }
   .estcc-form-grid .full { grid-column: auto; }
 }
+
+/* Disk Design System — tema claro/escuro real sem alterar contratos do módulo */
+.estcc-page {
+  --est-orange: var(--disk-color-primary);
+  --est-orange-dark: var(--disk-color-primary-hover);
+  --est-navy: var(--disk-text-primary);
+  --est-bg: var(--disk-bg-app);
+  --est-border: var(--disk-border-default);
+  --est-text: var(--disk-text-primary);
+  --est-muted: var(--disk-text-muted);
+  --est-green: var(--disk-color-success);
+  --est-yellow: var(--disk-color-warning);
+  --est-red: var(--disk-color-danger);
+  --est-blue: var(--disk-color-info);
+  background: var(--disk-bg-app);
+  color: var(--disk-text-primary);
+}
+.estcc-page .estcc-page-head h1,
+.estcc-page .estcc-card-title,
+.estcc-page strong,
+.estcc-page td { color: var(--disk-text-primary); }
+.estcc-page .estcc-page-head p,
+.estcc-page .estcc-card-desc,
+.estcc-page .label,
+.estcc-page .sub { color: var(--disk-text-muted); }
+.estcc-page .estcc-btn,
+.estcc-page .estcc-filters,
+.estcc-page .estcc-kpi,
+.estcc-page .estcc-card,
+.estcc-page .estcc-modal,
+.estcc-page .estcc-modal-content,
+.estcc-page input,
+.estcc-page select,
+.estcc-page textarea {
+  background: var(--disk-bg-surface) !important;
+  color: var(--disk-text-primary) !important;
+  border-color: var(--disk-border-default) !important;
+}
+.estcc-page .estcc-btn:hover,
+.estcc-page tbody tr:hover { background: var(--disk-bg-hover) !important; }
+.estcc-page .estcc-btn-primary {
+  background: var(--disk-color-primary) !important;
+  color: var(--disk-color-primary-foreground) !important;
+  border-color: var(--disk-color-primary) !important;
+}
+.estcc-page table,
+.estcc-page thead,
+.estcc-page tbody,
+.estcc-page tr,
+.estcc-page td { border-color: var(--disk-border-subtle) !important; }
+.estcc-page thead,
+.estcc-page th {
+  background: var(--disk-bg-muted) !important;
+  color: var(--disk-text-secondary) !important;
+}
+.estcc-page tbody,
+.estcc-page tr,
+.estcc-page td { background: var(--disk-bg-surface); }
+.estcc-page .estcc-alert { background: var(--disk-color-warning-subtle); border-color: var(--disk-color-warning-border); color: var(--disk-color-warning-text); }

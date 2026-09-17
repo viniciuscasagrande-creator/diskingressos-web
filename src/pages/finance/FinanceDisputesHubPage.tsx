@@ -852,7 +852,7 @@ export default function FinanceDisputesHubPage({
 
               <div className="estcc-section">
                 <h3>Motivo Informado</h3>
-                <p style={{ fontSize: 13, background: '#f8fafc', padding: 12, borderRadius: 8, margin: 0 }}>
+                <p style={{ fontSize: 13, background: 'var(--disk-bg-muted)', padding: 12, borderRadius: 8, margin: 0 }}>
                   {selectedRefund.reason}
                 </p>
               </div>

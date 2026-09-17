@@ -340,7 +340,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               <p>Receitas, despesas e repasses nos últimos 6 meses</p>
             </div>
             <div className="chart-legend-row">
-              <span className="legend-item" style={{ color: '#10B981' }}><i style={{ background: '#10B981' }} /> Receita</span>
+              <span className="legend-item" style={{ color: 'var(--disk-color-success)' }}><i style={{ background: '#10B981' }} /> Receita</span>
               <span className="legend-item" style={{ color: '#F43F5E' }}><i style={{ background: '#F43F5E' }} /> Despesa</span>
               <span className="legend-item" style={{ color: '#3B82F6' }}><i style={{ background: '#3B82F6' }} /> Repasse</span>
             </div>
@@ -412,11 +412,11 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                 <div key={item.id} className="share-item" style={{ padding: '12px' }}>
                   <div className="share-info">
                     <strong style={{ fontSize: '13px' }}>{item.producer || 'Produtora Parceira'}</strong>
-                    <span style={{ color: '#64748B' }}>{item.event}</span>
-                    <small style={{ color: '#94A3B8', marginTop: '2px', display: 'block' }}>Previsão: {item.scheduledFor}</small>
+                    <span style={{ color: 'var(--disk-text-muted)' }}>{item.event}</span>
+                    <small style={{ color: 'var(--disk-text-disabled)', marginTop: '2px', display: 'block' }}>Previsão: {item.scheduledFor}</small>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <b style={{ color: '#0F172A', fontSize: '13px' }}>{brl(item.net)}</b>
+                    <b style={{ color: 'var(--disk-text-primary)', fontSize: '13px' }}>{brl(item.net)}</b>
                     <span className="kpi-tag active" style={{ display: 'block', marginTop: '4px', textAlign: 'center' }}>
                       {item.status}
                     </span>
@@ -581,7 +581,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                     <td><b>#{p.id}</b></td>
                     <td className="event-name-cell">
                       <strong>{p.event}</strong>
-                      <small style={{ color: '#64748B', display: 'block' }}>{p.producer}</small>
+                      <small style={{ color: 'var(--disk-text-muted)', display: 'block' }}>{p.producer}</small>
                     </td>
                     <td>
                       <span className="bank-account-tag">{p.bankAccount}</span>
@@ -592,7 +592,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                       <span className="badge-method">{p.method}</span>
                     </td>
                     <td>
-                      <strong style={{ color: '#10B981' }}>{brl(p.net)}</strong>
+                      <strong style={{ color: 'var(--disk-color-success)' }}>{brl(p.net)}</strong>
                     </td>
                     <td>
                       <span className={`finance-status ${p.status.toLowerCase().replace(/\s+/g, '-')}`}>
@@ -754,7 +754,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                       required
                     />
                   </div>
-                  <small style={{ color: '#64748b', marginTop: '4px', display: 'block' }}>
+                  <small style={{ color: 'var(--disk-text-muted)', marginTop: '4px', display: 'block' }}>
                     Saldo disponível para este saque: <b>{brl(availableBalance)}</b>
                   </small>
                 </label>
@@ -767,7 +767,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                 </div>
                 <div className="payout-summary-row">
                   <span>Taxa de Transferência Bancária</span>
-                  <strong style={{ color: '#10B981' }}>R$ 0,00 (Gratuito)</strong>
+                  <strong style={{ color: 'var(--disk-color-success)' }}>R$ 0,00 (Gratuito)</strong>
                 </div>
                 <div className="payout-summary-row total">
                   <span>Valor Líquido a Receber</span>
@@ -825,11 +825,11 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
                 </div>
                 <div className="breakdown-line">
                   <span>Taxa Administrativa de Antecipação (3,5%)</span>
-                  <strong style={{ color: '#EF4444' }}>- {brl(advanceFee)}</strong>
+                  <strong style={{ color: 'var(--disk-color-danger)' }}>- {brl(advanceFee)}</strong>
                 </div>
                 <div className="breakdown-line total">
                   <span>Valor Líquido Creditado na Conta</span>
-                  <strong style={{ color: '#10B981' }}>{brl(advanceNet)}</strong>
+                  <strong style={{ color: 'var(--disk-color-success)' }}>{brl(advanceNet)}</strong>
                 </div>
               </div>
             </div>
@@ -896,7 +896,7 @@ export default function FinanceDashboardPage({ events, notify, onNavigate }: Pro
               </div>
               <div className="utm-order-detail-item">
                 <span>Valor Líquido Transferido</span>
-                <strong style={{ color: '#10B981', fontSize: '18px' }}>{brl(selectedPayout.net)}</strong>
+                <strong style={{ color: 'var(--disk-color-success)', fontSize: '18px' }}>{brl(selectedPayout.net)}</strong>
               </div>
             </div>
 

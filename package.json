@@ -156,7 +156,8 @@
     "audit:event-commercial": "node scripts/audit-event-commercial.mjs",
     "verify:event-commercial": "node scripts/verify-event-commercial.mjs",
     "test:pw:event-commercial": "playwright test tests/commercial/event-commercial-dashboard.spec.ts --project=chromium",
-    "gate:event-commercial": "npm run audit:event-commercial && npm run verify:event-commercial && npm run test:pw:event-commercial"
+    "gate:event-commercial": "npm run audit:event-commercial && npm run verify:event-commercial && npm run test:pw:event-commercial",
+    "verify:disk-master-visual": "node scripts/verify-disk-master-visual.mjs"
   },
   "dependencies": {
     "@prisma/client": "latest",

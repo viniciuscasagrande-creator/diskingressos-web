@@ -10373,3 +10373,110 @@ body {
   color: var(--disk-text-primary) !important;
 }
 
+
+/* ========================================================================== 
+   Disk — Ponte de tema real para Financeiro (29.14.1.3.3)
+   Mantém regras de negócio intactas e faz o legado consumir tokens globais.
+   ========================================================================== */
+.finance-dashboard-wrapper {
+  color: var(--disk-text-primary);
+  background: transparent;
+}
+.finance-dashboard-wrapper .finance-header-section,
+.finance-dashboard-wrapper .integrated-pipeline-card,
+.finance-dashboard-wrapper .finance-kpi-card,
+.finance-dashboard-wrapper .finance-chart-card,
+.finance-dashboard-wrapper .balance-card,
+.finance-dashboard-wrapper .cash-summary,
+.finance-dashboard-wrapper .table-card,
+.finance-dashboard-wrapper .card-surface,
+.finance-dashboard-wrapper .modal-content,
+.finance-dashboard-wrapper .finance-modal-content {
+  background: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+.finance-dashboard-wrapper .finance-title-row h1,
+.finance-dashboard-wrapper .pipeline-title strong,
+.finance-dashboard-wrapper .step-content strong,
+.finance-dashboard-wrapper .step-content b,
+.finance-dashboard-wrapper .kpi-value,
+.finance-dashboard-wrapper h1,
+.finance-dashboard-wrapper h2,
+.finance-dashboard-wrapper h3,
+.finance-dashboard-wrapper strong:not(.semantic-color) {
+  color: var(--disk-text-primary);
+}
+.finance-dashboard-wrapper .finance-select-group span,
+.finance-dashboard-wrapper .pipeline-title small,
+.finance-dashboard-wrapper .step-content span,
+.finance-dashboard-wrapper .kpi-label,
+.finance-dashboard-wrapper .kpi-footer small,
+.finance-dashboard-wrapper small,
+.finance-dashboard-wrapper .muted {
+  color: var(--disk-text-muted);
+}
+.finance-dashboard-wrapper .tier-pill-selector,
+.finance-dashboard-wrapper .pipeline-step-item,
+.finance-dashboard-wrapper .finance-filterbar,
+.finance-dashboard-wrapper .finance-tabs,
+.finance-dashboard-wrapper .filterbar,
+.finance-dashboard-wrapper .toolbar-surface {
+  background: var(--disk-bg-muted) !important;
+  border-color: var(--disk-border-default) !important;
+}
+.finance-dashboard-wrapper .tier-btn,
+.finance-dashboard-wrapper .finance-select-group select,
+.finance-dashboard-wrapper input,
+.finance-dashboard-wrapper select,
+.finance-dashboard-wrapper textarea,
+.finance-dashboard-wrapper .tool-btn,
+.finance-dashboard-wrapper button.secondary-btn {
+  color: var(--disk-text-primary);
+  border-color: var(--disk-border-default);
+}
+.finance-dashboard-wrapper .finance-select-group select,
+.finance-dashboard-wrapper input,
+.finance-dashboard-wrapper select,
+.finance-dashboard-wrapper textarea {
+  background: var(--disk-bg-surface) !important;
+}
+.finance-dashboard-wrapper .tier-btn.active {
+  background: var(--disk-bg-elevated) !important;
+  color: var(--disk-text-primary) !important;
+}
+.finance-dashboard-wrapper .tier-btn:hover,
+.finance-dashboard-wrapper .tool-btn:hover,
+.finance-dashboard-wrapper button.secondary-btn:hover {
+  background: var(--disk-bg-hover);
+}
+.finance-dashboard-wrapper .pipeline-header,
+.finance-dashboard-wrapper table,
+.finance-dashboard-wrapper th,
+.finance-dashboard-wrapper td {
+  border-color: var(--disk-border-subtle) !important;
+}
+.finance-dashboard-wrapper table,
+.finance-dashboard-wrapper thead,
+.finance-dashboard-wrapper tbody,
+.finance-dashboard-wrapper tr,
+.finance-dashboard-wrapper td {
+  background-color: transparent;
+  color: var(--disk-text-primary);
+}
+.finance-dashboard-wrapper thead,
+.finance-dashboard-wrapper th {
+  background-color: var(--disk-bg-muted) !important;
+  color: var(--disk-text-secondary) !important;
+}
+.finance-dashboard-wrapper tbody tr:hover {
+  background-color: var(--disk-bg-hover) !important;
+}
+.finance-dashboard-wrapper .pipeline-step-item.active {
+  background: var(--disk-color-info-subtle) !important;
+  border-color: var(--disk-color-info-border) !important;
+}
+.finance-dashboard-wrapper .pipeline-step-item.synced {
+  background: var(--disk-color-success-subtle) !important;
+  border-color: var(--disk-color-success-border) !important;
+}
