@@ -1,4 +1,4 @@
-export type Role = 'admin-master' | 'admin' | 'producer-admin' | 'producer-finance' | 'producer-operation' | 'producer-marketing' | 'viewer'
+export type Role = 'admin-master' | 'admin' | 'producer-admin' | 'producer-finance' | 'producer-operation' | 'producer-marketing' | 'commercial' | 'viewer'
 export type Producer = { id:number; name:string; document:string; status:'ativo'|'inativo' }
 export type AppUser = {
   id:number; name:string; email:string; password?:string; role:Role; producerId:number|null;
@@ -17,20 +17,22 @@ export const seedUsers:AppUser[] = [
   {id:4,name:'Marketing Disk',email:'marketing@diskingressos.com.br',password:'Marketing@123',role:'producer-marketing',producerId:1,status:'ativo'},
   {id:5,name:'Operação Disk',email:'operacao@diskingressos.com.br',password:'Operacao@123',role:'producer-operation',producerId:1,status:'ativo'},
   {id:6,name:'Consulta Disk',email:'consulta@diskingressos.com.br',password:'Consulta@123',role:'viewer',producerId:1,status:'ativo'},
+  {id:7,name:'Equipe Comercial',email:'comercial@diskingressos.com.br',password:'Comercial@123',role:'commercial',producerId:null,status:'ativo'},
 ]
 
 export const roleLabel:Record<Role,string> = {
   'admin-master':'Admin Master','admin':'Admin','producer-admin':'Produtor Admin','producer-finance':'Produtor Financeiro',
-  'producer-operation':'Produtor Operacional','producer-marketing':'Produtor Marketing','viewer':'Somente leitura'
+  'producer-operation':'Produtor Operacional','producer-marketing':'Produtor Marketing','commercial':'Comercial','viewer':'Somente leitura'
 }
 
 export function isGlobalAdmin(user:AppUser){return user.role==='admin-master'||user.role==='admin'}
-export function canAccess(user:AppUser, area:'events'|'finance'|'pos'|'admin'|'marketing'|'remarketing'|'sac'){
+export function canAccess(user:AppUser, area:'events'|'finance'|'pos'|'admin'|'marketing'|'remarketing'|'sac'|'commercial'){
   if(isGlobalAdmin(user)) return true
   if(area==='admin') return user.role==='producer-admin'
   if(area==='finance') return ['producer-admin','producer-finance','viewer'].includes(user.role)
   if(area==='pos') return ['producer-admin','producer-operation','viewer'].includes(user.role)
   if(area==='marketing'||area==='remarketing') return ['producer-admin','producer-marketing','viewer'].includes(user.role)
   if(area==='sac') return ['producer-admin','producer-operation','viewer'].includes(user.role)
+  if(area==='commercial') return ['producer-admin','commercial','viewer'].includes(user.role)
   return ['producer-admin','producer-operation','producer-marketing','viewer'].includes(user.role)
 }

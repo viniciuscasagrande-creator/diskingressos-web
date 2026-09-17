@@ -144,100 +144,117 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn" data-testid="commerce-orders-hub">
-      {/* Cabeçalho da Central Comercial via DiskPageHeader */}
-      <DiskPageHeader
-        eyebrow="Disk Interno • Motor Comercial & Vendas Omnichannel"
-        title="Pedidos, Ingressos & Integridade Comercial"
-        description="Operação unificada do Commerce Core: vendas originadas pelo Site, Bilheterias, PDVs e Portal do Produtor."
-        actions={
-          <div className="flex flex-wrap items-center gap-2.5">
+      {/* Cabeçalho da Central de Vendas Omnichannel com layout fluido e não esmagável */}
+      <div className="border-b border-[var(--disk-border-subtle)] pb-5 space-y-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="min-w-0 max-w-3xl">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                Operação Omnichannel • Vendas & Ingressos
+              </span>
+              <span className="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-sky-400" />
+                Commerce Core Homologado
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[var(--disk-text-primary)] tracking-tight">
+              Pedidos, Ingressos & Integridade Operacional
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--disk-text-secondary)] mt-1 leading-relaxed">
+              Operação unificada do Commerce Core: vendas originadas pelo Site, Bilheterias, PDVs e Portal do Produtor.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0 self-start lg:self-center">
             <DiskButton
               variant="outline"
               size="sm"
               onClick={loadData}
+              disabled={loading}
               icon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-primary' : ''}`} />}
             >
               Atualizar Vendas
             </DiskButton>
-            {onNavigateToPayments && (
-              <button
-                type="button"
-                onClick={onNavigateToPayments}
-                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
-                data-testid="goto-payments-btn"
-              >
-                <CreditCard className="w-3.5 h-3.5" />
-                <span>Central de Pagamentos</span>
-              </button>
-            )}
-            {onNavigateToTickets && (
-              <button
-                type="button"
-                onClick={onNavigateToTickets}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
-                data-testid="goto-tickets-btn"
-              >
-                <Ticket className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Ingressos & QR Codes</span>
-              </button>
-            )}
-            {onNavigateToAccess && (
-              <button
-                type="button"
-                onClick={onNavigateToAccess}
-                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
-                data-testid="goto-access-btn"
-              >
-                <Scan className="w-3.5 h-3.5" />
-                <span>Disk Acesso</span>
-              </button>
-            )}
-            {onNavigateToCustomers && (
-              <button
-                type="button"
-                onClick={onNavigateToCustomers}
-                className="px-3 py-1.5 bg-[var(--disk-bg-surface)] hover:bg-[var(--disk-bg-surface-hover)] text-[var(--disk-text-primary)] border border-[var(--disk-border-subtle)] text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
-                data-testid="goto-customers-btn"
-              >
-                <Users className="w-3.5 h-3.5 text-[var(--disk-primary)]" />
-                <span>Central de Clientes</span>
-              </button>
-            )}
-            <span className="px-3 py-1.5 rounded-lg bg-[var(--disk-bg-surface-sunken)] border border-[var(--disk-border-subtle)] text-[var(--disk-text-secondary)] text-xs font-semibold flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[var(--disk-primary)]" />
-              Commerce Core Homologado
-            </span>
           </div>
-        }
-      />
+        </div>
 
-      {/* 4 Cards de Métricas Comerciais com DiskKpiCard */}
+        {/* Toolbar de Acesso Rápido aos Módulos Operacionais Conectados */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--disk-border-subtle)]/60">
+          <span className="text-xs font-semibold text-[var(--disk-text-muted)] mr-1">Acesso direto:</span>
+          {onNavigateToPayments && (
+            <button
+              type="button"
+              onClick={onNavigateToPayments}
+              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              data-testid="goto-payments-btn"
+            >
+              <CreditCard className="w-3.5 h-3.5" />
+              <span>Central de Pagamentos</span>
+            </button>
+          )}
+          {onNavigateToTickets && (
+            <button
+              type="button"
+              onClick={onNavigateToTickets}
+              className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              data-testid="goto-tickets-btn"
+            >
+              <Ticket className="w-3.5 h-3.5" />
+              <span>Ingressos & QR Codes</span>
+            </button>
+          )}
+          {onNavigateToAccess && (
+            <button
+              type="button"
+              onClick={onNavigateToAccess}
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              data-testid="goto-access-btn"
+            >
+              <Scan className="w-3.5 h-3.5" />
+              <span>Disk Acesso</span>
+            </button>
+          )}
+          {onNavigateToCustomers && (
+            <button
+              type="button"
+              onClick={onNavigateToCustomers}
+              className="px-3 py-1.5 bg-[var(--disk-bg-surface)] hover:bg-[var(--disk-bg-surface-hover)] text-[var(--disk-text-primary)] border border-[var(--disk-border-subtle)] text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs"
+              data-testid="goto-customers-btn"
+            >
+              <Users className="w-3.5 h-3.5 text-[var(--disk-primary)]" />
+              <span>Central de Clientes</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 4 Cards de Métricas Reais com DiskKpiCard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <DiskKpiCard
           label="Faturamento do Dia"
-          value={`R$ ${summary ? summary.todayRevenueBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) : '1.842.630,45'}`}
-          note="381 pedidos / minuto"
+          value={summary ? `R$ ${summary.todayRevenueBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'R$ 0,00'}
+          note={summary && summary.ordersPerMinute > 0 ? `${summary.ordersPerMinute} pedidos / minuto` : 'Dados reais do banco'}
           accent="success"
           icon={<DollarSign className="w-5 h-5" />}
         />
         <DiskKpiCard
           label="Ingressos Emitidos Hoje"
-          value={summary ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '14.280'}
-          note="100% individualizados"
+          value={summary ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '0'}
+          note="Consolidado no banco"
           accent="info"
           icon={<Ticket className="w-5 h-5" />}
         />
         <DiskKpiCard
           label="Holds Ativos (Redis)"
-          value={summary ? summary.activeHoldsCount.toLocaleString('pt-BR') : '8.291'}
+          value={summary ? summary.activeHoldsCount.toLocaleString('pt-BR') : '0'}
           note="Reserva atômica anti-overbooking"
           accent="brand"
           icon={<Layers className="w-5 h-5" />}
         />
         <DiskKpiCard
           label="Aprovação de Pagamento"
-          value={summary ? `${summary.approvalRatePercentage}%` : '91.8%'}
-          note="PIX: 98.4% • Cartão: 85.2%"
+          value={summary && summary.approvalRatePercentage > 0 ? `${summary.approvalRatePercentage.toFixed(1)}%` : '0%'}
+          note="Conversão real de checkout"
           accent="purple"
           icon={<CheckCircle2 className="w-5 h-5" />}
         />
@@ -261,19 +278,25 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
 
         <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.inconsistentOrders ?? 0) > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
             <span className="text-[var(--disk-text-muted)]">Inconsistências:</span>
-            <strong className="text-emerald-500">0</strong>
+            <strong className={(summary?.integrityAlerts?.inconsistentOrders ?? 0) > 0 ? 'text-rose-400' : 'text-emerald-500'}>
+              {summary?.integrityAlerts?.inconsistentOrders ?? 0}
+            </strong>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.paymentsWithoutTickets ?? 0) > 0 ? 'bg-amber-400' : 'bg-emerald-500'}`} />
             <span className="text-[var(--disk-text-muted)]">Pagamentos sem Ingresso:</span>
-            <strong className="text-amber-500">2 (Recovery)</strong>
+            <strong className={(summary?.integrityAlerts?.paymentsWithoutTickets ?? 0) > 0 ? 'text-amber-400' : 'text-emerald-500'}>
+              {summary?.integrityAlerts?.paymentsWithoutTickets ?? 0}
+            </strong>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className={`w-2 h-2 rounded-full ${(summary?.integrityAlerts?.ticketsWithoutLedger ?? 0) > 0 ? 'bg-rose-500' : 'bg-emerald-500'}`} />
             <span className="text-[var(--disk-text-muted)]">Ingressos sem Ledger:</span>
-            <strong className="text-emerald-500">0</strong>
+            <strong className={(summary?.integrityAlerts?.ticketsWithoutLedger ?? 0) > 0 ? 'text-rose-400' : 'text-emerald-500'}>
+              {summary?.integrityAlerts?.ticketsWithoutLedger ?? 0}
+            </strong>
           </div>
         </div>
       </div>
@@ -422,7 +445,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
                         onClick={() => setSelectedOrder(order)}
                         className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/50 dark:text-indigo-300 rounded-btn font-bold text-xs transition flex items-center gap-1 ml-auto cursor-pointer"
                       >
-                        <span>Dossiê 360°</span>
+                        <span>Dossiê do Pedido</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>

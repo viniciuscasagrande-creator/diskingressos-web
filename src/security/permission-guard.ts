@@ -34,6 +34,10 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     'marketing.*',
     'eventos.visualizar'
   ],
+  'commercial': [
+    'comercial.*',
+    'eventos.visualizar'
+  ],
   'producer-operation': [
     'eventos.*',
     'pos.*',

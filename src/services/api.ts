@@ -1714,3 +1714,58 @@ export const getEventCommercialDashboard = (
   return request<EventCommercialDashboardData>(`/events/${eventId}/commercial-dashboard${qs(query)}`)
 }
 
+export type CommercialEventRow = {
+  id: number
+  code: string
+  title: string
+  status: string
+  date: string
+  producer: { id: number; name: string; document: string }
+  salesCents: number
+  serviceFeeCents: number
+  ticketsSold: number
+  commercialStatus: string
+  agreementVersion: number
+  fee: { type: string; bps: number | null; fixedCents: number | null } | null
+  spread: { enabled: boolean; bps: number | null } | null
+  advanced: { enabled: boolean; rateBps: number | null } | null
+}
+
+export type CommercialDashboard = {
+  summary: {
+    producers: number
+    events: number
+    published: number
+    pendingCommercial: number
+    salesCents: number
+    serviceFeeCents: number
+    spreadEvents: number
+    advancedEvents: number
+  }
+  events: CommercialEventRow[]
+}
+
+export type CommercialAgreementInput = {
+  serviceFeeType: 'percentual' | 'fixa' | 'percentage' | 'fixed'
+  serviceFeeBps?: number | null
+  serviceFeeFixedCents?: number | null
+  spreadEnabled: boolean
+  spreadBps?: number | null
+  advancedEnabled: boolean
+  advancedRateBps?: number | null
+  payoutDays?: number | null
+  effectiveFrom?: string
+  notes?: string | null
+  changeReason?: string
+}
+
+export const getCommercialDashboard = (producerId?: number, search?: string) =>
+  request<CommercialDashboard>(`/commercial/dashboard${qs({ producerId, search })}`)
+
+export const getCommercialAgreement = (eventId: number) =>
+  request<any>(`/commercial/events/${eventId}/agreement`)
+
+export const saveCommercialAgreement = (eventId: number, body: CommercialAgreementInput) =>
+  request<any>(`/commercial/events/${eventId}/agreement`, { method: 'POST', body: JSON.stringify(body) })
+
+

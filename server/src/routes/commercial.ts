@@ -11,31 +11,36 @@ commercialRouter.use(requireAuth)
 
 // Schema para criação/atualização de condições comerciais do evento
 const agreementSchema = z.object({
-  serviceFeeType: z.enum(['percentage', 'fixed']).default('percentage'),
-  serviceFeeBps: z.number().int().min(0).max(5000).default(1000), // max 50%
-  serviceFeeFixedCents: z.number().int().min(0).default(0),
+  serviceFeeType: z.preprocess((val) => {
+    if (val === 'percentual') return 'percentage'
+    if (val === 'fixa') return 'fixed'
+    return val
+  }, z.enum(['percentage', 'fixed']).default('percentage')),
+  serviceFeeBps: z.number().int().min(0).max(5000).nullable().optional().default(1000), // max 50%
+  serviceFeeFixedCents: z.number().int().min(0).nullable().optional().default(0),
   serviceFeePaidBy: z.enum(['buyer', 'producer']).default('buyer'),
   serviceFeeMinCents: z.number().int().min(0).default(0),
 
   spreadEnabled: z.boolean().default(false),
   spreadType: z.enum(['percentage', 'fixed']).default('percentage'),
-  spreadBps: z.number().int().min(0).default(0),
-  spreadFixedCents: z.number().int().min(0).default(0),
+  spreadBps: z.number().int().min(0).nullable().optional().default(0),
+  spreadFixedCents: z.number().int().min(0).nullable().optional().default(0),
   spreadNotes: z.string().optional().nullable(),
 
   advancedEnabled: z.boolean().default(false),
-  advancedRateBps: z.number().int().min(0).default(0),
+  advancedRateBps: z.number().int().min(0).nullable().optional().default(0),
   advancedMaxPercent: z.number().int().min(1).max(100).default(70),
   advancedMinDays: z.number().int().min(1).default(2),
   advancedTerms: z.string().optional().nullable(),
 
   payoutTermsDays: z.number().int().min(0).default(2),
+  payoutDays: z.number().int().min(0).optional(),
   payoutModel: z.enum(['pos_evento', 'semanal', 'quinzenal', 'customizado']).default('pos_evento'),
   payoutNotes: z.string().optional().nullable(),
 
   contractNumber: z.string().optional().nullable(),
   contractDocUrl: z.string().optional().nullable(),
-  changeReason: z.string().min(3, 'O motivo da alteração da condição comercial é obrigatório.'),
+  changeReason: z.string().optional().default('Atualização de condição comercial'),
   notes: z.string().optional().nullable()
 })
 
@@ -121,7 +126,7 @@ commercialRouter.get('/events/:eventId/agreement', async (req: AuthRequest, res)
  * Cria ou atualiza as condições comerciais de um evento.
  * Gera uma nova versão imutável e registra log de auditoria obrigatório.
  */
-commercialRouter.post('/events/:eventId/agreement', async (req: AuthRequest, res) => {
+const saveAgreementHandler = async (req: AuthRequest, res: any) => {
   try {
     const eventId = Number(req.params.eventId)
     if (!Number.isInteger(eventId) || eventId <= 0) {
@@ -135,7 +140,7 @@ commercialRouter.post('/events/:eventId/agreement', async (req: AuthRequest, res
 
     // Regra de segurança: alteração de taxas requer perfil Disk Admin, Comercial ou Gestão de Produtora autorizada
     const isAdmin = globalAdmin(req.auth!.role)
-    const isCommercialAdmin = req.auth!.role === 'commercial-admin' || req.auth!.role === 'admin' || req.auth!.role === 'admin-master' || req.auth!.role === 'producer-admin'
+    const isCommercialAdmin = req.auth!.role === 'commercial' || req.auth!.role === 'commercial-admin' || req.auth!.role === 'admin' || req.auth!.role === 'admin-master' || req.auth!.role === 'producer-admin'
 
     if (!isAdmin && !isCommercialAdmin) {
       return res.status(403).json({
@@ -260,7 +265,10 @@ commercialRouter.post('/events/:eventId/agreement', async (req: AuthRequest, res
     console.error('[commercial] Erro ao salvar acordo comercial:', error)
     return res.status(500).json({ message: 'Erro ao persistir condições comerciais do evento.' })
   }
-})
+}
+
+commercialRouter.post('/events/:eventId/agreement', saveAgreementHandler)
+commercialRouter.put('/events/:eventId/agreement', saveAgreementHandler)
 
 /**
  * POST /api/commercial/events/:eventId/advance

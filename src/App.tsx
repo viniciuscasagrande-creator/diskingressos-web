@@ -98,6 +98,8 @@ import { CommercialHubPage } from './pages/commercial/CommercialHubPage'
 
 const mobileInternalHeaderPages = new Set<PageKey>([
   'events',
+  'commercial-hub',
+  'commerce-orders',
   'event-utm',
   'marketing-utm-central',
   'finance-dashboard',
@@ -138,15 +140,15 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-intelligence': 'Disk Intelligence',
   'event-readiness': 'Event Readiness & Go-Live',
   'event-forecast': 'Analytics & Forecast Center',
-  'event-day-command': 'Event Day Command Center',
-  'event-producer-executive': 'Producer Executive Dashboard',
-  'event-platform-noc': 'Platform Operations / NOC',
+  'event-day-command': 'Day Command & Gate Ops',
+  'event-producer-executive': 'Executive Board & P&L',
+  'event-platform-noc': 'Platform NOC & Telemetry',
   'event-dashboard': 'Dashboard do Evento',
-  'event-tickets': 'Consultar Ingresso',
-  'event-courtesy': 'Cortesias',
+  'event-tickets': 'Ingressos do Evento',
+  'event-courtesy': 'Cortesias do Evento',
   'event-reports': 'Relatórios do Evento',
   'event-details': 'Detalhes do Evento',
-  'event-pixel': 'Pixel GA',
+  'event-pixel': 'Central de Pixels',
   'event-utm': 'Central UTM & Conversões',
   'event-ga4': 'Analytics GA4',
   'event-traffic': 'Tráfego Site',
@@ -156,9 +158,9 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-audit': 'Logs do Evento',
   'event-permissions': 'Permissões do Evento',
   'event-commercial-conditions': 'Condições Comerciais do Evento',
-  'commercial-hub': 'Comercial • Gestão de Taxas e Acordos',
+  'commercial-hub': 'Comercial',
   'event-support': 'Suporte a Eventos & Event Builder',
-  'commerce-orders': 'Pedidos, Ingressos & Integridade Comercial',
+  'commerce-orders': 'Pedidos & Vendas',
   'developer-center': 'Desenvolvedor • Central de Observabilidade',
   'payments-hub': 'Central de Pagamentos Enterprise',
   'tickets-hub': 'Central de Ingressos & Credenciais',
@@ -345,7 +347,8 @@ function moduleFor(page: PageKey, user?: AppUser | null): ModuleKey {
   return 'events'
 }
 
-function areaFor(page: PageKey): 'events' | 'finance' | 'pos' | 'admin' | 'marketing' | 'remarketing' | 'sac' {
+function areaFor(page: PageKey): 'events' | 'finance' | 'pos' | 'admin' | 'marketing' | 'remarketing' | 'sac' | 'commercial' {
+  if (page === 'commercial-hub' || page === 'event-commercial-conditions') return 'commercial'
   if (page === 'global-dashboard' || page.startsWith('admin-') || ['event-users', 'event-audit', 'event-permissions'].includes(page)) return 'admin'
   if (page.startsWith('finance-') || page === 'finance' || page.startsWith('accounting-')) return 'finance'
   if (page.startsWith('pos')) return 'pos'
@@ -357,6 +360,7 @@ function areaFor(page: PageKey): 'events' | 'finance' | 'pos' | 'admin' | 'marke
 
 function firstPageFor(user: AppUser): PageKey {
   if (isGlobalAdmin(user)) return 'global-dashboard'
+  if (user.role === 'commercial') return 'commercial-hub'
   return 'profile-dashboard'
 }
 
@@ -366,7 +370,7 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
     return firstPageFor(user)
   }
   if (clean === 'eventos') return 'events'
-  if (clean === 'commercial-hub' || clean === 'app/commercial-hub' || clean === 'comercial' || clean === 'app/comercial') return 'commercial-hub'
+  if (clean === 'commercial-hub' || clean === 'app/commercial-hub' || clean === 'comercial' || clean === 'app/comercial' || clean === 'commercial-dashboard' || clean === 'app/commercial-dashboard') return 'commercial-hub'
   if (clean === 'event-support' || clean === 'app/event-support') return 'event-support'
   if (clean === 'commerce-orders' || clean === 'app/commerce-orders' || clean === 'pedidos' || clean === 'app/pedidos') return 'commerce-orders'
   if (clean === 'developer-center' || clean === 'app/developer-center' || clean === 'desenvolvedor' || clean === 'app/desenvolvedor' || clean === 'desenvolvedor/design-system' || clean === 'app/desenvolvedor/design-system') return 'developer-center'
@@ -995,6 +999,10 @@ export default function App() {
                     AppRouter.syncFromLocation('/eventos')
                   } else if (page === 'finance-dashboard' || page === 'finance-hub') {
                     setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
+                  } else if (page === 'commercial-hub') {
+                    setPage(isGlobalAdmin(user) ? 'global-dashboard' : 'profile-dashboard')
+                  } else if (page.startsWith('commercial')) {
+                    setPage('commercial-hub')
                   } else if (page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread') {
                     setPage('finance-dashboard')
                   } else if (page.startsWith('accounting')) {
