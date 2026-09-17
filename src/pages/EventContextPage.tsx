@@ -24,6 +24,7 @@ import EventProducerExecutivePage from './eventos/EventProducerExecutivePage'
 import EventActivityStreamPage from './eventos/EventActivityStreamPage'
 import EventOSAdvancedPage from './EventOSAdvancedPage'
 import EventCommercialDashboardPage from './eventos/EventCommercialDashboardPage'
+import EventCommercialConditionsPage from './eventos/EventCommercialConditionsPage'
 import { getAutomationSummary, getRecoveryDashboard, type AutomationSummary, type RecoveryDashboard } from '../services/api'
 import type { PageKey } from '../components/ModuleSidebar'
 
@@ -44,6 +45,7 @@ export default function EventContextPage({event,participants,page,onNavigate,not
  if(page==='event-intelligence') return <EventDiskIntelligencePage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-producer-executive') return <EventProducerExecutivePage event={event} onNavigate={onNavigate} notify={notify}/>
  if(['event-permission-engine','event-compliance','event-readiness','event-platform-noc'].includes(page)) return <EventOSAdvancedPage event={event} page={page} notify={notify}/>
+ if(page==='event-commercial-conditions') return <EventCommercialConditionsPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-dashboard') return <EventCommercialDashboardPage event={event} onNavigate={onNavigate} notify={notify}/>
  if(page==='event-tickets') return <Tickets event={event} people={people} notify={notify}/>
  if(page==='event-courtesy') return <Courtesy event={event} people={people} notify={notify}/>

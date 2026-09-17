@@ -9,6 +9,12 @@ function demoToken(token:string){
 }
 
 async function main(){
+  try { await prisma.$executeRawUnsafe('PRAGMA foreign_keys = OFF;') } catch {}
+  await prisma.appliedFeeSnapshot.deleteMany()
+  await prisma.advanceOperation.deleteMany()
+  await prisma.commercialAgreementAuditLog.deleteMany()
+  await prisma.eventCommercialAgreementVersion.deleteMany()
+  await prisma.eventCommercialAgreement.deleteMany()
   await prisma.trackingDeliveryLog.deleteMany()
   await prisma.trackingIntegrationEvent.deleteMany()
   await prisma.trackingIntegration.deleteMany()
@@ -87,9 +93,104 @@ async function main(){
   const t1=await prisma.ticket.create({data:{code:'ING-1001',priceCents:21800,producerId:disk.id,eventId:maiden.id,orderId:o1.id,lotId:diskLot.id,participantId:p1.id}})
   await prisma.financialTransaction.create({data:{code:'FIN-PED-1001',type:'entrada',category:'venda',description:'Venda PED-1001',amountCents:20000,status:'liquidado',producerId:disk.id,eventId:maiden.id,orderId:o1.id}})
 
+  // Acordo comercial Maiden (Taxa percentual 9% + spread + advanced habilitado)
+  const maidenAgreement = await prisma.eventCommercialAgreement.create({
+    data: {
+      eventId: maiden.id,
+      producerId: disk.id,
+      currentVersion: 1,
+      status: 'ativo',
+      approvedBy: 'Diretoria Comercial Disk',
+      approvedAt: new Date()
+    }
+  })
+  const maidenVersion = await prisma.eventCommercialAgreementVersion.create({
+    data: {
+      agreementId: maidenAgreement.id,
+      version: 1,
+      status: 'ativa',
+      serviceFeeType: 'percentage',
+      serviceFeeBps: 900,
+      serviceFeeFixedCents: 0,
+      serviceFeePaidBy: 'buyer',
+      spreadEnabled: true,
+      spreadBps: 150,
+      advancedEnabled: true,
+      advancedRateBps: 250,
+      advancedMaxPercent: 70,
+      payoutTermsDays: 2,
+      payoutModel: 'pos_evento',
+      contractNumber: 'CTR-2026-MAIDEN-01',
+      changeReason: 'Contrato comercial inicial aprovado',
+      createdBy: 'Comercial Disk'
+    }
+  })
+  await prisma.appliedFeeSnapshot.create({
+    data: {
+      orderId: o1.id,
+      eventId: maiden.id,
+      producerId: disk.id,
+      agreementVersionId: maidenVersion.id,
+      ticketBaseCents: 20000,
+      feeTypeApplied: 'percentage',
+      feeRateAppliedBps: 900,
+      feeFixedAppliedCents: 0,
+      serviceFeeTotalCents: 1800,
+      grossChargedCents: 21800,
+      netProducerCents: 20000,
+      contractVersion: 1
+    }
+  })
+
   const o2=await prisma.order.create({data:{code:'PED-2001',buyerName:'Carlos Souza',buyerEmail:'carlos@example.com',paymentMethod:'credito',status:'pago',quantity:1,grossCents:4500,feeCents:500,netCents:4000,eventId:conferencia.id,producerId:fep.id}})
-  await prisma.ticket.create({data:{code:'ING-2001',priceCents:4500,producerId:fep.id,eventId:conferencia.id,orderId:o2.id,lotId:fepLot.id,participantId:p2.id}})
+  const t2=await prisma.ticket.create({data:{code:'ING-2001',priceCents:4500,producerId:fep.id,eventId:conferencia.id,orderId:o2.id,lotId:fepLot.id,participantId:p2.id}})
   await prisma.financialTransaction.create({data:{code:'FIN-PED-2001',type:'entrada',category:'venda',description:'Venda PED-2001',amountCents:4000,status:'liquidado',producerId:fep.id,eventId:conferencia.id,orderId:o2.id}})
+
+  // Acordo comercial Conferência (Taxa fixa R$ 5,00)
+  const confAgreement = await prisma.eventCommercialAgreement.create({
+    data: {
+      eventId: conferencia.id,
+      producerId: fep.id,
+      currentVersion: 1,
+      status: 'ativo',
+      approvedBy: 'Comercial FEP / Disk',
+      approvedAt: new Date()
+    }
+  })
+  const confVersion = await prisma.eventCommercialAgreementVersion.create({
+    data: {
+      agreementId: confAgreement.id,
+      version: 1,
+      status: 'ativa',
+      serviceFeeType: 'fixed',
+      serviceFeeBps: 0,
+      serviceFeeFixedCents: 500,
+      serviceFeePaidBy: 'buyer',
+      spreadEnabled: false,
+      advancedEnabled: false,
+      payoutTermsDays: 5,
+      payoutModel: 'pos_evento',
+      contractNumber: 'CTR-2026-FEP-3714',
+      changeReason: 'Contrato taxa fixa bilheteria',
+      createdBy: 'Comercial Disk'
+    }
+  })
+  await prisma.appliedFeeSnapshot.create({
+    data: {
+      orderId: o2.id,
+      eventId: conferencia.id,
+      producerId: fep.id,
+      agreementVersionId: confVersion.id,
+      ticketBaseCents: 4000,
+      feeTypeApplied: 'fixed',
+      feeRateAppliedBps: 0,
+      feeFixedAppliedCents: 500,
+      serviceFeeTotalCents: 500,
+      grossChargedCents: 4500,
+      netProducerCents: 4000,
+      contractVersion: 1
+    }
+  })
 
   await prisma.checkIn.create({data:{gate:'Portão A',method:'qr',operatorName:'Operação 01',producerId:disk.id,eventId:maiden.id,participantId:p1.id,ticketId:t1.id}})
 

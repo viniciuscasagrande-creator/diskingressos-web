@@ -26,7 +26,7 @@ export type PageKey =
   | 'customer-search-hub'
   | 'financial-core'
   | 'event-live-ops' | 'event-incidents' | 'event-revenue-intel' | 'event-global-search' | 'event-permission-engine' | 'event-compliance' | 'event-intelligence' | 'event-readiness' | 'event-forecast' | 'event-day-command' | 'event-producer-executive' | 'event-platform-noc'
-  | 'event-tickets' | 'event-courtesy' | 'event-reports' | 'event-details' | 'event-pixel' | 'event-utm' | 'event-ga4' | 'event-traffic' | 'event-meta-ads' | 'event-remarketing' | 'event-users' | 'event-audit' | 'event-permissions'
+  | 'event-tickets' | 'event-courtesy' | 'event-reports' | 'event-details' | 'event-pixel' | 'event-utm' | 'event-ga4' | 'event-traffic' | 'event-meta-ads' | 'event-remarketing' | 'event-users' | 'event-audit' | 'event-permissions' | 'event-commercial-conditions'
   | 'facial'
   // HUBS ENTERPRISE (FASE 28.15.8.1)
   | 'finance-hub-account' | 'finance-hub-bills' | 'finance-hub-treasury' | 'finance-hub-procurement' | 'finance-hub-controlling' | 'finance-hub-reconciliation' | 'finance-hub-reports'

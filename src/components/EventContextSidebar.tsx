@@ -2,7 +2,7 @@ import type { ComponentType } from 'react'
 import {
   Activity, ArrowLeft, BarChart3, CalendarDays, ChevronRight, CircleGauge, FileBarChart2,
   Link2, MapPin, Megaphone, MousePointerClick, ScanLine, ScrollText, Settings2, ShieldCheck,
-  Tags, Ticket, UserCog, Users, WalletCards, Waves, Boxes, ContactRound, Siren, Brain, Search, Gauge, Network, ClipboardCheck, Shield, LineChart, RadioTower, Split
+  Tags, Ticket, UserCog, Users, WalletCards, Waves, Boxes, ContactRound, Siren, Brain, Search, Gauge, Network, ClipboardCheck, Shield, LineChart, RadioTower, Split, Scale
 } from 'lucide-react'
 import type { EventItem } from '../data/events'
 import type { PageKey } from './ModuleSidebar'
@@ -38,6 +38,7 @@ const eventItems: Item[] = [
   { key: 'event-courtesy', label: 'Cortesias', icon: Tags },
   { key: 'event-reports', label: 'Relatórios', icon: FileBarChart2 },
   { key: 'event-details', label: 'Detalhes', icon: Settings2 },
+  { key: 'event-commercial-conditions', label: 'Condições Comerciais', icon: Scale },
 ]
 
 const marketingItems: Item[] = [

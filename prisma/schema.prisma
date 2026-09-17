@@ -57,6 +57,8 @@ model Producer {
   borderoDocuments      BorderoDocument[]
   signatureRequests     SignatureRequest[]
   signatureSigners      SignatureSigner[]
+  commercialAgreements  EventCommercialAgreement[]
+  advanceOperations     AdvanceOperation[]
 }
 
 model User {
@@ -128,6 +130,10 @@ model Event {
   financialClosings     FinancialClosing[]
   borderoDocuments      BorderoDocument[]
   signatureRequests     SignatureRequest[]
+  commercialAgreement   EventCommercialAgreement?
+  feeSnapshots          AppliedFeeSnapshot[]
+  advanceOperations     AdvanceOperation[]
+  commercialAuditLogs   CommercialAgreementAuditLog[]
 
   @@index([producerId])
   @@index([producerId, status])
@@ -177,6 +183,7 @@ model Order {
   posTransaction PosTransaction?
   financialTx    FinancialTransaction[]
   attribution    TrackingAttribution?
+  feeSnapshot    AppliedFeeSnapshot?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
@@ -1557,3 +1564,150 @@ model IntelligenceInsight {
 
   @@index([producerId, eventId, detectedAt])
 }
+
+// ===== Motor Comercial Disk — Acordos, Condições, Snapshots e Antecipações =====
+
+model EventCommercialAgreement {
+  id                    Int      @id @default(autoincrement())
+  eventId               Int      @unique
+  event                 Event    @relation(fields: [eventId], references: [id])
+  producerId            Int
+  producer              Producer @relation(fields: [producerId], references: [id])
+  currentVersion        Int      @default(1)
+  status                String   @default("ativo") // "rascunho" | "em_aprovacao" | "ativo" | "suspenso" | "encerrado"
+  approvedBy            String?
+  approvedAt            DateTime?
+  notes                 String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  versions              EventCommercialAgreementVersion[]
+  auditLogs             CommercialAgreementAuditLog[]
+  advanceOperations     AdvanceOperation[]
+
+  @@index([producerId, status])
+}
+
+model EventCommercialAgreementVersion {
+  id                    Int      @id @default(autoincrement())
+  agreementId           Int
+  agreement             EventCommercialAgreement @relation(fields: [agreementId], references: [id])
+  version               Int
+  effectiveFrom         DateTime @default(now())
+  effectiveTo           DateTime?
+  status                String   @default("ativa") // "ativa" | "substituida" | "cancelada"
+  
+  // Taxa de Serviço Disk
+  serviceFeeType        String   @default("percentage") // "percentage" | "fixed"
+  serviceFeeBps         Int      @default(1000)         // 1000 = 10.00%
+  serviceFeeFixedCents  Int      @default(0)            // ex: 800 = R$ 8,00 por ingresso
+  serviceFeePaidBy      String   @default("buyer")      // "buyer" (checkout) | "producer" (deduzido)
+  serviceFeeMinCents    Int      @default(0)
+
+  // Spread Comercial
+  spreadEnabled         Boolean  @default(false)
+  spreadType            String   @default("percentage") // "percentage" | "fixed"
+  spreadBps             Int      @default(0)
+  spreadFixedCents      Int      @default(0)
+  spreadNotes           String?
+
+  // Advanced / Antecipação
+  advancedEnabled       Boolean  @default(false)
+  advancedRateBps       Int      @default(0)            // ex: 250 = 2.50% ao mês
+  advancedMaxPercent    Int      @default(70)           // até 70% do saldo elegível
+  advancedMinDays       Int      @default(2)
+  advancedTerms         String?
+
+  // Prazos e Liquidação de Repasse
+  payoutTermsDays       Int      @default(2)            // D+2
+  payoutModel           String   @default("pos_evento") // "pos_evento" | "semanal" | "quinzenal" | "customizado"
+  payoutNotes           String?
+
+  // Metadados contratuais
+  contractNumber        String?
+  contractDocUrl        String?
+  changeReason          String?
+  createdBy             String
+  createdAt             DateTime @default(now())
+
+  feeSnapshots          AppliedFeeSnapshot[]
+
+  @@unique([agreementId, version])
+  @@index([agreementId, status])
+}
+
+model AppliedFeeSnapshot {
+  id                    Int      @id @default(autoincrement())
+  orderId               Int      @unique
+  order                 Order    @relation(fields: [orderId], references: [id])
+  eventId               Int
+  event                 Event    @relation(fields: [eventId], references: [id])
+  producerId            Int
+  agreementVersionId    Int
+  agreementVersion      EventCommercialAgreementVersion @relation(fields: [agreementVersionId], references: [id])
+  
+  ticketBaseCents       Int      // Preço nominal dos ingressos
+  feeTypeApplied        String   // "percentage" | "fixed"
+  feeRateAppliedBps     Int      // Taxa aplicada em bps
+  feeFixedAppliedCents  Int      // Taxa fixa aplicada em centavos
+  serviceFeeTotalCents  Int      // Valor total da taxa Disk cobrado
+  grossChargedCents     Int      // Total cobrado do comprador (base + taxa)
+  netProducerCents      Int      // Valor líquido do produtor
+
+  spreadAppliedCents    Int      @default(0)
+  financialCostCents    Int      @default(0)
+  contractVersion       Int      // Versão do acordo na data da compra
+  frozenAt              DateTime @default(now())
+
+  @@index([eventId, frozenAt])
+  @@index([producerId, frozenAt])
+}
+
+model AdvanceOperation {
+  id                    Int      @id @default(autoincrement())
+  code                  String   @unique // ex: ADV-maiden-2026-001
+  agreementId           Int
+  agreement             EventCommercialAgreement @relation(fields: [agreementId], references: [id])
+  eventId               Int
+  event                 Event    @relation(fields: [eventId], references: [id])
+  producerId            Int
+  producer              Producer @relation(fields: [producerId], references: [id])
+
+  requestedCents        Int
+  advanceRateBps        Int
+  costCents             Int      // Custo financeiro da antecipação
+  netTransferredCents   Int      // Valor líquido transferido ao produtor
+  status                String   @default("solicitada") // "solicitada" | "analise_risco" | "aprovada" | "contratada" | "liquidada" | "rejeitada"
+  eligibleBalanceCents  Int
+  bankAccountId         Int?
+  requestedBy           String
+  approvedBy            String?
+  approvedAt            DateTime?
+  transferredAt         DateTime?
+  settledAt             DateTime?
+  notes                 String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([producerId, status])
+  @@index([eventId, status])
+}
+
+model CommercialAgreementAuditLog {
+  id                    Int      @id @default(autoincrement())
+  agreementId           Int
+  agreement             EventCommercialAgreement @relation(fields: [agreementId], references: [id])
+  eventId               Int
+  event                 Event    @relation(fields: [eventId], references: [id])
+  actorId               String
+  actorName             String
+  action                String   // "create_agreement" | "change_fee" | "toggle_spread" | "toggle_advanced" | "change_payout" | "approve"
+  previousValueJson     String?
+  newValueJson          String
+  reason                String
+  timestamp             DateTime @default(now())
+
+  @@index([agreementId, timestamp])
+  @@index([eventId])
+}
+

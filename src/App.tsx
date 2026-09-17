@@ -154,6 +154,7 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'event-users': 'Usuários do Evento',
   'event-audit': 'Logs do Evento',
   'event-permissions': 'Permissões do Evento',
+  'event-commercial-conditions': 'Condições Comerciais do Evento',
   'event-support': 'Suporte a Eventos & Event Builder',
   'commerce-orders': 'Pedidos, Ingressos & Integridade Comercial',
   'developer-center': 'Desenvolvedor • Central de Observabilidade',
@@ -601,7 +602,7 @@ export default function App() {
   }
 
   const eventContextPages = new Set<PageKey>([
-    'event-command-center', 'event-inventory', 'event-customer-360', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details',
+    'event-command-center', 'event-inventory', 'event-customer-360', 'event-dashboard', 'event-tickets', 'event-courtesy', 'event-reports', 'event-details', 'event-commercial-conditions',
     'event-live-ops', 'event-incidents', 'event-revenue-intel', 'event-global-search', 'event-permission-engine', 'event-compliance', 'event-intelligence', 'event-readiness', 'event-forecast', 'event-day-command', 'event-producer-executive', 'event-platform-noc',
     'event-pixel', 'event-utm', 'event-ga4', 'event-traffic', 'event-meta-ads', 'event-remarketing',
     'event-users', 'event-audit', 'event-permissions'
