@@ -155,7 +155,7 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   return (
     <div
-      className={`app-shell min-h-screen bg-background text-foreground flex flex-col font-sans antialiased transition-colors w-full max-w-full ${
+      className={`app-shell h-screen max-h-screen bg-background text-foreground flex flex-col font-sans antialiased transition-colors w-full max-w-full overflow-hidden ${
         effectiveSidebarCollapsed && !inEventContext ? 'sidebar-collapsed' : ''
       } ${effectiveMobileNavOpen ? 'mobile-nav-open sidebar-mobile-expanded' : ''}`}
       data-testid="disk-app-shell"
@@ -195,7 +195,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       />
 
       {/* Área Central: Sidebar Global + Conteúdo Principal */}
-      <div className="flex flex-1 relative w-full min-h-[calc(100vh-var(--disk-shell-header,60px))]">
+      <div className="flex flex-1 relative w-full overflow-hidden min-h-0">
         {/* Sidebar Global Fixa / Recolhível */}
         <AppSidebar
           module={module}

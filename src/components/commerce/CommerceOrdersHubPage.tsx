@@ -194,7 +194,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
       width: '130px',
       render: (order) => (
         <span className="font-mono font-bold text-xs text-[var(--disk-text-primary,#0f172a)]">
-          R$ {order.totalAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          R$ {(order.totalAmount ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       )
     },
@@ -304,7 +304,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
         <DiskKpiCard
           label="Faturamento do Dia"
           value={
-            summary
+            summary && typeof summary.todayRevenueBrl === 'number'
               ? `R$ ${summary.todayRevenueBrl.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
               : 'R$ 0,00'
           }
@@ -317,7 +317,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
 
         <DiskKpiCard
           label="Ingressos Emitidos Hoje"
-          value={summary ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '0'}
+          value={summary && typeof summary.ticketsIssuedToday === 'number' ? summary.ticketsIssuedToday.toLocaleString('pt-BR') : '0'}
           icon={<Ticket className="w-5 h-5" />}
           accent="info"
           note="Consolidado em tempo real"
@@ -326,7 +326,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
 
         <DiskKpiCard
           label="Holds Ativos (Redis)"
-          value={summary ? summary.activeHoldsCount.toLocaleString('pt-BR') : '0'}
+          value={summary && typeof summary.activeHoldsCount === 'number' ? summary.activeHoldsCount.toLocaleString('pt-BR') : '0'}
           icon={<Layers className="w-5 h-5" />}
           accent="warning"
           note="Reserva anti-overbooking"

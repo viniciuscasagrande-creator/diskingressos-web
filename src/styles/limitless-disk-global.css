@@ -16,10 +16,13 @@ html[data-ui-framework='limitless'] {
   --ll-orange: #f97316;
 }
 
+html[data-ui-framework='limitless'],
 html[data-ui-framework='limitless'] body {
   font-size: 13px;
   line-height: 1.45;
-  overflow-x: hidden;
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
 }
 
 /* Shell: uma única geometria. */
@@ -30,6 +33,9 @@ html[data-ui-framework='limitless'] .app-shell {
   --content-max-width: 100rem !important;
   width: 100%;
   min-width: 0;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
 }
 
 html[data-ui-framework='limitless'] .global-topbar {
@@ -56,16 +62,17 @@ html[data-ui-framework='limitless'] .event-context-sidebar {
   width: var(--ll-sidebar) !important;
   min-width: var(--ll-sidebar) !important;
   max-width: var(--ll-sidebar) !important;
-  height: calc(100vh - var(--ll-header)) !important;
-  min-height: calc(100vh - var(--ll-header)) !important;
-  top: var(--ll-header) !important;
-  position: sticky !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  top: 0 !important;
+  position: relative !important;
   overflow: hidden !important;
   border-right: 1px solid var(--disk-border, rgba(148,163,184,.16)) !important;
   box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
-  align-self: flex-start !important;
+  align-self: stretch !important;
   transition: width .2s ease, min-width .2s ease, max-width .2s ease, flex-basis .2s ease !important;
 }
 
