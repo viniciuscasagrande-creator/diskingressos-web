@@ -1,10 +1,14 @@
 /* ============================================================================
-   DISK — SISTEMA DE DESIGN & LAYOUT GLOBAL (CLARO / ESCURO / SISTEMA)
-   Padrão: DiskIngressos OS — tokens de contraste, borda e alinhamento
-   - Todo card com borda visível de 1px garantida nos dois temas
-   - Alternador manual de tema (Claro / Escuro / Sistema)
-   - Números tabulares e monoespaçados para valores monetários
-   - Sidebar corporativa fixa com scroll interno e 0 vão até o rodapé
+   DISK — SISTEMA DE DESIGN & LAYOUT GLOBAL (VÍDEO OFICIAL 21/09/2026)
+   Referência visual oficial do vídeo:
+   - Fundo da página: Azul-preto (#0d1218) no escuro, #F5F6F8 no claro
+   - Fundo dos cards: Grafite azulado (#171d26) no escuro, #FFFFFF no claro
+   - Superfícies elevadas: #202732
+   - Bordas: Visíveis de 1px (#36414f no escuro, #DEE2E8 no claro)
+   - Cor principal: Laranja Disk (#FF8047 no escuro, #E8590C no claro)
+   - Textos: #f4f7fb (principal), #c4ccd7 (secundário), #8995a5 (suave)
+   - Números financeiros: Fonte monoespaçada / tabular
+   - Sidebar: Contínua até o rodapé, fixa com rolagem interna
    ============================================================================ */
 
 :root {
@@ -12,7 +16,7 @@
   --disk-layout-sidebar-width: clamp(288px, 19.25vw, 368px);
   --disk-layout-sidebar-collapsed: 76px;
 
-  /* ---- Modo Claro (Default) ---- */
+  /* ---- Modo Claro ---- */
   --disk-layout-page-bg: #F5F6F8;
   --disk-layout-header-bg: #FFFFFF;
   --disk-layout-sidebar-bg: #FFFFFF;
@@ -25,6 +29,7 @@
   --disk-layout-text: #14181F;
   --disk-layout-text-soft: #5B6472;
   --disk-layout-muted: #64748B;
+  --disk-layout-accent: #E8590C;
   --disk-layout-blue: #E8590C;
 
   /* HSL shadcn tokens - Modo Claro */
@@ -76,29 +81,30 @@
   --disk-text-muted: var(--disk-layout-muted);
 }
 
-/* ---- Modo Escuro (Tokens Oficiais do Sistema de Design) ---- */
+/* ---- Modo Escuro (Padrão Oficial do Vídeo de 21/09/2026) ---- */
 html.dark,
 html[data-theme='dark'] {
-  --disk-layout-page-bg: #14171C;
-  --disk-layout-header-bg: #111214;
-  --disk-layout-sidebar-bg: #151617;
-  --disk-layout-surface: #1B1F26;
-  --disk-layout-surface-soft: #20242C;
-  --disk-layout-surface-hover: #262B35;
-  --disk-layout-border: #2C313A;
-  --disk-layout-border-soft: #252A32;
-  --disk-layout-border-strong: #3C424D;
-  --disk-layout-text: #F1F2F4;
-  --disk-layout-text-soft: #A3ABB8;
-  --disk-layout-muted: #828B99;
-  --disk-layout-blue: #FF8C4A;
+  --disk-layout-page-bg: #0d1218;
+  --disk-layout-header-bg: #0a0f14;
+  --disk-layout-sidebar-bg: #0f151c;
+  --disk-layout-surface: #171d26;
+  --disk-layout-surface-soft: #121820;
+  --disk-layout-surface-hover: #242d39;
+  --disk-layout-border: #36414f;
+  --disk-layout-border-soft: #29323d;
+  --disk-layout-border-strong: #596779;
+  --disk-layout-text: #f4f7fb;
+  --disk-layout-text-soft: #c4ccd7;
+  --disk-layout-muted: #8995a5;
+  --disk-layout-accent: #ff8047;
+  --disk-layout-blue: #ff8047;
 
   --disk-bg-app: var(--disk-layout-page-bg);
   --disk-bg-surface: var(--disk-layout-surface);
-  --disk-bg-elevated: #20242C;
+  --disk-bg-elevated: #202732;
   --disk-bg-muted: var(--disk-layout-surface-soft);
   --disk-bg-hover: var(--disk-layout-surface-hover);
-  --disk-bg-active: #2C313A;
+  --disk-bg-active: #2b3644;
   --disk-border-default: var(--disk-layout-border);
   --disk-border-subtle: var(--disk-layout-border-soft);
   --disk-border-strong: var(--disk-layout-border-strong);
@@ -106,44 +112,35 @@ html[data-theme='dark'] {
   --disk-text-secondary: var(--disk-layout-text-soft);
   --disk-text-muted: var(--disk-layout-muted);
 
-  --background: 217.5 16.7% 9.4%;
-  --foreground: 220 12% 95.1%;
-  --card: 218.2 16.9% 12.7%;
-  --card-foreground: 220 12% 95.1%;
-  --popover: 220 15.8% 14.9%;
-  --popover-foreground: 220 12% 95.1%;
-  --primary: 21.9 100% 64.5%;
-  --primary-foreground: 30 27.8% 7.1%;
-  --secondary: 214.3 17.9% 7.6%;
-  --secondary-foreground: 220 12% 95.1%;
-  --muted: 214.3 17.9% 7.6%;
-  --muted-foreground: 217.1 12.9% 68%;
-  --accent: 23.7 48.7% 15.3%;
-  --accent-foreground: 23.6 100% 76.1%;
-  --destructive: 355.4 83.3% 69.4%;
-  --destructive-foreground: 355.1 46.8% 15.5%;
-  --success: 153 57.4% 52.2%;
-  --success-foreground: 156.4 47.8% 13.5%;
-  --success-soft: 156.4 47.8% 13.5%;
-  --success-soft-foreground: 153 57.4% 52.2%;
-  --warning: 37.9 86.8% 61.4%;
-  --warning-foreground: 39.6 86.2% 11.4%;
-  --warning-soft: 39.6 86.2% 11.4%;
-  --warning-soft-foreground: 37.9 86.8% 61.4%;
-  --info: 219.2 85.5% 72.9%;
-  --info-foreground: 218.8 47.2% 14.1%;
-  --info-soft: 218.8 47.2% 14.1%;
-  --info-soft-foreground: 219.2 85.5% 72.9%;
-  --border: 218.6 13.7% 20%;
-  --border-strong: 218.8 12.4% 26.9%;
-  --input: 218.6 13.7% 20%;
-  --ring: 21.9 100% 64.5%;
+  --background: 213 30% 7%;
+  --foreground: 210 40% 98%;
+  --card: 215 24% 12%;
+  --card-foreground: 210 40% 98%;
+  --popover: 214 22% 16%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 18 100% 64%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 22% 17%;
+  --secondary-foreground: 210 40% 96%;
+  --muted: 214 27% 10%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 215 22% 17%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 142 71% 45%;
+  --warning: 38 92% 50%;
+  --info: 217 91% 60%;
+  --border: 214 19% 26%;
+  --border-strong: 214 19% 34%;
+  --input: 214 19% 26%;
+  --ring: 18 100% 64%;
 
-  --sidebar: 210 4% 9%;
+  --sidebar: 213 24% 7%;
   --sidebar-foreground: 210 40% 98%;
-  --sidebar-hover: 220 4% 20%;
-  --sidebar-active: 21.9 100% 64.5%;
-  --sidebar-border: 225 4% 25%;
+  --sidebar-hover: 215 22% 17%;
+  --sidebar-active: 18 100% 64%;
+  --sidebar-border: 214 19% 22%;
 }
 
 /* Shell contínuo: cabeçalho em toda a largura, sidebar até o rodapé e conteúdo adjacente */
@@ -179,7 +176,7 @@ html[data-theme='dark'] {
   min-height: var(--disk-layout-header-height) !important;
   padding: 0 20px !important;
   background: var(--disk-layout-header-bg) !important;
-  border-bottom: 1px solid var(--disk-layout-border) !important;
+  border-bottom: 1px solid var(--disk-layout-border-soft) !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
@@ -209,7 +206,7 @@ html[data-theme='dark'] {
   position: sticky !important;
   top: var(--disk-layout-header-height) !important;
   background: var(--disk-layout-sidebar-bg) !important;
-  border-right: 1px solid var(--disk-layout-border) !important;
+  border-right: 1px solid var(--disk-layout-border-soft) !important;
   box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
@@ -230,7 +227,7 @@ html[data-theme='dark'] {
   min-height: 52px !important;
   padding: 8px 14px !important;
   background: var(--disk-layout-sidebar-bg) !important;
-  border-bottom: 1px solid var(--disk-layout-border) !important;
+  border-bottom: 1px solid var(--disk-layout-border-soft) !important;
   display: flex !important;
   align-items: center !important;
 }
@@ -271,7 +268,7 @@ html[data-theme='dark'] {
 
 .safesaff-sidebar .module-nav-item.active {
   background: var(--disk-layout-surface-soft) !important;
-  box-shadow: inset 3px 0 0 var(--disk-layout-blue) !important;
+  box-shadow: inset 3px 0 0 var(--disk-layout-accent) !important;
 }
 
 .safesaff-sidebar .module-nav-icon,
@@ -288,7 +285,7 @@ html.dark .safesaff-sidebar .module-nav-item,
 html.dark .safesaff-sidebar .collapsible-section-head,
 html[data-theme='dark'] .safesaff-sidebar .module-nav-item,
 html[data-theme='dark'] .safesaff-sidebar .collapsible-section-head {
-  color: #f0f1f3 !important;
+  color: #f4f7fb !important;
 }
 
 html.dark .safesaff-sidebar .module-nav-item:hover,
@@ -297,25 +294,25 @@ html.dark .safesaff-sidebar .collapsible-section-head.open,
 html[data-theme='dark'] .safesaff-sidebar .module-nav-item:hover,
 html[data-theme='dark'] .safesaff-sidebar .collapsible-section-head:hover,
 html[data-theme='dark'] .safesaff-sidebar .collapsible-section-head.open {
-  background: #25272b !important;
+  background: #242d39 !important;
 }
 
 html.dark .safesaff-sidebar .module-nav-item.active,
 html[data-theme='dark'] .safesaff-sidebar .module-nav-item.active {
-  background: #3a3b3f !important;
-  box-shadow: inset 3px 0 0 #FF8C4A !important;
+  background: #2b3644 !important;
+  box-shadow: inset 3px 0 0 #ff8047 !important;
 }
 
 html.dark .safesaff-sidebar .module-nav-icon,
 html.dark .safesaff-sidebar .collapsible-section-icon,
 html[data-theme='dark'] .safesaff-sidebar .module-nav-icon,
 html[data-theme='dark'] .safesaff-sidebar .collapsible-section-icon {
-  color: #e2e5e9 !important;
+  color: #c4ccd7 !important;
 }
 
 html.dark .safesaff-sidebar .module-nav-item.indent,
 html[data-theme='dark'] .safesaff-sidebar .module-nav-item.indent {
-  background: #121315 !important;
+  background: #0c1117 !important;
 }
 
 /* Conteúdo ocupa toda a área restante, sem faixa preta nem margem artificial */
@@ -377,9 +374,14 @@ thead, th {
   color: var(--disk-layout-text) !important;
 }
 
+html.dark :is(input, select, textarea):not([type='checkbox']):not([type='radio']):not([type='range']) {
+  background: var(--disk-bg-muted) !important;
+  border-color: var(--disk-layout-border) !important;
+  color: var(--disk-layout-text) !important;
+}
+
 /* ============================================================================
    NÚMEROS TABULARES — fonte monoespaçada com alinhamento de dígitos
-   Mais fácil comparar R$ 48.230,00 com R$ 112.900,00 em listas
    ============================================================================ */
 .tabular-nums,
 [data-tabular],
@@ -387,8 +389,15 @@ thead, th {
 .font-mono-numbers,
 .currency-value,
 .metric-value,
-.financial-val {
-  font-variant-numeric: tabular-nums !important;
+.financial-val,
+.money,
+.value,
+.kpi-value,
+[data-value],
+td[data-type='currency'],
+td[data-type='number'] {
+  font-variant-numeric: tabular-nums lining-nums !important;
+  font-feature-settings: 'tnum' 1, 'lnum' 1 !important;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
 
@@ -404,6 +413,121 @@ thead, th {
   font-size: 0.75rem !important;
   font-weight: 600 !important;
   line-height: 1 !important;
+}
+
+/* ============================================================================
+   PONTE CONTROLADA — FINANCEIRO E ESTORNOS AINDA EM COMPONENTES LEGADOS
+   Mantém o claro intacto e impede #fff/#f8fafc de romper o modo escuro.
+   ============================================================================ */
+html.dark :is(.finance-dashboard-wrapper,.finance-erp-ui,.finance-command,.finance360-page,
+  .finance-hub-video-model,.finance-spread-page,.disk-estornos-wrapper,#disk-estornos-module) {
+  background: var(--disk-bg-app) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+html.dark :is(.finance-header-section,.finance-chart-box,.finance-table-section,.finance-side-panels,
+  .finance-erp-hero,.finance-accounting-header,.finance-erp-panel,.finance-accounting-panel,
+  .finance360-hero,.finance360-panel,.finance360-kpi,.finance-command-hero,.finance-command-kpi,
+  .finance-command-card,.finance-command-footer,.finance-video-card,.finance-option-carousel,
+  .finance-hub-nav,.finance-cash-center-nav) {
+  background: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+  box-shadow: none !important;
+}
+
+html.dark :is(.finance-kpi-card,.finance-kpi,.balance-card,.cash-summary,.finance-card,
+  .finance360-rule,.finance-command-health > div) {
+  background: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+  box-shadow: none !important;
+}
+
+html.dark :is(.finance-dashboard-wrapper,.finance-erp-ui,.finance-command,.finance360-page,
+  .finance-hub-video-model) :is(h1,h2,h3,h4,strong,b,.value,.kpi-value) {
+  color: var(--disk-text-primary) !important;
+}
+
+html.dark :is(.finance-dashboard-wrapper,.finance-erp-ui,.finance-command,.finance360-page,
+  .finance-hub-video-model) :is(p,small,.label,.sub,.eyebrow,.table-subtitle) {
+  color: var(--disk-text-muted) !important;
+}
+
+html.dark :is(.finance-tabs,.finance360-tabs,.finance-erp-tabs,.finance-accounting-tabs) {
+  background: var(--disk-bg-muted) !important;
+  border-color: var(--disk-border-default) !important;
+}
+
+html.dark :is(.finance-tabs,.finance360-tabs,.finance-erp-tabs,.finance-accounting-tabs) button {
+  background: transparent !important;
+  color: var(--disk-text-secondary) !important;
+  border-color: transparent !important;
+}
+
+html.dark :is(.finance-tabs,.finance360-tabs,.finance-erp-tabs,.finance-accounting-tabs) button.active,
+html.dark :is(.finance-tabs,.finance360-tabs,.finance-erp-tabs,.finance-accounting-tabs) [aria-selected='true'] {
+  background: var(--disk-bg-elevated) !important;
+  color: var(--disk-color-primary) !important;
+  border-color: var(--disk-color-primary-subtle-border) !important;
+}
+
+html.dark :is(.finance-dashboard-wrapper,.finance-erp-ui,.finance-command,.finance360-page)
+  :is(input,select,textarea,button:not(.primary):not(.btn-primary)) {
+  background-color: var(--disk-bg-muted) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+/* Estornos possui variáveis próprias e hardcodes claros neutralizados */
+html.dark #disk-estornos-module,
+html.dark .disk-estornos-wrapper {
+  --di-orange: var(--disk-color-primary);
+  --di-orange-dark: var(--disk-color-primary-active);
+  --di-navy: var(--disk-bg-elevated);
+  --di-navy-2: var(--disk-bg-hover);
+  --di-bg: var(--disk-bg-app);
+  --di-border: var(--disk-border-default);
+  --di-text: var(--disk-text-primary);
+  --di-muted: var(--disk-text-muted);
+  --di-white: var(--disk-bg-surface);
+  --di-shadow: none;
+}
+
+html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) :is(
+  .di-filters,.di-kpi,.di-card,.di-panel,.di-table-wrap,.di-modal-content,
+  .di-drawer,.di-section,.di-summary,.di-toolbar
+) {
+  background: var(--disk-bg-surface) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+  box-shadow: none !important;
+}
+
+html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) :is(h1,h2,h3,h4,strong,.di-value,.value) {
+  color: var(--disk-text-primary) !important;
+}
+
+html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) :is(p,small,label,.di-label,.di-sub,.muted) {
+  color: var(--disk-text-muted) !important;
+}
+
+html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) :is(input,select,textarea,.di-btn:not(.di-btn-primary):not(.di-btn-danger):not(.di-btn-success)) {
+  background: var(--disk-bg-muted) !important;
+  border-color: var(--disk-border-default) !important;
+  color: var(--disk-text-primary) !important;
+}
+
+html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) :is(table,thead,tbody,tr,th,td) {
+  background-color: transparent !important;
+  border-color: var(--disk-border-subtle) !important;
+  color: var(--disk-text-secondary) !important;
+}
+
+html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) thead,
+html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) th {
+  background: var(--disk-bg-muted) !important;
+  color: var(--disk-text-muted) !important;
 }
 
 @media (max-width: 1199px) and (min-width: 768px) {

@@ -120,33 +120,33 @@
 /* Modo Escuro (.dark ou [data-theme="dark"]) */
 .dark,
 [data-theme="dark"] {
-  /* Marca Institucional Disk (Ajuste de contraste) */
-  --disk-color-primary: #F97316;
-  --disk-color-primary-hover: #FB923C;
-  --disk-color-primary-active: #EA580C;
-  --disk-color-primary-subtle: rgba(249, 115, 22, 0.14);
-  --disk-color-primary-subtle-border: rgba(249, 115, 22, 0.32);
+  /* Marca Institucional Disk — referência visual oficial de 21/09/2026 */
+  --disk-color-primary: #FF8047;
+  --disk-color-primary-hover: #FF9568;
+  --disk-color-primary-active: #F36B32;
+  --disk-color-primary-subtle: rgba(255, 128, 71, 0.14);
+  --disk-color-primary-subtle-border: rgba(255, 128, 71, 0.38);
   --disk-color-primary-foreground: #FFFFFF;
 
-  /* Superfícies & Fundos (Modo Escuro Komposo) */
-  --disk-bg-app: #0B0F19;
-  --disk-bg-surface: #111827;
-  --disk-bg-elevated: #1F2937;
-  --disk-bg-muted: #162032;
-  --disk-bg-hover: #1E293B;
-  --disk-bg-active: #24334C;
+  /* Superfícies & Fundos — quatro níveis realmente distinguíveis */
+  --disk-bg-app: #0D1218;
+  --disk-bg-surface: #171D26;
+  --disk-bg-elevated: #202732;
+  --disk-bg-muted: #121820;
+  --disk-bg-hover: #242D39;
+  --disk-bg-active: #2B3644;
 
   /* Bordas & Divisores */
-  --disk-border-default: #1F2937;
-  --disk-border-subtle: #162032;
-  --disk-border-strong: #374151;
-  --disk-border-focus: #F97316;
+  --disk-border-default: #36414F;
+  --disk-border-subtle: #29323D;
+  --disk-border-strong: #596779;
+  --disk-border-focus: #FF8047;
 
   /* Tipografia & Contrastes */
-  --disk-text-primary: #F8FAFC;
-  --disk-text-secondary: #CBD5E1;
-  --disk-text-muted: #94A3B8;
-  --disk-text-disabled: #64748B;
+  --disk-text-primary: #F4F7FB;
+  --disk-text-secondary: #C4CCD7;
+  --disk-text-muted: #8995A5;
+  --disk-text-disabled: #5F6B7A;
   --disk-text-inverse: #0F172A;
 
   /* Estados Semânticos Unificados */
@@ -175,33 +175,33 @@
   --disk-color-info-text: #60A5FA;
 
   /* Tokens HSL Padrão Komposo / shadcn / Tailwind (Modo Escuro) */
-  --background: 222 47% 7%;
+  --background: 213 30% 7%;
   --foreground: 210 40% 98%;
 
-  --card: 222 40% 10%;
+  --card: 215 24% 12%;
   --card-foreground: 210 40% 98%;
 
-  --popover: 222 40% 10%;
+  --popover: 214 22% 16%;
   --popover-foreground: 210 40% 98%;
 
-  --primary: 24 95% 53%;
+  --primary: 18 100% 64%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 217 25% 17%;
+  --secondary: 215 22% 17%;
   --secondary-foreground: 210 40% 96%;
 
-  --muted: 217 25% 15%;
+  --muted: 214 27% 10%;
   --muted-foreground: 215 20% 65%;
 
-  --accent: 217 25% 17%;
+  --accent: 215 22% 17%;
   --accent-foreground: 210 40% 98%;
 
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 217 25% 18%;
-  --input: 217 25% 18%;
-  --ring: 24 95% 53%;
+  --border: 214 19% 26%;
+  --input: 214 19% 26%;
+  --ring: 18 100% 64%;
 
   /* Semânticos adicionais */
   --success: 142 71% 45%;
@@ -209,25 +209,25 @@
   --info: 217 91% 60%;
 
   /* Sidebar (Preparação para Fase 29.14.1.2) */
-  --sidebar: 222 47% 8%;
-  --sidebar-foreground: 210 40% 96%;
-  --sidebar-hover: 217 25% 14%;
-  --sidebar-active: 24 95% 53%;
-  --sidebar-border: 217 25% 18%;
+  --sidebar: 213 24% 7%;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-hover: 215 22% 17%;
+  --sidebar-active: 18 100% 64%;
+  --sidebar-border: 214 19% 22%;
 
   /* Paleta Unificada de Gráficos (Modo Escuro) */
   --chart-1: 24 95% 58%;
-  --chart-2: 217 91% 65%;
-  --chart-3: 142 69% 58%;
+  --chart-2: 217 91% 60%;
+  --chart-3: 142 71% 45%;
   --chart-4: 43 96% 56%;
   --chart-5: 263 90% 66%;
 
-  --disk-chart-1: #FB923C;
+  --disk-chart-1: #FF8047;
   --disk-chart-2: #34D399;
   --disk-chart-3: #60A5FA;
   --disk-chart-4: #A78BFA;
   --disk-chart-5: #F472B6;
   --disk-chart-6: #22D3EE;
-  --disk-chart-grid: #1F2937;
-  --disk-chart-axis: #94A3B8;
+  --disk-chart-grid: #29323D;
+  --disk-chart-axis: #8995A5;
 }
