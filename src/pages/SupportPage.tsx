@@ -410,7 +410,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <button className={`ds-launcher-item ${activeTab === 'inbox' ? 'active' : ''}`} onClick={() => setActiveTab('inbox')}>
               <div className="ds-launcher-circle">
                 <MessagesSquare size={22} />
-                <span className="ds-mini-tag purple">3 novos</span>
+                <span className="ds-mini-tag orange">3 novos</span>
               </div>
               <span className="ds-launcher-label">Omnichannel</span>
             </button>
@@ -425,7 +425,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <button className={`ds-launcher-item ${activeTab === 'copilot' ? 'active' : ''}`} onClick={() => setActiveTab('copilot')}>
               <div className="ds-launcher-circle">
                 <Bot size={22} />
-                <span className="ds-mini-tag purple">96%</span>
+                <span className="ds-mini-tag orange">96%</span>
               </div>
               <span className="ds-launcher-label">Disk Copilot IA</span>
             </button>
@@ -541,7 +541,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
 
               <div className="ds-module-card" onClick={() => setActiveTab('sla')}>
-                <div className="ds-card-icon-wrap purple"><Clock3 size={22} /></div>
+                <div className="ds-card-icon-wrap orange"><Clock3 size={22} /></div>
                 <div className="ds-card-text"><h4>SLA & Metas</h4><p>Acordos, metas e conformidade de SLA</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
@@ -559,7 +559,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
 
               <div className="ds-module-card" onClick={() => setActiveTab('problems')}>
-                <div className="ds-card-icon-wrap purple"><Bug size={22} /></div>
+                <div className="ds-card-icon-wrap orange"><Bug size={22} /></div>
                 <div className="ds-card-text"><h4>Problems (RCA)</h4><p>Gestão de problemas, causas e planos</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
@@ -583,7 +583,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
 
               <div className="ds-module-card" onClick={() => setActiveTab('copilot')}>
-                <div className="ds-card-icon-wrap purple"><Bot size={22} /></div>
+                <div className="ds-card-icon-wrap orange"><Bot size={22} /></div>
                 <div className="ds-card-text"><h4>Disk Copilot IA</h4><p>IA aplicada ao atendimento com sugestões</p></div>
                 <ChevronRight size={18} className="ds-card-chevron" />
               </div>
@@ -664,14 +664,14 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
             <div className="ds-quick-actions-bar">
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#059669' }} /> Novo Ticket</button>
-              <button className="ds-quick-action-pill" onClick={() => onNavigate('customer-search-hub')} style={{ background: '#f5f3ff', borderColor: '#c4b5fd', color: '#6d28d9', fontWeight: 'bold' }}><Users size={14} style={{ color: '#7c3aed' }} /> Central de Clientes</button>
+              <button className="ds-quick-action-pill" onClick={() => onNavigate('customer-search-hub')} style={{ background: 'rgba(255, 128, 71, 0.12)', borderColor: 'rgba(255, 128, 71, 0.35)', color: '#FF8047', fontWeight: 'bold' }}><Users size={14} style={{ color: '#FF8047' }} /> Central de Clientes</button>
               <button className="ds-quick-action-pill" onClick={() => onNavigate('tickets-hub')}><Ticket size={14} style={{ color: '#2563eb' }} /> Ingressos & QR</button>
               <button className="ds-quick-action-pill" onClick={() => onNavigate('access-control-hub')}><ScanLine size={14} style={{ color: '#059669' }} /> Disk Acesso</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('incidents')}><AlertTriangle size={14} style={{ color: '#dc2626' }} /> Novo Incidente</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('major')}><Siren size={14} style={{ color: '#dc2626' }} /> War Room</button>
               <button className="ds-quick-action-pill" onClick={() => notify('Disparo de broadcast de suporte')}><Radio size={14} style={{ color: '#d97706' }} /> Broadcast</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('bi')}><BarChart3 size={14} style={{ color: '#0284c7' }} /> Relatório Executivo</button>
-              <button className="ds-quick-action-pill" onClick={() => notify('Exportação de relatórios gerada em Excel!')}><Download size={14} style={{ color: '#7c3aed' }} /> Exportar Dados</button>
+              <button className="ds-quick-action-pill" onClick={() => notify('Exportação de relatórios gerada em Excel!')}><Download size={14} style={{ color: '#FF8047' }} /> Exportar Dados</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('sla')}><SlidersHorizontal size={14} /> Configurações</button>
             </div>
           </>
@@ -765,15 +765,15 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   </button>
                 </div>
 
-                <div style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', borderRadius: '14px', padding: '16px 20px' }}>
+                <div style={{ background: 'rgba(255, 128, 71, 0.08)', border: '1px solid rgba(255, 128, 71, 0.35)', borderRadius: '14px', padding: '16px 20px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Bot size={18} style={{ color: '#7c3aed' }} />
-                      <strong style={{ color: '#5b21b6', fontSize: '14px' }}>Diagnóstico Disk Copilot IA (SAC Integrado)</strong>
+                      <Bot size={18} style={{ color: '#FF8047' }} />
+                      <strong style={{ color: '#FF8047', fontSize: '14px' }}>Diagnóstico Disk Copilot IA (SAC Integrado)</strong>
                     </div>
-                    <span className="ds-mini-tag purple" style={{ position: 'static' }}>96% Confiança</span>
+                    <span className="ds-mini-tag orange" style={{ position: 'static' }}>96% Confiança</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '13px', color: '#4c1d95', lineHeight: 1.5 }}>
+                  <p style={{ margin: 0, fontSize: '13px', color: 'inherit', lineHeight: 1.5 }}>
                     <b>Diagnóstico:</b> O pedido #DI-984221 está com pagamento PIX aprovado e 2 ingressos ativos (não utilizados). Houve falha na entrega do e-mail de notificação. <b>Next Best Action:</b> Clique em "Enviar WhatsApp" para disparar os vouchers atualizados com QR Code direto no celular do comprador.
                   </p>
                 </div>
@@ -867,7 +867,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
                   <div className="ds-bi-card">
                     <div className="ds-bi-card-header">
-                      <h3 className="ds-bi-card-title"><Clock3 size={18} style={{ color: '#7c3aed' }} /> Linha do Tempo de Interações</h3>
+                      <h3 className="ds-bi-card-title"><Clock3 size={18} style={{ color: '#FF8047' }} /> Linha do Tempo de Interações</h3>
                     </div>
 
                     <div className="ds-cockpit-timeline">
@@ -1003,7 +1003,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
               <div className="ds-bi-card">
                 <div className="ds-bi-card-header">
-                  <h3 className="ds-bi-card-title"><Tag size={18} style={{ color: '#7c3aed' }} /> Chamados por Categoria</h3>
+                  <h3 className="ds-bi-card-title"><Tag size={18} style={{ color: '#FF8047' }} /> Chamados por Categoria</h3>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {[
@@ -1450,7 +1450,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <button className="ds-filter-tab-btn">Planos Corretivos Concluídos</button>
               </div>
 
-              <button className="ds-quick-action-pill" onClick={() => notify('Abertura de nova Investigação de Problema')} style={{ background: '#7c3aed', color: '#fff', border: 0 }}>
+              <button className="ds-quick-action-pill" onClick={() => notify('Abertura de nova Investigação de Problema')} style={{ background: '#FF8047', color: '#fff', border: 0 }}>
                 <Plus size={14} /> Novo Problem (RCA)
               </button>
             </div>
@@ -1460,7 +1460,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <div key={p.id} className="ds-bi-card">
                   <div className="ds-bi-card-header">
                     <div>
-                      <span className="ds-badge purple" style={{ marginBottom: '4px' }}>{p.code}</span>
+                      <span className="ds-badge orange" style={{ marginBottom: '4px' }}>{p.code}</span>
                       <h3 className="ds-bi-card-title">{p.title}</h3>
                     </div>
                     <span className="ds-badge green">{p.status}</span>
@@ -1573,7 +1573,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Award size={20} style={{ color: '#0284c7' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Promotores</span><div className="ds-stat-val-row"><span className="ds-stat-val">68%</span></div></div></div>
               <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Users size={20} style={{ color: '#d97706' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Neutros</span><div className="ds-stat-val-row"><span className="ds-stat-val">21%</span></div></div></div>
               <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><AlertOctagon size={20} style={{ color: '#dc2626' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Detratores</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#dc2626' }}>11%</span></div></div></div>
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><RotateCcw size={20} style={{ color: '#7c3aed' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Taxa Recuperação</span><div className="ds-stat-val-row"><span className="ds-stat-val">84%</span></div></div></div>
+              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><RotateCcw size={20} style={{ color: '#FF8047' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Taxa Recuperação</span><div className="ds-stat-val-row"><span className="ds-stat-val">84%</span></div></div></div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '16px', marginTop: '16px' }}>
@@ -1634,25 +1634,25 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             ======================================================== */}
         {activeTab === 'copilot' && (
           <div style={{ marginTop: '10px' }}>
-            <div style={{ background: 'linear-gradient(135deg, #f5f3ff 0%, #eff6ff 100%)', border: '1px solid #ddd6fe', borderRadius: '14px', padding: '20px 24px', marginBottom: '20px' }}>
+            <div style={{ background: 'rgba(255, 128, 71, 0.08)', border: '1px solid rgba(255, 128, 71, 0.35)', borderRadius: '14px', padding: '20px 24px', marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#7c3aed', color: '#fff', display: 'grid', placeItems: 'center' }}>
+                  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: '#FF8047', color: '#fff', display: 'grid', placeItems: 'center' }}>
                     <Bot size={24} />
                   </div>
                   <div>
-                    <h2 style={{ margin: 0, fontSize: '18px', color: '#4c1d95' }}>Disk Copilot IA — Inteligência Ativa no SAC</h2>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#6d28d9' }}>Conectado a Tickets + Pedidos + Clientes + KEDB + Incidentes</p>
+                    <h2 style={{ margin: 0, fontSize: '18px', color: '#FF8047' }}>Disk Copilot IA — Inteligência Ativa no SAC</h2>
+                    <p style={{ margin: 0, fontSize: '13px', color: 'inherit' }}>Conectado a Tickets + Pedidos + Clientes + KEDB + Incidentes</p>
                   </div>
                 </div>
-                <span className="ds-badge purple" style={{ fontSize: '13px', padding: '6px 12px' }}>Modelo Ativo: GPT-4o Optimized</span>
+                <span className="ds-badge orange" style={{ fontSize: '13px', padding: '6px 12px' }}>Modelo Ativo: GPT-4o Optimized</span>
               </div>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '16px' }}>
               <div className="ds-bi-card">
                 <div className="ds-bi-card-header">
-                  <h3 className="ds-bi-card-title"><Sparkles size={18} style={{ color: '#7c3aed' }} /> Next Best Action Recomendações em Tempo Real</h3>
+                  <h3 className="ds-bi-card-title"><Sparkles size={18} style={{ color: '#FF8047' }} /> Next Best Action Recomendações em Tempo Real</h3>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1754,7 +1754,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                     <td><span className="ds-badge green">93.4%</span></td>
                   </tr>
                   <tr>
-                    <td><span className="ds-badge purple">P4 — Baixo</span></td>
+                    <td><span className="ds-badge orange">P4 — Baixo</span></td>
                     <td><b>8 horas</b></td>
                     <td><b>48 horas</b></td>
                     <td>Dias úteis</td>
@@ -1796,7 +1796,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '16px' }}>
               {[
                 { name: 'Fila N1 — SAC Geral & Dúvidas', tickets: 18, wait: '4 min', agents: 4, lead: 'Lucas SAC', color: '#2563eb' },
-                { name: 'Fila N2 — Financeiro & Reembolsos', tickets: 6, wait: '14 min', agents: 2, lead: 'Beatriz N2', color: '#7c3aed' },
+                { name: 'Fila N2 — Financeiro & Reembolsos', tickets: 6, wait: '14 min', agents: 2, lead: 'Beatriz N2', color: '#FF8047' },
                 { name: 'Fila N3 — Casos Complexos & Ouvidoria', tickets: 3, wait: '8 min', agents: 2, lead: 'Fernando SAC', color: '#dc2626' },
               ].map((q, i) => (
                 <div key={i} className="ds-bi-card">
@@ -1835,7 +1835,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
         {activeTab === 'predictive' && (
           <div style={{ marginTop: '10px' }}>
             <div className="ds-stats-strip">
-              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Brain size={20} style={{ color: '#7c3aed' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Previsão 7 Dias</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#7c3aed' }}>584</span><span className="ds-stat-delta green">±4% Erro MAPE</span></div></div></div>
+              <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Brain size={20} style={{ color: '#FF8047' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Previsão 7 Dias</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#FF8047' }}>584</span><span className="ds-stat-delta green">±4% Erro MAPE</span></div></div></div>
               <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><AlertTriangle size={20} style={{ color: '#d97706' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Risco Sobrecarga</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#d97706' }}>Moderado</span><span className="ds-stat-delta orange">Fila N1 Sexta-feira</span></div></div></div>
               <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><Activity size={20} style={{ color: '#059669' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Detecção Z-Score</span><div className="ds-stat-val-row"><span className="ds-stat-val" style={{ color: '#059669' }}>Normal</span></div></div></div>
               <div className="ds-stat-card"><div className="ds-stat-icon-wrap"><TrendingUp size={20} style={{ color: '#0284c7' }} /></div><div className="ds-stat-content"><span className="ds-stat-label">Pico Estimado</span><div className="ds-stat-val-row"><span className="ds-stat-val">19/05 (18:00)</span></div></div></div>

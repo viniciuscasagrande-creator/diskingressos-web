@@ -281,9 +281,9 @@
 }
 
 .module-hub-card-badge--purple {
-  background: rgba(168, 85, 247, 0.15);
-  border: 1px solid rgba(168, 85, 247, 0.4);
-  color: #c084fc;
+  background: rgba(255, 128, 71, 0.15);
+  border: 1px solid rgba(255, 128, 71, 0.4);
+  color: #ff8047;
 }
 
 .module-hub-card-body {

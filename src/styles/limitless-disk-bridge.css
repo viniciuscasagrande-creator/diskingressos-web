@@ -200,27 +200,27 @@
 }
 
 .disk-limitless-page .badge-subtle-indigo {
-  background: rgba(99, 102, 241, 0.12);
-  color: #4f46e5;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: rgba(255, 128, 71, 0.12);
+  color: #ff8047;
+  border: 1px solid rgba(255, 128, 71, 0.3);
 }
 .dark .disk-limitless-page .badge-subtle-indigo,
 [data-theme='dark'] .disk-limitless-page .badge-subtle-indigo {
-  background: rgba(99, 102, 241, 0.18);
-  color: #818cf8;
-  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(255, 128, 71, 0.18);
+  color: #ff8047;
+  border-color: rgba(255, 128, 71, 0.45);
 }
 
 .disk-limitless-page .badge-subtle-purple {
-  background: rgba(168, 85, 247, 0.12);
-  color: #9333ea;
-  border: 1px solid rgba(168, 85, 247, 0.25);
+  background: rgba(255, 128, 71, 0.12);
+  color: #ff8047;
+  border: 1px solid rgba(255, 128, 71, 0.3);
 }
 .dark .disk-limitless-page .badge-subtle-purple,
 [data-theme='dark'] .disk-limitless-page .badge-subtle-purple {
-  background: rgba(168, 85, 247, 0.18);
-  color: #c084fc;
-  border-color: rgba(168, 85, 247, 0.3);
+  background: rgba(255, 128, 71, 0.18);
+  color: #ff8047;
+  border-color: rgba(255, 128, 71, 0.45);
 }
 
 .disk-limitless-page .form-control,

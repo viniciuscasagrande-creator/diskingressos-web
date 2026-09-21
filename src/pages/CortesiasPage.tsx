@@ -143,7 +143,7 @@ export const CortesiasPage: React.FC<CortesiasPageProps> = ({
         </div>
         <div className="bg-white p-4 rounded-card border border-[#E2E8F0] shadow-xs">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wide block">Cota Máxima Autorizada</span>
-          <strong className="text-[22px] font-black text-purple-600 mt-1 block">150</strong>
+          <strong className="text-[22px] font-black text-[#FF8047] mt-1 block">150</strong>
           <span className="text-[10.5px] text-slate-500 font-semibold">Restam {150 - cortesias.length} vagas</span>
         </div>
       </div>

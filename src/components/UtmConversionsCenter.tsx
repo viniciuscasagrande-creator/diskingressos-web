@@ -473,7 +473,7 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
       {/* 2. Top Consolidated KPI Strip (6 Cards) */}
       <section className="utm-dash-kpis">
         <DashKpi
-          tone="purple"
+          tone="orange"
           icon={<Link2 size={20} />}
           label="URLs rastreáveis"
           value={String(totals.activeLinks)}
@@ -543,7 +543,7 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
         </div>
         <div>
           <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>🚀 Mais Tráfego</span>
-          <strong style={{ display: 'block', fontSize: '13px', color: '#7C3AED', marginTop: '2px' }}>Instagram (1.842 vis.)</strong>
+          <strong style={{ display: 'block', fontSize: '13px', color: '#FF8047', marginTop: '2px' }}>Instagram (1.842 vis.)</strong>
         </div>
         <div>
           <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>⚠️ Maior Abandono</span>
@@ -925,7 +925,7 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
                 <div className="utm-line-legend">
                   <span className="dot-green">● Adicionaram</span>
                   <span className="dot-orange">● Checkouts</span>
-                  <span className="dot-purple">● Abandonos</span>
+                  <span className="dot-amber" style={{ color: '#F59E0B' }}>● Abandonos</span>
                   <span className="dot-blue">● Compras</span>
                 </div>
 
@@ -941,8 +941,8 @@ export default function UtmConversionsCenter({ event, events = [], onSelectEvent
                     <path d="M 0 60 Q 40 40, 80 50 T 160 35 T 240 45 T 320 30 T 400 48 T 460 38" fill="none" stroke="#10B981" strokeWidth="2.5" />
                     {/* Checkouts curve (Orange) */}
                     <path d="M 0 85 Q 40 75, 80 70 T 160 65 T 240 68 T 320 58 T 400 65 T 460 60" fill="none" stroke="#F97316" strokeWidth="2.5" />
-                    {/* Abandonos curve (Purple) */}
-                    <path d="M 0 105 Q 40 95, 80 98 T 160 90 T 240 92 T 320 88 T 400 95 T 460 90" fill="none" stroke="#A855F7" strokeWidth="2" />
+                    {/* Abandonos curve (Amber) */}
+                    <path d="M 0 105 Q 40 95, 80 98 T 160 90 T 240 92 T 320 88 T 400 95 T 460 90" fill="none" stroke="#F59E0B" strokeWidth="2" />
                     {/* Compras curve (Blue) */}
                     <path d="M 0 95 Q 40 88, 80 82 T 160 78 T 240 80 T 320 72 T 400 76 T 460 70" fill="none" stroke="#3B82F6" strokeWidth="2.5" />
                   </svg>

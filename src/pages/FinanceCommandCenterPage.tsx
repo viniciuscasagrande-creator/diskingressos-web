@@ -293,7 +293,7 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
             label="Repasses pendentes"
             value={brl(summary?.pendingPayoutsCents)}
             note={`${summary?.pendingPayoutsCount || 0} solicitação(ões)`}
-            accent="purple"
+            accent="primary"
             onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-payouts', { status: 'pending', eventName: selectedEventName, source: 'finance-dashboard', label: 'Repasses pendentes' })}
           />
           <DiskKpiCard
@@ -325,7 +325,7 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
             <span><b>{summary?.activeAcquirers || 0}</b> adquirentes</span>
           </HealthLink>
           <HealthLink page="finance-methods" onNavigate={onNavigate}>
-            <CreditCard className="w-4 h-4 text-indigo-500" />
+            <CreditCard className="w-4 h-4 text-[#FF8047]" />
             <span><b>{summary?.methods || 0}</b> métodos</span>
           </HealthLink>
           <HealthLink page="finance-refunds" onNavigate={onNavigate}>

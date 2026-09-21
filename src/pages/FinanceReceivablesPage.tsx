@@ -218,7 +218,7 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
     { label: 'Crédito', value: 62, hex: '#0c83ff' },
     { label: 'PIX', value: 21, hex: '#059669' },
     { label: 'Débito', value: 11, hex: '#f58646' },
-    { label: 'Boleto/Outros', value: 6, hex: '#8b5cf6' },
+    { label: 'Boleto/Outros', value: 6, hex: '#FF8047' },
   ]
 
   const exportCSV = () => {
@@ -546,8 +546,8 @@ export default function FinanceReceivablesPage({ events, notify, onNavigate }: P
                       <span
                         className="pa-badge"
                         style={{
-                          background: r.origin === 'automatico' ? 'rgba(56, 189, 248, 0.15)' : 'rgba(192, 132, 252, 0.15)',
-                          color: r.origin === 'automatico' ? '#38bdf8' : '#c084fc',
+                          background: r.origin === 'automatico' ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 128, 71, 0.15)',
+                          color: r.origin === 'automatico' ? '#38bdf8' : '#FF8047',
                         }}
                       >
                         {r.origin === 'automatico' ? 'Automático' : 'Manual'}

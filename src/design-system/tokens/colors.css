@@ -137,9 +137,10 @@
   --disk-bg-active: #2B3644;
 
   /* Bordas & Divisores */
-  --disk-border-default: #36414F;
-  --disk-border-subtle: #29323D;
-  --disk-border-strong: #596779;
+  --disk-border-default: #FF8047;
+  --disk-card-border: #FF8047;
+  --disk-border-subtle: rgba(255, 128, 71, 0.45);
+  --disk-border-strong: #FF8047;
   --disk-border-focus: #FF8047;
 
   /* Tipografia & Contrastes */
@@ -199,7 +200,7 @@
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 214 19% 26%;
+  --border: 18 100% 64%;
   --input: 214 19% 26%;
   --ring: 18 100% 64%;
 

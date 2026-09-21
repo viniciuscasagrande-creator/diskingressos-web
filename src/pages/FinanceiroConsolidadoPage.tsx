@@ -250,10 +250,10 @@ export default function FinanceiroConsolidadoPage({ events, notify, onNavigate }
           <span className="text-[10px] text-slate-500">Obrigações futuras</span>
         </div>
 
-        <div className="bg-[#0f172a] border-2 border-purple-500/40 rounded-xl p-3 shadow-md bg-gradient-to-br from-purple-950/30 to-slate-900">
-          <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider block">Saldo Projetado</span>
+        <div className="bg-[#0f172a] border-2 border-orange-500/40 rounded-xl p-3 shadow-md bg-gradient-to-br from-orange-950/30 to-slate-900">
+          <span className="text-[10px] font-bold text-orange-300 uppercase tracking-wider block">Saldo Projetado</span>
           <strong className="text-base text-white block mt-1">{brl(summary.projectedBalanceCents / 100)}</strong>
-          <span className="text-[10px] text-purple-300 font-medium">Liquidez final</span>
+          <span className="text-[10px] text-orange-300 font-medium">Liquidez final</span>
         </div>
       </section>
 

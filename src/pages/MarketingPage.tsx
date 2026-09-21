@@ -164,7 +164,7 @@ const hubGroups: HubGroup[] = [
   {
     name: '4. Tracking & Conversão',
     description: 'Rastreie cada clique até a compra final com atribuição multi-touch.',
-    badgeColor: '#7C3AED',
+    badgeColor: '#FF8047',
     modules: [
       { id: 'marketing-utm-central', title: 'Central UTM & Conversões', description: 'Dashboard executivo completo de UTMs.', icon: Link2, badge: 'Novo' },
       { id: 'marketing-links', title: 'Links, UTMs e QR Codes', description: 'URLs curtas e QR codes para totens/posts.', icon: QrCode },
@@ -1070,7 +1070,7 @@ function InfluencerManager({ events, event = defaultFallbackEvent, notify }: { e
           <h2 style={{ color: '#0F172A', fontSize: '22px', margin: '2px 0 4px' }}>Influenciadores & Promoters — {eventTitle}</h2>
           <p style={{ color: '#64748B', fontSize: '13px', margin: 0 }}>Acompanhe as vendas individuais de criadores de conteúdo com links UTM exclusivos.</p>
         </div>
-        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#7C3AED', borderColor: '#7C3AED', fontSize: '12px' }}>
+        <button className="btn primary" onClick={() => setIsModalOpen(true)} style={{ background: '#FF8047', borderColor: '#FF8047', fontSize: '12px' }}>
           <Plus size={15} /> Cadastrar Influenciador
         </button>
       </div>
@@ -1128,7 +1128,7 @@ function InfluencerManager({ events, event = defaultFallbackEvent, notify }: { e
           <div className="utm-modal-card-v2" style={{ width: 'min(500px, 94vw)', background: '#FFFFFF', borderRadius: '12px', padding: '24px' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2E8F0', paddingBottom: '14px', marginBottom: '16px' }}>
               <div>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#7C3AED', textTransform: 'uppercase' }}>CREATOR NETWORK</span>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#FF8047', textTransform: 'uppercase' }}>CREATOR NETWORK</span>
                 <h3 style={{ margin: '2px 0 0', fontSize: '18px', color: '#0F172A', fontWeight: 800 }}>Cadastrar Novo Influenciador</h3>
               </div>
               <button type="button" className="drawer-close-btn" onClick={() => setIsModalOpen(false)}><X size={16} /></button>
@@ -1153,7 +1153,7 @@ function InfluencerManager({ events, event = defaultFallbackEvent, notify }: { e
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '10px' }}>
                 <button type="button" className="btn secondary" onClick={() => setIsModalOpen(false)}>Cancelar</button>
-                <button type="submit" className="btn primary" style={{ background: '#7C3AED', borderColor: '#7C3AED' }}>Cadastrar e Gerar UTM</button>
+                <button type="submit" className="btn primary" style={{ background: '#FF8047', borderColor: '#FF8047' }}>Cadastrar e Gerar UTM</button>
               </div>
             </form>
           </div>
@@ -1220,7 +1220,7 @@ function AudiencesPage({ events, event = defaultFallbackEvent, notify }: { event
     { name: 'Compradores VIP (Ticket Médio > R$ 300)', size: '1.240 contatos', capi: 'Sincronizado', color: '#16A34A' },
     { name: 'Abandonos de Checkout (Últimos 14 dias)', size: '380 contatos', capi: 'Sincronizado', color: '#2563EB' },
     { name: 'Compradores de Edições Anteriores 2025', size: '4.520 contatos', capi: 'Pendente', color: '#D97706' },
-    { name: 'Visitantes Recorrentes sem Compra', size: '2.180 contatos', capi: 'Sincronizado', color: '#7C3AED' }
+    { name: 'Visitantes Recorrentes sem Compra', size: '2.180 contatos', capi: 'Sincronizado', color: '#FF8047' }
   ])
   const [newName, setNewName] = useState('')
   const [newRule, setNewRule] = useState('Compradores nos últimos 90 dias')

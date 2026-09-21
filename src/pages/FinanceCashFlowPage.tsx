@@ -384,13 +384,13 @@ export default function FinanceCashFlowPage({ events, notify, onNavigate }: Prop
         </div>
 
         {/* 7. Saldo Projetado Final */}
-        <div className="bg-[#0f172a]/90 border-2 border-purple-500/50 rounded-xl p-3.5 shadow-md bg-gradient-to-br from-purple-950/30 to-slate-900">
+        <div className="bg-[#0f172a]/90 border-2 border-orange-500/50 rounded-xl p-3.5 shadow-md bg-gradient-to-br from-orange-950/30 to-slate-900">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-purple-300 uppercase tracking-wider">Saldo Projetado</span>
-            <TrendingUp size={14} className="text-purple-400" />
+            <span className="text-[11px] font-bold text-orange-300 uppercase tracking-wider">Saldo Projetado</span>
+            <TrendingUp size={14} className="text-orange-400" />
           </div>
           <strong className="text-base text-white block mt-1 font-extrabold">{brl(kpis.projectedBalanceCents / 100)}</strong>
-          <span className="text-[10px] text-purple-300 font-medium mt-1 block">Final do período</span>
+          <span className="text-[10px] text-orange-300 font-medium mt-1 block">Final do período</span>
         </div>
       </section>
 
@@ -439,7 +439,7 @@ export default function FinanceCashFlowPage({ events, notify, onNavigate }: Prop
                     <strong className="text-white block">{point.label} ({point.isPast ? 'Realizado' : 'Projetado'})</strong>
                     <div className="text-emerald-400 mt-0.5">Entrada: {brl(entryCents / 100)}</div>
                     <div className="text-rose-400">Saída: {brl(exitCents / 100)}</div>
-                    <div className="text-purple-300 font-semibold mt-1 border-t border-slate-800 pt-0.5">
+                    <div className="text-orange-300 font-semibold mt-1 border-t border-slate-800 pt-0.5">
                       Saldo Projetado: {brl(point.projectedBalanceCents / 100)}
                     </div>
                   </div>

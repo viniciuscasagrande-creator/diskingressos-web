@@ -389,11 +389,11 @@ export default function FinanceReconciliationPage({ events = [], notify, onNavig
         <div className="rec-kpi-card">
           <div className="rec-kpi-top">
             <span className="rec-kpi-label">Sobretaxas MDR</span>
-            <div className="rec-kpi-icon bg-purple-50 text-purple-600">
+            <div className="rec-kpi-icon bg-orange-50 text-[#FF8047] dark:bg-orange-500/10">
               <ShieldAlert size={16} />
             </div>
           </div>
-          <div className="rec-kpi-val text-purple-600">
+          <div className="rec-kpi-val text-[#FF8047]">
             {formatBRL(summary?.excessMdrFeesCents ?? 1992)}
           </div>
           <div className="rec-kpi-sub">
@@ -775,7 +775,7 @@ export default function FinanceReconciliationPage({ events = [], notify, onNavig
                     {/* Botão Vínculo Manual */}
                     {(tx.status === 'VALOR_DIVERGENTE' || tx.status === 'PEDIDO_NAO_LOCALIZADO') && (
                       <button
-                        className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded text-xs font-bold transition cursor-pointer inline-flex items-center gap-1"
+                        className="px-2.5 py-1 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 dark:bg-orange-500/10 dark:text-[#FF8047] dark:border-orange-500/30 rounded text-xs font-bold transition cursor-pointer inline-flex items-center gap-1"
                         onClick={() => handleOpenManualMatch(tx)}
                       >
                         <Pencil size={12} />
@@ -1100,7 +1100,7 @@ export default function FinanceReconciliationPage({ events = [], notify, onNavig
           <div className="rec-modal-container">
             <div className="rec-modal-header">
               <h2>
-                <Pencil size={18} className="text-purple-600" />
+                <Pencil size={18} className="text-[#FF8047]" />
                 Vincular Pedido Manualmente
               </h2>
               <button

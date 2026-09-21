@@ -63,7 +63,7 @@ export const DiskKpiCard: React.FC<DiskKpiCardProps> = ({
     warning: { bg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400', text: 'text-amber-600 dark:text-amber-400' },
     danger: { bg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400', text: 'text-rose-600 dark:text-rose-400' },
     info: { bg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400', text: 'text-blue-600 dark:text-blue-400' },
-    purple: { bg: 'bg-purple-500/10 text-purple-600 dark:text-purple-400', text: 'text-purple-600 dark:text-purple-400' },
+    purple: { bg: 'bg-primary/10 text-primary', text: 'text-primary' },
     neutral: { bg: 'bg-muted text-muted-foreground', text: 'text-muted-foreground' },
   }
 
