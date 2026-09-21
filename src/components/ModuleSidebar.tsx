@@ -247,31 +247,26 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
   const isRemarketingActive = page.startsWith('remarketing-')
   const isAdminActive = page.startsWith('admin-')
 
-  const [openFinance, setOpenFinance] = useState(isFinanceActive)
-  const [openAccounting, setOpenAccounting] = useState(isAccountingActive)
-  const [openMarketing, setOpenMarketing] = useState(isMarketingActive)
-  const [openRemarketing, setOpenRemarketing] = useState(isRemarketingActive)
-  const [openAdmin, setOpenAdmin] = useState(isAdminActive)
+  type SectionKey = 'finance' | 'accounting' | 'marketing' | 'remarketing' | 'admin' | null
+
+  const getActiveSection = (): SectionKey => {
+    if (isFinanceActive) return 'finance'
+    if (isAccountingActive) return 'accounting'
+    if (isMarketingActive) return 'marketing'
+    if (isRemarketingActive) return 'remarketing'
+    if (isAdminActive) return 'admin'
+    return null
+  }
+
+  const [openSection, setOpenSection] = useState<SectionKey>(() => getActiveSection())
 
   useEffect(() => {
-    if (isMarketingActive) setOpenMarketing(true)
-  }, [page, isMarketingActive])
+    const active = getActiveSection()
+    if (active) {
+      setOpenSection(active)
+    }
+  }, [page, isFinanceActive, isAccountingActive, isMarketingActive, isRemarketingActive, isAdminActive])
 
-  useEffect(() => {
-    if (isFinanceActive) setOpenFinance(true)
-  }, [page, isFinanceActive])
-
-  useEffect(() => {
-    if (isAccountingActive) setOpenAccounting(true)
-  }, [page, isAccountingActive])
-
-  useEffect(() => {
-    if (isRemarketingActive) setOpenRemarketing(true)
-  }, [page, isRemarketingActive])
-
-  useEffect(() => {
-    if (isAdminActive) setOpenAdmin(true)
-  }, [page, isAdminActive])
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false
     return (
@@ -288,17 +283,24 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
     onCollapsedChange?.(collapsed)
   }, [collapsed, onCollapsedChange])
 
-  const toggleCollapsed = () => setCollapsed(value => !value)
+  const toggleCollapsed = () => {
+    setCollapsed(prev => {
+      const next = !prev
+      if (next) {
+        setOpenSection(null)
+      } else {
+        setOpenSection(getActiveSection())
+      }
+      return next
+    })
+  }
 
-  const handleSectionToggle = (
-    currentOpen: boolean,
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
+  const handleSectionToggle = (section: NonNullable<SectionKey>) => {
     if (collapsed) {
       setCollapsed(false)
-      setOpen(true)
+      setOpenSection(section)
     } else {
-      setOpen(prev => !prev)
+      setOpenSection(prev => (prev === section ? null : section))
     }
   }
 
@@ -357,12 +359,8 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         <CollapsibleSection
           label="Financeiro"
           icon={WalletCards}
-          open={openFinance}
-          keepOpen={isFinanceActive}
-          onToggle={() => handleSectionToggle(openFinance, setOpenFinance)}
-          onClose={() => {
-            if (!isFinanceActive) setOpenFinance(false)
-          }}
+          open={openSection === 'finance'}
+          onToggle={() => handleSectionToggle('finance')}
         >
           {financeHubItems.map((it, idx) => (
             <NavItem
@@ -387,12 +385,8 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         <CollapsibleSection
           label="Contabilidade"
           icon={BookOpenCheck}
-          open={openAccounting}
-          keepOpen={isAccountingActive}
-          onToggle={() => handleSectionToggle(openAccounting, setOpenAccounting)}
-          onClose={() => {
-            if (!isAccountingActive) setOpenAccounting(false)
-          }}
+          open={openSection === 'accounting'}
+          onToggle={() => handleSectionToggle('accounting')}
         >
           {accountingHubItems.map((it, index) => (
             <NavItem
@@ -409,12 +403,8 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         <CollapsibleSection
           label="Marketing"
           icon={Megaphone}
-          open={openMarketing}
-          keepOpen={isMarketingActive}
-          onToggle={() => handleSectionToggle(openMarketing, setOpenMarketing)}
-          onClose={() => {
-            if (!isMarketingActive) setOpenMarketing(false)
-          }}
+          open={openSection === 'marketing'}
+          onToggle={() => handleSectionToggle('marketing')}
         >
           {marketingItems.map((it, index) => (
             <NavItem
@@ -432,12 +422,8 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
         <CollapsibleSection
           label="Remarketing"
           icon={Repeat2}
-          open={openRemarketing}
-          keepOpen={isRemarketingActive}
-          onToggle={() => handleSectionToggle(openRemarketing, setOpenRemarketing)}
-          onClose={() => {
-            if (!isRemarketingActive) setOpenRemarketing(false)
-          }}
+          open={openSection === 'remarketing'}
+          onToggle={() => handleSectionToggle('remarketing')}
         >
           {remarketingItems.map((it, index) => (
             <NavItem
@@ -455,12 +441,8 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           <CollapsibleSection
             label="Administração"
             icon={Building2}
-            open={openAdmin}
-            keepOpen={isAdminActive}
-            onToggle={() => handleSectionToggle(openAdmin, setOpenAdmin)}
-            onClose={() => {
-              if (!isAdminActive) setOpenAdmin(false)
-            }}
+            open={openSection === 'admin'}
+            onToggle={() => handleSectionToggle('admin')}
           >
             {adminItems.map((it, index) => (
               <NavItem
@@ -483,20 +465,16 @@ function CollapsibleSection({
   icon: SectionIcon,
   open,
   onToggle,
-  onClose,
-  keepOpen = false,
   children
 }: {
   label: string
   icon?: ComponentType<{ size?: number; strokeWidth?: number }>
   open: boolean
   onToggle: () => void
-  onClose: () => void
-  keepOpen?: boolean
   children: ReactNode
 }) {
   return (
-    <div className="collapsible-nav-section">
+    <div className={`collapsible-nav-section ${open ? 'open' : ''}`}>
       <button
         type="button"
         className={`collapsible-section-head ${open ? 'open' : ''}`}
@@ -514,7 +492,6 @@ function CollapsibleSection({
       <div
         className={`collapsible-section-body ${open ? 'open' : ''}`}
         aria-hidden={!open}
-        style={{ display: open ? 'block' : 'none' }}
       >
         <div className="collapsible-section-inner">{children}</div>
       </div>

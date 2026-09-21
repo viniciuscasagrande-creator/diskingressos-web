@@ -19,15 +19,18 @@ html,body,#root{height:100%;max-height:100%;overflow:hidden}
 #main-module-sidebar .module-nav-icon svg{width:15px!important;height:15px!important}
 #main-module-sidebar .module-nav-label,#main-module-sidebar .collapsible-section-label{flex:1!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
 #main-module-sidebar .nav-item-badge{flex:0 0 auto!important;max-width:64px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:8.5px!important;line-height:15px!important;height:15px!important;padding:0 4px!important;border-radius:8px!important}
-#main-module-sidebar .collapsible-section-inner{padding:1px 0 3px 7px!important}
-#main-module-sidebar .module-nav-item.indent{padding-left:22px!important;font-size:11.5px!important}
-#main-module-sidebar .collapsible-section-body{display:none!important}
-#main-module-sidebar .collapsible-section-body.open{display:block!important}
+#main-module-sidebar .collapsible-section-body{display:grid!important;grid-template-rows:0fr;transition:grid-template-rows .18s cubic-bezier(0.4,0,0.2,1)!important;overflow:hidden!important}
+#main-module-sidebar .collapsible-section-body.open{grid-template-rows:1fr!important}
+#main-module-sidebar .collapsible-section-inner{min-height:0!important;overflow:hidden!important;padding:2px 0 4px 6px!important}
+#main-module-sidebar .module-nav-item.indent{padding-left:26px!important;font-size:11.5px!important}
 #main-module-sidebar .collapsible-section-chevron{margin-left:auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;transition:transform .2s ease!important}
 #main-module-sidebar .collapsible-section-head.open .collapsible-section-chevron{transform:rotate(90deg)!important}
-#main-module-sidebar.safesaff-sidebar--collapsed .module-caption,#main-module-sidebar.safesaff-sidebar--collapsed .module-nav-label,#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-label,#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-chevron,#main-module-sidebar.safesaff-sidebar--collapsed .nav-item-badge,#main-module-sidebar.safesaff-sidebar--collapsed .safesaff-sidebar-home span{display:none!important}
-#main-module-sidebar.safesaff-sidebar--collapsed .module-nav-item,#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-head{justify-content:center!important;padding:8px!important}
-#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-body{display:none!important}
+#main-module-sidebar.safesaff-sidebar--collapsed .safesaff-sidebar-header{justify-content:center!important;padding:6px 0!important}
+#main-module-sidebar.safesaff-sidebar--collapsed .safesaff-sidebar-home{display:none!important}
+#main-module-sidebar.safesaff-sidebar--collapsed .safesaff-sidebar-toggle{margin:0 auto!important}
+#main-module-sidebar.safesaff-sidebar--collapsed .module-caption,#main-module-sidebar.safesaff-sidebar--collapsed .module-nav-label,#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-label,#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-chevron,#main-module-sidebar.safesaff-sidebar--collapsed .nav-item-badge{display:none!important}
+#main-module-sidebar.safesaff-sidebar--collapsed .module-nav-item,#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-head,#main-module-sidebar.safesaff-sidebar--collapsed .module-nav-item.indent{justify-content:center!important;padding:8px!important}
+#main-module-sidebar.safesaff-sidebar--collapsed .collapsible-section-body{display:none!important;grid-template-rows:0fr!important}
 #main-app-content.disk-main-content{flex:1 1 0%!important;width:auto!important;min-width:0!important;max-width:none!important;height:100%!important;max-height:100%!important;overflow-y:auto!important;overflow-x:hidden!important}
 #main-app-content .disk-content-container{width:100%!important;max-width:1760px!important;min-width:0!important;margin:0 auto!important;padding:20px 24px 36px!important}
 #main-app-content .disk-content-container>*{min-width:0!important;max-width:100%!important}.disk-limitless-page h1{max-width:none!important;word-break:normal!important;overflow-wrap:normal!important}.disk-limitless-page table{width:100%}
