@@ -38,6 +38,9 @@ html[data-ui-framework='limitless'] .global-topbar {
   padding-inline: 1rem !important;
   gap: .75rem !important;
   box-shadow: none !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
 }
 
 html[data-ui-framework='limitless'] .global-topbar button,
