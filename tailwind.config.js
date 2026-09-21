@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,6 +8,63 @@ export default {
   theme: {
     extend: {
       colors: {
+        border: 'hsl(var(--border))',
+        'border-strong': 'hsl(var(--border-strong))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+
+        // ---- Extensões DiskIngressos OS (Financeiro & Estornos) ----
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+          soft: 'hsl(var(--success-soft))',
+          'soft-foreground': 'hsl(var(--success-soft-foreground))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+          soft: 'hsl(var(--warning-soft))',
+          'soft-foreground': 'hsl(var(--warning-soft-foreground))',
+        },
+        info: {
+          DEFAULT: 'hsl(var(--info))',
+          foreground: 'hsl(var(--info-foreground))',
+          soft: 'hsl(var(--info-soft))',
+          'soft-foreground': 'hsl(var(--info-soft-foreground))',
+        },
+
+        // ---- Paleta de compatibilidade legada ----
         brand: {
           sidebar: '#222A36',
           sidebarActive: '#3B4553',
@@ -14,9 +72,9 @@ export default {
           header: '#222A36',
           headerSearch: '#2A3442',
           bg: '#F4F6F9',
-          card: '#FFFFFF',
-          border: '#E2E8F0',
-          inputBorder: '#CBD5E1',
+          card: 'hsl(var(--card))',
+          border: 'hsl(var(--border))',
+          inputBorder: 'hsl(var(--input))',
           blue: '#1677FF',
           blueHover: '#0F6DE8',
           green: '#10B981',
@@ -25,9 +83,9 @@ export default {
           cyan: '#06B6D4',
           purple: '#7C3AED',
           slate: '#64748B',
-          textMain: '#0E1726',
-          textMuted: '#718096',
-        }
+          textMain: 'hsl(var(--foreground))',
+          textMuted: 'hsl(var(--muted-foreground))',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
@@ -42,7 +100,10 @@ export default {
         card: '10px',
         btn: '8px',
         input: '8px',
-      }
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
     },
   },
   plugins: [],

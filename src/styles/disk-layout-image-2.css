@@ -1,61 +1,152 @@
 /* ============================================================================
-   DISK — LAYOUT GLOBAL REFERÊNCIA IMAGEM 2
-   Escopo exclusivamente visual. Não altera menus, rotas, permissões ou dados.
-   Importado por último em main.tsx para consolidar o shell sem !important
-   espalhado pelos componentes funcionais.
+   DISK — SISTEMA DE DESIGN & LAYOUT GLOBAL (CLARO / ESCURO / SISTEMA)
+   Padrão: DiskIngressos OS — tokens de contraste, borda e alinhamento
+   - Todo card com borda visível de 1px garantida nos dois temas
+   - Alternador manual de tema (Claro / Escuro / Sistema)
+   - Números tabulares e monoespaçados para valores monetários
+   - Sidebar corporativa fixa com scroll interno e 0 vão até o rodapé
    ============================================================================ */
 
 :root {
   --disk-layout-header-height: 74px;
   --disk-layout-sidebar-width: clamp(288px, 19.25vw, 368px);
   --disk-layout-sidebar-collapsed: 76px;
-  --disk-layout-page-bg: #202124;
-  --disk-layout-header-bg: #111214;
-  --disk-layout-sidebar-bg: #151617;
-  --disk-layout-surface: #2b2c31;
-  --disk-layout-surface-soft: #26272b;
-  --disk-layout-surface-hover: #34363b;
-  --disk-layout-border: #45474d;
-  --disk-layout-border-soft: #383a40;
-  --disk-layout-text: #f8fafc;
-  --disk-layout-text-soft: #d4d7dd;
-  --disk-layout-muted: #a4a8b1;
-  --disk-layout-blue: #60a5fa;
-}
 
-/* A referência é escura; estes tokens eliminam os cartões cinza-claro no tema escuro. */
-html.dark,
-html[data-theme='dark'] {
+  /* ---- Modo Claro (Default) ---- */
+  --disk-layout-page-bg: #F5F6F8;
+  --disk-layout-header-bg: #FFFFFF;
+  --disk-layout-sidebar-bg: #FFFFFF;
+  --disk-layout-surface: #FFFFFF;
+  --disk-layout-surface-soft: #F8FAFC;
+  --disk-layout-surface-hover: #F1F5F9;
+  --disk-layout-border: #DEE2E8;
+  --disk-layout-border-soft: #E2E8F0;
+  --disk-layout-border-strong: #C7CCD4;
+  --disk-layout-text: #14181F;
+  --disk-layout-text-soft: #5B6472;
+  --disk-layout-muted: #64748B;
+  --disk-layout-blue: #E8590C;
+
+  /* HSL shadcn tokens - Modo Claro */
+  --background: 220 17.6% 96.7%;
+  --foreground: 218.2 21.6% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 218.2 21.6% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 218.2 21.6% 10%;
+  --primary: 21 90.2% 47.8%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 216 17.2% 94.3%;
+  --secondary-foreground: 218.2 21.6% 10%;
+  --muted: 216 17.2% 94.3%;
+  --muted-foreground: 216.5 11.2% 40.2%;
+  --accent: 24 86.2% 94.3%;
+  --accent-foreground: 21.8 90.1% 31.8%;
+  --destructive: 354.6 68.1% 41.8%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 155.3 78.1% 26.9%;
+  --success-foreground: 0 0% 100%;
+  --success-soft: 146.2 44.4% 92.9%;
+  --success-soft-foreground: 155.3 78.1% 26.9%;
+  --warning: 35.5 100% 30.2%;
+  --warning-foreground: 0 0% 100%;
+  --warning-soft: 40 80.5% 92%;
+  --warning-soft-foreground: 35.5 100% 30.2%;
+  --info: 219 68.8% 39%;
+  --info-foreground: 0 0% 100%;
+  --info-soft: 219 71.4% 94.5%;
+  --info-soft-foreground: 219 68.8% 39%;
+  --border: 216 17.9% 89%;
+  --border-strong: 216.9 13.1% 80.6%;
+  --input: 216 17.9% 89%;
+  --ring: 21 90.2% 47.8%;
+  --radius: 0.75rem;
+
   --disk-bg-app: var(--disk-layout-page-bg);
   --disk-bg-surface: var(--disk-layout-surface);
-  --disk-bg-elevated: #303137;
+  --disk-bg-elevated: #FFFFFF;
   --disk-bg-muted: var(--disk-layout-surface-soft);
   --disk-bg-hover: var(--disk-layout-surface-hover);
-  --disk-bg-active: #393c43;
+  --disk-bg-active: #E2E8F0;
   --disk-border-default: var(--disk-layout-border);
   --disk-border-subtle: var(--disk-layout-border-soft);
-  --disk-border-strong: #5a5d65;
+  --disk-border-strong: var(--disk-layout-border-strong);
   --disk-text-primary: var(--disk-layout-text);
   --disk-text-secondary: var(--disk-layout-text-soft);
   --disk-text-muted: var(--disk-layout-muted);
-  --background: 220 3% 13%;
-  --foreground: 210 40% 98%;
-  --card: 225 4% 18%;
-  --card-foreground: 210 40% 98%;
-  --popover: 225 4% 18%;
-  --popover-foreground: 210 40% 98%;
-  --secondary: 225 4% 21%;
-  --muted: 225 4% 17%;
-  --border: 225 4% 29%;
-  --input: 225 4% 29%;
+}
+
+/* ---- Modo Escuro (Tokens Oficiais do Sistema de Design) ---- */
+html.dark,
+html[data-theme='dark'] {
+  --disk-layout-page-bg: #14171C;
+  --disk-layout-header-bg: #111214;
+  --disk-layout-sidebar-bg: #151617;
+  --disk-layout-surface: #1B1F26;
+  --disk-layout-surface-soft: #20242C;
+  --disk-layout-surface-hover: #262B35;
+  --disk-layout-border: #2C313A;
+  --disk-layout-border-soft: #252A32;
+  --disk-layout-border-strong: #3C424D;
+  --disk-layout-text: #F1F2F4;
+  --disk-layout-text-soft: #A3ABB8;
+  --disk-layout-muted: #828B99;
+  --disk-layout-blue: #FF8C4A;
+
+  --disk-bg-app: var(--disk-layout-page-bg);
+  --disk-bg-surface: var(--disk-layout-surface);
+  --disk-bg-elevated: #20242C;
+  --disk-bg-muted: var(--disk-layout-surface-soft);
+  --disk-bg-hover: var(--disk-layout-surface-hover);
+  --disk-bg-active: #2C313A;
+  --disk-border-default: var(--disk-layout-border);
+  --disk-border-subtle: var(--disk-layout-border-soft);
+  --disk-border-strong: var(--disk-layout-border-strong);
+  --disk-text-primary: var(--disk-layout-text);
+  --disk-text-secondary: var(--disk-layout-text-soft);
+  --disk-text-muted: var(--disk-layout-muted);
+
+  --background: 217.5 16.7% 9.4%;
+  --foreground: 220 12% 95.1%;
+  --card: 218.2 16.9% 12.7%;
+  --card-foreground: 220 12% 95.1%;
+  --popover: 220 15.8% 14.9%;
+  --popover-foreground: 220 12% 95.1%;
+  --primary: 21.9 100% 64.5%;
+  --primary-foreground: 30 27.8% 7.1%;
+  --secondary: 214.3 17.9% 7.6%;
+  --secondary-foreground: 220 12% 95.1%;
+  --muted: 214.3 17.9% 7.6%;
+  --muted-foreground: 217.1 12.9% 68%;
+  --accent: 23.7 48.7% 15.3%;
+  --accent-foreground: 23.6 100% 76.1%;
+  --destructive: 355.4 83.3% 69.4%;
+  --destructive-foreground: 355.1 46.8% 15.5%;
+  --success: 153 57.4% 52.2%;
+  --success-foreground: 156.4 47.8% 13.5%;
+  --success-soft: 156.4 47.8% 13.5%;
+  --success-soft-foreground: 153 57.4% 52.2%;
+  --warning: 37.9 86.8% 61.4%;
+  --warning-foreground: 39.6 86.2% 11.4%;
+  --warning-soft: 39.6 86.2% 11.4%;
+  --warning-soft-foreground: 37.9 86.8% 61.4%;
+  --info: 219.2 85.5% 72.9%;
+  --info-foreground: 218.8 47.2% 14.1%;
+  --info-soft: 218.8 47.2% 14.1%;
+  --info-soft-foreground: 219.2 85.5% 72.9%;
+  --border: 218.6 13.7% 20%;
+  --border-strong: 218.8 12.4% 26.9%;
+  --input: 218.6 13.7% 20%;
+  --ring: 21.9 100% 64.5%;
+
   --sidebar: 210 4% 9%;
   --sidebar-foreground: 210 40% 98%;
   --sidebar-hover: 220 4% 20%;
-  --sidebar-active: 217 91% 60%;
+  --sidebar-active: 21.9 100% 64.5%;
   --sidebar-border: 225 4% 25%;
 }
 
-/* Shell contínuo: cabeçalho em toda a largura, sidebar até o rodapé e conteúdo adjacente. */
+/* Shell contínuo: cabeçalho em toda a largura, sidebar até o rodapé e conteúdo adjacente */
 .app-shell,
 .app-shell[data-visual-contract] {
   min-height: 100vh !important;
@@ -82,13 +173,13 @@ html[data-theme='dark'] {
   display: flex !important;
 }
 
-/* Cabeçalho da imagem 2. */
+/* Cabeçalho da plataforma */
 .global-topbar {
   height: var(--disk-layout-header-height) !important;
   min-height: var(--disk-layout-header-height) !important;
   padding: 0 20px !important;
   background: var(--disk-layout-header-bg) !important;
-  border-bottom: 1px solid #2d2f33 !important;
+  border-bottom: 1px solid var(--disk-layout-border) !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
@@ -118,7 +209,7 @@ html[data-theme='dark'] {
   position: sticky !important;
   top: var(--disk-layout-header-height) !important;
   background: var(--disk-layout-sidebar-bg) !important;
-  border-right: 1px solid #2d2f33 !important;
+  border-right: 1px solid var(--disk-layout-border) !important;
   box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
@@ -139,7 +230,7 @@ html[data-theme='dark'] {
   min-height: 52px !important;
   padding: 8px 14px !important;
   background: var(--disk-layout-sidebar-bg) !important;
-  border-bottom: 1px solid #2d2f33 !important;
+  border-bottom: 1px solid var(--disk-layout-border) !important;
   display: flex !important;
   align-items: center !important;
 }
@@ -157,7 +248,7 @@ html[data-theme='dark'] {
 
 .safesaff-sidebar .module-caption {
   padding: 14px 14px 6px !important;
-  color: #8f939b !important;
+  color: var(--disk-layout-muted) !important;
   font-size: 11px !important;
   font-weight: 700 !important;
 }
@@ -168,32 +259,66 @@ html[data-theme='dark'] {
   height: 52px !important;
   padding-inline: 20px !important;
   gap: 16px !important;
-  color: #f0f1f3 !important;
+  color: var(--disk-layout-text) !important;
   font-size: 15px !important;
 }
 
 .safesaff-sidebar .module-nav-item:hover,
 .safesaff-sidebar .collapsible-section-head:hover,
 .safesaff-sidebar .collapsible-section-head.open {
-  background: #25272b !important;
+  background: var(--disk-layout-surface-hover) !important;
 }
 
 .safesaff-sidebar .module-nav-item.active {
-  background: #3a3b3f !important;
+  background: var(--disk-layout-surface-soft) !important;
   box-shadow: inset 3px 0 0 var(--disk-layout-blue) !important;
 }
 
 .safesaff-sidebar .module-nav-icon,
 .safesaff-sidebar .collapsible-section-icon {
-  color: #e2e5e9 !important;
+  color: var(--disk-layout-text-soft) !important;
 }
 
 .safesaff-sidebar .module-nav-item.indent {
   padding-left: 42px !important;
+}
+
+/* Modo escuro específico para sidebar */
+html.dark .safesaff-sidebar .module-nav-item,
+html.dark .safesaff-sidebar .collapsible-section-head,
+html[data-theme='dark'] .safesaff-sidebar .module-nav-item,
+html[data-theme='dark'] .safesaff-sidebar .collapsible-section-head {
+  color: #f0f1f3 !important;
+}
+
+html.dark .safesaff-sidebar .module-nav-item:hover,
+html.dark .safesaff-sidebar .collapsible-section-head:hover,
+html.dark .safesaff-sidebar .collapsible-section-head.open,
+html[data-theme='dark'] .safesaff-sidebar .module-nav-item:hover,
+html[data-theme='dark'] .safesaff-sidebar .collapsible-section-head:hover,
+html[data-theme='dark'] .safesaff-sidebar .collapsible-section-head.open {
+  background: #25272b !important;
+}
+
+html.dark .safesaff-sidebar .module-nav-item.active,
+html[data-theme='dark'] .safesaff-sidebar .module-nav-item.active {
+  background: #3a3b3f !important;
+  box-shadow: inset 3px 0 0 #FF8C4A !important;
+}
+
+html.dark .safesaff-sidebar .module-nav-icon,
+html.dark .safesaff-sidebar .collapsible-section-icon,
+html[data-theme='dark'] .safesaff-sidebar .module-nav-icon,
+html[data-theme='dark'] .safesaff-sidebar .collapsible-section-icon {
+  color: #e2e5e9 !important;
+}
+
+html.dark .safesaff-sidebar .module-nav-item.indent,
+html[data-theme='dark'] .safesaff-sidebar .module-nav-item.indent {
   background: #121315 !important;
 }
 
-/* Conteúdo ocupa toda a área restante, sem faixa preta nem margem artificial. */
+/* Conteúdo ocupa toda a área restante, sem faixa preta nem margem artificial */
 .disk-main-content,
 #main-app-content {
   flex: 1 1 auto !important;
@@ -211,42 +336,74 @@ html[data-theme='dark'] {
   padding: 24px !important;
 }
 
-/* Hierarquia de superfícies equivalente à imagem 2. */
-html.dark :is(
-  .card,.panel,.widget,.box,.tile,.table-card,.chart-card,.metric-card,
-  .dashboard-kpi-card,.finance-kpi,.finance-card,.balance-card,.hub-card,
-  .event-card,.summary-card,.content-card,.stat-card,.kpi-card,.report-card,
-  .filter-card,.form-card,.module-card,.section-card,.content-panel,
-  .table-wrapper,.profile-hero,.profile-kpi,.profile-section,.profile-shortcut,
-  .profile-event-list,.profile-event-row
+/* ============================================================================
+   REGRA DE OURO: TODO CARD TEM BORDA PRÓPRIA NOS DOIS TEMAS
+   Garante que nenhum card desaparece por falta de sombra ou fundo parecido.
+   ============================================================================ */
+:is(
+  .card, .panel, .widget, .box, .tile, .table-card, .chart-card, .metric-card,
+  .dashboard-kpi-card, .finance-kpi, .finance-card, .balance-card, .hub-card,
+  .event-card, .summary-card, .content-card, .stat-card, .kpi-card, .report-card,
+  .filter-card, .form-card, .module-card, .section-card, .content-panel,
+  .table-wrapper, .profile-hero, .profile-kpi, .profile-section, .profile-shortcut,
+  .profile-event-list, .profile-event-row, [data-slot="card"], .disk-card
 ) {
   background: var(--disk-layout-surface) !important;
   border: 1px solid var(--disk-layout-border) !important;
   border-radius: 10px !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
 }
 
-html.dark :is(
-  .card,.panel,.widget,.table-card,.chart-card,.metric-card,.dashboard-kpi-card,
-  .finance-card,.hub-card,.event-card,.content-card,.module-card,.section-card
+:is(
+  .card, .panel, .widget, .table-card, .chart-card, .metric-card, .dashboard-kpi-card,
+  .finance-card, .hub-card, .event-card, .content-card, .module-card, .section-card
 ):hover {
-  border-color: #5a5d65 !important;
+  border-color: var(--disk-layout-border-strong) !important;
 }
 
-html.dark :is(table, thead, tbody, tr, th, td) {
+/* Tabelas e cabeçalhos em ambos os temas */
+:is(table, thead, tbody, tr, th, td) {
   border-color: var(--disk-layout-border-soft) !important;
 }
 
-html.dark thead,
-html.dark th {
-  background: #292b30 !important;
-  color: #c7cad1 !important;
+thead, th {
+  background: var(--disk-layout-surface-soft) !important;
+  color: var(--disk-layout-text-soft) !important;
 }
 
-html.dark :is(input, select, textarea):not([type='checkbox']):not([type='radio']):not([type='range']) {
-  background: #24262a !important;
-  border-color: var(--disk-layout-border) !important;
+:is(input, select, textarea):not([type='checkbox']):not([type='radio']):not([type='range']) {
+  background: var(--disk-layout-surface) !important;
+  border: 1px solid var(--disk-layout-border) !important;
   color: var(--disk-layout-text) !important;
+}
+
+/* ============================================================================
+   NÚMEROS TABULARES — fonte monoespaçada com alinhamento de dígitos
+   Mais fácil comparar R$ 48.230,00 com R$ 112.900,00 em listas
+   ============================================================================ */
+.tabular-nums,
+[data-tabular],
+.font-mono,
+.font-mono-numbers,
+.currency-value,
+.metric-value,
+.financial-val {
+  font-variant-numeric: tabular-nums !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+/* ============================================================================
+   PILLS & BADGES — cor nunca é o único sinal, texto e indicador legíveis
+   ============================================================================ */
+.status-pill, .badge-status, [data-status-pill] {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.375rem !important;
+  border-radius: 9999px !important;
+  padding: 0.25rem 0.625rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
 }
 
 @media (max-width: 1199px) and (min-width: 768px) {
