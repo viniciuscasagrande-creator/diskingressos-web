@@ -48,7 +48,7 @@ export type PageKey =
   // POS & ADMIN & OUTROS
   | 'pos' | 'pos-terminals' | 'pos-sales' | 'pos-closing'
   | 'admin-hub' | 'admin-users' | 'admin-producers' | 'admin-permissions' | 'admin-audit' | 'admin-security'
-  | 'marketing-hub' | 'marketing-dashboard' | 'marketing-status-real' | 'marketing-real-status' | 'marketing-campaigns' | 'marketing-ready-campaigns' | 'marketing-create' | 'marketing-meta-ads' | 'marketing-google-ads' | 'marketing-tiktok-ads' | 'marketing-spotify-ads' | 'marketing-spotify' | 'marketing-influencers' | 'marketing-automations' | 'marketing-whatsapp' | 'marketing-email' | 'marketing-crm' | 'marketing-audiences' | 'marketing-coupons' | 'marketing-cashback' | 'marketing-coins' | 'marketing-gamification' | 'marketing-referral' | 'marketing-affiliates' | 'marketing-utm-central' | 'marketing-links' | 'marketing-tracking' | 'marketing-attribution' | 'marketing-conversions' | 'marketing-remarketing' | 'marketing-recovery' | 'marketing-reports' | 'marketing-channel-performance' | 'marketing-campaign-ranking' | 'marketing-funnel-insights' | 'marketing-communications'
+  | 'marketing-hub' | 'marketing-dashboard' | 'marketing-status-real' | 'marketing-real-status' | 'marketing-campaigns' | 'marketing-ready-campaigns' | 'marketing-create' | 'marketing-meta-ads' | 'marketing-google-ads' | 'marketing-google-analytics' | 'marketing-tiktok-ads' | 'marketing-spotify-ads' | 'marketing-spotify' | 'marketing-influencers' | 'marketing-automations' | 'marketing-whatsapp' | 'marketing-email' | 'marketing-crm' | 'marketing-audiences' | 'marketing-coupons' | 'marketing-cashback' | 'marketing-coins' | 'marketing-gamification' | 'marketing-referral' | 'marketing-affiliates' | 'marketing-utm-central' | 'marketing-links' | 'marketing-tracking' | 'marketing-attribution' | 'marketing-conversions' | 'marketing-remarketing' | 'marketing-recovery' | 'marketing-reports' | 'marketing-channel-performance' | 'marketing-campaign-ranking' | 'marketing-funnel-insights' | 'marketing-communications'
   | 'remarketing-hub' | 'remarketing-dashboard' | 'remarketing-carts' | 'remarketing-audiences' | 'remarketing-segments' | 'remarketing-flows' | 'remarketing-whatsapp' | 'remarketing-email' | 'remarketing-payments' | 'remarketing-inactive' | 'remarketing-postevent' | 'remarketing-automation' | 'remarketing-reports'
   | 'sac-hub' | 'sac-dashboard' | 'sac-tickets' | 'sac-new' | 'sac-sla' | 'sac-integrations' | 'sac-knowledge' | 'sac-reports'
 
@@ -123,6 +123,10 @@ const marketingItems: Item[] = [
   { key: 'marketing-campaigns', label: 'Campanhas Multicanais', icon: Megaphone },
   { key: 'marketing-ready-campaigns', label: 'Campanhas Prontas', icon: Sparkles, badge: '⚡ Pronto' },
   { key: 'marketing-status-real', label: 'Status Real', icon: Activity, badge: 'Ao Vivo' },
+  { key: 'marketing-meta-ads', label: 'Meta Ads & Pixel', icon: Target, badge: 'CAPI' },
+  { key: 'marketing-google-analytics', label: 'Google Analytics', icon: BarChart3, badge: 'GA4' },
+  { key: 'marketing-tiktok-ads', label: 'TikTok Ads', icon: Play, badge: 'Pixel' },
+  { key: 'marketing-spotify-ads', label: 'Spotify Ads', icon: Headphones, badge: 'Áudio' },
   { key: 'marketing-whatsapp', label: 'WhatsApp Marketing', icon: MessageCircle, badge: 'Oficial' },
   { key: 'marketing-email', label: 'E-mail Marketing', icon: Mail },
   { key: 'marketing-automations', label: 'Automações & Jornadas', icon: Zap },
@@ -130,7 +134,6 @@ const marketingItems: Item[] = [
   { key: 'marketing-utm-central', label: 'Central UTM & Links', icon: Link2, badge: 'UTM / QR' },
   { key: 'marketing-affiliates', label: 'Afiliados & Promoters', icon: UsersRound },
   { key: 'marketing-tracking', label: 'Pixels & Conversões', icon: Activity, badge: 'Multi-pixel' },
-  { key: 'marketing-spotify-ads', label: 'Spotify Ads', icon: Headphones, badge: 'Áudio' },
   { key: 'marketing-attribution', label: 'Atribuição Multicanal', icon: Scale },
   { key: 'marketing-reports', label: 'Relatórios de Marketing', icon: FileSpreadsheet }
 ]

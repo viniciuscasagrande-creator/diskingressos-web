@@ -343,6 +343,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const isMarketingActive = [
     'marketing', 'mkt-hub', 'mkt-dashboard', 'mkt-campaigns', 'mkt-new-campaign', 
+    'marketing-meta-ads', 'marketing-google-analytics', 'marketing-tiktok-ads',
     'marketing-spotify', 'marketing-spotify-ads', 'mkt-spotify',
     'mkt-automations', 'mkt-whatsapp', 'mkt-email', 'mkt-coupons', 
     'mkt-links', 'mkt-affiliates', 'mkt-analytics', 'mkt-comm-integrations', 'mkt-reports', 'campanhas', 
@@ -776,6 +777,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-slate-500" />
                   <span>Campanhas</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('marketing-meta-ads')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'marketing-meta-ads'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                  <span>Meta Ads & Pixel</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('marketing-google-analytics')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'marketing-google-analytics'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
+                  <span>Google Analytics</span>
+                </button>
+
+                <button
+                  onClick={() => onNavigate('marketing-tiktok-ads')}
+                  className={`flex w-full items-center gap-2 rounded-btn px-2.5 py-1.5 text-[12px] font-medium transition ${
+                    currentPage === 'marketing-tiktok-ads'
+                      ? 'bg-[#173A52] text-[#7DD3FC] font-bold'
+                      : 'text-slate-400 hover:bg-[#283243] hover:text-slate-200'
+                  }`}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+                  <span>TikTok Ads</span>
                 </button>
 
                 <button

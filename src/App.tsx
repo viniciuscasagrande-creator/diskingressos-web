@@ -264,8 +264,9 @@ const titleMap: Partial<Record<PageKey, string>> = {
   'marketing-campaigns': 'Campanhas Multicanais',
   'marketing-ready-campaigns': 'Campanhas Prontas',
   'marketing-create': 'Criar Campanha',
-  'marketing-meta-ads': 'Meta Ads',
+  'marketing-meta-ads': 'Meta Ads & Pixel Token',
   'marketing-google-ads': 'Google Ads',
+  'marketing-google-analytics': 'Google Analytics (GA4)',
   'marketing-tiktok-ads': 'TikTok Ads',
   'marketing-spotify-ads': 'Spotify Ads & Conversões CAPI',
   'marketing-spotify': 'Spotify Ads & Conversões CAPI',
@@ -411,6 +412,9 @@ function resolvePageFromPath(path: string, user: AppUser): PageKey {
     return `accounting-${tab}` as PageKey
   }
   if (clean === 'contabilidade' || clean === 'accounting-disk') return 'accounting-dashboard'
+  if (clean === 'marketing/meta-ads' || clean === 'marketing-meta-ads') return 'marketing-meta-ads'
+  if (clean === 'marketing/google-analytics' || clean === 'marketing-google-analytics' || clean === 'marketing/ga4') return 'marketing-google-analytics'
+  if (clean === 'marketing/tiktok-ads' || clean === 'marketing-tiktok-ads') return 'marketing-tiktok-ads'
   if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
   if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') return 'marketing-status-real'
   const resolved = AppRouter.resolve(path)
@@ -470,6 +474,9 @@ export default function App() {
         return `accounting-${tab}` as PageKey
       }
       if (clean === 'contabilidade' || clean === 'accounting-disk') return 'accounting-dashboard'
+      if (clean === 'marketing/meta-ads' || clean === 'marketing-meta-ads') return 'marketing-meta-ads'
+      if (clean === 'marketing/google-analytics' || clean === 'marketing-google-analytics' || clean === 'marketing/ga4') return 'marketing-google-analytics'
+      if (clean === 'marketing/tiktok-ads' || clean === 'marketing-tiktok-ads') return 'marketing-tiktok-ads'
       if (clean === 'marketing/spotify' || clean === 'marketing-spotify' || clean === 'marketing-spotify-ads') return 'marketing-spotify'
       if (clean === 'marketing/status-real' || clean === 'marketing-status-real' || clean === 'marketing-real-status') return 'marketing-status-real'
       if (clean in titleMap) return clean as PageKey
@@ -847,6 +854,15 @@ export default function App() {
       targetUrl = ACCOUNTING_TAB_TO_ROUTE[tab] || '/contabilidade/dashboard'
       window.history.pushState({ page: next, route: targetUrl, tab }, '', targetUrl)
       AccountingController.activateTab(tab, { skipRouter: true })
+    } else if (next === 'marketing-meta-ads') {
+      targetUrl = '/app/marketing/meta-ads'
+      window.history.pushState({ page: next }, '', targetUrl)
+    } else if (next === 'marketing-google-analytics') {
+      targetUrl = '/app/marketing/google-analytics'
+      window.history.pushState({ page: next }, '', targetUrl)
+    } else if (next === 'marketing-tiktok-ads') {
+      targetUrl = '/app/marketing/tiktok-ads'
+      window.history.pushState({ page: next }, '', targetUrl)
     } else if (next === 'marketing-spotify' || next === 'marketing-spotify-ads') {
       targetUrl = '/app/marketing/spotify'
       window.history.pushState({ page: next }, '', targetUrl)
@@ -1332,6 +1348,7 @@ export default function App() {
               'marketing-create': 'create',
               'marketing-meta-ads': 'meta-ads',
               'marketing-google-ads': 'google-ads',
+              'marketing-google-analytics': 'google-analytics',
               'marketing-tiktok-ads': 'tiktok-ads',
               'marketing-spotify-ads': 'spotify-ads',
               'marketing-spotify': 'spotify-ads',

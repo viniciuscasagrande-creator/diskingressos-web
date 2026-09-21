@@ -22,6 +22,9 @@ import EmailMarketingPage from './marketing/EmailMarketingPage'
 import MarketingReportsPage from './marketing/MarketingReportsPage'
 import MarketingAttributionPage from './marketing/MarketingAttributionPage'
 import SpotifyAdsHubPage from './marketing/SpotifyAdsHubPage'
+import MetaAdsHubPage from './marketing/MetaAdsHubPage'
+import GoogleAnalyticsHubPage from './marketing/GoogleAnalyticsHubPage'
+import TikTokAdsHubPage from './marketing/TikTokAdsHubPage'
 import { CampaignRealStatusPage } from './marketing/status-real/CampaignRealStatusPage'
 import { LimitlessPage } from '../integrations/limitless/LimitlessPage'
 import {
@@ -57,6 +60,7 @@ export type Mode =
   | 'create'
   | 'status-real'
   | 'meta-ads'
+  | 'google-analytics'
   | 'google-ads'
   | 'tiktok-ads'
   | 'spotify-ads'
@@ -124,6 +128,7 @@ const hubGroups: HubGroup[] = [
       { id: 'marketing-campaigns', title: 'Campanhas', description: 'Criação e gestão de campanhas multicanais.', icon: Megaphone },
       { id: 'marketing-ready-campaigns', title: 'Campanhas Prontas', description: '8 modelos prontos para ativar no evento.', icon: Sparkles, badge: '⚡ Pronto' },
       { id: 'marketing-meta-ads', title: 'Meta Ads', description: 'Campanhas Instagram / Facebook e CAPI.', icon: Target },
+      { id: 'marketing-google-analytics', title: 'Google Analytics', description: 'Métricas GA4, funil e Measurement Protocol.', icon: BarChart3, badge: 'GA4' },
       { id: 'marketing-google-ads', title: 'Google Ads', description: 'Rede de Pesquisa, YouTube e palavras-chave.', icon: Search },
       { id: 'marketing-tiktok-ads', title: 'TikTok Ads', description: 'Spark Ads, vídeos e conversões virais.', icon: Play },
       { id: 'marketing-spotify-ads', title: 'Spotify Ads', description: 'Campanhas de áudio oficial, companion banners e CAPI.', icon: Headphones, badge: 'Áudio' },
@@ -237,7 +242,29 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
     }
 
     if (mode === 'meta-ads') {
-      return <MetaAdsManager events={events} event={selectedEvent} notify={notify} />
+      return (
+        <MetaAdsHubPage
+          events={events}
+          selectedEventId={selectedEventId}
+          producerId={producerId}
+          producerName={producerName}
+          notify={notify}
+          onNavigate={onNavigate}
+        />
+      )
+    }
+
+    if (mode === 'google-analytics') {
+      return (
+        <GoogleAnalyticsHubPage
+          events={events}
+          selectedEventId={selectedEventId}
+          producerId={producerId}
+          producerName={producerName}
+          notify={notify}
+          onNavigate={onNavigate}
+        />
+      )
     }
 
     if (mode === 'google-ads') {
@@ -245,7 +272,16 @@ export default function MarketingPage({ events, producerName, producerId, mode, 
     }
 
     if (mode === 'tiktok-ads') {
-      return <TikTokAdsManager events={events} event={selectedEvent} notify={notify} />
+      return (
+        <TikTokAdsHubPage
+          events={events}
+          selectedEventId={selectedEventId}
+          producerId={producerId}
+          producerName={producerName}
+          notify={notify}
+          onNavigate={onNavigate}
+        />
+      )
     }
 
     if (mode === 'spotify-ads' || mode === 'spotify') {

@@ -76,7 +76,11 @@ const pageTitles: Partial<Record<NavigationPage, string>> = {
   'mkt-affiliates': 'Afiliados e Parceiros',
   'mkt-analytics': 'Pixel & Analytics (Herança)',
   'pixel-meta': 'Pixel & Analytics',
-  'google-analytics': 'Pixel & Analytics',
+  'marketing-meta-ads': 'Meta Ads & Pixel Token',
+  'marketing-google-analytics': 'Google Analytics (GA4)',
+  'marketing-tiktok-ads': 'TikTok Ads',
+  'marketing-spotify-ads': 'Spotify Ads & Conversões CAPI',
+  'marketing-spotify': 'Spotify Ads & Conversões CAPI',
   'mkt-comm-integrations': 'Integrações de Comunicação',
   'mkt-reports': 'Relatórios de Marketing',
   // Remarketing (Fase 11)
