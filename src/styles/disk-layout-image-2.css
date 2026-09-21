@@ -1,0 +1,294 @@
+/* ============================================================================
+   DISK — LAYOUT GLOBAL REFERÊNCIA IMAGEM 2
+   Escopo exclusivamente visual. Não altera menus, rotas, permissões ou dados.
+   Importado por último em main.tsx para consolidar o shell sem !important
+   espalhado pelos componentes funcionais.
+   ============================================================================ */
+
+:root {
+  --disk-layout-header-height: 74px;
+  --disk-layout-sidebar-width: clamp(288px, 19.25vw, 368px);
+  --disk-layout-sidebar-collapsed: 76px;
+  --disk-layout-page-bg: #202124;
+  --disk-layout-header-bg: #111214;
+  --disk-layout-sidebar-bg: #151617;
+  --disk-layout-surface: #2b2c31;
+  --disk-layout-surface-soft: #26272b;
+  --disk-layout-surface-hover: #34363b;
+  --disk-layout-border: #45474d;
+  --disk-layout-border-soft: #383a40;
+  --disk-layout-text: #f8fafc;
+  --disk-layout-text-soft: #d4d7dd;
+  --disk-layout-muted: #a4a8b1;
+  --disk-layout-blue: #60a5fa;
+}
+
+/* A referência é escura; estes tokens eliminam os cartões cinza-claro no tema escuro. */
+html.dark,
+html[data-theme='dark'] {
+  --disk-bg-app: var(--disk-layout-page-bg);
+  --disk-bg-surface: var(--disk-layout-surface);
+  --disk-bg-elevated: #303137;
+  --disk-bg-muted: var(--disk-layout-surface-soft);
+  --disk-bg-hover: var(--disk-layout-surface-hover);
+  --disk-bg-active: #393c43;
+  --disk-border-default: var(--disk-layout-border);
+  --disk-border-subtle: var(--disk-layout-border-soft);
+  --disk-border-strong: #5a5d65;
+  --disk-text-primary: var(--disk-layout-text);
+  --disk-text-secondary: var(--disk-layout-text-soft);
+  --disk-text-muted: var(--disk-layout-muted);
+  --background: 220 3% 13%;
+  --foreground: 210 40% 98%;
+  --card: 225 4% 18%;
+  --card-foreground: 210 40% 98%;
+  --popover: 225 4% 18%;
+  --popover-foreground: 210 40% 98%;
+  --secondary: 225 4% 21%;
+  --muted: 225 4% 17%;
+  --border: 225 4% 29%;
+  --input: 225 4% 29%;
+  --sidebar: 210 4% 9%;
+  --sidebar-foreground: 210 40% 98%;
+  --sidebar-hover: 220 4% 20%;
+  --sidebar-active: 217 91% 60%;
+  --sidebar-border: 225 4% 25%;
+}
+
+/* Shell contínuo: cabeçalho em toda a largura, sidebar até o rodapé e conteúdo adjacente. */
+.app-shell,
+.app-shell[data-visual-contract] {
+  min-height: 100vh !important;
+  width: 100% !important;
+  background: var(--disk-layout-page-bg) !important;
+  --header-height: var(--disk-layout-header-height) !important;
+  --sidebar-width: var(--disk-layout-sidebar-width) !important;
+  --sidebar-collapsed-width: var(--disk-layout-sidebar-collapsed) !important;
+  --content-max-width: none !important;
+}
+
+.app-shell > .global-topbar {
+  flex: 0 0 var(--disk-layout-header-height) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+}
+
+.app-shell > .global-topbar + .mobile-nav-backdrop + div,
+.app-shell > div.flex.flex-1 {
+  min-height: calc(100vh - var(--disk-layout-header-height)) !important;
+  align-items: stretch !important;
+  background: var(--disk-layout-page-bg) !important;
+  display: flex !important;
+}
+
+/* Cabeçalho da imagem 2. */
+.global-topbar {
+  height: var(--disk-layout-header-height) !important;
+  min-height: var(--disk-layout-header-height) !important;
+  padding: 0 20px !important;
+  background: var(--disk-layout-header-bg) !important;
+  border-bottom: 1px solid #2d2f33 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.global-topbar .navbar-logo {
+  height: 31px !important;
+  max-height: 31px !important;
+  max-width: 190px !important;
+}
+
+.global-topbar :is(input, select, button) {
+  border-color: var(--disk-layout-border) !important;
+}
+
+/* Sidebar corporativa: FIXA com SCROLL interno, 100% até o rodapé sem vão vazio */
+.safesaff-sidebar.module-sidebar,
+.event-context-sidebar,
+#main-module-sidebar {
+  flex: 0 0 var(--disk-layout-sidebar-width) !important;
+  width: var(--disk-layout-sidebar-width) !important;
+  min-width: var(--disk-layout-sidebar-width) !important;
+  max-width: var(--disk-layout-sidebar-width) !important;
+  height: calc(100vh - var(--disk-layout-header-height)) !important;
+  min-height: calc(100vh - var(--disk-layout-header-height)) !important;
+  max-height: calc(100vh - var(--disk-layout-header-height)) !important;
+  align-self: stretch !important;
+  position: sticky !important;
+  top: var(--disk-layout-header-height) !important;
+  background: var(--disk-layout-sidebar-bg) !important;
+  border-right: 1px solid #2d2f33 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  z-index: 30 !important;
+}
+
+.safesaff-sidebar--collapsed.module-sidebar,
+#main-module-sidebar.safesaff-sidebar--collapsed {
+  flex-basis: var(--disk-layout-sidebar-collapsed) !important;
+  width: var(--disk-layout-sidebar-collapsed) !important;
+  min-width: var(--disk-layout-sidebar-collapsed) !important;
+  max-width: var(--disk-layout-sidebar-collapsed) !important;
+}
+
+.safesaff-sidebar-header {
+  height: 52px !important;
+  min-height: 52px !important;
+  padding: 8px 14px !important;
+  background: var(--disk-layout-sidebar-bg) !important;
+  border-bottom: 1px solid #2d2f33 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.safesaff-sidebar .module-nav,
+#main-module-sidebar .module-nav {
+  flex: 1 1 0% !important;
+  height: calc(100% - 52px) !important;
+  max-height: calc(100% - 52px) !important;
+  padding: 8px 6px 32px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin !important;
+}
+
+.safesaff-sidebar .module-caption {
+  padding: 14px 14px 6px !important;
+  color: #8f939b !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.safesaff-sidebar .module-nav-item,
+.safesaff-sidebar .collapsible-section-head {
+  min-height: 52px !important;
+  height: 52px !important;
+  padding-inline: 20px !important;
+  gap: 16px !important;
+  color: #f0f1f3 !important;
+  font-size: 15px !important;
+}
+
+.safesaff-sidebar .module-nav-item:hover,
+.safesaff-sidebar .collapsible-section-head:hover,
+.safesaff-sidebar .collapsible-section-head.open {
+  background: #25272b !important;
+}
+
+.safesaff-sidebar .module-nav-item.active {
+  background: #3a3b3f !important;
+  box-shadow: inset 3px 0 0 var(--disk-layout-blue) !important;
+}
+
+.safesaff-sidebar .module-nav-icon,
+.safesaff-sidebar .collapsible-section-icon {
+  color: #e2e5e9 !important;
+}
+
+.safesaff-sidebar .module-nav-item.indent {
+  padding-left: 42px !important;
+  background: #121315 !important;
+}
+
+/* Conteúdo ocupa toda a área restante, sem faixa preta nem margem artificial. */
+.disk-main-content,
+#main-app-content {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  min-height: calc(100dvh - var(--disk-layout-header-height)) !important;
+  background: var(--disk-layout-page-bg) !important;
+  color: var(--disk-layout-text) !important;
+}
+
+.disk-content-container {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 24px !important;
+}
+
+/* Hierarquia de superfícies equivalente à imagem 2. */
+html.dark :is(
+  .card,.panel,.widget,.box,.tile,.table-card,.chart-card,.metric-card,
+  .dashboard-kpi-card,.finance-kpi,.finance-card,.balance-card,.hub-card,
+  .event-card,.summary-card,.content-card,.stat-card,.kpi-card,.report-card,
+  .filter-card,.form-card,.module-card,.section-card,.content-panel,
+  .table-wrapper,.profile-hero,.profile-kpi,.profile-section,.profile-shortcut,
+  .profile-event-list,.profile-event-row
+) {
+  background: var(--disk-layout-surface) !important;
+  border: 1px solid var(--disk-layout-border) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+
+html.dark :is(
+  .card,.panel,.widget,.table-card,.chart-card,.metric-card,.dashboard-kpi-card,
+  .finance-card,.hub-card,.event-card,.content-card,.module-card,.section-card
+):hover {
+  border-color: #5a5d65 !important;
+}
+
+html.dark :is(table, thead, tbody, tr, th, td) {
+  border-color: var(--disk-layout-border-soft) !important;
+}
+
+html.dark thead,
+html.dark th {
+  background: #292b30 !important;
+  color: #c7cad1 !important;
+}
+
+html.dark :is(input, select, textarea):not([type='checkbox']):not([type='radio']):not([type='range']) {
+  background: #24262a !important;
+  border-color: var(--disk-layout-border) !important;
+  color: var(--disk-layout-text) !important;
+}
+
+@media (max-width: 1199px) and (min-width: 768px) {
+  :root { --disk-layout-sidebar-width: 288px; }
+  .disk-content-container { padding: 20px !important; }
+}
+
+@media (max-width: 767px) {
+  :root { --disk-layout-header-height: 60px; }
+
+  .global-topbar {
+    height: var(--disk-layout-header-height) !important;
+    min-height: var(--disk-layout-header-height) !important;
+    padding-inline: 12px !important;
+  }
+
+  .safesaff-sidebar.module-sidebar,
+  .safesaff-sidebar.module-sidebar.safesaff-sidebar--collapsed,
+  .event-context-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(88vw, 330px) !important;
+    min-width: 0 !important;
+    max-width: 330px !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow-y: auto !important;
+    transform: translateX(-105%) !important;
+  }
+
+  .mobile-nav-open .safesaff-sidebar.module-sidebar,
+  .sidebar-mobile-expanded .safesaff-sidebar.module-sidebar,
+  .mobile-nav-open .event-context-sidebar,
+  .sidebar-mobile-expanded .event-context-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .disk-content-container { padding: 14px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell *, .app-shell *::before, .app-shell *::after {
+    scroll-behavior: auto !important;
+  }
+}
