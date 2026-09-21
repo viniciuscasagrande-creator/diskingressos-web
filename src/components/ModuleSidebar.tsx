@@ -290,6 +290,18 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
 
   const toggleCollapsed = () => setCollapsed(value => !value)
 
+  const handleSectionToggle = (
+    currentOpen: boolean,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    if (collapsed) {
+      setCollapsed(false)
+      setOpen(true)
+    } else {
+      setOpen(prev => !prev)
+    }
+  }
+
   return (
     <aside
       className={`module-sidebar safesaff-sidebar ${collapsed ? 'safesaff-sidebar--collapsed' : ''} ${mobileNavOpen ? 'sidebar-mobile-expanded' : ''}`}
@@ -347,7 +359,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           icon={WalletCards}
           open={openFinance}
           keepOpen={isFinanceActive}
-          onToggle={() => setOpenFinance(!openFinance)}
+          onToggle={() => handleSectionToggle(openFinance, setOpenFinance)}
           onClose={() => {
             if (!isFinanceActive) setOpenFinance(false)
           }}
@@ -377,7 +389,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           icon={BookOpenCheck}
           open={openAccounting}
           keepOpen={isAccountingActive}
-          onToggle={() => setOpenAccounting(!openAccounting)}
+          onToggle={() => handleSectionToggle(openAccounting, setOpenAccounting)}
           onClose={() => {
             if (!isAccountingActive) setOpenAccounting(false)
           }}
@@ -399,7 +411,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           icon={Megaphone}
           open={openMarketing}
           keepOpen={isMarketingActive}
-          onToggle={() => setOpenMarketing(!openMarketing)}
+          onToggle={() => handleSectionToggle(openMarketing, setOpenMarketing)}
           onClose={() => {
             if (!isMarketingActive) setOpenMarketing(false)
           }}
@@ -422,7 +434,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
           icon={Repeat2}
           open={openRemarketing}
           keepOpen={isRemarketingActive}
-          onToggle={() => setOpenRemarketing(!openRemarketing)}
+          onToggle={() => handleSectionToggle(openRemarketing, setOpenRemarketing)}
           onClose={() => {
             if (!isRemarketingActive) setOpenRemarketing(false)
           }}
@@ -445,7 +457,7 @@ export default function ModuleSidebar({ module, page, onNavigate, onHome, canAdm
             icon={Building2}
             open={openAdmin}
             keepOpen={isAdminActive}
-            onToggle={() => setOpenAdmin(!openAdmin)}
+            onToggle={() => handleSectionToggle(openAdmin, setOpenAdmin)}
             onClose={() => {
               if (!isAdminActive) setOpenAdmin(false)
             }}
@@ -499,7 +511,11 @@ function CollapsibleSection({
           <ChevronRight size={14} />
         </span>
       </button>
-      <div className={`collapsible-section-body ${open ? 'open' : ''}`} aria-hidden={!open}>
+      <div
+        className={`collapsible-section-body ${open ? 'open' : ''}`}
+        aria-hidden={!open}
+        style={{ display: open ? 'block' : 'none' }}
+      >
         <div className="collapsible-section-inner">{children}</div>
       </div>
     </div>

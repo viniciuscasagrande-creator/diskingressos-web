@@ -116,7 +116,10 @@
 .safesaff-sidebar .collapsible-section-head:hover,.safesaff-sidebar .collapsible-section-head.open{background:var(--safesaff-sidebar-hover)!important;color:#fff!important}
 .safesaff-sidebar .collapsible-section-icon{color:#a7b2bf!important}
 .safesaff-sidebar .collapsible-section-label{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.safesaff-sidebar .collapsible-section-chevron{margin-left:auto!important;flex:0 0 22px!important}
+.safesaff-sidebar .collapsible-section-chevron{margin-left:auto!important;flex:0 0 22px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;transition:transform .2s ease!important}
+.safesaff-sidebar .collapsible-section-head.open .collapsible-section-chevron{transform:rotate(90deg)!important}
+.safesaff-sidebar .collapsible-section-body{display:none!important}
+.safesaff-sidebar .collapsible-section-body.open{display:block!important}
 .safesaff-sidebar .module-nav-item.indent{padding-left:27px!important;background:rgba(0,0,0,.055)!important}
 .safesaff-sidebar .module-nav-item.indent:hover{background:rgba(255,255,255,.06)!important}
 .safesaff-sidebar .module-nav-item.indent.active{background:var(--safesaff-sidebar-active)!important}
