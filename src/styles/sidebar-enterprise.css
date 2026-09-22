@@ -1,6 +1,6 @@
 /* SafeSaff — Fase 25.6.1 | Sidebar Premium baseada na referência do vídeo */
 :root{
-  --safesaff-sidebar-expanded:288px;
+  --safesaff-sidebar-expanded:var(--disk-layout-sidebar-width, 350px);
   --safesaff-sidebar-collapsed:76px;
   --safesaff-sidebar-bg:#252b36;
   --safesaff-sidebar-bg-deep:#202630;

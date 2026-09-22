@@ -1,5 +1,5 @@
 /* Disk + Limitless V6: contrato final do shell */
-:root{--disk-shell-sidebar:240px;--disk-shell-sidebar-collapsed:64px;--disk-shell-header:var(--ll-header,58px)}
+:root{--disk-shell-sidebar:var(--disk-layout-sidebar-width, 350px);--disk-shell-sidebar-collapsed:64px;--disk-shell-header:var(--ll-header,58px)}
 html,body,#root{height:100%;max-height:100%;overflow:hidden}
 .app-shell{height:100vh!important;max-height:100vh!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
 .global-topbar{position:relative!important;top:0!important;z-index:50!important;flex:0 0 var(--disk-shell-header)!important;height:var(--disk-shell-header)!important;min-height:var(--disk-shell-header)!important;max-height:var(--disk-shell-header)!important;padding:0 14px!important;gap:10px!important;background:var(--disk-bg-surface,#fff)!important;border-bottom:1px solid var(--disk-border-default,#e2e8f0)!important;box-shadow:none!important}

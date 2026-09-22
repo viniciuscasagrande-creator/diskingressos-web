@@ -6,7 +6,7 @@
    ============================================================================ */
 
 html[data-ui-framework='limitless'] {
-  --ll-sidebar: 15.75rem;
+  --ll-sidebar: var(--disk-layout-sidebar-width, 350px);
   --ll-sidebar-collapsed: 4rem;
   --ll-header: 3.625rem;
   --ll-radius: .5rem;

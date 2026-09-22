@@ -13,7 +13,7 @@
 
 :root {
   --disk-layout-header-height: 74px;
-  --disk-layout-sidebar-width: 310px;
+  --disk-layout-sidebar-width: 350px;
   --disk-layout-sidebar-collapsed: 76px;
 
   /* ---- Modo Claro Harmonizado (SafeSaff Suave & Acolhedor) ---- */
@@ -192,9 +192,13 @@ html[data-theme='dark'] {
 }
 
 /* Sidebar corporativa: FIXA com SCROLL interno, 100% até o rodapé sem vão vazio */
-.safesaff-sidebar.module-sidebar,
-.event-context-sidebar,
-#main-module-sidebar {
+html :is(
+  .safesaff-sidebar.module-sidebar,
+  .safesaff-sidebar,
+  .event-context-sidebar,
+  #main-module-sidebar,
+  #main-module-sidebar.module-sidebar.safesaff-sidebar
+):not(.safesaff-sidebar--collapsed) {
   flex: 0 0 var(--disk-layout-sidebar-width) !important;
   width: var(--disk-layout-sidebar-width) !important;
   min-width: var(--disk-layout-sidebar-width) !important;
@@ -214,8 +218,20 @@ html[data-theme='dark'] {
   z-index: 30 !important;
 }
 
-.safesaff-sidebar--collapsed.module-sidebar,
-#main-module-sidebar.safesaff-sidebar--collapsed {
+html[data-ui-framework='limitless'] #main-module-sidebar.module-sidebar:not(.safesaff-sidebar--collapsed),
+html[data-ui-framework='limitless'] .event-context-sidebar:not(.safesaff-sidebar--collapsed) {
+  flex: 0 0 var(--disk-layout-sidebar-width) !important;
+  width: var(--disk-layout-sidebar-width) !important;
+  min-width: var(--disk-layout-sidebar-width) !important;
+  max-width: var(--disk-layout-sidebar-width) !important;
+}
+
+html :is(
+  .safesaff-sidebar--collapsed.module-sidebar,
+  .safesaff-sidebar--collapsed,
+  #main-module-sidebar.safesaff-sidebar--collapsed
+) {
+  flex: 0 0 var(--disk-layout-sidebar-collapsed) !important;
   flex-basis: var(--disk-layout-sidebar-collapsed) !important;
   width: var(--disk-layout-sidebar-collapsed) !important;
   min-width: var(--disk-layout-sidebar-collapsed) !important;
@@ -628,7 +644,7 @@ html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) th {
 }
 
 @media (max-width: 1199px) and (min-width: 768px) {
-  :root { --disk-layout-sidebar-width: 288px; }
+  :root { --disk-layout-sidebar-width: 310px; }
   .disk-content-container { padding: 20px !important; }
 }
 

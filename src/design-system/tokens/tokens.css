@@ -14,7 +14,7 @@
   --disk-theme-transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
   /* Variáveis Estruturais do AppShell Komposo/Disk (29.14.1.2.65 e 29.14.1.2.66) */
-  --sidebar-width: 17rem;
+  --sidebar-width: var(--disk-layout-sidebar-width, 350px);
   --sidebar-collapsed-width: 4.5rem;
   --header-height: 4rem;
   --content-max-width: 100rem;

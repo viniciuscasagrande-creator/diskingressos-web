@@ -162,7 +162,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       data-visual-contract="disk-limitless-shell-v6"
       style={
         {
-          '--sidebar-width': '15rem',
+          '--sidebar-width': 'var(--disk-layout-sidebar-width, 350px)',
           '--sidebar-collapsed-width': '4rem',
           '--header-height': 'var(--ll-header, 3.625rem)',
           '--content-max-width': '110rem'
