@@ -129,18 +129,18 @@
   --disk-color-primary-foreground: #FFFFFF;
 
   /* Superfícies & Fundos — quatro níveis realmente distinguíveis */
-  --disk-bg-app: #0D1218;
-  --disk-bg-surface: #171D26;
-  --disk-bg-elevated: #202732;
-  --disk-bg-muted: #121820;
-  --disk-bg-hover: #242D39;
-  --disk-bg-active: #2B3644;
+  --disk-bg-app: #0B0E14;
+  --disk-bg-surface: #151C27;
+  --disk-bg-elevated: #1F2736;
+  --disk-bg-muted: #111721;
+  --disk-bg-hover: #1C2432;
+  --disk-bg-active: #242E3F;
 
-  /* Bordas & Divisores */
-  --disk-border-default: #FF8047;
-  --disk-card-border: #FF8047;
-  --disk-border-subtle: rgba(255, 128, 71, 0.45);
-  --disk-border-strong: #FF8047;
+  /* Bordas & Divisores — contraste nítido de 1px garantido conforme vídeo oficial */
+  --disk-border-default: #283548;
+  --disk-card-border: #283548;
+  --disk-border-subtle: #1E293B;
+  --disk-border-strong: #3B4B63;
   --disk-border-focus: #FF8047;
 
   /* Tipografia & Contrastes */
@@ -200,8 +200,9 @@
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 18 100% 64%;
-  --input: 214 19% 26%;
+  --border: 215 20% 22%;
+  --border-strong: 215 25% 30%;
+  --input: 215 20% 22%;
   --ring: 18 100% 64%;
 
   /* Semânticos adicionais */

@@ -11,7 +11,7 @@
         try {
           var stored = localStorage.getItem('disk-theme');
           var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var resolved = stored === 'dark' || ((!stored || stored === 'system') && prefersDark) ? 'dark' : 'light';
+          var resolved = stored === 'light' ? 'light' : (stored === 'system' ? (prefersDark ? 'dark' : 'light') : 'dark');
           document.documentElement.classList.remove('light', 'dark');
           document.documentElement.classList.add(resolved);
           document.documentElement.style.colorScheme = resolved;

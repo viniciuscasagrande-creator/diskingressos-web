@@ -277,7 +277,7 @@ export default function POSPage({ events, initialTab = 'overview', notify, onNav
                       <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${
-                            p === 'Pix' ? 'bg-teal-500' : p === 'Dinheiro' ? 'bg-emerald-500' : p === 'Crédito' ? 'bg-sky-500' : 'bg-indigo-500'
+                            p === 'Pix' ? 'bg-teal-500' : p === 'Dinheiro' ? 'bg-emerald-500' : p === 'Crédito' ? 'bg-sky-500' : 'bg-orange-500'
                           }`}
                           style={{ width: `${pct}%` }}
                         />

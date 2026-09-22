@@ -13,7 +13,7 @@
 
 :root {
   --disk-layout-header-height: 74px;
-  --disk-layout-sidebar-width: clamp(288px, 19.25vw, 368px);
+  --disk-layout-sidebar-width: 310px;
   --disk-layout-sidebar-collapsed: 76px;
 
   /* ---- Modo Claro ---- */
@@ -84,15 +84,15 @@
 /* ---- Modo Escuro (Padrão Oficial do Vídeo de 21/09/2026) ---- */
 html.dark,
 html[data-theme='dark'] {
-  --disk-layout-page-bg: #0d1218;
-  --disk-layout-header-bg: #0a0f14;
-  --disk-layout-sidebar-bg: #0f151c;
-  --disk-layout-surface: #171d26;
-  --disk-layout-surface-soft: #121820;
-  --disk-layout-surface-hover: #242d39;
-  --disk-layout-border: #ff8047;
-  --disk-layout-border-soft: rgba(255, 128, 71, 0.45);
-  --disk-layout-border-strong: #ff8047;
+  --disk-layout-page-bg: #0b0e14;
+  --disk-layout-header-bg: #0e131b;
+  --disk-layout-sidebar-bg: #0e131b;
+  --disk-layout-surface: #151c27;
+  --disk-layout-surface-soft: #111721;
+  --disk-layout-surface-hover: #1c2432;
+  --disk-layout-border: #283548;
+  --disk-layout-border-soft: #1e293b;
+  --disk-layout-border-strong: #3b4b63;
   --disk-layout-text: #f4f7fb;
   --disk-layout-text-soft: #c4ccd7;
   --disk-layout-muted: #8995a5;
@@ -101,10 +101,10 @@ html[data-theme='dark'] {
 
   --disk-bg-app: var(--disk-layout-page-bg);
   --disk-bg-surface: var(--disk-layout-surface);
-  --disk-bg-elevated: #202732;
+  --disk-bg-elevated: #1f2736;
   --disk-bg-muted: var(--disk-layout-surface-soft);
   --disk-bg-hover: var(--disk-layout-surface-hover);
-  --disk-bg-active: #2b3644;
+  --disk-bg-active: #242e3f;
   --disk-border-default: var(--disk-layout-border);
   --disk-border-subtle: var(--disk-layout-border-soft);
   --disk-border-strong: var(--disk-layout-border-strong);
@@ -112,17 +112,17 @@ html[data-theme='dark'] {
   --disk-text-secondary: var(--disk-layout-text-soft);
   --disk-text-muted: var(--disk-layout-muted);
 
-  --background: 213 30% 7%;
+  --background: 220 28% 6%;
   --foreground: 210 40% 98%;
-  --card: 215 24% 12%;
+  --card: 215 28% 12%;
   --card-foreground: 210 40% 98%;
-  --popover: 214 22% 16%;
+  --popover: 215 28% 12%;
   --popover-foreground: 210 40% 98%;
   --primary: 18 100% 64%;
   --primary-foreground: 0 0% 100%;
   --secondary: 215 22% 17%;
   --secondary-foreground: 210 40% 96%;
-  --muted: 214 27% 10%;
+  --muted: 215 28% 10%;
   --muted-foreground: 215 20% 65%;
   --accent: 215 22% 17%;
   --accent-foreground: 210 40% 98%;
@@ -131,16 +131,16 @@ html[data-theme='dark'] {
   --success: 142 71% 45%;
   --warning: 38 92% 50%;
   --info: 217 91% 60%;
-  --border: 18 100% 64%;
-  --border-strong: 18 100% 64%;
-  --input: 214 19% 26%;
+  --border: 215 20% 22%;
+  --border-strong: 215 25% 30%;
+  --input: 215 20% 22%;
   --ring: 18 100% 64%;
 
-  --sidebar: 213 24% 7%;
+  --sidebar: 215 31% 8%;
   --sidebar-foreground: 210 40% 98%;
   --sidebar-hover: 215 22% 17%;
   --sidebar-active: 18 100% 64%;
-  --sidebar-border: 214 19% 22%;
+  --sidebar-border: 215 20% 22%;
 }
 
 /* Shell contínuo: cabeçalho em toda a largura, sidebar até o rodapé e conteúdo adjacente */
@@ -252,22 +252,28 @@ html[data-theme='dark'] {
 
 .safesaff-sidebar .module-nav-item,
 .safesaff-sidebar .collapsible-section-head {
-  min-height: 52px !important;
-  height: 52px !important;
-  padding-inline: 20px !important;
-  gap: 16px !important;
+  min-height: 48px !important;
+  height: 48px !important;
+  padding-inline: 18px !important;
+  margin-inline: 8px !important;
+  border-radius: 12px !important;
+  gap: 14px !important;
   color: var(--disk-layout-text) !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.15s ease !important;
 }
 
 .safesaff-sidebar .module-nav-item:hover,
 .safesaff-sidebar .collapsible-section-head:hover,
 .safesaff-sidebar .collapsible-section-head.open {
   background: var(--disk-layout-surface-hover) !important;
+  color: #ffffff !important;
 }
 
 .safesaff-sidebar .module-nav-item.active {
   background: var(--disk-layout-surface-soft) !important;
+  color: #ffffff !important;
   box-shadow: inset 3px 0 0 var(--disk-layout-accent) !important;
 }
 
@@ -334,8 +340,9 @@ html[data-theme='dark'] .safesaff-sidebar .module-nav-item.indent {
 }
 
 /* ============================================================================
-   REGRA DE OURO: TODO CARD TEM BORDA PRÓPRIA NOS DOIS TEMAS
-   Garante que nenhum card desaparece por falta de sombra ou fundo parecido.
+   REGRA DE OURO DO VÍDEO OFICIAL: CADA CARD TEM BORDA PRÓPRIA (1PX DE CONTRASTE)
+   Superfície: var(--disk-layout-surface) | Borda: var(--disk-layout-border)
+   Garante contraste perfeito e legibilidade sem excesso de bordas neon.
    ============================================================================ */
 :is(
   .card, .panel, .widget, .box, .tile, .table-card, .chart-card, .metric-card,
@@ -347,52 +354,22 @@ html[data-theme='dark'] .safesaff-sidebar .module-nav-item.indent {
 ) {
   background: var(--disk-layout-surface) !important;
   border: 1px solid var(--disk-layout-border) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22) !important;
 }
 
-/* ============================================================================
-   REGRA SUPREMA DE CARDS: EM MODO ESCURO / FUNDO PRETO, BORDAS ALARANJADAS
-   ============================================================================ */
-html.dark :is(
-  .card, .panel, .widget, .box, .tile, .table-card, .chart-card, .metric-card,
-  .dashboard-kpi-card, .finance-kpi, .finance-card, .balance-card, .hub-card,
-  .event-card, .summary-card, .content-card, .stat-card, .kpi-card, .report-card,
-  .filter-card, .form-card, .module-card, .section-card, .content-panel,
-  .table-wrapper, .profile-hero, .profile-kpi, .profile-section, .profile-shortcut,
-  .profile-event-list, .profile-event-row, [data-slot="card"], .disk-card,
-  .safesaff-card, .bg-card, [data-card], [data-testid="disk-kpi-card"],
-  .finance-kpi-card, .finance-command-card, .finance-video-card,
-  .finance-header-section, .finance-chart-box, .finance-table-section, .finance-side-panels,
-  .finance-erp-hero, .finance-accounting-header, .finance-erp-panel, .finance-accounting-panel,
-  .finance360-hero, .finance360-panel, .finance360-kpi, .finance-command-hero, .finance-command-kpi,
-  .finance-command-card, .finance-command-footer, .finance-command-health > div,
-  .di-filters, .di-kpi, .di-card, .di-panel, .di-table-wrap, .di-modal-content,
-  .di-drawer, .di-section, .di-summary, .di-toolbar,
-  .growth-kpi, .utm-dash-kpi, .ds-bi-card, .ds-stat-card, .ds-module-card, .module-hub-card,
-  .health-link, .rec-kpi-card, .rec-pipeline-card, .login-card,
-  article[class*='kpi'], div[class*='kpi-card']
-):not(.global-topbar):not(.safesaff-sidebar):not(.module-sidebar):not(.module-nav-item):not(.collapsible-section-head):not(.btn):not(button):not(input):not(select):not(textarea):not(thead):not(tbody):not(tr):not(th):not(td),
-html[data-theme='dark'] :is(
-  .card, .panel, .widget, .box, .tile, .table-card, .chart-card, .metric-card,
-  .dashboard-kpi-card, .finance-kpi, .finance-card, .balance-card, .hub-card,
-  .event-card, .summary-card, .content-card, .stat-card, .kpi-card, .report-card,
-  .filter-card, .form-card, .module-card, .section-card, .content-panel,
-  .table-wrapper, .profile-hero, .profile-kpi, .profile-section, .profile-shortcut,
-  .profile-event-list, .profile-event-row, [data-slot="card"], .disk-card,
-  .safesaff-card, .bg-card, [data-card], [data-testid="disk-kpi-card"],
-  .finance-kpi-card, .finance-command-card, .finance-video-card,
-  .finance-header-section, .finance-chart-box, .finance-table-section, .finance-side-panels,
-  .finance-erp-hero, .finance-accounting-header, .finance-erp-panel, .finance-accounting-panel,
-  .finance360-hero, .finance360-panel, .finance360-kpi, .finance-command-hero, .finance-command-kpi,
-  .finance-command-card, .finance-command-footer, .finance-command-health > div,
-  .di-filters, .di-kpi, .di-card, .di-panel, .di-table-wrap, .di-modal-content,
-  .di-drawer, .di-section, .di-summary, .di-toolbar,
-  .growth-kpi, .utm-dash-kpi, .ds-bi-card, .ds-stat-card, .ds-module-card, .module-hub-card,
-  .health-link, .rec-kpi-card, .rec-pipeline-card, .login-card,
-  article[class*='kpi'], div[class*='kpi-card']
-):not(.global-topbar):not(.safesaff-sidebar):not(.module-sidebar):not(.module-nav-item):not(.collapsible-section-head):not(.btn):not(button):not(input):not(select):not(textarea):not(thead):not(tbody):not(tr):not(th):not(td) {
-  border: 1px solid #ff8047 !important;
+/* Modos escuros: assegura que controles e divisores usem as bordas corretas da paleta oficial */
+html.dark :is(.card, .panel, .widget, [class*='card-'], [class*='panel-']),
+html[data-theme='dark'] :is(.card, .panel, .widget, [class*='card-'], [class*='panel-']) {
+  background: var(--disk-layout-surface) !important;
+  border-color: var(--disk-layout-border) !important;
+}
+
+html.dark :is(input, select, textarea, .form-control),
+html[data-theme='dark'] :is(input, select, textarea, .form-control) {
+  background: var(--disk-layout-surface-soft) !important;
+  border-color: var(--disk-layout-border) !important;
+  color: var(--disk-layout-text) !important;
 }
 
 /* ============================================================================
@@ -693,3 +670,78 @@ html.dark :is(#disk-estornos-module,.disk-estornos-wrapper) th {
     scroll-behavior: auto !important;
   }
 }
+
+/* ============================================================================
+   TELA DE LOGIN: HARMONIZAÇÃO OFICIAL COM TEMA ESCURO
+   ============================================================================ */
+html.dark .login-page,
+html[data-theme='dark'] .login-page {
+  background: var(--disk-layout-page-bg) !important;
+  color: var(--disk-layout-text) !important;
+}
+
+html.dark .login-card,
+html[data-theme='dark'] .login-card {
+  background: var(--disk-layout-surface) !important;
+  border: 1px solid var(--disk-layout-border) !important;
+  color: var(--disk-layout-text) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+}
+
+html.dark .login-card-head h2,
+html[data-theme='dark'] .login-card-head h2 {
+  color: var(--disk-layout-text) !important;
+}
+
+html.dark .login-card-head p,
+html[data-theme='dark'] .login-card-head p {
+  color: var(--disk-layout-muted) !important;
+}
+
+html.dark .login-card > label,
+html[data-theme='dark'] .login-card > label {
+  color: var(--disk-layout-text-soft) !important;
+}
+
+html.dark .login-input,
+html[data-theme='dark'] .login-input {
+  background: var(--disk-layout-surface-soft) !important;
+  border: 1px solid var(--disk-layout-border) !important;
+  color: var(--disk-layout-text) !important;
+}
+
+html.dark .login-input input,
+html[data-theme='dark'] .login-input input {
+  background: transparent !important;
+  color: var(--disk-layout-text) !important;
+}
+
+html.dark .login-submit,
+html[data-theme='dark'] .login-submit {
+  background: var(--disk-layout-accent) !important;
+  color: #fff !important;
+}
+
+html.dark .demo-access,
+html[data-theme='dark'] .demo-access {
+  border-top-color: var(--disk-layout-border) !important;
+}
+
+html.dark .demo-access b,
+html[data-theme='dark'] .demo-access b {
+  color: var(--disk-layout-text-soft) !important;
+}
+
+html.dark .demo-btn,
+html[data-theme='dark'] .demo-btn {
+  background: var(--disk-layout-surface-soft) !important;
+  border: 1px solid var(--disk-layout-border) !important;
+  color: var(--disk-layout-text) !important;
+}
+
+html.dark .demo-btn:hover,
+html[data-theme='dark'] .demo-btn:hover {
+  background: var(--disk-layout-surface-hover) !important;
+  border-color: var(--disk-layout-accent) !important;
+}
+

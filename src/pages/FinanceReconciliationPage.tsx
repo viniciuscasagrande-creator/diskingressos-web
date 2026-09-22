@@ -1138,7 +1138,7 @@ export default function FinanceReconciliationPage({ events = [], notify, onNavig
                 Cancelar
               </button>
               <button
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold cursor-pointer"
+                className="px-4 py-2 bg-[#ff8047] hover:bg-[#ff6c26] text-white rounded-lg text-xs font-bold cursor-pointer"
                 onClick={handleConfirmManualMatch}
               >
                 Salvar Vínculo & Conciliar

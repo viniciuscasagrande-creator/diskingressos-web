@@ -226,7 +226,7 @@ export default function EventsPage({
           value={filtered.reduce((a, b) => a + b.sales, 0).toLocaleString('pt-BR')}
           subtitle="Consolidado de emissão"
           icon={<Users className="w-5 h-5" />}
-          accent="purple"
+          accent="orange"
         />
 
         <DiskKpiCard
