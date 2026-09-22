@@ -414,7 +414,10 @@ html[data-ui-framework='limitless'] #main-app-content > .disk-content-container 
   .filter-card, .form-card, .module-card, .section-card, .content-panel,
   .table-wrapper, .profile-hero, .profile-kpi, .profile-section, .profile-shortcut,
   .profile-event-list, .profile-event-row, [data-slot="card"], .disk-card,
-  .fa-panel, .fa-kpi, .fa-header, .fa-sign-card, .fa-report-grid article
+  .fa-panel, .fa-kpi, .fa-header, .fa-sign-card, .fa-report-grid article,
+  .ds-module-card, .ds-stat-card, .ds-spark-card, .ds-bi-card,
+  .ds-finance-header-card, .ds-spread-left-card, .ds-reconciliation-left-card,
+  .ds-divergence-card, .ds-cockpit-header, .ds-cockpit-order, .ds-data-table-wrap
 ) {
   background: var(--disk-layout-surface) !important;
   border: 1px solid var(--disk-layout-border) !important;
@@ -1647,5 +1650,342 @@ html body :is(.grid-gap-4, .grid-gap-6, .grid-gap-8) {
 ) {
   padding: 0 !important;
 }
+
+/* ============================================================================
+   8. PADRONIZAÇÃO DEFINITIVA TEMA ESCURO — HUB DE ATENDIMENTO / SAC / DISKSERVICE
+   Garante visual 100% harmonizado no padrão SafeSaff, eliminando cards brancos
+   ============================================================================ */
+
+/* Top Launcher Carousel */
+#main-app-content .ds-launcher-wrapper {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 28px !important;
+}
+
+#main-app-content .ds-launcher-bar {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 20px !important;
+  padding: 16px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+  scroll-behavior: smooth !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #334155 transparent !important;
+}
+
+#main-app-content .ds-launcher-circle {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50% !important;
+  background: #1e293b !important;
+  border: 2px solid #334155 !important;
+  color: #94a3b8 !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#main-app-content .ds-launcher-item:hover .ds-launcher-circle {
+  transform: translateY(-2px) !important;
+  border-color: #60a5fa !important;
+  color: #ffffff !important;
+  background: #1e293b !important;
+}
+
+#main-app-content .ds-launcher-item.active .ds-launcher-circle {
+  background: radial-gradient(circle at center, #3b82f6 0%, #1d4ed8 100%) !important;
+  border-color: #93c5fd !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6) !important;
+}
+
+#main-app-content .ds-launcher-label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+}
+
+#main-app-content .ds-launcher-item.active .ds-launcher-label {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+#main-app-content .ds-launcher-scroll-btn {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #ffffff !important;
+  display: grid !important;
+  place-items: center !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35) !important;
+  transition: all 0.15s ease !important;
+}
+
+#main-app-content .ds-launcher-scroll-btn:hover {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Header & Toggles */
+#main-app-content .ds-section-title {
+  color: #94a3b8 !important;
+}
+
+#main-app-content .ds-view-btn {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.15s ease !important;
+}
+
+#main-app-content .ds-view-btn:hover {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .ds-view-btn.active {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  border-color: #3b82f6 !important;
+}
+
+/* 15 Módulos Principais Cards */
+#main-app-content .ds-module-card {
+  background: linear-gradient(145deg, #0f172a 0%, #131c31 100%) !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-align: left !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+#main-app-content .ds-module-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.15) !important;
+}
+
+#main-app-content .ds-card-text h4 {
+  margin: 0 0 3px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+#main-app-content .ds-card-text p {
+  margin: 0 !important;
+  font-size: 11px !important;
+  color: #94a3b8 !important;
+  line-height: 1.35 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+#main-app-content .ds-card-chevron {
+  color: #475569 !important;
+  flex: 0 0 auto !important;
+  transition: transform 0.15s ease, color 0.15s ease !important;
+}
+
+#main-app-content .ds-module-card:hover .ds-card-chevron {
+  color: #ffffff !important;
+  transform: translateX(3px) !important;
+}
+
+/* Card Icon Wraps Dark Mode */
+#main-app-content .ds-card-icon-wrap.green { background: rgba(16, 185, 129, 0.12) !important; color: #10b981 !important; border: 1px solid rgba(16, 185, 129, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.cyan { background: rgba(6, 182, 212, 0.12) !important; color: #06b6d4 !important; border: 1px solid rgba(6, 182, 212, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.purple { background: rgba(255, 128, 71, 0.16) !important; color: #ff8047 !important; border: 1px solid rgba(255, 128, 71, 0.45) !important; }
+#main-app-content .ds-card-icon-wrap.yellow { background: rgba(245, 158, 11, 0.12) !important; color: #f59e0b !important; border: 1px solid rgba(245, 158, 11, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.pink { background: rgba(236, 72, 153, 0.12) !important; color: #ec4899 !important; border: 1px solid rgba(236, 72, 153, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.emerald { background: rgba(5, 150, 105, 0.12) !important; color: #10b981 !important; border: 1px solid rgba(5, 150, 105, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.red { background: rgba(239, 68, 68, 0.12) !important; color: #ef4444 !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.blue { background: rgba(59, 130, 246, 0.12) !important; color: #3b82f6 !important; border: 1px solid rgba(59, 130, 246, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.orange { background: rgba(249, 115, 22, 0.12) !important; color: #f97316 !important; border: 1px solid rgba(249, 115, 22, 0.3) !important; }
+#main-app-content .ds-card-icon-wrap.teal { background: rgba(20, 184, 166, 0.12) !important; color: #14b8a6 !important; border: 1px solid rgba(20, 184, 166, 0.3) !important; }
+
+/* Stats Strip */
+#main-app-content .ds-stat-card {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+#main-app-content .ds-stat-icon-wrap {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content .ds-stat-label {
+  color: #94a3b8 !important;
+}
+
+#main-app-content .ds-stat-val {
+  color: #ffffff !important;
+}
+
+/* Quick Actions */
+#main-app-content .ds-quick-action-pill {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 20px !important;
+  padding: 9px 18px !important;
+  color: #e2e8f0 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.15s ease !important;
+}
+
+#main-app-content .ds-quick-action-pill:hover {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Search 360, Cockpit, Omnichannel, Data Tables */
+#main-app-content .ds-search360-bar {
+  background: #0f172a !important;
+  border: 2px solid #2563eb !important;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2) !important;
+}
+
+#main-app-content .ds-search360-input {
+  color: #ffffff !important;
+}
+
+#main-app-content .ds-cockpit-header {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content .ds-cockpit-name-block h2 {
+  color: #ffffff !important;
+}
+
+#main-app-content .ds-cockpit-order {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content .ds-cockpit-order-header strong {
+  color: #ffffff !important;
+}
+
+#main-app-content .ds-filter-tab-btn {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content .ds-filter-tab-btn:hover {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .ds-filter-tab-btn.active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .ds-data-table-wrap {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content .ds-data-table th {
+  background: #131b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content .ds-data-table td {
+  border-bottom: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content .ds-inbox-conversations-panel,
+#main-app-content .ds-inbox-chat-panel,
+#main-app-content .ds-inbox-context-panel {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content .ds-conv-item:hover {
+  background: #131b2e !important;
+}
+
+#main-app-content .ds-conv-item.active {
+  background: #1e293b !important;
+  border-left: 3px solid #2563eb !important;
+}
+
+#main-app-content .ds-conv-name {
+  color: #ffffff !important;
+}
+
+#main-app-content .ds-chat-messages-area {
+  background: #0b1120 !important;
+}
+
+#main-app-content .ds-chat-bubble.customer {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+}
+
+#main-app-content .ds-chat-input-bar {
+  background: #0f172a !important;
+  border-top: 1px solid #1e293b !important;
+}
+
+#main-app-content .ds-chat-input {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
 
 
