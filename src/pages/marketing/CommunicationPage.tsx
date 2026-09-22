@@ -74,7 +74,7 @@ export const CommunicationPage: React.FC<CommunicationPageProps> = ({
   };
 
   return (
-    <div className="w-full space-y-6 select-none font-sans">
+    <div className="w-full space-y-2 select-none font-sans">
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>

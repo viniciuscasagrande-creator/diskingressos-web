@@ -176,7 +176,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({
     ];
 
     return (
-      <div className="w-full space-y-6 select-none font-sans">
+      <div className="w-full space-y-2 select-none font-sans">
         <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#1677FF] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
@@ -223,7 +223,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({
   // 2. Open New Ticket View
   if (mode === 'sac-new') {
     return (
-      <div className="w-full space-y-6 select-none font-sans">
+      <div className="w-full space-y-2 select-none font-sans">
         <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
           <h2 className="text-[20px] font-black text-[#0E1726] tracking-tight">Abrir Novo Chamado</h2>
           <p className="text-[12px] text-[#718096]">
@@ -388,7 +388,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({
   // 3. SLA & ITIL Policies View
   if (mode === 'sac-sla') {
     return (
-      <div className="w-full space-y-6 select-none font-sans">
+      <div className="w-full space-y-2 select-none font-sans">
         <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#1677FF] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
             GESTÃO DE NÍVEL DE SERVIÇO (SLA)
@@ -459,7 +459,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({
   // 4. Integrations View
   if (mode === 'sac-integrations') {
     return (
-      <div className="w-full space-y-6 select-none font-sans">
+      <div className="w-full space-y-2 select-none font-sans">
         <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
           <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
             INTEGRAÇÕES OMNICHANNEL
@@ -518,7 +518,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({
   // 5. Knowledge Base View
   if (mode === 'sac-knowledge') {
     return (
-      <div className="w-full space-y-6 select-none font-sans">
+      <div className="w-full space-y-2 select-none font-sans">
         <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
           <h2 className="text-[20px] font-black text-[#0E1726] tracking-tight">Base de Conhecimento (KEDB)</h2>
           <p className="text-[12px] text-[#718096]">
@@ -556,7 +556,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({
   // 6. Reports View
   if (mode === 'sac-reports') {
     return (
-      <div className="w-full space-y-6 select-none font-sans">
+      <div className="w-full space-y-2 select-none font-sans">
         <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
           <h2 className="text-[20px] font-black text-[#0E1726] tracking-tight">Relatórios de Atendimento & SLA</h2>
           <p className="text-[12px] text-[#718096]">
@@ -615,7 +615,7 @@ export const SupportPage: React.FC<SupportPageProps> = ({
   const isDashboard = mode === 'sac-dashboard';
 
   return (
-    <div className="w-full space-y-6 select-none font-sans">
+    <div className="w-full space-y-2 select-none font-sans">
       {/* Top Banner */}
       <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>

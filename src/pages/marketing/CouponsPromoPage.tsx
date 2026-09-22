@@ -78,7 +78,7 @@ export const CouponsPromoPage: React.FC<CouponsPromoPageProps> = ({ events, sele
   ];
 
   return (
-    <div className="w-full space-y-6 select-none font-sans">
+    <div className="w-full space-y-2 select-none font-sans">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
         <div>

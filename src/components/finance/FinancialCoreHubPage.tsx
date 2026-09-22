@@ -241,7 +241,7 @@ export const FinancialCoreHubPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 pb-12" data-testid="pagina-nucleo-financeiro-contabil">
+    <div className="space-y-2 pb-8 w-full max-w-none" data-testid="pagina-nucleo-financeiro-contabil">
       {/* Topo / Header Enterprise */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

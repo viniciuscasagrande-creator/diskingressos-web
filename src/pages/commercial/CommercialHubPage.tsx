@@ -815,7 +815,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
 
   return (
     <div
-      className="commercial-hub-container p-4 sm:p-6 lg:p-8 space-y-6 max-w-full mx-auto"
+      className="commercial-hub-container space-y-2 w-full max-w-none"
       data-testid="commercial-hub-page"
       data-visual-standard="disk-limitless-v7"
     >

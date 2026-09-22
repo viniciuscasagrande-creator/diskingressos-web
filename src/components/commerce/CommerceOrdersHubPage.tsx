@@ -230,7 +230,7 @@ export const CommerceOrdersHubPage: React.FC<CommerceOrdersHubPageProps> = ({
 
   return (
     <div
-      className="commerce-orders-container p-4 sm:p-6 lg:p-8 space-y-6 max-w-full mx-auto"
+      className="commerce-orders-container space-y-2 w-full max-w-none"
       data-testid="commerce-orders-hub"
       data-visual-standard="disk-limitless-v7"
     >

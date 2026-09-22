@@ -140,7 +140,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
   }, [logs, logSeverityFilter, logSearchQuery])
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12 animate-fadeIn" data-testid="developer-command-center">
+    <div className="space-y-2 w-full max-w-none pb-8 animate-fadeIn" data-testid="developer-command-center">
       {/* Banner de Impersonation (se ativo) */}
       {isImpersonating && (
         <DeveloperImpersonationBanner
@@ -164,7 +164,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
       )}
 
       {/* Cabeçalho da Central Developer */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-1">
             <Terminal className="w-4 h-4" />
@@ -204,8 +204,8 @@ export const DeveloperCommandCenterPage: React.FC = () => {
       </div>
 
       {/* KPIs da Plataforma */}
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-2">
+        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
           <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Uptime Plataforma</p>
           <p className="text-2xl font-black text-emerald-600 mt-1">
             {summary ? `${summary.uptimePercentage}%` : '99.99%'}
@@ -213,7 +213,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
           <p className="text-[10px] text-slate-400 mt-1">Meta SLA: 99.95%</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
           <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Latência P95</p>
           <p className="text-2xl font-black text-slate-900 mt-1">
             {summary ? `${summary.apiP95Ms} ms` : '218 ms'}
@@ -221,7 +221,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
           <p className="text-[10px] text-emerald-600 font-semibold mt-1">Excelente (&lt; 300ms)</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
           <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Taxa de Erro 24h</p>
           <p className="text-2xl font-black text-slate-900 mt-1">
             {summary ? `${summary.errorRatePercentage}%` : '0.12%'}
@@ -229,7 +229,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
           <p className="text-[10px] text-slate-400 mt-1">Normal (&lt; 0.5%)</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
           <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Vazão Global</p>
           <p className="text-2xl font-black text-indigo-600 mt-1">
             {summary ? summary.requestsPerMinute.toLocaleString('pt-BR') : '12.842'}
@@ -237,7 +237,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
           <p className="text-[10px] text-slate-400 mt-1">requisições / min</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
           <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Fila DLQ</p>
           <p className="text-2xl font-black text-rose-600 mt-1">
             {summary ? summary.dlqCount : 3}
@@ -245,7 +245,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
           <p className="text-[10px] text-rose-600 font-semibold mt-1">Mensagens retidas</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
           <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Incidentes</p>
           <p className="text-2xl font-black text-amber-600 mt-1">
             {summary ? summary.activeIncidentsCount : 2}
@@ -356,10 +356,10 @@ export const DeveloperCommandCenterPage: React.FC = () => {
 
       {/* ABA 1: INVESTIGAÇÃO UNIVERSAL (Correlation ID) */}
       {activeTab === 'investigacao' && (
-        <div className="space-y-6">
+        <div className="space-y-2">
           {/* Caixa de Busca Universal */}
-          <div className="bg-slate-900 p-6 rounded-2xl text-white shadow-xl">
-            <div className="max-w-3xl">
+          <div className="bg-slate-900 p-4 rounded-xl text-white shadow-xl">
+            <div className="w-full">
               <h2 className="text-base font-bold flex items-center gap-2">
                 <Search className="w-5 h-5 text-indigo-400" />
                 <span>Rastreamento Universal de Jornada Ponta a Ponta</span>
@@ -373,7 +373,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
                   e.preventDefault()
                   handleSearchJourney(searchCorrelationId)
                 }}
-                className="mt-4 flex gap-2"
+                className="mt-3 flex gap-2"
               >
                 <div className="relative flex-1">
                   <input
@@ -394,7 +394,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
                 </button>
               </form>
 
-              <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-400">
+              <div className="mt-2.5 flex items-center gap-2 text-[11px] text-slate-400">
                 <span>Atalhos de teste:</span>
                 <button
                   type="button"
@@ -412,8 +412,8 @@ export const DeveloperCommandCenterPage: React.FC = () => {
 
           {/* Resultado do Rastreamento */}
           {activeJourney ? (
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-sm font-black text-indigo-600">
@@ -445,12 +445,12 @@ export const DeveloperCommandCenterPage: React.FC = () => {
               </div>
 
               {/* Timeline de Etapas */}
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
                   Cadeia Canônica de Execução no Disk Core
                 </h4>
 
-                <div className="relative pl-6 border-l-2 border-slate-200 space-y-6">
+                <div className="relative pl-6 border-l-2 border-slate-200 space-y-2">
                   {activeJourney.steps.map((step) => {
                     const isErr = step.status === 'ERROR'
                     return (
@@ -526,8 +526,8 @@ export const DeveloperCommandCenterPage: React.FC = () => {
 
       {/* ABA 2: LOGS ESTRUTURADOS */}
       {activeTab === 'logs' && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-sm font-bold text-slate-900">Logs Estruturados Sanitizados</h3>
               <p className="text-xs text-slate-500">
@@ -668,17 +668,17 @@ export const DeveloperCommandCenterPage: React.FC = () => {
 
       {/* ABA 3: ERROS & FINGERPRINTS */}
       {activeTab === 'erros' && (
-        <div className="space-y-4">
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
             <h3 className="text-sm font-bold text-slate-900">Exceções Agrupadas por Fingerprint</h3>
             <p className="text-xs text-slate-500">
               Impacto quantificado em usuários, eventos e volume financeiro em risco nas últimas 24 horas.
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             {errors.map((err) => (
-              <div key={err.fingerprint} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-3">
+              <div key={err.fingerprint} className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm space-y-2">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <span className="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-xs font-mono">
@@ -713,7 +713,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
 
       {/* ABA 4: FILAS & DLQ */}
       {activeTab === 'filas' && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-2">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-900">Monitor de Filas & Dead-Letter (DLQ)</h3>
@@ -727,28 +727,28 @@ export const DeveloperCommandCenterPage: React.FC = () => {
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-2.5 px-3">Fila Técnica</th>
-                  <th className="py-2.5 px-3">Pendentes</th>
-                  <th className="py-2.5 px-3">Em Processamento</th>
-                  <th className="py-2.5 px-3">Retidas na DLQ</th>
-                  <th className="py-2.5 px-3">Latência Média</th>
-                  <th className="py-2.5 px-3">Status</th>
-                  <th className="py-2.5 px-3 text-right">Ação</th>
+                  <th className="py-2 px-3">Fila Técnica</th>
+                  <th className="py-2 px-3">Pendentes</th>
+                  <th className="py-2 px-3">Em Processamento</th>
+                  <th className="py-2 px-3">Retidas na DLQ</th>
+                  <th className="py-2 px-3">Latência Média</th>
+                  <th className="py-2 px-3">Status</th>
+                  <th className="py-2 px-3 text-right">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-[11px]">
                 {queues.map((q) => (
                   <tr key={q.queueName} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3 font-mono font-bold text-slate-900">{q.queueName}</td>
-                    <td className="py-3 px-3">{q.pendingCount}</td>
-                    <td className="py-3 px-3">{q.inProgressCount}</td>
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-3 font-mono font-bold text-slate-900">{q.queueName}</td>
+                    <td className="py-2.5 px-3">{q.pendingCount}</td>
+                    <td className="py-2.5 px-3">{q.inProgressCount}</td>
+                    <td className="py-2.5 px-3">
                       <span className={`font-bold ${q.dlqCount > 0 ? 'text-rose-600 font-black' : 'text-slate-400'}`}>
                         {q.dlqCount}
                       </span>
                     </td>
-                    <td className="py-3 px-3 font-mono">{q.latencyAvgMs} ms</td>
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-3 font-mono">{q.latencyAvgMs} ms</td>
+                    <td className="py-2.5 px-3">
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           q.status === 'CRITICAL'
@@ -761,7 +761,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
                         {q.status}
                       </span>
                     </td>
-                    <td className="py-3 px-3 text-right">
+                    <td className="py-2.5 px-3 text-right">
                       {q.canReprocess && q.dlqCount > 0 ? (
                         <button
                           type="button"
@@ -784,7 +784,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
 
       {/* ABA 5: SESSÕES ATIVAS & IAM */}
       {activeTab === 'sessoes' && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-2">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-bold text-slate-900">Sessões Ativas no Disk Core</h3>
@@ -798,30 +798,30 @@ export const DeveloperCommandCenterPage: React.FC = () => {
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
                 <tr>
-                  <th className="py-2.5 px-3">Usuário</th>
-                  <th className="py-2.5 px-3">Perfil IAM</th>
-                  <th className="py-2.5 px-3">Dispositivo / IP</th>
-                  <th className="py-2.5 px-3">Localização</th>
-                  <th className="py-2.5 px-3">Início</th>
-                  <th className="py-2.5 px-3">Status</th>
-                  <th className="py-2.5 px-3 text-right">Ação</th>
+                  <th className="py-2 px-3">Usuário</th>
+                  <th className="py-2 px-3">Perfil IAM</th>
+                  <th className="py-2 px-3">Dispositivo / IP</th>
+                  <th className="py-2 px-3">Localização</th>
+                  <th className="py-2 px-3">Início</th>
+                  <th className="py-2 px-3">Status</th>
+                  <th className="py-2 px-3 text-right">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-[11px]">
                 {sessions.map((s) => (
                   <tr key={s.sessionId} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-3">
+                    <td className="py-2 px-3">
                       <p className="font-bold text-slate-900">{s.userName}</p>
                       <p className="text-[10px] text-slate-400 font-mono">{s.userEmail}</p>
                     </td>
-                    <td className="py-3 px-3 font-semibold text-slate-700">{s.role}</td>
-                    <td className="py-3 px-3">
+                    <td className="py-2 px-3 font-semibold text-slate-700">{s.role}</td>
+                    <td className="py-2 px-3">
                       <p className="text-slate-800">{s.device}</p>
                       <p className="text-[10px] text-slate-400 font-mono">{s.ip}</p>
                     </td>
-                    <td className="py-3 px-3 text-slate-600">{s.city}</td>
-                    <td className="py-3 px-3 text-slate-500">{s.startedAt}</td>
-                    <td className="py-3 px-3">
+                    <td className="py-2 px-3 text-slate-600">{s.city}</td>
+                    <td className="py-2 px-3 text-slate-500">{s.startedAt}</td>
+                    <td className="py-2 px-3">
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           s.status === 'ACTIVE'
@@ -832,7 +832,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
                         {s.status === 'ACTIVE' ? 'Ativa' : 'Revogada'}
                       </span>
                     </td>
-                    <td className="py-3 px-3 text-right">
+                    <td className="py-2 px-3 text-right">
                       {s.status === 'ACTIVE' ? (
                         <button
                           type="button"
@@ -855,7 +855,7 @@ export const DeveloperCommandCenterPage: React.FC = () => {
 
       {/* ABA 6: SAÚDE DOS COMPONENTES */}
       {activeTab === 'saude' && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-2">
           <div>
             <h3 className="text-sm font-bold text-slate-900">Health Check da Infraestrutura & Provedores</h3>
             <p className="text-xs text-slate-500">

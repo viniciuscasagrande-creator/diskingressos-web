@@ -107,7 +107,7 @@ export const DesignSystemShowcasePage: React.FC = () => {
 
   return (
     <div
-      className="space-y-8 max-w-7xl mx-auto pb-16 animate-fadeIn"
+      className="space-y-2 w-full max-w-none pb-8 animate-fadeIn"
       data-testid="design-system-showcase"
     >
       {/* Top Banner de Identidade & Controles de Tema */}

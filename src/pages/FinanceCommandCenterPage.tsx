@@ -160,7 +160,7 @@ export default function FinanceCommandCenterPage({ events, producerId, notify, o
   return (
     <LimitlessPage
       dataTestId="finance-dashboard-page"
-      className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn"
+      className="space-y-2 w-full max-w-none animate-fadeIn"
     >
       <div className="finance-command" data-finance-release="25.3.3-navigation-rail-financial-typography-2026-09-02">
         {/* Header Limitless V7 */}

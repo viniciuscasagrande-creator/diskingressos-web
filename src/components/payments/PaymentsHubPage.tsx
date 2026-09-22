@@ -151,7 +151,7 @@ export const PaymentsHubPage: React.FC<PaymentsHubPageProps> = ({
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn" data-testid="payments-hub">
+    <div className="space-y-2 w-full max-w-none animate-fadeIn" data-testid="payments-hub">
       {/* Modais Alinhados */}
       {selectedPaymentForDossier && (
         <PaymentDossier360Modal

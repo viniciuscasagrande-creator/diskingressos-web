@@ -27,7 +27,7 @@ export const AntecipacoesModule: React.FC<{ onBack: () => void }> = ({ onBack })
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       <button
         onClick={onBack}
         className="flex items-center gap-1.5 text-xs font-bold text-[#1677FF] hover:underline"

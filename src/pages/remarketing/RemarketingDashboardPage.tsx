@@ -41,7 +41,7 @@ export const RemarketingDashboardPage: React.FC<RemarketingDashboardPageProps> =
   ];
 
   return (
-    <div className="w-full space-y-6 select-none font-sans">
+    <div className="w-full space-y-2 select-none font-sans">
       {/* 1. Top Context Row */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs">
         <div>

@@ -91,7 +91,7 @@ export const CortesiasPage: React.FC<CortesiasPageProps> = ({
   });
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

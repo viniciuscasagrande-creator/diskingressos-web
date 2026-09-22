@@ -57,7 +57,7 @@ export const RemarketingHub: React.FC<RemarketingHubProps> = ({
   ];
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       {/* Sub-Navigation Bar */}
       <div className="bg-white border border-[#E2E8F0] rounded-card p-1.5 shadow-xs flex items-center gap-1 overflow-x-auto">
         <button

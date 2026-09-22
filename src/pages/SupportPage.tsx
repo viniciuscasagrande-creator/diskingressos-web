@@ -304,7 +304,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   }, [mode])
 
   return (
-    <LimitlessPage className="p-4 md:p-6 space-y-6">
+    <LimitlessPage className="space-y-2 w-full max-w-none">
       <DiskPageHeader
         title={`Cockpit SAC & Atendimento — ${producerName || 'Disk Service'}`}
         description="Visão integrada, gestão de chamados, conformidade SLA e inteligência operacional"

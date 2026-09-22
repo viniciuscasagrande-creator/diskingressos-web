@@ -56,7 +56,7 @@ export const ProducersPage: React.FC<{ notify?: (msg: string) => void }> = ({ no
   ];
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       <PageHeader
         eyebrow="ADMINISTRAÇÃO DE TENANTS"
         title="Produtoras Cadastradas"

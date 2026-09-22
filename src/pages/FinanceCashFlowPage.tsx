@@ -201,7 +201,7 @@ export default function FinanceCashFlowPage({ events, notify, onNavigate }: Prop
   )
 
   return (
-    <div className="finance-dashboard-wrapper space-y-6">
+    <div className="finance-dashboard-wrapper space-y-2 w-full max-w-none">
       {/* Botão de Retorno e Toggle de Regime */}
       <div className="flex items-center justify-between">
         <button

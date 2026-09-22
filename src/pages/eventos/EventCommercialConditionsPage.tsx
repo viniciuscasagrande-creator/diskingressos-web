@@ -182,7 +182,7 @@ export default function EventCommercialConditionsPage({ event, onNavigate, notif
   const v = data?.activeVersion
 
   return (
-    <div className="space-y-6" data-testid="event-commercial-conditions-page">
+    <div className="space-y-2 w-full max-w-none" data-testid="event-commercial-conditions-page">
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#0F172A] border border-slate-800 rounded-xl p-5 text-white">
         <div>
@@ -267,7 +267,7 @@ export default function EventCommercialConditionsPage({ event, onNavigate, notif
 
       {/* Conteúdo da Tab Vigente */}
       {activeTab === 'condicoes' && (
-        <div className="space-y-6">
+        <div className="space-y-2">
           {error && (
             <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 flex items-center gap-3">
               <AlertCircle size={20} />
@@ -449,7 +449,7 @@ export default function EventCommercialConditionsPage({ event, onNavigate, notif
 
       {/* Tab Antecipação */}
       {activeTab === 'antecipacao' && (
-        <div className="space-y-6">
+        <div className="space-y-2">
           <div className="p-6 rounded-xl border border-slate-800 bg-[#0F172A] space-y-3">
             <h3 className="font-bold text-slate-200 flex items-center gap-2">
               <ArrowUpRight className="text-cyan-400" size={18} />

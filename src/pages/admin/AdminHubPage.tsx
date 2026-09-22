@@ -61,7 +61,7 @@ export const AdminHubPage: React.FC<AdminHubPageProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       <div className="flex items-center gap-2">
         <button
           onClick={() => (onNavigate ? onNavigate('profile-dashboard' as any) : window.history.back())}

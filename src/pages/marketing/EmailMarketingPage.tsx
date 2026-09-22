@@ -359,7 +359,7 @@ export default function EmailMarketingPage({ producerId, producerName, events, s
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2 w-full max-w-none">
       {/* 1. Header & Control Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
         <div className="flex items-center gap-3">

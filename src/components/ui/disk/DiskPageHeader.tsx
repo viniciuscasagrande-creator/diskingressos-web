@@ -67,7 +67,7 @@ export const DiskPageHeader: React.FC<DiskPageHeaderProps> = ({
       )}
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="min-w-0 max-w-4xl">
+        <div className="min-w-0 flex-1">
           {/* Eyebrow & Badges */}
           {(eyebrow || badge || (badges && badges.length > 0)) && (
             <div className="flex flex-wrap items-center gap-2 mb-1.5">

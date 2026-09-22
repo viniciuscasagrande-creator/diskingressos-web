@@ -75,7 +75,7 @@ export default function LotsPage({ events, selectedEvent, onSelect, onBack }: Pr
   }
 
   return (
-    <LimitlessPage className="p-4 md:p-6 space-y-6">
+    <LimitlessPage className="space-y-2 w-full max-w-none">
       {/* 1. Header Canônico Limitless V7 */}
       <DiskPageHeader
         title="Lotes & Ingressos"

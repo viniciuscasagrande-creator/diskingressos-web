@@ -64,7 +64,7 @@ export default function EventsPage({
   const setColumnCount = (n: 2|3|4|5|6) => { setColumns(n); localStorage.setItem('safesaff.events.vertical.columns', String(n)) }
 
   return (
-    <LimitlessPage dataTestId="events-page" className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn">
+    <LimitlessPage dataTestId="events-page" className="space-y-2 w-full max-w-none animate-fadeIn">
       {/* 1. Cabeçalho V7 Oficial */}
       <DiskPageHeader
         breadcrumbs={['Operações', 'Eventos']}

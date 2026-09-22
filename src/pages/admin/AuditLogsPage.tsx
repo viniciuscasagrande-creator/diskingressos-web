@@ -32,7 +32,7 @@ export const AuditLogsPage: React.FC = () => {
   ];
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       <PageHeader
         eyebrow="GOVERNANÇA & SEGURANÇA"
         title="Logs de Auditoria do Sistema"

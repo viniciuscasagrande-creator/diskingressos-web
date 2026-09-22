@@ -167,7 +167,7 @@ export default function FinanceiroConsolidadoPage({ events, notify, onNavigate }
   }
 
   return (
-    <div className="finance-dashboard-wrapper space-y-6">
+    <div className="finance-dashboard-wrapper space-y-2 w-full max-w-none">
       <div className="flex items-center gap-2 mb-1">
         <button
           onClick={() => (onNavigate ? onNavigate('finance-dashboard') : window.history.back())}

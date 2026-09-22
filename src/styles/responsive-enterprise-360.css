@@ -8,7 +8,7 @@
   --safe-page-gutter:24px;
   --safe-section-gap:16px;
   --safe-touch-target:42px;
-  --safe-content-max:1920px;
+  --safe-content-max:100%;
 }
 html,body,#root{max-width:100%;min-width:0}
 img,svg,canvas,video{max-width:100%}
@@ -109,9 +109,9 @@ img,svg,canvas,video{max-width:100%}
   .fa-panel{padding:12px!important}
 }
 
-/* Telas largas: impede que dashboards se estiquem indefinidamente. */
+/* Telas largas: auto-ajuste fluido total de ponta a ponta sem margens centrais */
 @media (min-width:1920px){
-  .content>.page-content,.phase6-content>.page-content,.main-content>.page-content{max-width:var(--safe-content-max);margin-inline:auto}
+  .content>.page-content,.phase6-content>.page-content,.main-content>.page-content{max-width:100%!important;margin-inline:0!important;width:100%!important}
 }
 
 @media (orientation:landscape) and (max-height:600px) and (pointer:coarse){

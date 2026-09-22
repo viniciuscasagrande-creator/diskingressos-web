@@ -74,7 +74,7 @@ export const CustomerSearchHubPage: React.FC = () => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100)
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-[1600px] mx-auto animate-fadeIn">
+    <div className="space-y-2 w-full max-w-none animate-fadeIn">
       {/* Cabeçalho */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
         <div>

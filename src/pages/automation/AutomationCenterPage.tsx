@@ -143,7 +143,7 @@ export const AutomationCenterPage: React.FC<AutomationCenterPageProps> = ({
 
   if (mode === 'automations') {
     return (
-      <div className="w-full space-y-6 select-none font-sans">
+      <div className="w-full space-y-2 select-none font-sans">
         {/* Intro Banner */}
         <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -418,7 +418,7 @@ export const AutomationCenterPage: React.FC<AutomationCenterPageProps> = ({
   const isEmail = mode === 'email';
 
   return (
-    <div className="w-full space-y-6 select-none font-sans">
+    <div className="w-full space-y-2 select-none font-sans">
       <div className="bg-white p-5 rounded-card border border-[#E2E8F0] shadow-xs flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">

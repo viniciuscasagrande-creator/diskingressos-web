@@ -58,7 +58,7 @@ export const DiskPageHeader: React.FC<DiskPageHeaderProps> = ({
           </div>
 
           {displayDesc && (
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-3xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
               {displayDesc}
             </p>
           )}

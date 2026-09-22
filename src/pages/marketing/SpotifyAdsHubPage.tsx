@@ -190,7 +190,7 @@ export const SpotifyAdsHubPage: React.FC<SpotifyAdsHubPageProps> = ({
   }
 
   return (
-    <div className="w-full space-y-6 font-sans select-none" data-release={SPOTIFY_ADS_RELEASE}>
+    <div className="w-full space-y-2 font-sans select-none" data-release={SPOTIFY_ADS_RELEASE}>
       <audio id="hub-global-audio" preload="none" onEnded={() => setPlayingAudioUrl(null)} />
 
       {/* 1. Header & Contexto Multi-Tenant */}

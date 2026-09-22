@@ -70,7 +70,7 @@ export const SplitFinanceiroModule: React.FC<{ onBack: () => void }> = ({ onBack
   ];
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       {/* Back Button */}
       <div className="flex items-center gap-2">
         <button

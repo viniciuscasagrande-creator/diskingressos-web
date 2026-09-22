@@ -136,7 +136,7 @@ export default function ProfileDashboardPage({ user, producer, events, participa
   ]
 
   return (
-    <div className="profile-dashboard space-y-6">
+    <div className="profile-dashboard space-y-2 w-full max-w-none">
       {/* 1. Hero do Perfil & Contexto da Produtora */}
       <section className="profile-hero">
         <div>

@@ -22,7 +22,7 @@ export const SecurityPage: React.FC<SecurityPageProps> = ({ notify }) => {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-2">
       <PageHeader
         eyebrow="PROTEÇÃO DA PLATAFORMA"
         title="Configurações de Segurança"

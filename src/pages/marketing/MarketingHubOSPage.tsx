@@ -187,7 +187,7 @@ export default function MarketingHubOSPage(p: Props) {
   ]
 
   return (
-    <LimitlessPage dataTestId="marketing-dashboard-page" className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto animate-fadeIn">
+    <LimitlessPage dataTestId="marketing-dashboard-page" className="space-y-2 w-full max-w-none animate-fadeIn">
       {/* 1. Header V7 Oficial */}
       <DiskPageHeader
         breadcrumbs={['Marketing', 'Visão Geral']}
