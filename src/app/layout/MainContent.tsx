@@ -25,9 +25,7 @@ export const MainContent: React.FC<MainContentProps> = ({
       role="main"
     >
       <div
-        className={`disk-content-container w-full mx-auto pt-2 pb-6 pr-4 sm:pr-5 pl-1 sm:pl-2 ${
-          fullWidth ? 'max-w-none' : 'max-w-[var(--content-max-width,100%)]'
-        }`}
+        className="disk-content-container w-full m-0 p-0 max-w-none"
       >
         {children}
       </div>

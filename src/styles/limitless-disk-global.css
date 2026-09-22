@@ -30,7 +30,7 @@ html[data-ui-framework='limitless'] .app-shell {
   --sidebar-width: var(--ll-sidebar) !important;
   --sidebar-collapsed-width: var(--ll-sidebar-collapsed) !important;
   --header-height: var(--ll-header) !important;
-  --content-max-width: 100rem !important;
+  --content-max-width: 100% !important;
   width: 100%;
   min-width: 0;
   height: 100vh !important;
@@ -230,9 +230,11 @@ html[data-ui-framework='limitless'] #main-app-content {
 
 html[data-ui-framework='limitless'] #main-app-content > .disk-content-container {
   width: 100% !important;
-  max-width: 100rem !important;
+  max-width: 100% !important;
   min-width: 0 !important;
-  padding: 1.25rem 1.5rem 2rem !important;
+  margin: 0 !important;
+  padding: 8px 16px 2rem 8px !important;
+  box-sizing: border-box !important;
 }
 
 html[data-ui-framework='limitless'] #main-app-content .disk-page-header,

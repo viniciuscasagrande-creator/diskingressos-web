@@ -364,27 +364,42 @@ html[data-theme='dark'] .safesaff-sidebar .module-nav-item.indent {
   color: var(--disk-layout-text) !important;
 }
 
-.disk-content-container {
+.disk-content-container,
+#main-app-content .disk-content-container,
+#main-app-content > .disk-content-container,
+html[data-ui-framework='limitless'] #main-app-content > .disk-content-container {
   width: 100% !important;
-  max-width: none !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
   margin: 0 !important;
-  padding-top: 10px !important;
+  padding-top: 8px !important;
   padding-bottom: 40px !important;
-  padding-left: 4px !important; /* Quase beirando a barra lateral esquerda */
-  padding-right: 20px !important;
+  padding-left: 8px !important; /* Quase beirando a barra lateral esquerda */
+  padding-right: 20px !important; /* Expandindo ate a borda direita do monitor */
   box-sizing: border-box !important;
 }
 
 .phase6-content,
 .content.phase6-content,
-#main-app-content .phase6-content {
-  padding-left: 4px !important;
-  padding-right: 16px !important;
+#main-app-content .phase6-content,
+#main-app-content > .disk-content-container > .phase6-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .module-titlebar {
-  padding-left: 12px !important;
-  padding-right: 20px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 0 12px 0 !important;
+  padding-left: 6px !important;
+  padding-right: 16px !important;
+  box-sizing: border-box !important;
 }
 
 /* ============================================================================
@@ -1381,6 +1396,7 @@ html.dark .fa-line,
 html[data-theme='dark'] .fa-line {
   border-bottom-color: #1e293b !important;
   color: #cbd5e1 !important;
+  background: transparent !important;
 }
 
 html.dark .fa-line.strong,
@@ -1416,3 +1432,39 @@ html.dark .fa-table tr:hover td,
 html[data-theme='dark'] .fa-table tr:hover td {
   background: #182232 !important;
 }
+
+/* ==============================================================================
+   AUTO-AJUSTE FLUIDO DE TELA (DESKTOP, ULTRAWIDE, TABLET & MOBILE)
+   Garante expansão de ponta a ponta: beira a sidebar na esquerda e tela cheia na direita.
+   ============================================================================== */
+@media (min-width: 1920px) {
+  #main-app-content .disk-content-container {
+    padding-left: 8px !important;
+    padding-right: 24px !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  #main-app-content .disk-content-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-top: 10px !important;
+  }
+  .module-titlebar {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #main-app-content .disk-content-container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    padding-top: 8px !important;
+  }
+  .module-titlebar {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
