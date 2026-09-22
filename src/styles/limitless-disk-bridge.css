@@ -424,18 +424,19 @@
 .disk-limitless-page .fa-kpi {
   background: var(--ll-surface);
   border: 1px solid var(--ll-border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.15rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .disk-limitless-page .fa-kpi:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transform: translateY(-3px);
+  border-color: #ff8047;
+  box-shadow: 0 12px 28px -4px rgba(255, 128, 71, 0.16), 0 4px 12px rgba(15, 23, 42, 0.05);
 }
 
 .disk-limitless-page .fa-kpi > span {
@@ -443,21 +444,22 @@
   height: 36px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
-  background: rgba(249, 115, 22, 0.12);
-  color: var(--ll-primary);
+  border-radius: 10px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #ea580c;
 }
 
 .disk-limitless-page .fa-kpi small {
   font-size: 0.75rem;
   color: var(--ll-text-muted);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .disk-limitless-page .fa-kpi strong {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   color: var(--ll-text);
   font-weight: 800;
 }
@@ -465,9 +467,9 @@
 .disk-limitless-page .fa-panel {
   background: var(--ll-surface);
   border: 1px solid var(--ll-border);
-  border-radius: 12px;
-  padding: 1.25rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border-radius: 16px;
+  padding: 1.35rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04);
 }
 
 .disk-limitless-page .fa-panel-head h3 {

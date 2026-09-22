@@ -344,7 +344,8 @@ html.dark :is(
   .card,.panel,.widget,.box,.tile,.table-card,.chart-card,.metric-card,.dashboard-kpi-card,
   .finance-kpi,.finance-card,.balance-card,.hub-card,.event-card,.summary-card,.content-card,
   .stat-card,.kpi-card,.report-card,.filter-card,.form-card,.section-card,.module-card,
-  .marketing-os-panel,.campaign-card,.automation-card,.utm-card,.analytics-card
+  .marketing-os-panel,.campaign-card,.automation-card,.utm-card,.analytics-card,
+  .fa-panel,.fa-kpi,.fa-header,.fa-sign-card,.fa-report-grid article
 ) {
   background: var(--disk-bg-surface) !important;
   color: var(--disk-text-primary) !important;

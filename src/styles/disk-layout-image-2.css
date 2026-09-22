@@ -398,7 +398,8 @@ html[data-theme='dark'] .safesaff-sidebar .module-nav-item.indent {
   .event-card, .summary-card, .content-card, .stat-card, .kpi-card, .report-card,
   .filter-card, .form-card, .module-card, .section-card, .content-panel,
   .table-wrapper, .profile-hero, .profile-kpi, .profile-section, .profile-shortcut,
-  .profile-event-list, .profile-event-row, [data-slot="card"], .disk-card
+  .profile-event-list, .profile-event-row, [data-slot="card"], .disk-card,
+  .fa-panel, .fa-kpi, .fa-header, .fa-sign-card, .fa-report-grid article
 ) {
   background: var(--disk-layout-surface) !important;
   border: 1px solid var(--disk-layout-border) !important;
@@ -989,6 +990,429 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
   }
 }
 
+/* ==============================================================================
+   PADRONIZAÇÃO DEFINITIVA: CONTABILIDADE & VISÃO GERAL (DESIGN SYSTEM DISK)
+   Elimina bordas brancas/grosseiras e harmoniza 100% com o padrão dos outros módulos.
+   ============================================================================== */
+.fa-page {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
 
+/* Header da Contabilidade */
+.fa-header {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 22px 24px !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
+}
 
+.fa-header h2 {
+  color: #0f172a !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  margin: 4px 0 6px !important;
+}
 
+.fa-header p {
+  color: #64748b !important;
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+}
+
+.fa-header .eyebrow {
+  color: #ff8047 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+/* Toolbar & Abas */
+.fa-tabs {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  padding: 6px !important;
+  display: flex !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+}
+
+.fa-tabs button {
+  background: transparent !important;
+  border: 0 !important;
+  color: #64748b !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  white-space: nowrap !important;
+}
+
+.fa-tabs button:hover {
+  background: rgba(255, 128, 71, 0.08) !important;
+  color: #ff8047 !important;
+}
+
+.fa-tabs button.active {
+  background: #ff8047 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(255, 128, 71, 0.25) !important;
+}
+
+.fa-search {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+  padding: 0 14px !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+.fa-search:focus-within {
+  border-color: #ff8047 !important;
+  box-shadow: 0 0 0 3px rgba(255, 128, 71, 0.18) !important;
+}
+
+.fa-search input {
+  background: transparent !important;
+  border: 0 !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+}
+
+/* CARDS KPI (VISÃO GERAL / DASHBOARD CONTÁBIL) */
+.fa-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 16px !important;
+  width: 100% !important;
+}
+
+.fa-kpi {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 18px 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.fa-kpi:hover {
+  transform: translateY(-3px) !important;
+  border-color: #ff8047 !important;
+  box-shadow: 0 12px 28px -4px rgba(255, 128, 71, 0.16), 0 4px 12px rgba(15, 23, 42, 0.05) !important;
+}
+
+.fa-kpi > span {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 10px !important;
+  background: #fff7ed !important;
+  border: 1px solid #fed7aa !important;
+  color: #ea580c !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 4px !important;
+  transition: all 0.2s ease !important;
+}
+
+.fa-kpi:hover > span {
+  background: #ff8047 !important;
+  border-color: #ff8047 !important;
+  color: #ffffff !important;
+  transform: scale(1.06) !important;
+}
+
+.fa-kpi small {
+  color: #64748b !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+.fa-kpi strong {
+  color: #0f172a !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+}
+
+/* PAINÉIS (DRE, SAÚDE, DIVERGÊNCIAS, LANÇAMENTOS) */
+.fa-panel {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 16px !important;
+  padding: 22px 24px !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  min-width: 0 !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.fa-panel:hover {
+  border-color: #cbd5e1 !important;
+}
+
+.fa-panel-head h3 {
+  color: #0f172a !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+}
+
+.fa-panel-head p {
+  color: #64748b !important;
+  font-size: 13px !important;
+  margin: 4px 0 0 !important;
+}
+
+/* SUB-ESTRUTURAS INTERNAS */
+.fa-dre-lines {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+}
+
+.fa-line {
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #334155 !important;
+  padding: 12px 16px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 13px !important;
+}
+
+.fa-line.strong {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+.fa-line.neg b {
+  color: #dc2626 !important;
+}
+
+.fa-health {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.fa-health-row {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  padding: 12px 16px !important;
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  transition: border-color 0.15s ease !important;
+}
+
+.fa-health-row:hover {
+  border-color: #cbd5e1 !important;
+}
+
+.fa-health-row b {
+  color: #0f172a !important;
+  font-size: 13px !important;
+}
+
+.fa-health-row small {
+  color: #64748b !important;
+  font-size: 12px !important;
+}
+
+/* TABELAS DA CONTABILIDADE */
+.fa-table-wrap {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: auto !important;
+}
+
+.fa-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 12.5px !important;
+}
+
+.fa-table th {
+  background: #f8fafc !important;
+  color: #64748b !important;
+  text-align: left !important;
+  padding: 11px 14px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+.fa-table td {
+  padding: 12px 14px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #334155 !important;
+}
+
+.fa-table tr:hover td {
+  background: #fffaf5 !important;
+}
+
+/* OUTROS CARDS DA CONTABILIDADE (Borderôs, Assinaturas, Relatórios) */
+.fa-sign-card,
+.fa-report-grid article {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
+  transition: all 0.2s ease !important;
+}
+
+.fa-sign-card:hover,
+.fa-report-grid article:hover {
+  border-color: #ff8047 !important;
+  box-shadow: 0 8px 24px -4px rgba(255, 128, 71, 0.15) !important;
+}
+
+/* SUPORTE TOTAL AO MODO ESCURO (DARK THEME) NA CONTABILIDADE */
+html.dark :is(.fa-header, .fa-panel, .fa-kpi, .fa-sign-card, .fa-report-grid article),
+html[data-theme='dark'] :is(.fa-header, .fa-panel, .fa-kpi, .fa-sign-card, .fa-report-grid article) {
+  background: #151c27 !important;
+  border-color: #283548 !important;
+  color: #f4f7fb !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark :is(.fa-kpi, .fa-sign-card, .fa-report-grid article):hover,
+html[data-theme='dark'] :is(.fa-kpi, .fa-sign-card, .fa-report-grid article):hover {
+  background: #182232 !important;
+  border-color: #ff8047 !important;
+}
+
+html.dark .fa-kpi > span,
+html[data-theme='dark'] .fa-kpi > span {
+  background: rgba(255, 128, 71, 0.15) !important;
+  border: 1px solid rgba(255, 128, 71, 0.35) !important;
+  color: #ff8047 !important;
+}
+
+html.dark .fa-kpi small,
+html[data-theme='dark'] .fa-kpi small {
+  color: #94a3b8 !important;
+}
+
+html.dark .fa-kpi strong,
+html[data-theme='dark'] .fa-kpi strong {
+  color: #ffffff !important;
+}
+
+html.dark .fa-header h2,
+html.dark .fa-panel-head h3,
+html[data-theme='dark'] .fa-header h2,
+html[data-theme='dark'] .fa-panel-head h3 {
+  color: #ffffff !important;
+}
+
+html.dark .fa-header p,
+html.dark .fa-panel-head p,
+html[data-theme='dark'] .fa-header p,
+html[data-theme='dark'] .fa-panel-head p {
+  color: #94a3b8 !important;
+}
+
+html.dark .fa-tabs,
+html[data-theme='dark'] .fa-tabs {
+  background: #111721 !important;
+  border-color: #283548 !important;
+}
+
+html.dark .fa-tabs button,
+html[data-theme='dark'] .fa-tabs button {
+  color: #94a3b8 !important;
+}
+
+html.dark .fa-tabs button.active,
+html[data-theme='dark'] .fa-tabs button.active {
+  background: #ff8047 !important;
+  color: #ffffff !important;
+}
+
+html.dark .fa-search,
+html[data-theme='dark'] .fa-search {
+  background: #111721 !important;
+  border-color: #283548 !important;
+}
+
+html.dark .fa-search input,
+html[data-theme='dark'] .fa-search input {
+  color: #f4f7fb !important;
+}
+
+html.dark :is(.fa-dre-lines, .fa-health-row, .fa-table-wrap),
+html[data-theme='dark'] :is(.fa-dre-lines, .fa-health-row, .fa-table-wrap) {
+  border-color: #283548 !important;
+  background: #151c27 !important;
+}
+
+html.dark .fa-line,
+html[data-theme='dark'] .fa-line {
+  border-bottom-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .fa-line.strong,
+html[data-theme='dark'] .fa-line.strong {
+  background: #111721 !important;
+  color: #ffffff !important;
+}
+
+html.dark .fa-health-row b,
+html[data-theme='dark'] .fa-health-row b {
+  color: #ffffff !important;
+}
+
+html.dark .fa-health-row small,
+html[data-theme='dark'] .fa-health-row small {
+  color: #94a3b8 !important;
+}
+
+html.dark .fa-table th,
+html[data-theme='dark'] .fa-table th {
+  background: #111721 !important;
+  color: #94a3b8 !important;
+  border-bottom-color: #283548 !important;
+}
+
+html.dark .fa-table td,
+html[data-theme='dark'] .fa-table td {
+  border-bottom-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .fa-table tr:hover td,
+html[data-theme='dark'] .fa-table tr:hover td {
+  background: #182232 !important;
+}
