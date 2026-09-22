@@ -16,21 +16,21 @@
   --disk-layout-sidebar-width: 310px;
   --disk-layout-sidebar-collapsed: 76px;
 
-  /* ---- Modo Claro ---- */
-  --disk-layout-page-bg: #F5F6F8;
-  --disk-layout-header-bg: #FFFFFF;
-  --disk-layout-sidebar-bg: #FFFFFF;
-  --disk-layout-surface: #FFFFFF;
-  --disk-layout-surface-soft: #F8FAFC;
-  --disk-layout-surface-hover: #F1F5F9;
-  --disk-layout-border: #DEE2E8;
-  --disk-layout-border-soft: #E2E8F0;
-  --disk-layout-border-strong: #C7CCD4;
-  --disk-layout-text: #14181F;
-  --disk-layout-text-soft: #5B6472;
-  --disk-layout-muted: #64748B;
+  /* ---- Modo Claro Harmonizado (SafeSaff Suave & Acolhedor) ---- */
+  --disk-layout-page-bg: #F4F1ED;
+  --disk-layout-header-bg: #FFFDF9;
+  --disk-layout-sidebar-bg: #202B3D;
+  --disk-layout-surface: #FFFAF2;
+  --disk-layout-surface-soft: #F5EEE5;
+  --disk-layout-surface-hover: #EBE0D2;
+  --disk-layout-border: #E6DED4;
+  --disk-layout-border-soft: #EDE4D8;
+  --disk-layout-border-strong: #D9CFC2;
+  --disk-layout-text: #1E293B;
+  --disk-layout-text-soft: #64748B;
+  --disk-layout-muted: #718096;
   --disk-layout-accent: #E8590C;
-  --disk-layout-blue: #E8590C;
+  --disk-layout-blue: #1677FF;
 
   /* HSL shadcn tokens - Modo Claro */
   --background: 220 17.6% 96.7%;
@@ -744,4 +744,123 @@ html[data-theme='dark'] .demo-btn:hover {
   background: var(--disk-layout-surface-hover) !important;
   border-color: var(--disk-layout-accent) !important;
 }
+
+/* ============================================================================
+   COMPONENTES E CARDS HARMONIZADOS (SURFACE & STAT CARDS)
+   Suporte a Modo Claro acolhedor (warm soft) e Modo Escuro corporativo
+   ============================================================================ */
+
+/* Surface Panels & Cards */
+.surface-panel,
+.surface-card {
+  background: var(--disk-layout-surface);
+  border: 1px solid var(--disk-layout-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.subtle-card {
+  background: var(--disk-layout-surface-soft);
+  border: 1px solid var(--disk-layout-border-soft);
+  border-radius: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.surface-panel:hover,
+.surface-card:hover,
+.subtle-card:hover {
+  border-color: var(--disk-layout-border-strong);
+}
+
+/* Stat Cards Globais */
+.stat-card {
+  background: var(--disk-layout-surface);
+  border: 1px solid var(--disk-layout-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+/* Variações de cor para Modo Claro */
+html:not(.dark) .stat-card.stat-blue,
+html.light .stat-card.stat-blue,
+html[data-theme='light'] .stat-card.stat-blue {
+  background: linear-gradient(180deg, #EFF6FF 0%, #FFFFFF 100%) !important;
+  border-color: #BFDBFE !important;
+}
+
+html:not(.dark) .stat-card.stat-green,
+html.light .stat-card.stat-green,
+html[data-theme='light'] .stat-card.stat-green {
+  background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%) !important;
+  border-color: #BBF7D0 !important;
+}
+
+html:not(.dark) .stat-card.stat-orange,
+html.light .stat-card.stat-orange,
+html[data-theme='light'] .stat-card.stat-orange {
+  background: linear-gradient(180deg, #FFF7ED 0%, #FFFFFF 100%) !important;
+  border-color: #FED7AA !important;
+}
+
+/* Variações de cor para Modo Escuro */
+html.dark .stat-card.stat-blue,
+html[data-theme='dark'] .stat-card.stat-blue {
+  background: #151C27 !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+html.dark .stat-card.stat-green,
+html[data-theme='dark'] .stat-card.stat-green {
+  background: #151C27 !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+html.dark .stat-card.stat-orange,
+html[data-theme='dark'] .stat-card.stat-orange {
+  background: #151C27 !important;
+  border-color: rgba(255, 128, 71, 0.3) !important;
+}
+
+/* Badges de Destaque Harmonizados */
+.badge-blue {
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: #2563EB !important;
+  border: 1px solid rgba(37, 99, 235, 0.25) !important;
+}
+
+.badge-green {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #059669 !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+.badge-orange {
+  background: rgba(255, 128, 71, 0.12) !important;
+  color: #FF8047 !important;
+  border: 1px solid rgba(255, 128, 71, 0.35) !important;
+}
+
+html.dark .badge-blue,
+html[data-theme='dark'] .badge-blue {
+  background: rgba(37, 99, 235, 0.2) !important;
+  color: #60A5FA !important;
+  border-color: rgba(37, 99, 235, 0.4) !important;
+}
+
+html.dark .badge-green,
+html[data-theme='dark'] .badge-green {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #34D399 !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+html.dark .badge-orange,
+html[data-theme='dark'] .badge-orange {
+  background: rgba(255, 128, 71, 0.2) !important;
+  color: #FF9B6A !important;
+  border-color: rgba(255, 128, 71, 0.45) !important;
+}
+
 

@@ -156,17 +156,17 @@ export default function ProfileDashboardPage({ user, producer, events, participa
         {stats.map(({ label, value, change, trend, tone }) => (
           <article
             key={label}
-            className="rounded-xl border border-slate-200 dark:border-[#283548] bg-white dark:bg-[#151c27] p-5 shadow-sm dark:shadow-none transition-all hover:border-slate-300 dark:hover:border-[#3b4b63]"
+            className={`stat-card stat-${tone} rounded-xl p-5 shadow-sm transition-all hover:scale-[1.01]`}
           >
             <div className="mb-3 flex items-center justify-between">
               <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{label}</p>
               <span
                 className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold ${
                   tone === 'blue'
-                    ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
+                    ? 'badge-blue'
                     : tone === 'green'
-                    ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'
-                    : 'bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-[#ff8047]'
+                    ? 'badge-green'
+                    : 'badge-orange'
                 }`}
               >
                 {trend === 'up' ? '↗' : '↘'} {change}
@@ -179,10 +179,10 @@ export default function ProfileDashboardPage({ user, producer, events, participa
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-lg ${
                   tone === 'blue'
-                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                    ? 'badge-blue'
                     : tone === 'green'
-                    ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
-                    : 'bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-[#ff8047]'
+                    ? 'badge-green'
+                    : 'badge-orange'
                 }`}
               >
                 {trend === 'up' ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
@@ -195,7 +195,7 @@ export default function ProfileDashboardPage({ user, producer, events, participa
       {/* 3. Seção Dividida: Performance Semanal + Eventos em Destaque */}
       <section className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
         {/* Gráfico Semanal de Receita Consolidada */}
-        <article className="rounded-xl border border-slate-200 dark:border-[#283548] bg-white dark:bg-[#151c27] p-5 shadow-sm dark:shadow-none">
+        <article className="surface-card p-5">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Performance</p>
@@ -229,7 +229,7 @@ export default function ProfileDashboardPage({ user, producer, events, participa
 
           <div className="grid gap-3 sm:grid-cols-3 pt-3 border-t border-slate-100 dark:border-[#1e293b]">
             {timeline.map(({ label, value, percent, color }) => (
-              <div key={label} className="rounded-lg border border-slate-100 dark:border-[#1e293b] bg-slate-50/50 dark:bg-[#111721] p-3.5">
+              <div key={label} className="subtle-card p-3.5">
                 <div className="mb-2 flex items-center justify-between text-xs">
                   <span className="text-slate-500 dark:text-slate-400 font-medium">{label}</span>
                   <span className="font-bold text-slate-800 dark:text-white tabular-nums">{value}</span>
@@ -243,7 +243,7 @@ export default function ProfileDashboardPage({ user, producer, events, participa
         </article>
 
         {/* Eventos em Destaque */}
-        <article className="rounded-xl border border-slate-200 dark:border-[#283548] bg-white dark:bg-[#151c27] p-5 shadow-sm dark:shadow-none flex flex-col justify-between">
+        <article className="surface-card p-5 flex flex-col justify-between">
           <div>
             <div className="mb-5 flex items-center justify-between">
               <div>
@@ -263,7 +263,7 @@ export default function ProfileDashboardPage({ user, producer, events, participa
                 <div
                   key={name}
                   onClick={() => onNavigate('events')}
-                  className="rounded-lg border border-slate-100 dark:border-[#1e293b] bg-slate-50/50 dark:bg-[#111721] p-3.5 hover:border-slate-300 dark:hover:border-[#283548] transition cursor-pointer"
+                  className="subtle-card p-3.5 hover:border-slate-300 dark:hover:border-[#283548] transition cursor-pointer"
                 >
                   <div className="mb-2 flex items-center justify-between gap-2">
                     <h4 className="font-bold text-sm text-slate-800 dark:text-white truncate">{name}</h4>
@@ -307,7 +307,7 @@ export default function ProfileDashboardPage({ user, producer, events, participa
       </section>
 
       {/* 4. Tabela de Desempenho de Vendas por Evento */}
-      <section className="rounded-xl border border-slate-200 dark:border-[#283548] bg-white dark:bg-[#151c27] p-5 shadow-sm dark:shadow-none">
+      <section className="surface-card p-5">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Venda por Evento</p>
