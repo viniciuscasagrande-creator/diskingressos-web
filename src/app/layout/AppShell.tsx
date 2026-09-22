@@ -165,7 +165,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           '--sidebar-width': 'var(--disk-layout-sidebar-width, 350px)',
           '--sidebar-collapsed-width': '4rem',
           '--header-height': 'var(--ll-header, 3.625rem)',
-          '--content-max-width': '110rem'
+          '--content-max-width': '100%'
         } as React.CSSProperties
       }
     >

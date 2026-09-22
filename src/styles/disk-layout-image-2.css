@@ -886,12 +886,26 @@ html[data-theme='light'] .module-hub-card {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   color: #1e293b !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
+}
+
+html:not(.dark) .module-hub-card:hover,
+html.light .module-hub-card:hover,
+html[data-theme='light'] .module-hub-card:hover {
+  border-color: #ff8047 !important;
+  box-shadow: 0 14px 28px -4px rgba(255, 128, 71, 0.16), 0 4px 12px rgba(15, 23, 42, 0.05) !important;
 }
 
 html:not(.dark) .module-hub-card .module-hub-card-title,
 html.light .module-hub-card .module-hub-card-title,
 html[data-theme='light'] .module-hub-card .module-hub-card-title {
   color: #0f172a !important;
+}
+
+html:not(.dark) .module-hub-card:hover .module-hub-card-title,
+html.light .module-hub-card:hover .module-hub-card-title,
+html[data-theme='light'] .module-hub-card:hover .module-hub-card-title {
+  color: #ff8047 !important;
 }
 
 html:not(.dark) .module-hub-card .module-hub-card-desc,
@@ -903,10 +917,46 @@ html[data-theme='light'] .module-hub-card .module-hub-card-desc {
 html:not(.dark) .module-hub-card-icon-wrap,
 html.light .module-hub-card-icon-wrap,
 html[data-theme='light'] .module-hub-card-icon-wrap {
-  background: #eff6ff !important;
-  border: 1px solid #dbeafe !important;
-  color: #2563eb !important;
+  background: #fff7ed !important;
+  border: 1px solid #fed7aa !important;
+  color: #ea580c !important;
 }
+
+html:not(.dark) .module-hub-card:hover .module-hub-card-icon-wrap,
+html.light .module-hub-card:hover .module-hub-card-icon-wrap,
+html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
+  background: #ff8047 !important;
+  border-color: #ff8047 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(255, 128, 71, 0.35) !important;
+}
+
+/* Auto-ajuste de tela inteligente: Grids fluidas que se auto-ajustam à largura útil do monitor */
+.module-hub-grid,
+.hub-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)) !important;
+  gap: 20px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+@media (max-width: 720px) {
+  .module-hub-grid,
+  .hub-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .module-hub-grid,
+  .hub-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
 
 
 

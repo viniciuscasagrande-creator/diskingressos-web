@@ -1,5 +1,7 @@
 /* ==============================================================================
-   FASE 28.15.8.1 — MODULE HUB VIEW (ESTILO ENTERPRISE COMPACTO)
+   MODULE HUB VIEW — DESIGN SYSTEM MODERNO & RESPONSIVO
+   Suporte perfeito a Modo Claro (Warm Soft) e Modo Escuro (Executive Slate)
+   DiskIngressos Padrão Corporativo
    ============================================================================== */
 
 .module-hub-container {
@@ -7,21 +9,24 @@
   flex-direction: column;
   gap: 24px;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 16px 20px 48px;
-  color: #f1f5f9;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px 28px 60px;
+  color: var(--disk-layout-text, #1e293b);
+  box-sizing: border-box;
 }
 
-/* Header do Hub */
+/* ------------------------------------------------------------------------------
+   HEADER DO HUB
+   ------------------------------------------------------------------------------ */
 .module-hub-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+  gap: 18px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--disk-layout-border-soft, #e2e8f0);
 }
 
 .module-hub-header-main {
@@ -35,22 +40,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px;
-  background: #17212f;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  color: #cbd5e1;
+  padding: 8px 14px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  shrink: 0;
-}
-
-.module-hub-back-btn:hover {
-  background: #233148;
-  color: #ffffff;
-  border-color: #06b6d4;
+  flex-shrink: 0;
 }
 
 .module-hub-title-group {
@@ -63,14 +59,13 @@
 .module-hub-title-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .module-hub-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 800;
-  color: #ffffff;
   letter-spacing: -0.02em;
   margin: 0;
 }
@@ -78,106 +73,102 @@
 .module-hub-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  font-size: 10px;
+  padding: 3px 10px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   border-radius: 9999px;
-  background: rgba(6, 182, 212, 0.15);
-  border: 1px solid rgba(6, 182, 212, 0.4);
-  color: #06b6d4;
+  background: rgba(255, 128, 71, 0.12);
+  border: 1px solid rgba(255, 128, 71, 0.35);
+  color: #ff8047;
 }
 
 .module-hub-subtitle {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 13.5px;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 /* Busca rápida */
 .module-hub-search-wrap {
   position: relative;
   width: 100%;
-  max-width: 280px;
+  max-width: 320px;
 }
 
 .module-hub-search-icon {
   position: absolute;
-  left: 12px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #64748b;
+  color: #94a3b8;
   pointer-events: none;
 }
 
 .module-hub-search-input {
   width: 100%;
-  background: #131d36;
-  border: 1px solid #28395f;
-  border-radius: 8px;
-  padding: 8px 12px 8px 34px;
-  font-size: 12px;
-  color: #f1f5f9;
+  height: 42px;
+  border-radius: 10px;
+  padding: 8px 14px 8px 38px;
+  font-size: 13px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .module-hub-search-input:focus {
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+  border-color: #ff8047;
+  box-shadow: 0 0 0 3px rgba(255, 128, 71, 0.18);
 }
 
-.module-hub-search-input::placeholder {
-  color: #64748b;
-}
-
-/* Grupos e categorias */
+/* ------------------------------------------------------------------------------
+   GRUPOS E CATEGORIAS
+   ------------------------------------------------------------------------------ */
 .module-hub-content {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 32px;
 }
 
 .module-hub-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .module-hub-category-title {
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #38bdf8;
-  padding-left: 4px;
-  border-left: 3px solid #0284c7;
+  color: #ff8047;
+  padding-left: 8px;
+  border-left: 3px solid #ff8047;
 }
 
-/* Grid de Cards */
+/* ------------------------------------------------------------------------------
+   GRID DE CARDS — AUTO-AJUSTÁVEL (FLUID AUTO-FIT) PARA QUALQUER MONITOR
+   ------------------------------------------------------------------------------ */
 .module-hub-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 20px;
+  width: 100%;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 720px) {
   .module-hub-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
   }
 }
 
-@media (max-width: 900px) {
-  .module-hub-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
+@media (max-width: 500px) {
   .module-hub-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
+  }
+  .module-hub-container {
+    padding: 16px 14px 48px;
   }
   .module-hub-header {
     flex-direction: column;
@@ -188,145 +179,118 @@
   }
 }
 
-/* Card Individual */
+/* ------------------------------------------------------------------------------
+   CARD INDIVIDUAL — ALTA QUALIDADE, INTERATIVO E POLIDO
+   ------------------------------------------------------------------------------ */
 .module-hub-card {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #131d36;
-  border: 1px solid #223358;
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 16px;
+  padding: 24px 22px 20px;
+  min-height: 180px;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s ease,
+              border-color 0.22s ease,
+              background-color 0.22s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Linha superior interativa no hover */
+.module-hub-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff8047, #ffa375);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.module-hub-card:hover::before {
+  opacity: 1;
 }
 
 .module-hub-card:hover {
-  transform: translateY(-2px);
-  background: #182544;
-  border-color: #06b6d4;
-  box-shadow: 0 8px 24px -4px rgba(6, 182, 212, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-4px);
+  border-color: #ff8047 !important;
 }
 
 .module-hub-card:active {
-  transform: translateY(0);
-}
-
-.module-hub-card--highlight {
-  border-color: rgba(6, 182, 212, 0.5);
-  background: linear-gradient(180deg, rgba(8, 145, 178, 0.1) 0%, #131d36 100%);
+  transform: translateY(-1px);
 }
 
 .module-hub-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .module-hub-card-icon-wrap {
-  width: 38px;
-  height: 38px;
-  border-radius: 9px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0b1222;
-  border: 1px solid #24355a;
-  color: #38bdf8;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.module-hub-card:hover .module-hub-card-icon-wrap {
-  color: #06b6d4;
-  border-color: #06b6d4;
-  background: #0f1c36;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
 }
 
 .module-hub-card-badge {
-  font-size: 9px;
+  font-size: 10.5px;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 2px 7px;
+  padding: 3px 9px;
   border-radius: 9999px;
-}
-
-.module-hub-card-badge--info {
-  background: rgba(6, 182, 212, 0.15);
-  border: 1px solid rgba(6, 182, 212, 0.4);
-  color: #38bdf8;
-}
-
-.module-hub-card-badge--success {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.4);
-  color: #34d399;
-}
-
-.module-hub-card-badge--warning {
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: #fbbf24;
-}
-
-.module-hub-card-badge--primary {
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.4);
-  color: #60a5fa;
-}
-
-.module-hub-card-badge--purple {
-  background: rgba(255, 128, 71, 0.15);
-  border: 1px solid rgba(255, 128, 71, 0.4);
-  color: #ff8047;
+  letter-spacing: 0.03em;
 }
 
 .module-hub-card-body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .module-hub-card-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  color: #f8fafc;
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.35;
+  transition: color 0.15s ease;
 }
 
 .module-hub-card:hover .module-hub-card-title {
-  color: #ffffff;
+  color: #ff8047 !important;
 }
 
 .module-hub-card-desc {
-  font-size: 11px;
-  color: #94a3b8;
+  font-size: 13px;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .module-hub-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid rgba(148, 163, 184, 0.08);
-  color: #64748b;
-  font-size: 11px;
-  font-weight: 600;
-  transition: color 0.2s;
+  padding-top: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.2s ease;
 }
 
-.module-hub-card:hover .module-hub-card-footer {
-  color: #38bdf8;
+.module-hub-card-action {
+  letter-spacing: 0.02em;
 }
 
 .module-hub-card-arrow {
@@ -334,22 +298,18 @@
 }
 
 .module-hub-card:hover .module-hub-card-arrow {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 .module-hub-empty {
   padding: 48px 24px;
   text-align: center;
-  background: #111a30;
-  border: 1px dashed #26385d;
-  border-radius: 12px;
-  color: #94a3b8;
-  font-size: 13px;
+  border-radius: 14px;
+  font-size: 14px;
 }
 
 /* ==============================================================================
-   SUPORTE COMPLETO AO MODO CLARO (LIGHT THEME) PARA OS HUBS
-   Elimina blocos escuros/pretos em telas claras
+   TEMA CLARO (LIGHT THEME) — LIMPO, MODERNO E CORPORATIVO
    ============================================================================== */
 html:not(.dark) .module-hub-container,
 html.light .module-hub-container,
@@ -366,52 +326,52 @@ html[data-theme='light'] .module-hub-header {
 html:not(.dark) .module-hub-title,
 html.light .module-hub-title,
 html[data-theme='light'] .module-hub-title {
-  color: #0f172a !important;
+  color: #0f172a;
 }
 
 html:not(.dark) .module-hub-subtitle,
 html.light .module-hub-subtitle,
 html[data-theme='light'] .module-hub-subtitle {
-  color: #64748b !important;
+  color: #64748b;
 }
 
 html:not(.dark) .module-hub-back-btn,
 html.light .module-hub-back-btn,
 html[data-theme='light'] .module-hub-back-btn {
-  background: #f1f5f9 !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #334155 !important;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
 }
 
 html:not(.dark) .module-hub-back-btn:hover,
 html.light .module-hub-back-btn:hover,
 html[data-theme='light'] .module-hub-back-btn:hover {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
-  border-color: #94a3b8 !important;
+  background: #e2e8f0;
+  color: #ff8047;
+  border-color: #ff8047;
 }
 
 html:not(.dark) .module-hub-search-input,
 html.light .module-hub-search-input,
 html[data-theme='light'] .module-hub-search-input {
-  background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #0f172a !important;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
 }
 
 html:not(.dark) .module-hub-search-input::placeholder,
 html.light .module-hub-search-input::placeholder,
 html[data-theme='light'] .module-hub-search-input::placeholder {
-  color: #94a3b8 !important;
+  color: #94a3b8;
 }
 
-/* CARDS DO HUB NO MODO CLARO: Fundo branco/suave, borda elegante, sombra limpa */
+/* CARDS NO MODO CLARO */
 html:not(.dark) .module-hub-card,
 html.light .module-hub-card,
 html[data-theme='light'] .module-hub-card {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05) !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
 }
 
 html:not(.dark) .module-hub-card:hover,
@@ -419,30 +379,7 @@ html.light .module-hub-card:hover,
 html[data-theme='light'] .module-hub-card:hover {
   background: #ffffff !important;
   border-color: #ff8047 !important;
-  box-shadow: 0 10px 24px -4px rgba(255, 128, 71, 0.16), 0 4px 12px rgba(15, 23, 42, 0.06) !important;
-}
-
-html:not(.dark) .module-hub-card--highlight,
-html.light .module-hub-card--highlight,
-html[data-theme='light'] .module-hub-card--highlight {
-  border-color: #fed7aa !important;
-  background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%) !important;
-}
-
-html:not(.dark) .module-hub-card-icon-wrap,
-html.light .module-hub-card-icon-wrap,
-html[data-theme='light'] .module-hub-card-icon-wrap {
-  background: #eff6ff !important;
-  border: 1px solid #dbeafe !important;
-  color: #2563eb !important;
-}
-
-html:not(.dark) .module-hub-card:hover .module-hub-card-icon-wrap,
-html.light .module-hub-card:hover .module-hub-card-icon-wrap,
-html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
-  background: #fff7ed !important;
-  border-color: #fed7aa !important;
-  color: #ff8047 !important;
+  box-shadow: 0 14px 28px -4px rgba(255, 128, 71, 0.16), 0 4px 12px rgba(15, 23, 42, 0.05) !important;
 }
 
 html:not(.dark) .module-hub-card-title,
@@ -463,11 +400,29 @@ html[data-theme='light'] .module-hub-card-desc {
   color: #64748b !important;
 }
 
+html:not(.dark) .module-hub-card-icon-wrap,
+html.light .module-hub-card-icon-wrap,
+html[data-theme='light'] .module-hub-card-icon-wrap {
+  background: #fff7ed !important;
+  border: 1px solid #fed7aa !important;
+  color: #ea580c !important;
+}
+
+html:not(.dark) .module-hub-card:hover .module-hub-card-icon-wrap,
+html.light .module-hub-card:hover .module-hub-card-icon-wrap,
+html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
+  background: #ff8047 !important;
+  border-color: #ff8047 !important;
+  color: #ffffff !important;
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(255, 128, 71, 0.35) !important;
+}
+
 html:not(.dark) .module-hub-card-footer,
 html.light .module-hub-card-footer,
 html[data-theme='light'] .module-hub-card-footer {
   border-top: 1px solid #f1f5f9 !important;
-  color: #64748b !important;
+  color: #94a3b8 !important;
 }
 
 html:not(.dark) .module-hub-card:hover .module-hub-card-footer,
@@ -476,10 +431,126 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-footer {
   color: #ff8047 !important;
 }
 
-html:not(.dark) .module-hub-category-title,
-html.light .module-hub-category-title,
-html[data-theme='light'] .module-hub-category-title {
-  color: #0284c7 !important;
-  border-left: 3px solid #0284c7 !important;
+html:not(.dark) .module-hub-card-badge--info,
+html.light .module-hub-card-badge--info,
+html[data-theme='light'] .module-hub-card-badge--info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
 }
 
+html:not(.dark) .module-hub-card-badge--primary,
+html.light .module-hub-card-badge--primary,
+html[data-theme='light'] .module-hub-card-badge--primary {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #ea580c;
+}
+
+html:not(.dark) .module-hub-card-badge--success,
+html.light .module-hub-card-badge--success,
+html[data-theme='light'] .module-hub-card-badge--success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+}
+
+/* ==============================================================================
+   TEMA ESCURO (DARK THEME) — GRAFITE ARDÓSIA CORPORATIVO & DISK ORANGE
+   ============================================================================== */
+html.dark .module-hub-container,
+html[data-theme='dark'] .module-hub-container {
+  color: #f1f5f9;
+}
+
+html.dark .module-hub-title,
+html[data-theme='dark'] .module-hub-title {
+  color: #ffffff;
+}
+
+html.dark .module-hub-subtitle,
+html[data-theme='dark'] .module-hub-subtitle {
+  color: #94a3b8;
+}
+
+html.dark .module-hub-header,
+html[data-theme='dark'] .module-hub-header {
+  border-bottom: 1px solid #283548;
+}
+
+html.dark .module-hub-back-btn,
+html[data-theme='dark'] .module-hub-back-btn {
+  background: #151c27;
+  border: 1px solid #283548;
+  color: #cbd5e1;
+}
+
+html.dark .module-hub-back-btn:hover,
+html[data-theme='dark'] .module-hub-back-btn:hover {
+  background: #1e293b;
+  color: #ff8047;
+  border-color: #ff8047;
+}
+
+html.dark .module-hub-search-input,
+html[data-theme='dark'] .module-hub-search-input {
+  background: #111721;
+  border: 1px solid #283548;
+  color: #f1f5f9;
+}
+
+html.dark .module-hub-card,
+html[data-theme='dark'] .module-hub-card {
+  background: #151c27 !important;
+  border: 1px solid #283548 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+html.dark .module-hub-card:hover,
+html[data-theme='dark'] .module-hub-card:hover {
+  background: #182232 !important;
+  border-color: #ff8047 !important;
+  box-shadow: 0 12px 28px -4px rgba(255, 128, 71, 0.2), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .module-hub-card-title,
+html[data-theme='dark'] .module-hub-card-title {
+  color: #ffffff !important;
+}
+
+html.dark .module-hub-card:hover .module-hub-card-title,
+html[data-theme='dark'] .module-hub-card:hover .module-hub-card-title {
+  color: #ff8047 !important;
+}
+
+html.dark .module-hub-card-desc,
+html[data-theme='dark'] .module-hub-card-desc {
+  color: #94a3b8 !important;
+}
+
+html.dark .module-hub-card-icon-wrap,
+html[data-theme='dark'] .module-hub-card-icon-wrap {
+  background: rgba(255, 128, 71, 0.12) !important;
+  border: 1px solid rgba(255, 128, 71, 0.3) !important;
+  color: #ff8047 !important;
+}
+
+html.dark .module-hub-card:hover .module-hub-card-icon-wrap,
+html[data-theme='dark'] .module-hub-card:hover .module-hub-card-icon-wrap {
+  background: #ff8047 !important;
+  border-color: #ff8047 !important;
+  color: #ffffff !important;
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(255, 128, 71, 0.4) !important;
+}
+
+html.dark .module-hub-card-footer,
+html[data-theme='dark'] .module-hub-card-footer {
+  border-top: 1px solid rgba(148, 163, 184, 0.1) !important;
+  color: #94a3b8 !important;
+}
+
+html.dark .module-hub-card:hover .module-hub-card-footer,
+html[data-theme='dark'] .module-hub-card:hover .module-hub-card-footer {
+  color: #ff8047 !important;
+}

@@ -1038,10 +1038,10 @@ export default function App() {
                   }
                   window.scrollTo({ top: 0 })
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#17212F] hover:bg-[#253245] text-slate-700 hover:text-slate-900 border border-slate-200 transition shadow-xs cursor-pointer select-none"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-[#151C27] dark:hover:bg-[#1E293B] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#283548] transition shadow-xs cursor-pointer select-none"
                 title="Voltar ao Painel Anterior"
               >
-                <ArrowLeft size={14} className="text-[#06B6D4]" />
+                <ArrowLeft size={14} className="text-[#FF8047]" />
                 <span>
                   {page.startsWith('finance') || page.startsWith('fin-') || (page as string) === 'simulador-spread'
                     ? page === 'finance-dashboard' || page === 'finance-hub'
