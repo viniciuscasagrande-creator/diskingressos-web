@@ -879,4 +879,34 @@ html[data-theme='dark'] .badge-orange {
   border-color: rgba(255, 128, 71, 0.45) !important;
 }
 
+/* Hub Cards Globais no Modo Claro */
+html:not(.dark) .module-hub-card,
+html.light .module-hub-card,
+html[data-theme='light'] .module-hub-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+html:not(.dark) .module-hub-card .module-hub-card-title,
+html.light .module-hub-card .module-hub-card-title,
+html[data-theme='light'] .module-hub-card .module-hub-card-title {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .module-hub-card .module-hub-card-desc,
+html.light .module-hub-card .module-hub-card-desc,
+html[data-theme='light'] .module-hub-card .module-hub-card-desc {
+  color: #64748b !important;
+}
+
+html:not(.dark) .module-hub-card-icon-wrap,
+html.light .module-hub-card-icon-wrap,
+html[data-theme='light'] .module-hub-card-icon-wrap {
+  background: #eff6ff !important;
+  border: 1px solid #dbeafe !important;
+  color: #2563eb !important;
+}
+
+
 
