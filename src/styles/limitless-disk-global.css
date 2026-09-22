@@ -56,8 +56,7 @@ html[data-ui-framework='limitless'] .global-topbar select {
 }
 
 /* Sidebar canônica Limitless: proporção compacta e previsível. */
-html[data-ui-framework='limitless'] #main-module-sidebar.module-sidebar,
-html[data-ui-framework='limitless'] .event-context-sidebar {
+html[data-ui-framework='limitless'] #main-module-sidebar.module-sidebar {
   flex: 0 0 var(--ll-sidebar) !important;
   width: var(--ll-sidebar) !important;
   min-width: var(--ll-sidebar) !important;
@@ -68,6 +67,28 @@ html[data-ui-framework='limitless'] .event-context-sidebar {
   top: 0 !important;
   position: relative !important;
   overflow: hidden !important;
+  border-right: 1px solid var(--disk-border, rgba(148,163,184,.16)) !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: stretch !important;
+  transition: width .2s ease, min-width .2s ease, max-width .2s ease, flex-basis .2s ease !important;
+}
+
+html[data-ui-framework='limitless'] .event-context-sidebar {
+  flex: 0 0 var(--ll-sidebar) !important;
+  width: var(--ll-sidebar) !important;
+  min-width: var(--ll-sidebar) !important;
+  max-width: var(--ll-sidebar) !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: 100% !important;
+  top: 0 !important;
+  position: relative !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: #334155 transparent !important;
   border-right: 1px solid var(--disk-border, rgba(148,163,184,.16)) !important;
   box-shadow: none !important;
   display: flex !important;
