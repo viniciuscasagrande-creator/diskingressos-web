@@ -1526,3 +1526,87 @@ html[data-theme='dark'] .fa-table tr:hover td {
   }
 }
 
+/* ==============================================================================
+   PADRONIZAÇÃO DEFINITIVA GLOBAL — ESPAÇAMENTO VERTICAL JUSTO EM TODO O SAFESAFF
+   Aplica redução de espaçamento vertical entre cards, kpis, painéis e seções
+   em TODOS os módulos, menus e telas do sistema.
+   ============================================================================== */
+
+/* 1. Stacks verticais do Tailwind e containers flex em todo o sistema */
+#main-app-content :is(.space-y-4, .space-y-5, .space-y-6, .space-y-8, .space-y-10, .space-y-12) > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(8px * calc(1 - var(--tw-space-y-reverse))) !important;
+  margin-bottom: calc(8px * var(--tw-space-y-reverse)) !important;
+}
+
+#main-app-content :is(.flex-col, .flex-column):is(.gap-3, .gap-4, .gap-5, .gap-6, .gap-8, .gap-10) {
+  row-gap: 8px !important;
+}
+
+/* 2. Grids com gaps excessivos */
+#main-app-content :is(.gap-4, .gap-5, .gap-6, .gap-8, .gap-10, .gap-12) {
+  row-gap: 8px !important;
+  column-gap: 12px !important;
+}
+
+#main-app-content :is(.grid-gap-4, .grid-gap-6, .grid-gap-8) {
+  row-gap: 8px !important;
+  column-gap: 12px !important;
+}
+
+/* 3. Margens inferiores de cabeçalhos e barras de ferramentas em todas as telas */
+#main-app-content :is(
+  .module-titlebar, .page-header, .disk-page-header, .content-header,
+  .section-header, .estcc-page-head, .producer-account-topline,
+  .payout-control-head, .inventory-head, .eosx header, .di-page-head
+) {
+  margin-bottom: 6px !important;
+  padding-bottom: 2px !important;
+}
+
+#main-app-content :is(
+  .estcc-filters, .estcc-nav-tabs, .fa-toolbar, .fa-tabs,
+  .producer-filter-bar, .inventory-toolbar, .eosx-toolbar, .payout-filter-bar,
+  .inventory-event-strip
+) {
+  margin-bottom: 8px !important;
+  row-gap: 6px !important;
+}
+
+/* 4. Remoção de margens verticais externas redundantes em cards e painéis */
+#main-app-content :is(
+  .card, .panel, .widget, .box, .tile, .table-card, .chart-card, .metric-card,
+  .dashboard-kpi-card, .finance-kpi, .finance-card, .balance-card, .hub-card,
+  .event-card, .summary-card, .content-card, .stat-card, .kpi-card, .report-card,
+  .filter-card, .form-card, .module-card, .section-card, .content-panel,
+  .table-wrapper, .disk-card, .estcc-card, .pa-card, .marketing-os-panel,
+  .surface-card, .surface-panel, .subtle-card, .inventory-panel, .di-card
+) {
+  margin-bottom: 0 !important;
+}
+
+/* 5. Todos os grids de cards, kpis e estatísticas do sistema */
+:is(
+  .cards-grid, .kpi-grid, .stats-grid, .metrics-grid, .dashboard-grid, .finance-grid,
+  .module-hub-grid, .hub-card-grid, .grid-cards, .eosx-kpis, .eosx-grid,
+  .payout-balance-grid, .payout-control-visuals, .producer-kpi-grid, .producer-visual-grid,
+  .inventory-kpis, .inventory-grid-main, .inventory-grid-bottom, .tracking-kpi-grid,
+  .sac-kpi-grid, .disputes-kpi-grid, .fa-grid-2, .fa-kpis, .fa-signature-grid,
+  .fa-report-grid, .event-grid, .events-grid, .module-grid, .analytics-grid,
+  .estcc-kpis, .estcc-layout, .bucket-grid, .cash-waterfall, .reserve-policy-metrics,
+  .di-kpis, .di-layout
+) {
+  row-gap: 8px !important;
+  column-gap: 12px !important;
+}
+
+/* 6. Containers de página fluidos de ponta a ponta */
+#main-app-content :is(
+  .estcc-page, .di-content, .producer-account, .eosx,
+  .event-inventory-page, .payout-control-shell, .module-hub-container
+) {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+

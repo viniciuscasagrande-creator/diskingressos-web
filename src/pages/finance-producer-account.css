@@ -6,9 +6,10 @@
 .producer-account {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 8px;
   color: #e5edf8;
   font-family: inherit;
+  width: 100%;
 }
 
 .producer-account button,
@@ -157,16 +158,17 @@
 .producer-kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  row-gap: 8px;
+  column-gap: 10px;
 }
 
 .pa-kpi {
   position: relative;
   overflow: hidden;
   display: flex;
-  gap: 14px;
-  padding: 20px;
-  border-radius: 16px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
   border: 1px solid #233149;
   background: #0f1827;
   transition: transform 0.2s ease, border-color 0.2s ease;
@@ -580,7 +582,8 @@
 .producer-visual-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 14px;
+  row-gap: 8px;
+  column-gap: 12px;
 }
 
 .producer-visual-grid.second {
@@ -590,8 +593,8 @@
 .pa-card {
   border: 1px solid #233149;
   background: linear-gradient(180deg, #0f1827, #0c1421);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 14px 16px;
 }
 
 .pa-card-head {
