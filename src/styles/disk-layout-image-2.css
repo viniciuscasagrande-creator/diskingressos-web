@@ -1987,5 +1987,657 @@ html body :is(.grid-gap-4, .grid-gap-6, .grid-gap-8) {
   color: #ffffff !important;
 }
 
+/* ============================================================================
+   9. PADRONIZAÇÃO DEFINITIVA TEMA ESCURO — CONTEXTO DE EVENTO / EVENT OS / COCKPIT
+   Abrange todos os submódulos de /eventos/:id/* (Cockpit, Inventário, Clientes,
+   Live Ops, Incidentes, Revenue, Busca, Intelligence, Forecast, etc.)
+   ============================================================================ */
+
+/* 1. Cockpit Operacional do Evento (EventCommandCenterPage) */
+#main-app-content :is(.event-os-hero) {
+  background: linear-gradient(135deg, #0f172a 0%, #172033 100%) !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+#main-app-content :is(.event-os-hero) h2 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.event-os-hero) p {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.event-os-health) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content :is(.event-os-health) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.event-os-health) :is(span, small) {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.event-os-toolbar) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+#main-app-content :is(.event-os-toolbar) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-shortcuts-bar) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+#main-app-content :is(.cockpit-shortcut-btn) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+}
+
+#main-app-content :is(.cockpit-shortcut-btn):hover {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-period-btn) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.cockpit-period-btn):hover {
+  background: #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-period-btn.active) {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.event-os-kpi) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+#main-app-content :is(.event-os-kpi) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.event-os-kpi) span {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.event-os-kpi) small {
+  color: #64748b !important;
+}
+
+#main-app-content :is(.event-os-panel) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+#main-app-content :is(.event-os-panel) h3 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.event-os-panel) header p {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.cockpit-lot-row, .cockpit-finance-item, .cockpit-marketing-item, .event-os-check, .event-os-alert-row, .cockpit-drilldown-row) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-finance-item strong, .cockpit-marketing-item strong, .event-os-check strong, .event-os-alert-row strong) {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-finance-item span, .cockpit-marketing-item span, .event-os-check small, .event-os-alert-row small) {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.cockpit-progress-bar) {
+  background: #1e293b !important;
+}
+
+#main-app-content :is(.cockpit-eventday-banner) {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content :is(.event-os-launch) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content :is(.event-os-launch) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.event-os-launch) small {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.cockpit-modal-content) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-modal-header) {
+  background: #131b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-modal-header) h3 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.cockpit-modal-body) {
+  background: #0f172a !important;
+}
+
+/* 2. Inventário Operacional (EventInventoryPage) */
+#main-app-content :is(.inventory-head) h2 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-head) p {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.inventory-event-strip, .inventory-toolbar, .inventory-panel) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.inventory-event-strip) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-kpi) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-kpi) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-kpi) small {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.inventory-panel-head) {
+  background: #131b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-panel-head) h3 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-table) th {
+  background: #131b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.inventory-table) td {
+  border-bottom: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(.inventory-table) td strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-search) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-search) input {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-status-tabs) button {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.inventory-status-tabs) button.active {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-row-actions) button,
+#main-app-content :is(.inventory-recommendation) button,
+#main-app-content :is(.hold-row) button {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(.inventory-recommendation, .inventory-ok) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+}
+
+#main-app-content :is(.inventory-recommendation) strong,
+#main-app-content :is(.inventory-ok) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-recommendation) span,
+#main-app-content :is(.inventory-ok) span {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.sector-row, .hold-row) {
+  border-bottom: 1px solid #1e293b !important;
+}
+
+#main-app-content :is(.sector-copy strong, .hold-row strong) {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-modal) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-modal-head) h3 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-modal) input,
+#main-app-content :is(.inventory-modal) select {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.inventory-loading) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+/* 3. Central de Clientes (EventCustomer360Page) */
+#main-app-content :is(.customer360-head) h2 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.customer360-head) p {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.customer360-strip, .customer360-panel, .crm-kpi) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.crm-kpi) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.customer360-toolbar) {
+  background: #131b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.customer360-toolbar) h3 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.customer360-toolbar) label {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.customer360-toolbar) input {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.customer360-table-wrap) th {
+  background: #131b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.customer360-table-wrap) td {
+  border-top: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(.customer360-table-wrap) td strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.crm-profile-grid) > div {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.crm-profile-grid) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.crm-modal) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.crm-modal) h3 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.customer360-head) button,
+#main-app-content :is(.crm-open),
+#main-app-content :is(.crm-actions) button,
+#main-app-content :is(.crm-filters) select,
+#main-app-content :is(.crm-filters) button {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(.customer360-loading) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+/* 4. Live Operations (EventLiveOpsPage) */
+#main-app-content :is(.elo-kpi-card, .elo-flow-section, .elo-panel, .elo-rejections-section) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.elo-kpi-card) strong,
+#main-app-content :is(.elo-panel-title) h3 {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.elo-gate-card) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.elo-gate-top) {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.elo-action-btn) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(.elo-devices-table) th {
+  background: #131b2e !important;
+  border-bottom: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.elo-devices-table) td {
+  border-bottom: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* 5. Incident Center (EventIncidentsPage) */
+#main-app-content :is(.eic-kpi-card, .eic-filter-bar, .eic-incident-card, .eic-panel) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.eic-kpi-card) strong {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.eic-search-input, .eic-select) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+/* 6. Revenue Intelligence (EventRevenueIntelPage) */
+#main-app-content :is(.eri-period-bar, .eri-kpi-card, .eri-panel, .eri-chart-card) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.eri-period-tabs) {
+  background: #131b2e !important;
+}
+
+#main-app-content :is(.eri-period-tab) {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(.eri-period-tab.active) {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.eri-kpi-card) strong,
+#main-app-content :is(.eri-panel) h3 {
+  color: #ffffff !important;
+}
+
+/* 7. Global Search (EventGlobalSearchPage) */
+#main-app-content :is(.egs-command-bar, .egs-result-card, .egs-panel) {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.egs-search-input) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(.egs-scope-bar, .egs-btn) {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(.egs-scope-bar) b,
+#main-app-content :is(.egs-result-card) strong {
+  color: #ffffff !important;
+}
+
+/* 8. Demais Submódulos de Eventos (Forecast, Disk Intel, Day Command, Commercial, Producer Executive, Activity Stream, Order 360) */
+#main-app-content :is(
+  .efc-panel, .efc-kpi-card, .efc-filter-bar, .efc-container,
+  .di-kpi, .di-panel, .di-card, .edi-container, .edi-kpi, .edi-panel, .edi-card,
+  .edc-page, .edc-card, .edc-kpi-card, .edc-toolbar, .edc-gate-card, .edc-sector-box, .edc-actions-dropdown,
+  .epe-container, .epe-panel, .epe-kpi-card, .epe-toolbar, .epe-card,
+  .ecd-container, .ecd-kpi-card, .ecd-card, .ecd-panel, .ecd-filter-bar,
+  .activity-stream-page, .activity-stream-card, .activity-card, .eas-item, .eas-filter-bar, .eas-panel,
+  .advanced-panel, .advanced-kpi, .eos-panel, .eos-card, .eosx, .eosx-panel, .eosx-kpis > div,
+  .order-360-investigation-hub, .order-360-master-card, .order-360-card, .order-360-timeline-section
+) {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+#main-app-content :is(
+  .efc-panel h3, .di-panel h3, .edi-panel h3, .edc-card-header h3, .epe-panel h3, .ecd-card-title, .advanced-panel h3, .eosx h2,
+  .order-360-master-header h2, .order-360-card-title-wrap h3, .order-360-timeline-header h3,
+  .efc-kpi-card strong, .di-kpi strong, .edi-kpi strong, .edc-kpi-card strong, .epe-kpi-card strong, .ecd-kpi-value,
+  .order-360-total-value, .order-360-kpi-cell strong
+) {
+  color: #ffffff !important;
+}
+
+#main-app-content :is(
+  .edc-gate-card, .edc-sector-box, .edc-support-stat, .edc-risk-item, .edc-payment-methods, .edc-flow-stats,
+  .order-360-breadcrumbs, .order-360-back-btn, .order-360-ticket-item, .order-360-micro-btn, .order-360-card-highlight,
+  .ecd-tab-pill, .ecd-select, .ecd-btn-secondary, .ecd-velocity-kpis, .ecd-ticket-bar-wrap,
+  .egs-btn, .egs-scope-bar, .egs-tab, .egs-select, .egs-action-btn
+) {
+  background: #131b2e !important;
+  border-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(
+  .edc-btn, .elo-btn, .eic-btn, .egs-btn, .eri-btn, .ecd-btn-secondary
+):hover {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* 9. Subpáginas Internas de EventContextPage (Tickets, Cortesias, Relatórios, Detalhes, GA4, Tráfego, Meta Ads, Remarketing, Dashboard) */
+#main-app-content :is(
+  .event-context-page,
+  .event-context-page .growth-panel,
+  .event-context-page .growth-kpi,
+  .event-context-page .context-module-panel,
+  .event-context-page .context-event-strip,
+  .event-context-page .multi-tracking-summary article,
+  .event-context-page .integration-card,
+  .event-context-page .order-360-investigation-hub
+) {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+#main-app-content .context-page-heading h2,
+#main-app-content .growth-kpi strong,
+#main-app-content .panel-head h3,
+#main-app-content .context-module-copy h3,
+#main-app-content .context-operation-row strong,
+#main-app-content .context-module-card strong,
+#main-app-content .traffic-item strong,
+#main-app-content .context-table td strong {
+  color: #ffffff !important;
+}
+
+#main-app-content .context-page-heading > div > p:last-child,
+#main-app-content .growth-kpi .kpi-top,
+#main-app-content .panel-head p,
+#main-app-content .context-module-copy p,
+#main-app-content .context-operation-row,
+#main-app-content .context-module-card small,
+#main-app-content .traffic-item span,
+#main-app-content .context-table td small {
+  color: #94a3b8 !important;
+}
+
+#main-app-content :is(
+  .event-context-badge,
+  .context-search,
+  .context-module-card,
+  .context-launch,
+  .context-quick-actions button,
+  .context-definition > div,
+  .traffic-item,
+  .table-action,
+  .btn.secondary,
+  .event-remarketing-tabs button,
+  .event-remarketing-security-strip,
+  .integration-scope,
+  .integration-event-picker label,
+  .integration-meta-events label
+) {
+  background: #131b2e !important;
+  border-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content :is(.context-search) input,
+#main-app-content :is(.context-form-grid) input,
+#main-app-content :is(.context-form-grid) select {
+  background: #131b2e !important;
+  border-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+#main-app-content :is(
+  .context-module-card:hover,
+  .context-launch:hover,
+  .context-quick-actions button:hover,
+  .table-action:hover,
+  .btn.secondary:hover
+) {
+  background: #1e293b !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .context-table-wrap {
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+}
+
+#main-app-content .context-table th {
+  background: #131b2e !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+#main-app-content .context-table td {
+  border-bottom: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content .context-table tr:hover td {
+  background: #131b2e !important;
+}
+
+#main-app-content .context-event-strip > div {
+  border-right: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content .metric-bar i {
+  background: #1e293b !important;
+}
+
+
+
 
 

@@ -310,10 +310,10 @@ export default function EventCommandCenterPage({ event, onNavigate, notify }: Pr
         <button className="cockpit-shortcut-btn" onClick={() => onNavigate('sac-hub')} data-testid="shortcut-sac">
           <Headphones size={14} /> SAC
         </button>
-        <button className="cockpit-shortcut-btn text-rose-700 bg-rose-50 border-rose-200" onClick={() => onNavigate('finance-refunds')} data-testid="shortcut-refunds">
+        <button className="cockpit-shortcut-btn text-rose-400 bg-rose-950/40 border-rose-800/60" onClick={() => onNavigate('finance-refunds')} data-testid="shortcut-refunds">
           <Undo2 size={14} /> Estornos
         </button>
-        <button className="cockpit-shortcut-btn text-sky-700 bg-sky-50 border-sky-200" onClick={() => setViewMode('timeline')} data-testid="shortcut-activity-stream">
+        <button className="cockpit-shortcut-btn text-sky-400 bg-sky-950/40 border-sky-800/60" onClick={() => setViewMode('timeline')} data-testid="shortcut-activity-stream">
           <Clock3 size={14} /> Histórico de Atividades
         </button>
       </section>

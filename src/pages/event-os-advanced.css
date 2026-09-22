@@ -1,1 +1,218 @@
-.eosx{padding:0;width:100%;max-width:100%;display:grid;gap:8px}.eosx header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.eosx header span{font-size:11px;font-weight:800;letter-spacing:.12em;color:#0891b2}.eosx h2{margin:2px 0 4px;font-size:22px}.eosx p{margin:0;color:#64748b}.eosx button{border:1px solid #dbe3ee;background:#fff;border-radius:9px;padding:7px 12px;display:flex;gap:6px;align-items:center;font-weight:700}.eosx-scope{display:flex;gap:8px;align-items:center;background:#ecfeff;border:1px solid #a5f3fc;padding:8px 12px;border-radius:10px;color:#155e75}.eosx-scope span{margin-left:auto;font-size:12px}.eosx-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));row-gap:8px;column-gap:10px}.eosx-kpis>div,.eosx-panel{background:#fff;border:1px solid #e2e8f0;border-radius:13px}.eosx-kpis>div{padding:10px 12px;display:grid;gap:2px}.eosx-kpis span,.eosx-kpis small{color:#64748b;font-size:11px}.eosx-kpis strong{font-size:19px}.eosx-grid{display:grid;grid-template-columns:1.4fr .8fr;row-gap:8px;column-gap:12px}.eosx-panel{padding:12px 14px}.eosx-title,.eosx-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.eosx-title h3,.eosx-toolbar h3{margin:0 0 2px}.eosx-signal{display:flex;gap:8px;padding:8px;border-radius:8px;margin-top:6px;background:#f8fafc}.eosx-signal.warning{background:#fffbeb}.eosx-signal.critical{background:#fef2f2}.eosx-signal span{display:grid}.eosx-signal small,.eosx-activity small{color:#64748b}.eosx-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eef2f7}.eosx-row b{text-transform:uppercase;font-size:11px;color:#0f766e}.eosx-toolbar label{display:flex;gap:6px;align-items:center;border:1px solid #dbe3ee;border-radius:8px;padding:6px 8px}.eosx-toolbar input{border:0;outline:0}.eosx-activity{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid #eef2f7}.eosx-activity span{display:grid}.eosx-activity time{display:flex;gap:4px;align-items:center;font-size:11px;color:#64748b}@media(max-width:1000px){.eosx-kpis{grid-template-columns:repeat(2,1fr)}.eosx-grid{grid-template-columns:1fr}}@media(max-width:620px){.eosx{padding:8px}.eosx header,.eosx-scope{flex-direction:column}.eosx-scope span{margin:0}.eosx-kpis{grid-template-columns:1fr}.eosx-toolbar{align-items:flex-start;gap:8px;flex-direction:column}.eosx-activity{grid-template-columns:auto 1fr}.eosx-activity time{grid-column:2}}
+.eosx {
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  display: grid;
+  gap: 8px;
+  color: #f8fafc;
+}
+.eosx header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.eosx header span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: #38bdf8;
+}
+.eosx h2 {
+  margin: 2px 0 4px;
+  font-size: 22px;
+  color: #ffffff;
+}
+.eosx p {
+  margin: 0;
+  color: #94a3b8;
+}
+.eosx button {
+  border: 1px solid #1e293b;
+  background: #131b2e;
+  color: #cbd5e1;
+  border-radius: 9px;
+  padding: 7px 12px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.eosx button:hover {
+  background: #1e293b;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+.eosx-scope {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #131b2e;
+  border: 1px solid #1e293b;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: #38bdf8;
+}
+.eosx-scope span {
+  margin-left: auto;
+  font-size: 12px;
+  color: #94a3b8;
+}
+.eosx-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  row-gap: 8px;
+  column-gap: 10px;
+}
+.eosx-kpis > div,
+.eosx-panel {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 13px;
+}
+.eosx-kpis > div {
+  padding: 10px 12px;
+  display: grid;
+  gap: 2px;
+}
+.eosx-kpis span,
+.eosx-kpis small {
+  color: #94a3b8;
+  font-size: 11px;
+}
+.eosx-kpis strong {
+  font-size: 19px;
+  color: #ffffff;
+}
+.eosx-grid {
+  display: grid;
+  grid-template-columns: 1.4fr .8fr;
+  row-gap: 8px;
+  column-gap: 12px;
+}
+.eosx-panel {
+  padding: 12px 14px;
+}
+.eosx-title,
+.eosx-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.eosx-title h3,
+.eosx-toolbar h3 {
+  margin: 0 0 2px;
+  color: #ffffff;
+}
+.eosx-signal {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 8px;
+  margin-top: 6px;
+  background: #131b2e;
+  border: 1px solid #1e293b;
+  color: #cbd5e1;
+}
+.eosx-signal.warning {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+.eosx-signal.critical {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+.eosx-signal span {
+  display: grid;
+}
+.eosx-signal small,
+.eosx-activity small {
+  color: #94a3b8;
+}
+.eosx-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #1e293b;
+  color: #cbd5e1;
+}
+.eosx-row b {
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #2dd4bf;
+}
+.eosx-toolbar label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid #1e293b;
+  background: #131b2e;
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: #94a3b8;
+}
+.eosx-toolbar input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #ffffff;
+}
+.eosx-activity {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid #1e293b;
+  color: #cbd5e1;
+}
+.eosx-activity span {
+  display: grid;
+}
+.eosx-activity time {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+@media(max-width:1000px) {
+  .eosx-kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .eosx-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media(max-width:620px) {
+  .eosx {
+    padding: 8px;
+  }
+  .eosx header,
+  .eosx-scope {
+    flex-direction: column;
+  }
+  .eosx-scope span {
+    margin: 0;
+  }
+  .eosx-kpis {
+    grid-template-columns: 1fr;
+  }
+  .eosx-toolbar {
+    align-items: flex-start;
+    gap: 8px;
+    flex-direction: column;
+  }
+  .eosx-activity {
+    grid-template-columns: auto 1fr;
+  }
+  .eosx-activity time {
+    grid-column: 2;
+  }
+}

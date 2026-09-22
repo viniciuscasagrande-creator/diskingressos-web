@@ -132,10 +132,10 @@
   position: absolute;
   right: 0;
   top: calc(100% + 6px);
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #0f172a;
+  border: 1px solid #1e293b;
   border-radius: 10px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
   min-width: 220px;
   z-index: 1000;
   padding: 6px;
@@ -152,7 +152,7 @@
   border-radius: 6px;
   border: none;
   background: transparent;
-  color: #1e293b;
+  color: #cbd5e1;
   font-size: 12px;
   font-weight: 500;
   text-align: left;
@@ -162,8 +162,8 @@
 }
 
 .edc-action-item:hover {
-  background: #f1f5f9;
-  color: #0284c7;
+  background: #1e293b;
+  color: #38bdf8;
 }
 
 /* 8 Priority KPIs Grid */
@@ -174,21 +174,21 @@
 }
 
 .edc-kpi-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #0f172a;
+  border: 1px solid #1e293b;
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
 }
 
 .edc-kpi-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   border-color: #38bdf8;
 }
 
@@ -198,7 +198,7 @@
   align-items: center;
   font-size: 10px;
   font-weight: 700;
-  color: #64748b;
+  color: #94a3b8;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -206,13 +206,13 @@
 .edc-kpi-card strong {
   font-size: 20px;
   font-weight: 800;
-  color: #0f172a;
+  color: #ffffff;
   line-height: 1.1;
 }
 
 .edc-kpi-card small {
   font-size: 10px;
-  color: #64748b;
+  color: #94a3b8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -239,11 +239,11 @@
 
 /* Section Cards */
 .edc-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: #0f172a;
+  border: 1px solid #1e293b;
   border-radius: 12px;
   padding: 16px 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -253,7 +253,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #1e293b;
   padding-bottom: 10px;
 }
 
@@ -261,7 +261,7 @@
   margin: 0;
   font-size: 14px;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -270,7 +270,7 @@
 .edc-link-btn {
   font-size: 11px;
   font-weight: 700;
-  color: #0284c7;
+  color: #38bdf8;
   background: none;
   border: none;
   cursor: pointer;
@@ -291,8 +291,8 @@
 }
 
 .edc-gate-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #131b2e;
+  border: 1px solid #1e293b;
   border-radius: 10px;
   padding: 12px 14px;
   display: flex;
@@ -303,8 +303,8 @@
 }
 
 .edc-gate-card:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: #1e293b;
+  border-color: #3b82f6;
 }
 
 .edc-gate-top {
@@ -315,7 +315,7 @@
 
 .edc-gate-top strong {
   font-size: 13px;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .edc-badge {
@@ -327,18 +327,18 @@
 }
 
 .edc-badge.online {
-  background: #dcfce7;
-  color: #15803d;
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
 }
 
 .edc-badge.atencao {
-  background: #fef3c7;
-  color: #b45309;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
 }
 
 .edc-badge.critico {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
 }
 
 .edc-gate-metrics {
@@ -346,11 +346,11 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 4px;
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
 }
 
 .edc-gate-metrics span b {
-  color: #0f172a;
+  color: #ffffff;
 }
 
 /* Flow Chart Bars */
@@ -359,8 +359,9 @@
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: #475569;
-  background: #f8fafc;
+  color: #94a3b8;
+  background: #131b2e;
+  border: 1px solid #1e293b;
   padding: 8px 14px;
   border-radius: 8px;
 }
@@ -371,7 +372,7 @@
   gap: 10px;
   height: 90px;
   padding: 10px 0 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #1e293b;
 }
 
 .edc-flow-col {
@@ -398,7 +399,7 @@
 
 .edc-flow-label {
   font-size: 10px;
-  color: #64748b;
+  color: #94a3b8;
   font-family: monospace;
 }
 
@@ -410,8 +411,8 @@
 }
 
 .edc-sector-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #131b2e;
+  border: 1px solid #1e293b;
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -425,12 +426,12 @@
   align-items: center;
   font-size: 12px;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .edc-progress-track {
   height: 6px;
-  background: #e2e8f0;
+  background: #1e293b;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -471,7 +472,7 @@
 .edc-sales-stat strong {
   font-size: 16px;
   font-weight: 800;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .edc-payment-methods {
@@ -480,10 +481,11 @@
   gap: 8px;
   font-size: 11px;
   font-weight: 600;
-  background: #f8fafc;
+  background: #131b2e;
+  border: 1px solid #1e293b;
   padding: 8px 12px;
   border-radius: 6px;
-  color: #334155;
+  color: #cbd5e1;
 }
 
 /* Risk Section */
@@ -495,7 +497,8 @@
 }
 
 .edc-risk-item {
-  background: #f8fafc;
+  background: #131b2e;
+  border: 1px solid #1e293b;
   padding: 8px 10px;
   border-radius: 6px;
   display: flex;
@@ -504,12 +507,12 @@
 }
 
 .edc-risk-item span {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .edc-risk-item strong {
   font-size: 14px;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 /* Support Section */
@@ -523,19 +526,20 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  background: #f8fafc;
+  background: #131b2e;
+  border: 1px solid #1e293b;
   padding: 8px 10px;
   border-radius: 6px;
 }
 
 .edc-support-stat span {
   font-size: 10px;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .edc-support-stat strong {
   font-size: 15px;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 /* Alerts List */
@@ -556,21 +560,21 @@
 }
 
 .edc-alert-item.warning {
-  background: #fffbeb;
-  border: 1px solid #fef3c7;
-  color: #92400e;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
 }
 
 .edc-alert-item.critical {
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
-  color: #991b1b;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
 }
 
 /* Incident Integrated Box */
 .edc-incident-card {
-  border: 1px solid #fca5a5;
-  background: #fff1f2;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.15);
   border-radius: 8px;
   padding: 10px 12px;
   display: flex;
@@ -587,7 +591,7 @@
 .edc-incident-title {
   font-size: 12px;
   font-weight: 700;
-  color: #9f1239;
+  color: #f87171;
 }
 
 .edc-incident-actions {
@@ -616,7 +620,7 @@
 }
 
 .edc-activity-item:hover {
-  background: #f1f5f9;
+  background: #131b2e;
 }
 
 .edc-activity-time {
@@ -628,7 +632,7 @@
 
 .edc-activity-msg {
   font-size: 12px;
-  color: #1e293b;
+  color: #cbd5e1;
   flex: 1;
 }
 
