@@ -286,17 +286,17 @@
 }
 
 .safesaff-sidebar .module-caption{
-  font-size:10px!important;
-  line-height:14px!important;
-  font-weight:600!important;
-  letter-spacing:.075em!important;
+  font-size:13.5px!important;
+  line-height:18px!important;
+  font-weight:650!important;
+  letter-spacing:.06em!important;
   text-transform:uppercase!important;
 }
 
 .safesaff-sidebar .module-nav-item,
 .safesaff-sidebar .collapsible-section-head{
-  font-size:13px!important;
-  line-height:18px!important;
+  font-size:17px!important;
+  line-height:22px!important;
   font-weight:500!important;
   letter-spacing:0!important;
   font-variation-settings:'wght' 500!important;
@@ -312,14 +312,16 @@
 .safesaff-sidebar .collapsible-section-label{
   display:block!important;
   min-width:0!important;
-  line-height:18px!important;
+  font-size:17px!important;
+  line-height:22px!important;
   white-space:nowrap!important;
   overflow:hidden!important;
   text-overflow:ellipsis!important;
 }
 
 .safesaff-sidebar .module-nav-item.indent{
-  font-size:12.75px!important;
+  font-size:16px!important;
+  line-height:22px!important;
   font-weight:450!important;
   font-variation-settings:'wght' 450!important;
   color:#c8d1dc!important;
@@ -332,15 +334,15 @@
 
 .safesaff-sidebar .nav-item-badge{
   font-family:'SafeSaff Inter','Inter','Segoe UI',Roboto,Arial,sans-serif!important;
-  font-size:9px!important;
-  line-height:16px!important;
-  font-weight:600!important;
+  font-size:11.5px!important;
+  line-height:18px!important;
+  font-weight:650!important;
   letter-spacing:.02em!important;
 }
 
 .safesaff-sidebar .safesaff-sidebar-home span{
-  font-size:13px!important;
-  line-height:18px!important;
+  font-size:17px!important;
+  line-height:22px!important;
   font-weight:600!important;
   letter-spacing:0!important;
 }

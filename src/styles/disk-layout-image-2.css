@@ -262,20 +262,23 @@ html :is(
 .safesaff-sidebar .module-caption {
   padding: 14px 14px 6px !important;
   color: var(--disk-layout-muted) !important;
-  font-size: 11px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
+  letter-spacing: .06em !important;
+  text-transform: uppercase !important;
 }
 
 .safesaff-sidebar .module-nav-item,
 .safesaff-sidebar .collapsible-section-head {
-  min-height: 48px !important;
-  height: 48px !important;
+  min-height: 50px !important;
+  height: 50px !important;
   padding-inline: 18px !important;
   margin-inline: 8px !important;
   border-radius: 12px !important;
   gap: 14px !important;
   color: var(--disk-layout-text) !important;
-  font-size: 14px !important;
+  font-size: 17px !important;
+  line-height: 22px !important;
   font-weight: 500 !important;
   transition: all 0.15s ease !important;
 }
@@ -298,7 +301,20 @@ html :is(
   color: var(--disk-layout-text-soft) !important;
 }
 
+.safesaff-sidebar .module-nav-icon svg,
+.safesaff-sidebar .collapsible-section-icon svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.safesaff-sidebar .collapsible-section-chevron svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
 .safesaff-sidebar .module-nav-item.indent {
+  font-size: 16px !important;
+  line-height: 22px !important;
   padding-left: 42px !important;
 }
 
@@ -352,7 +368,23 @@ html[data-theme='dark'] .safesaff-sidebar .module-nav-item.indent {
   width: 100% !important;
   max-width: none !important;
   margin: 0 !important;
-  padding: 24px !important;
+  padding-top: 10px !important;
+  padding-bottom: 40px !important;
+  padding-left: 4px !important; /* Quase beirando a barra lateral esquerda */
+  padding-right: 20px !important;
+  box-sizing: border-box !important;
+}
+
+.phase6-content,
+.content.phase6-content,
+#main-app-content .phase6-content {
+  padding-left: 4px !important;
+  padding-right: 16px !important;
+}
+
+.module-titlebar {
+  padding-left: 12px !important;
+  padding-right: 20px !important;
 }
 
 /* ============================================================================

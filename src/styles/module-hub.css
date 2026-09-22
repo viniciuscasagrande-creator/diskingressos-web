@@ -11,7 +11,7 @@
   width: 100%;
   max-width: 100%;
   margin: 0;
-  padding: 20px 28px 60px;
+  padding: 10px 18px 60px 4px;
   color: var(--disk-layout-text, #1e293b);
   box-sizing: border-box;
 }
