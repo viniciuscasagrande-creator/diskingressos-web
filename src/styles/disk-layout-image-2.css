@@ -984,7 +984,7 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
 .hub-card-grid {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)) !important;
-  gap: 20px !important;
+  gap: 12px !important;
   width: 100% !important;
   max-width: 100% !important;
 }
@@ -993,7 +993,7 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
   .module-hub-grid,
   .hub-card-grid {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
-    gap: 16px !important;
+    gap: 10px !important;
   }
 }
 
@@ -1001,7 +1001,7 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
   .module-hub-grid,
   .hub-card-grid {
     grid-template-columns: 1fr !important;
-    gap: 14px !important;
+    gap: 10px !important;
   }
 }
 
@@ -1012,7 +1012,7 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
 .fa-page {
   display: flex !important;
   flex-direction: column !important;
-  gap: 20px !important;
+  gap: 12px !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -1023,7 +1023,7 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 16px !important;
-  padding: 22px 24px !important;
+  padding: 16px 20px !important;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
 }
 
@@ -1111,7 +1111,7 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
 .fa-kpis {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
-  gap: 16px !important;
+  gap: 10px !important;
   width: 100% !important;
 }
 
@@ -1119,10 +1119,10 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 16px !important;
-  padding: 18px 20px !important;
+  padding: 14px 16px !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
+  gap: 4px !important;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease !important;
   position: relative !important;
@@ -1136,16 +1136,16 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
 }
 
 .fa-kpi > span {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 10px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 9px !important;
   background: #fff7ed !important;
   border: 1px solid #fed7aa !important;
   color: #ea580c !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 2px !important;
   transition: all 0.2s ease !important;
 }
 
@@ -1166,22 +1166,41 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
 
 .fa-kpi strong {
   color: #0f172a !important;
-  font-size: 22px !important;
+  font-size: 20px !important;
   font-weight: 800 !important;
   letter-spacing: -0.02em !important;
   line-height: 1.2 !important;
 }
 
-/* PAINÉIS (DRE, SAÚDE, DIVERGÊNCIAS, LANÇAMENTOS) */
+/* GRIDS E PAINÉIS (DRE, SAÚDE, DIVERGÊNCIAS, LANÇAMENTOS) */
+.fa-grid-2 {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 900px) {
+  .fa-grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+:is(.cards-grid, .kpi-grid, .stats-grid, .metrics-grid, .dashboard-grid, .finance-grid, .fa-grid-2, .module-hub-grid, .hub-card-grid) {
+  gap: 12px !important;
+}
+
 .fa-panel {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 16px !important;
-  padding: 22px 24px !important;
+  padding: 16px 18px !important;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 18px !important;
+  gap: 12px !important;
   min-width: 0 !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
@@ -1190,9 +1209,17 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
   border-color: #cbd5e1 !important;
 }
 
+.fa-panel-head {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 6px !important;
+}
+
 .fa-panel-head h3 {
   color: #0f172a !important;
-  font-size: 17px !important;
+  font-size: 16px !important;
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
   margin: 0 !important;
@@ -1200,8 +1227,8 @@ html[data-theme='light'] .module-hub-card:hover .module-hub-card-icon-wrap {
 
 .fa-panel-head p {
   color: #64748b !important;
-  font-size: 13px !important;
-  margin: 4px 0 0 !important;
+  font-size: 12.5px !important;
+  margin: 2px 0 0 !important;
 }
 
 /* SUB-ESTRUTURAS INTERNAS */
