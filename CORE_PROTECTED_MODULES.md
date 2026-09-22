@@ -1,6 +1,6 @@
 # CORE_PROTECTED_MODULES — SafeSaff / PDT
 
-Release: `26.x.2-core-stability-gate-2026-09-03`
+Release: `26.x.3.10-runtime-functional-stability-2026-09-03`
 
 ## Regra permanente
 

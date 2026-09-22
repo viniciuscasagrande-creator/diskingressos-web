@@ -1,131 +1,131 @@
-## Fase 16.5 — Central UTM & Conversões
+# DiskIngressos Enterprise — SafeSaff (PDT)
 
-Esta versão adiciona a Central UTM & Conversões em tela única. Consulte `PHASE16_4_UTM_CONVERSIONS.md`.
-
-# DiskIngressos — Fase 16.5
-
-Esta versão adiciona suporte a múltiplos Meta Pixels e múltiplos Tokens da Conversion API por produtora/evento. Consulte `PHASE16_1_MULTI_PIXEL_TOKEN.md`.
-
-# DiskIngressos — Fase 14
-
-Esta versão consolida as fases anteriores e adiciona **Integrações de Comunicação + SAC / Service Desk com SLA e práticas ITIL**.
-
-## Novidades
-- Hub SAC, Dashboard, Chamados, Abertura, SLA & ITIL, Integrações, Base de Conhecimento e Relatórios.
-- Priorização automática P1–P4 por impacto × urgência.
-- Metas de primeira resposta e resolução persistidas no backend.
-- Isolamento multi-produtor nas rotas do SAC.
-- Central de Comunicação com WhatsApp Business, e-mail, fila, webhooks e consentimentos LGPD.
-- Integração conceitual com Eventos, Ingressos, Participantes, Check-in, Financeiro, Marketing e Remarketing.
-
-# DiskIngressos — Fase 12
-
-Projeto React + TypeScript + Node/Express + Prisma com autenticação multi-produtor e núcleo operacional persistente.
-
-## O que entrou nesta fase
-
-Além de Login, Produtoras, Usuários, Eventos e Auditoria das fases anteriores, a API agora possui banco para **Lotes, Vendas, Ingressos, Participantes, Check-in, Terminais POS, Transações POS, Movimentações Financeiras e Repasses**.
-
-O menu Eventos ganhou **Núcleo Operacional**, consumindo métricas reais do backend no mesmo template visual definido para o sistema.
-
-Leia `PHASE10_OPERATIONS.md` para a arquitetura e rotas.
-
-## Instalação
-
-1. Copie `.env.example` para `.env`.
-2. Instale as dependências:
-
-```bash
-npm install
-```
-
-3. Crie/atualize o banco e carregue os dados de demonstração:
-
-```bash
-npm run db:setup
-```
-
-4. Inicie frontend e API:
-
-```bash
-npm run dev
-```
-
-Frontend: `http://localhost:5173`  
-API: `http://localhost:3333/api`
-
-## Usuários de demonstração
-
-- Admin Master: `admin@diskingressos.com.br` / `Admin@123`
-- Produtor Admin: `vinicius@diskingressos.com.br` / `Produtor@123`
-- Financeiro FEP: `financeiro@fep.com.br` / `Financeiro@123`
-
-As credenciais são somente para desenvolvimento local. As senhas são armazenadas como hash bcrypt no banco gerado pelo seed.
-
-## Observação para produção
-
-SQLite foi mantido para facilitar a execução local. Para produção, migre o datasource Prisma para PostgreSQL/MySQL, use segredos fortes, HTTPS, cookies/sessão apropriados ou estratégia de tokens com refresh, rate limiting e políticas formais de backup/auditoria.
-
-
-## Fase 12 — Marketing & Remarketing
-
-Foram adicionados Hub Marketing, Dashboard Marketing, menu completo de Marketing, Hub Remarketing, Dashboard Remarketing e menu completo de Remarketing. Os módulos respeitam o escopo da produtora e o perfil produtor-marketing. Consulte `PHASE11_MARKETING_REMARKETING.md`.
-
-
-## Fase 12
-
-Campanhas persistentes, Links/UTMs/QR Codes e Pixel & Analytics com herança Global → Produtora → Evento. Consulte `PHASE12_MARKETING_TRACKING.md`.
-
-## Fase 13
-
-Inclui automações persistentes, templates de WhatsApp/e-mail, histórico de execuções e oportunidades de remarketing. Consulte `PHASE13_AUTOMATIONS_MESSAGING.md`.
-
-## Fase 15 — Navegação contextual por evento
-
-Ao clicar em um card de evento, o painel troca a sidebar geral por uma sidebar contextual daquele evento. O contexto permanece ativo em Dashboard, ingressos, cortesias, relatórios, Pixel/GA, UTMs, GA4, tráfego, Meta Ads, Remarketing e Administração do evento. Consulte `PHASE15_EVENT_CONTEXT_NAVIGATION.md`.
-
-
-## Fase 16.2 — Login e escopo por usuário
-
-- Login é a primeira tela do sistema.
-- Produtor DiskIngressos recebe somente seus 15 eventos.
-- Admin Master abre a Visão Geral Administrativa e pode selecionar qualquer produtora.
-- Sessão normal usa sessionStorage; a opção Lembrar acesso usa localStorage.
-- Logout limpa a sessão e retorna para /login.
-- Veja `PHASE16_2_LOGIN_SCOPE.md`.
-
-## Fase 16.3 — Dashboard inicial por perfil
-
-Esta versão adiciona redirecionamento pós-login por perfil. Admin Master/Admin entram na visão global; os demais perfis entram em **Meu Dashboard**, já limitado à sua produtora e com atalhos filtrados por permissão.
-
-Novos acessos de teste:
-
-- `operacao@diskingressos.com.br` / `Operacao@123`
-- `consulta@diskingressos.com.br` / `Consulta@123`
-
-Veja `PHASE16_3_PROFILE_DASHBOARDS.md` para o desenho de acesso.
-
-
-## Fase 16.5
-Veja `PHASE16_5_UTM_ATTRIBUTION.md` para o fluxo de atribuição UTM persistente, vínculo com pedidos e detecção de carrinho abandonado.
-
-## Fase 16.6
-
-Inclui remarketing automático ligado à origem UTM, fila de recuperação por WhatsApp/E-mail, consentimento por canal, tentativas/retries, dashboard de receita recuperada por campanha e fechamento da atribuição ao marcar uma venda como recuperada. Consulte `PHASE16_6_AUTOMATIC_REMARKETING.md`.
+Plataforma corporativa de alta performance para **Gestão de Eventos, Ticketing, Operação de Portaria, Núcleo Financeiro, Motor de Estornos, Marketing Multicanal e Atendimento / SAC (ITIL)**.
 
 ---
 
-## Fase 16.7 — Deploy Web
+## 🛡️ Contrato de Módulos Protegidos (CORE_PROTECTED_MODULES)
 
-O projeto agora inclui configuração de homologação para frontend estático + API Node + PostgreSQL.
+Por governança do produto e estabilidade operacional, os 5 módulos principais são **protegidos por travas de CI/Build automatizadas**. Nenhuma rota, PageKey ou tela pode ser removida ou alterada sem aprovação prévia:
 
-Arquivos principais:
-- `PHASE16_7_DEPLOY_WEB.md`
-- `DEPLOY_CHECKLIST.md`
-- `.env.production.example`
-- `prisma/schema.postgresql.prisma`
-- `render.yaml`
-- `Dockerfile.api`
-- `public/_redirects`
+| Módulo | Rota Canônica | PageKey | Tela / Componente Oficial |
+| :--- | :--- | :--- | :--- |
+| **Eventos** | `/app/events` | `events` | `EventsPage.tsx` |
+| **Financeiro** | `/app/finance-dashboard` | `finance-dashboard` | `FinanceDashboardPage.tsx` |
+| **Estornos** | `/app/finance-refunds` | `finance-refunds` | `FinanceDisputesHubPage.tsx` *(Independente no menu)* |
+| **Marketing** | `/app/marketing-dashboard` | `marketing-dashboard` | `MarketingDashboardPage.tsx` |
+| **Atendimento / SAC** | `/app/sac-hub` | `sac-hub` | `SACHubPage.tsx` |
 
-Para desenvolvimento local, o `prisma/schema.prisma` continua usando SQLite. Para hospedagem, use o schema PostgreSQL de produção.
+---
+
+## 🎨 Identidade Visual & Design System
+
+A plataforma implementa um Design System corporativo homologado com transição de temas fluida:
+
+- **Modo Escuro (Padrão Corporativo)**:
+  - Fundo ultra escuro executivo (`#0B0E14`), superfícies em grafite ardósia (`#151C27`) e contornos sutis de 1px (`#283548`).
+  - Destaque principal no **Laranja Disk** (`#FF8047`) e Azul Disk, eliminando excessos ou bordas neon.
+- **Modo Claro (Harmonizado & Acolhedor)**:
+  - Fundo em tom suave (`#F4F1ED`), superfícies claras acolhedoras (`#FFFAF2`) e bordas suaves (`#E6DED4`).
+  - Classes de cartões temáticos com gradientes suaves: `.stat-blue`, `.stat-green`, `.stat-orange`, `.surface-card`, `.surface-panel` e `.subtle-card`.
+- **Barra Lateral Executiva (350px)**:
+  - Largura confortável de **350px** para leitura integral de rótulos longos, sem quebra de linha ou corte de texto.
+  - Modo recolhido (76px) com preservação de ícones e tooltips.
+- **Localização pt-BR & Tipografia Financeira**:
+  - Interface do usuário 100% em Português do Brasil.
+  - Valores e indicadores com algarismos tabulares (`tabular-nums`) para alinhamento contábil.
+
+---
+
+## 🚀 Como Iniciar
+
+### Pré-requisitos
+- Node.js 18+ (recomendado 20 LTS)
+- npm 9+
+
+### Instalação e Execução Local
+
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+
+2. Configure o banco de dados e dados de demonstração:
+   ```bash
+   npm run db:setup
+   ```
+
+3. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+   - **Frontend**: `http://localhost:5173` (ou porta indicada pelo Vite)
+   - **API Backend**: `http://localhost:3333/api`
+
+---
+
+## 🚦 Gates de Qualidade & CI
+
+O projeto possui validação multinível contra regressões:
+
+```bash
+# 1. Verifica integridade dos 5 módulos protegidos (trava de CI)
+npm run verify:protected-modules
+
+# 2. Executa gate de qualidade completo (Módulos protegidos + Lucide Icons + Typecheck TypeScript)
+npm run quality:gate
+
+# 3. Compilação de produção com Vite
+npm run build
+
+# 4. Homologação completa com Deploy Guard HTTP + Testes Playwright
+npm run homologate:vercel
+```
+
+---
+
+## 🔑 Perfis de Acesso & Demonstração
+
+Para ambiente de desenvolvimento local, utilize as credenciais pré-configuradas no seed:
+
+| Perfil | E-mail | Senha | Escopo de Acesso |
+| :--- | :--- | :--- | :--- |
+| **Admin Master** | `admin@diskingressos.com.br` | `Admin@123` | Acesso global a todas as produtoras e módulos |
+| **Produtor Admin** | `vinicius@diskingressos.com.br` | `Produtor@123` | Gestão completa da produtora vinculada |
+| **Produtor Financeiro** | `financeiro@fep.com.br` | `Financeiro@123` | Foco em repasses, conciliação e fluxo financeiro |
+| **Operação** | `operacao@diskingressos.com.br` | `Operacao@123` | Check-in, lotes, participantes e terminais POS |
+| **Visualizador** | `consulta@diskingressos.com.br` | `Consulta@123` | Acesso seguro somente-leitura |
+
+---
+
+## 📂 Estrutura do Repositório
+
+```text
+safesaff/
+├── docs/                        # Documentação histórica de fases, arquitetura e relatórios
+│   ├── architecture/            # Decisões de backend, segurança e infraestrutura
+│   ├── phases/                  # Especificação das fases de desenvolvimento
+│   └── reports/                 # Evidências e matrizes de homologação
+├── prisma/                      # Modelagem de dados (SQLite local / PostgreSQL produção)
+├── scripts/                     # Scripts de verificação, gates de CI e deploy guard
+├── src/
+│   ├── app/                     # AppShell, navegação e layout mestre
+│   ├── auth/                    # Contexto de autenticação, JWT e RBAC multi-tenant
+│   ├── components/              # Componentes de interface e barras de navegação
+│   ├── data/                    # Mocks, seeds e repositórios locais
+│   ├── design-system/           # Tokens, temas e componentes universais Komposo/Disk
+│   ├── pages/                   # Telas e módulos da plataforma
+│   └── styles/                  # Folhas de estilo, temas e classes utilitárias
+└── tests/                       # Suíte de testes E2E e visuais com Playwright
+```
+
+---
+
+## 🌐 Produção & Deploy
+
+- **Ambiente de Homologação / Produção**: [https://safesaff.vercel.app](https://safesaff.vercel.app)
+- **Deploy Guard**: Validação HTTP automática das rotas protegidas a cada deploy.
+- **Sincronização Multi-Remote**:
+  - GitHub Principal: `diskingressos-web`
+  - GitHub Secundário: `safesaff`
+  - GitLab Mirror: `diskingressos/safesaff`
