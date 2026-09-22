@@ -2737,3 +2737,539 @@ html body :is(.grid-gap-4, .grid-gap-6, .grid-gap-8) {
   flex-shrink: 0 !important;
   white-space: nowrap !important;
 }
+
+/* ============================================================================
+   SEÇÃO 10: CENTRAL ADMINISTRATIVA & TELAS DE ADMINISTRAÇÃO (TEMA ESCURO OFICIAL)
+   Eliminação total de cards brancos em:
+   - Central Administrativa (admin-hub)
+   - Usuários e Acessos (admin-users)
+   - Produtoras (admin-producers)
+   - Perfis e Permissões (admin-permissions)
+   - Logs de Auditoria (admin-audit)
+   - Segurança (admin-security)
+   - Cards legados (hub-card, ops-card, finance-module-card, etc.)
+   ============================================================================ */
+
+/* 1. CENTRAL ADMINISTRATIVA (admin-hub) */
+#main-app-content .admin-hub,
+html body .admin-hub {
+  padding-bottom: 32px !important;
+}
+
+#main-app-content .admin-intro h2,
+html body .admin-intro h2 {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
+#main-app-content .admin-intro p,
+html body .admin-intro p {
+  color: #94a3b8 !important;
+}
+
+#main-app-content .admin-intro .eyebrow,
+html body .admin-intro .eyebrow {
+  color: #38bdf8 !important;
+}
+
+#main-app-content .admin-card-grid,
+html body .admin-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+#main-app-content .admin-module-card,
+html body .admin-module-card {
+  min-height: 122px !important;
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+  padding: 22px !important;
+  color: #ffffff !important;
+  text-align: left !important;
+  display: grid !important;
+  grid-template-columns: 52px 1fr 24px !important;
+  align-items: center !important;
+  gap: 16px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+#main-app-content .admin-module-card:hover,
+html body .admin-module-card:hover {
+  background: #131b2e !important;
+  border-color: #334155 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  transform: translateY(-2px) !important;
+}
+
+#main-app-content .admin-card-icon,
+html body .admin-card-icon {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 12px !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+#main-app-content .admin-module-card strong,
+html body .admin-module-card strong {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .admin-module-card small,
+html body .admin-module-card small {
+  font-size: 13px !important;
+  color: #94a3b8 !important;
+  line-height: 1.45 !important;
+}
+
+#main-app-content .admin-card-arrow,
+html body .admin-card-arrow {
+  color: #64748b !important;
+  transition: all 0.2s ease !important;
+}
+
+#main-app-content .admin-module-card:hover .admin-card-arrow,
+html body .admin-module-card:hover .admin-card-arrow {
+  color: #38bdf8 !important;
+  transform: translateX(3px) !important;
+}
+
+/* 2. USUÁRIOS E ACESSOS, PRODUTORAS & AUDITORIA */
+#main-app-content .users-page,
+html body .users-page {
+  padding-bottom: 32px !important;
+}
+
+#main-app-content .users-toolbar h2,
+html body .users-toolbar h2 {
+  color: #ffffff !important;
+}
+
+#main-app-content .users-toolbar p,
+html body .users-toolbar p {
+  color: #94a3b8 !important;
+}
+
+#main-app-content .users-toolbar .eyebrow,
+html body .users-toolbar .eyebrow {
+  color: #38bdf8 !important;
+}
+
+#main-app-content .users-summary > div,
+html body .users-summary > div {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 10px !important;
+  padding: 15px 17px !important;
+  color: #94a3b8 !important;
+}
+
+#main-app-content .users-summary svg,
+html body .users-summary svg {
+  color: #38bdf8 !important;
+}
+
+#main-app-content .users-summary b,
+html body .users-summary b {
+  color: #ffffff !important;
+}
+
+#main-app-content .table-card,
+html body .table-card {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+#main-app-content .table-tools,
+html body .table-tools {
+  background: #0f172a !important;
+  border-bottom: 1px solid #1e293b !important;
+  padding: 14px 16px !important;
+}
+
+#main-app-content .table-search,
+html body .table-search {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+}
+
+#main-app-content .table-search svg,
+html body .table-search svg {
+  color: #64748b !important;
+}
+
+#main-app-content .table-search input,
+html body .table-search input {
+  background: transparent !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .table-search input::placeholder,
+html body .table-search input::placeholder {
+  color: #64748b !important;
+}
+
+#main-app-content .users-table th,
+html body .users-table th {
+  background: #131b2e !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid #1e293b !important;
+  padding: 14px 16px !important;
+}
+
+#main-app-content .users-table td,
+html body .users-table td {
+  border-bottom: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+  padding: 15px 16px !important;
+}
+
+#main-app-content .users-table tr:hover td,
+html body .users-table tr:hover td {
+  background: #131b2e !important;
+}
+
+#main-app-content .users-table td b,
+html body .users-table td b {
+  color: #ffffff !important;
+}
+
+#main-app-content .users-table td small,
+html body .users-table td small {
+  color: #64748b !important;
+}
+
+#main-app-content .secondary-small,
+html body .secondary-small {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #cbd5e1 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+#main-app-content .secondary-small:hover:not(:disabled),
+html body .secondary-small:hover:not(:disabled) {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .tool-btn,
+html body .tool-btn {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #cbd5e1 !important;
+  border-radius: 8px !important;
+  padding: 9px 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+#main-app-content .tool-btn:hover,
+html body .tool-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Modais de Usuário e Produtora */
+.modal-backdrop {
+  background: rgba(3, 7, 18, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.user-modal {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 14px !important;
+  color: #ffffff !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+.user-modal h3 {
+  color: #ffffff !important;
+}
+
+.user-modal > p {
+  color: #94a3b8 !important;
+}
+
+.user-modal label {
+  color: #cbd5e1 !important;
+}
+
+.user-modal input,
+.user-modal select {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.user-modal input:focus,
+.user-modal select:focus {
+  border-color: #38bdf8 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2) !important;
+}
+
+.modal-close {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.modal-close:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* 3. PERFIS E PERMISSÕES (admin-permissions) */
+#main-app-content .permissions-page,
+html body .permissions-page {
+  padding-bottom: 32px !important;
+}
+
+#main-app-content .permissions-layout,
+html body .permissions-layout {
+  gap: 18px !important;
+}
+
+#main-app-content .role-list,
+html body .role-list {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 10px !important;
+  padding: 8px !important;
+}
+
+#main-app-content .role-list button,
+html body .role-list button {
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+}
+
+#main-app-content .role-list button:hover,
+html body .role-list button:hover {
+  background: #131b2e !important;
+  color: #ffffff !important;
+}
+
+#main-app-content .role-list button.active,
+html body .role-list button.active {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  font-weight: 700 !important;
+}
+
+#main-app-content .permission-table-wrap,
+html body .permission-table-wrap {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+}
+
+#main-app-content .permission-heading,
+html body .permission-heading {
+  background: #0f172a !important;
+  border-bottom: 1px solid #1e293b !important;
+  padding: 17px 18px !important;
+}
+
+#main-app-content .permission-heading strong,
+html body .permission-heading strong {
+  color: #ffffff !important;
+}
+
+#main-app-content .permission-heading span,
+html body .permission-heading span {
+  color: #94a3b8 !important;
+}
+
+#main-app-content .permission-table th,
+html body .permission-table th {
+  background: #131b2e !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+#main-app-content .permission-table td,
+html body .permission-table td {
+  border-bottom: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content .permission-table tr:hover td,
+html body .permission-table tr:hover td {
+  background: #131b2e !important;
+}
+
+#main-app-content .permission-table td b,
+html body .permission-table td b {
+  color: #ffffff !important;
+}
+
+#main-app-content .perm-check span,
+html body .perm-check span {
+  background: #334155 !important;
+}
+
+#main-app-content .perm-check input:checked + span,
+html body .perm-check input:checked + span {
+  background: #3b82f6 !important;
+}
+
+/* 4. CONFIGURAÇÕES DE SEGURANÇA (admin-security) */
+#main-app-content .security-page,
+html body .security-page {
+  padding-bottom: 32px !important;
+}
+
+#main-app-content .security-grid,
+html body .security-grid {
+  gap: 17px !important;
+}
+
+#main-app-content .security-card,
+html body .security-card {
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+#main-app-content .security-card-title,
+html body .security-card-title {
+  border-bottom: 1px solid #1e293b !important;
+  padding-bottom: 16px !important;
+}
+
+#main-app-content .security-card-title svg,
+html body .security-card-title svg {
+  color: #38bdf8 !important;
+}
+
+#main-app-content .security-card-title strong,
+html body .security-card-title strong {
+  color: #ffffff !important;
+}
+
+#main-app-content .security-card-title small,
+html body .security-card-title small {
+  color: #94a3b8 !important;
+}
+
+#main-app-content .security-setting,
+html body .security-setting {
+  border-bottom: 1px solid #1e293b !important;
+}
+
+#main-app-content .security-setting strong,
+html body .security-setting strong {
+  color: #ffffff !important;
+}
+
+#main-app-content .security-setting small,
+html body .security-setting small {
+  color: #94a3b8 !important;
+}
+
+#main-app-content .security-number,
+html body .security-number {
+  border-bottom: 1px solid #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+#main-app-content .security-number input,
+html body .security-number input {
+  background: #131b2e !important;
+  border: 1px solid #1e293b !important;
+  color: #ffffff !important;
+  border-radius: 6px !important;
+}
+
+#main-app-content .security-note,
+html body .security-note {
+  background: rgba(245, 158, 11, 0.1) !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+  color: #fbbf24 !important;
+  border-radius: 8px !important;
+}
+
+#main-app-content .security-note b,
+html body .security-note b {
+  color: #fde68a !important;
+}
+
+/* 5. CARDS LEGADOS DE OUTROS HUBS (NÃO DEIXAR NADA BRANCO) */
+#main-app-content .hub-card,
+html body .hub-card,
+#main-app-content .finance-module-card,
+html body .finance-module-card,
+#main-app-content .ops-card,
+html body .ops-card,
+#main-app-content .ops-balance,
+html body .ops-balance,
+#main-app-content .placeholder-module,
+html body .placeholder-module {
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+#main-app-content .hub-card:hover,
+html body .hub-card:hover,
+#main-app-content .finance-module-card:hover,
+html body .finance-module-card:hover,
+#main-app-content .ops-card:hover,
+html body .ops-card:hover {
+  background: #131b2e !important;
+  border-color: #334155 !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+#main-app-content .hub-card strong,
+html body .hub-card strong,
+#main-app-content .finance-module-card strong,
+html body .finance-module-card strong,
+#main-app-content .ops-card strong,
+html body .ops-card strong,
+#main-app-content .ops-balance strong,
+html body .ops-balance strong {
+  color: #ffffff !important;
+}
+
+#main-app-content .hub-card small,
+html body .hub-card small,
+#main-app-content .finance-module-card small,
+html body .finance-module-card small,
+#main-app-content .ops-balance span,
+html body .ops-balance span,
+#main-app-content .ops-card span,
+html body .ops-card span {
+  color: #94a3b8 !important;
+}
+

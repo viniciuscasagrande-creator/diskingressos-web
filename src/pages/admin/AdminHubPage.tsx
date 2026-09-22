@@ -85,35 +85,35 @@ export const AdminHubPage: React.FC<AdminHubPageProps> = ({ onNavigate }) => {
             <div
               key={card.key}
               onClick={() => onNavigate(card.key)}
-              className="group relative flex flex-col justify-between rounded-card border border-[#E2E8F0] bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-[#1677FF] hover:shadow-card cursor-pointer"
+              className="group relative flex flex-col justify-between rounded-xl border border-[#1e293b] bg-[#0f172a] p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-sky-500/50 hover:bg-[#131b2e] hover:shadow-card cursor-pointer"
             >
               <div>
                 <div className="flex items-start justify-between mb-3.5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-btn bg-[#EFF6FF] text-[#1677FF] transition group-hover:scale-105">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 transition group-hover:scale-105">
                     <Icon size={24} />
                   </div>
-                  <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[11px] font-bold text-slate-700">
+                  <span className="rounded-full bg-slate-800/80 border border-slate-700 px-2.5 py-0.5 text-[11px] font-bold text-slate-300">
                     {card.badge}
                   </span>
                 </div>
 
-                <h3 className="text-[17px] font-bold text-[#0E1726] group-hover:text-[#1677FF] transition-colors">
+                <h3 className="text-[17px] font-bold text-white group-hover:text-sky-400 transition-colors">
                   {card.title}
                 </h3>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] block mt-0.5">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mt-0.5">
                   {card.subtitle}
                 </span>
 
-                <p className="text-[12px] text-[#718096] mt-2.5 leading-relaxed">
+                <p className="text-[12px] text-slate-400 mt-2.5 leading-relaxed">
                   {card.desc}
                 </p>
               </div>
 
-              <div className="mt-5 pt-3.5 border-t border-[#EDF0F4] flex items-center justify-between">
-                <span className="text-[11px] text-[#64748B] font-semibold">
+              <div className="mt-5 pt-3.5 border-t border-slate-800 flex items-center justify-between">
+                <span className="text-[11px] text-slate-400 font-semibold">
                   Acessar Módulo
                 </span>
-                <span className="flex items-center gap-1 text-xs font-bold text-[#1677FF] group-hover:underline">
+                <span className="flex items-center gap-1 text-xs font-bold text-sky-400 group-hover:underline">
                   Configurar <ArrowRight size={14} className="transition group-hover:translate-x-1" />
                 </span>
               </div>
