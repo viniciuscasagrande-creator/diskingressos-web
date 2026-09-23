@@ -215,7 +215,7 @@ export const SpotifyCampaignWizardModal: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-[#0f172a] rounded-2xl shadow-2xl border border-[#1e293b] w-full max-w-2xl overflow-hidden flex flex-col max-h-[88vh] text-white">
+      <div className="bg-[#0f172a] rounded-2xl shadow-2xl border border-[#1e293b] w-full max-w-3xl overflow-hidden flex flex-col max-h-[88vh] text-white">
         {/* Header */}
         <div className="px-5 py-3 bg-[#0B132B] text-white flex items-center justify-between border-b border-[#1e293b] shrink-0">
           <div className="flex items-center gap-2.5">
@@ -268,7 +268,7 @@ export const SpotifyCampaignWizardModal: React.FC<Props> = ({
                   </span>
                 </div>
                 {idx < steps.length - 1 && (
-                  <div className={`h-[1px] grow min-w-2 max-w-6 ${step > s.num ? 'bg-[#1DB954]/60' : 'bg-slate-700/60'}`} />
+                  <div className={`h-[1px] grow min-w-2 max-w-8 ${step > s.num ? 'bg-[#1DB954]/60' : 'bg-slate-700/60'}`} />
                 )}
               </React.Fragment>
             ))}
