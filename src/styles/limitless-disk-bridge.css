@@ -819,3 +819,28 @@
   color: #cbd5e1 !important;
 }
 
+/* Status Faciais, Participantes & Novo Evento */
+.dark .disk-limitless-page .facial-kpis>div,
+[data-theme='dark'] .disk-limitless-page .facial-kpis>div {
+  background: var(--disk-bg-surface, #1e293b) !important;
+  border: 1px solid var(--disk-border-default, #334155) !important;
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .disk-limitless-page .checkin-btn.undo,
+[data-theme='dark'] .disk-limitless-page .checkin-btn.undo {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+}
+.dark .disk-limitless-page .wizard-steps,
+[data-theme='dark'] .disk-limitless-page .wizard-steps,
+.dark .disk-limitless-page .preview-card,
+[data-theme='dark'] .disk-limitless-page .preview-card,
+.dark .disk-limitless-page .help-card,
+[data-theme='dark'] .disk-limitless-page .help-card {
+  background: var(--disk-bg-surface, #1e293b) !important;
+  border: 1px solid var(--disk-border-default, #334155) !important;
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+
+

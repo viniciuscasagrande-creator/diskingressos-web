@@ -10540,3 +10540,183 @@ html[data-theme='light'] {
   color: #94a3b8 !important;
 }
 
+/* ========================================================================== 
+   Disk — Dark Theme: Status Faciais, Participantes & Criar Novo Evento
+   ========================================================================== */
+
+/* 1. Status Faciais (/app/facial) */
+.dark .facial-kpis>div,
+[data-theme='dark'] .facial-kpis>div {
+  background: var(--disk-bg-surface, #1e293b) !important;
+  border: 1px solid var(--disk-border-default, #334155) !important;
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .facial-kpis small,
+[data-theme='dark'] .facial-kpis small {
+  color: var(--disk-text-muted, #94a3b8) !important;
+}
+.dark .facial-kpis strong,
+[data-theme='dark'] .facial-kpis strong {
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .facial-kpis em,
+[data-theme='dark'] .facial-kpis em {
+  color: #64748b !important;
+}
+.dark .kpi-icon.success,
+[data-theme='dark'] .kpi-icon.success {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+}
+.dark .kpi-icon.warning,
+[data-theme='dark'] .kpi-icon.warning {
+  background: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+}
+.dark .kpi-icon.neutral,
+[data-theme='dark'] .kpi-icon.neutral {
+  background: rgba(100, 116, 139, 0.15) !important;
+  color: #94a3b8 !important;
+}
+.dark .facial-card,
+[data-theme='dark'] .facial-card {
+  border-bottom-color: var(--disk-border-subtle, #334155) !important;
+}
+.dark .facial-card:nth-child(odd),
+[data-theme='dark'] .facial-card:nth-child(odd) {
+  border-right-color: var(--disk-border-subtle, #334155) !important;
+}
+.dark .facial-photo,
+[data-theme='dark'] .facial-photo {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+  border: 1px solid #334155 !important;
+}
+.dark .facial-copy strong,
+[data-theme='dark'] .facial-copy strong {
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .facial-copy small,
+[data-theme='dark'] .facial-copy small {
+  color: var(--disk-text-muted, #94a3b8) !important;
+}
+
+/* 2. Participantes (/app/participants) */
+.dark .checkin-btn.undo,
+[data-theme='dark'] .checkin-btn.undo {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #334155 !important;
+  transition: all 0.15s ease !important;
+}
+.dark .checkin-btn.undo:hover,
+[data-theme='dark'] .checkin-btn.undo:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+.dark .person-avatar,
+[data-theme='dark'] .person-avatar {
+  background: rgba(37, 99, 235, 0.18) !important;
+  color: #60a5fa !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+/* 3. Criar Novo Evento (/app/new-event & /app/edit-event) */
+.dark .wizard-steps,
+[data-theme='dark'] .wizard-steps {
+  background: var(--disk-bg-surface, #1e293b) !important;
+  border: 1px solid var(--disk-border-default, #334155) !important;
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .wizard-steps button,
+[data-theme='dark'] .wizard-steps button {
+  color: var(--disk-text-muted, #94a3b8) !important;
+}
+.dark .wizard-steps button>span,
+[data-theme='dark'] .wizard-steps button>span {
+  background: rgba(51, 65, 85, 0.6) !important;
+  color: #cbd5e1 !important;
+}
+.dark .wizard-steps button.active,
+[data-theme='dark'] .wizard-steps button.active {
+  color: #38bdf8 !important;
+}
+.dark .wizard-steps button.active>span,
+[data-theme='dark'] .wizard-steps button.active>span {
+  background: rgba(37, 99, 235, 0.25) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+}
+.dark .preview-card,
+[data-theme='dark'] .preview-card {
+  background: var(--disk-bg-surface, #1e293b) !important;
+  border: 1px solid var(--disk-border-default, #334155) !important;
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .preview-cover,
+[data-theme='dark'] .preview-cover {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  color: #94a3b8 !important;
+  border-bottom: 1px solid #334155 !important;
+}
+.dark .preview-cover span,
+[data-theme='dark'] .preview-cover span {
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .preview-cover small,
+[data-theme='dark'] .preview-cover small {
+  color: #64748b !important;
+}
+.dark .preview-content h3,
+[data-theme='dark'] .preview-content h3 {
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .preview-content p,
+[data-theme='dark'] .preview-content p {
+  color: var(--disk-text-muted, #94a3b8) !important;
+}
+.dark .preview-status,
+[data-theme='dark'] .preview-status {
+  border-top: 1px solid #334155 !important;
+  color: var(--disk-text-muted, #94a3b8) !important;
+}
+.dark .help-card,
+[data-theme='dark'] .help-card {
+  background: var(--disk-bg-surface, #1e293b) !important;
+  border: 1px solid var(--disk-border-default, #334155) !important;
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .help-card strong,
+[data-theme='dark'] .help-card strong {
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .help-card li,
+[data-theme='dark'] .help-card li {
+  color: var(--disk-text-muted, #94a3b8) !important;
+}
+.dark .help-card li:before,
+[data-theme='dark'] .help-card li:before {
+  border-color: #475569 !important;
+}
+.dark .help-card li.done,
+[data-theme='dark'] .help-card li.done {
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .help-card li.done:before,
+[data-theme='dark'] .help-card li.done:before {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+  box-shadow: inset 0 0 0 3px #1e293b !important;
+}
+.dark .section-divider,
+[data-theme='dark'] .section-divider {
+  background: var(--disk-border-default, #334155) !important;
+}
+.dark .section-icon,
+[data-theme='dark'] .section-icon {
+  background: rgba(37, 99, 235, 0.15) !important;
+  color: #60a5fa !important;
+}
+
+
