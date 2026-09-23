@@ -100,14 +100,17 @@ Para ambiente de desenvolvimento local, utilize as credenciais pré-configuradas
 
 ## 📂 Estrutura do Repositório
 
+Consulte o índice completo em [**docs/README.md**](docs/README.md).
+
 ```text
 safesaff/
-├── docs/                        # Documentação histórica de fases, arquitetura e relatórios
-│   ├── architecture/            # Decisões de backend, segurança e infraestrutura
-│   ├── phases/                  # Especificação das fases de desenvolvimento
-│   └── reports/                 # Evidências e matrizes de homologação
+├── docs/                        # Central de documentação, arquitetura, fases e relatórios
+│   ├── architecture/            # Decisões de backend, segurança e Design System
+│   ├── phases/                  # Especificação das fases de desenvolvimento e manifestos
+│   └── reports/                 # Evidências, ajustes visuais e matrizes de homologação
 ├── prisma/                      # Modelagem de dados (SQLite local / PostgreSQL produção)
 ├── scripts/                     # Scripts de verificação, gates de CI e deploy guard
+├── server/                      # API backend Node/Express estruturada (rotas, domínios, serviços)
 ├── src/
 │   ├── app/                     # AppShell, navegação e layout mestre
 │   ├── auth/                    # Contexto de autenticação, JWT e RBAC multi-tenant
