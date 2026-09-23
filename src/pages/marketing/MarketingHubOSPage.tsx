@@ -449,15 +449,15 @@ export default function MarketingHubOSPage(p: Props) {
             {recentPurchases.map((rp, idx) => (
               <div key={idx} className="flex justify-between items-center py-1">
                 <div>
-                  <div className="font-bold text-slate-900 text-xs">
-                    {rp.name} · <span className="font-medium text-emerald-600">{rp.ticket}</span>
+                  <div className="font-bold text-slate-100 text-xs">
+                    {rp.name} · <span className="font-medium text-emerald-400">{rp.ticket}</span>
                   </div>
                   <small className="text-slate-400">
                     {rp.channel} · {rp.event}
                   </small>
                 </div>
                 <div className="text-right">
-                  <span className="font-bold text-slate-900 text-xs block">{rp.amount}</span>
+                  <span className="font-bold text-slate-100 text-xs block">{rp.amount}</span>
                   <small className="text-slate-400">{rp.time}</small>
                 </div>
               </div>
@@ -476,30 +476,30 @@ export default function MarketingHubOSPage(p: Props) {
       {/* 5. REFINED: Gráfico Moderno de Evolução Diária de Vendas (R$) & Funil 360° */}
       <div className="marketing-os-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '14px' }}>
         {/* Timeline Sales Evolution Chart (Refined Modern Look) */}
-        <div className="marketing-os-panel" style={{ background: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)' }}>
+        <div className="marketing-os-panel" style={{ background: 'var(--ll-surface, #1e293b)', padding: '20px', borderRadius: '12px', border: '1px solid var(--ll-border, #334155)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>Evolução Diária de Vendas (R$)</h3>
-                <span style={{ fontSize: '11px', fontWeight: 800, color: '#16A34A', background: '#DCFCE7', padding: '2px 8px', borderRadius: '999px', border: '1px solid #BBF7D0' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#F8FAFC' }}>Evolução Diária de Vendas (R$)</h3>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#34D399', background: 'rgba(16, 185, 129, 0.15)', padding: '2px 8px', borderRadius: '999px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                   Pico na Virada 🔥
                 </span>
               </div>
-              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#64748B' }}>
+              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94A3B8' }}>
                 Curva de faturamento e investimento em mídia ao longo do período
               </p>
             </div>
 
             {/* Context Badge of Selected Bar */}
             {selectedBar && (
-              <div style={{ textAlign: 'right', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                <span style={{ fontSize: '10px', fontWeight: 700, color: '#64748B', display: 'block', textTransform: 'uppercase' }}>
+              <div style={{ textAlign: 'right', background: 'rgba(15, 23, 42, 0.6)', padding: '6px 12px', borderRadius: '8px', border: '1px solid #334155' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#94A3B8', display: 'block', textTransform: 'uppercase' }}>
                   {selectedBar.day} ({selectedBar.date})
                 </span>
-                <strong style={{ fontSize: '14px', fontWeight: 900, color: '#16A34A' }}>
+                <strong style={{ fontSize: '14px', fontWeight: 900, color: '#34D399' }}>
                   R$ {selectedBar.revenue.toLocaleString('pt-BR')},00
                 </strong>
-                <small style={{ display: 'block', fontSize: '10px', color: '#475569' }}>
+                <small style={{ display: 'block', fontSize: '10px', color: '#94A3B8' }}>
                   {selectedBar.tickets} ingressos · {selectedBar.roas} ROAS
                 </small>
               </div>
@@ -507,11 +507,11 @@ export default function MarketingHubOSPage(p: Props) {
           </div>
 
           {/* Graphical Grid Container */}
-          <div style={{ position: 'relative', background: 'linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%)', borderRadius: '8px', padding: '16px 12px 10px', border: '1px solid #F1F5F9' }}>
+          <div style={{ position: 'relative', background: 'rgba(15, 23, 42, 0.4)', borderRadius: '8px', padding: '16px 12px 10px', border: '1px solid rgba(51, 65, 85, 0.4)' }}>
             {/* Horizontal Background Guidelines */}
-            <div style={{ position: 'absolute', top: '20px', left: '12px', right: '12px', borderBottom: '1px dashed #E2E8F0', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', top: '70px', left: '12px', right: '12px', borderBottom: '1px dashed #E2E8F0', pointerEvents: 'none' }} />
-            <div style={{ position: 'absolute', top: '120px', left: '12px', right: '12px', borderBottom: '1px dashed #E2E8F0', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '20px', left: '12px', right: '12px', borderBottom: '1px dashed rgba(51, 65, 85, 0.4)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '70px', left: '12px', right: '12px', borderBottom: '1px dashed rgba(51, 65, 85, 0.4)', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', top: '120px', left: '12px', right: '12px', borderBottom: '1px dashed rgba(51, 65, 85, 0.4)', pointerEvents: 'none' }} />
 
             {/* 7 Daily Bars */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '10px', alignItems: 'end', height: '150px', position: 'relative', zIndex: 2 }}>
@@ -541,7 +541,7 @@ export default function MarketingHubOSPage(p: Props) {
                       style={{
                         fontSize: '10px',
                         fontWeight: 800,
-                        color: isSelected ? '#16A34A' : '#64748B',
+                        color: isSelected ? '#34D399' : '#94A3B8',
                         transition: 'all 0.2s ease',
                         transform: isSelected ? 'scale(1.1)' : 'scale(1)'
                       }}
@@ -559,9 +559,9 @@ export default function MarketingHubOSPage(p: Props) {
                           ? 'linear-gradient(180deg, #22C55E 0%, #15803D 100%)'
                           : isSelected
                           ? 'linear-gradient(180deg, #3B82F6 0%, #1D4ED8 100%)'
-                          : 'linear-gradient(180deg, #93C5FD 0%, #3B82F6 100%)',
+                          : 'linear-gradient(180deg, #60A5FA 0%, #2563EB 100%)',
                         borderRadius: '6px 6px 3px 3px',
-                        boxShadow: isSelected ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none',
+                        boxShadow: isSelected ? '0 4px 12px rgba(37, 99, 235, 0.4)' : 'none',
                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                         transform: isSelected ? 'translateY(-2px)' : 'none'
                       }}
@@ -569,10 +569,10 @@ export default function MarketingHubOSPage(p: Props) {
 
                     {/* Day & Date Label */}
                     <div style={{ textAlign: 'center', marginTop: '2px' }}>
-                      <span style={{ fontSize: '11px', fontWeight: isSelected ? 800 : 700, color: isSelected ? '#0F172A' : '#64748B', display: 'block' }}>
+                      <span style={{ fontSize: '11px', fontWeight: isSelected ? 800 : 700, color: isSelected ? '#F8FAFC' : '#94A3B8', display: 'block' }}>
                         {d.day}
                       </span>
-                      <small style={{ fontSize: '9px', color: '#94A3B8', display: 'block' }}>{d.date}</small>
+                      <small style={{ fontSize: '9px', color: '#64748B', display: 'block' }}>{d.date}</small>
                     </div>
                   </div>
                 )
@@ -581,36 +581,36 @@ export default function MarketingHubOSPage(p: Props) {
           </div>
 
           {/* Footer of Chart */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid #F1F5F9', fontSize: '11px', color: '#64748B' }}>
-            <span>Média diária do período: <strong>R$ 27.820,00</strong></span>
-            <span style={{ color: '#16A34A', fontWeight: 700 }}>● Maior volume: Sexta-feira (Virada de Lote)</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid rgba(51, 65, 85, 0.4)', fontSize: '11px', color: '#94A3B8' }}>
+            <span>Média diária do período: <strong style={{ color: '#F8FAFC' }}>R$ 27.820,00</strong></span>
+            <span style={{ color: '#34D399', fontWeight: 700 }}>● Maior volume: Sexta-feira (Virada de Lote)</span>
           </div>
         </div>
 
         {/* Full-Funnel Breakdown */}
-        <div className="marketing-os-panel" style={{ background: '#FFFFFF', padding: '20px', borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)' }}>
+        <div className="marketing-os-panel" style={{ background: 'var(--ll-surface, #1e293b)', padding: '20px', borderRadius: '12px', border: '1px solid var(--ll-border, #334155)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)' }}>
           <div className="panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>Funil de Conversão Multicanal</h3>
-              <small style={{ color: '#64748B' }}>Taxa de passagem desde o primeiro anúncio até o ingresso</small>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#F8FAFC' }}>Funil de Conversão Multicanal</h3>
+              <small style={{ color: '#94A3B8' }}>Taxa de passagem desde o primeiro anúncio até o ingresso</small>
             </div>
-            <span style={{ fontSize: '11px', fontWeight: 800, color: '#2563EB', background: '#EFF6FF', padding: '2px 8px', borderRadius: '999px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 800, color: '#60A5FA', background: 'rgba(37, 99, 235, 0.2)', border: '1px solid rgba(37, 99, 235, 0.4)', padding: '2px 8px', borderRadius: '999px' }}>
               Full Funnel
             </span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {funnelSteps.map((step, idx) => (
-              <div key={idx} style={{ padding: '8px 10px', background: '#F8FAFC', borderRadius: '8px', border: '1px solid #F1F5F9' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#0F172A' }}>
+              <div key={idx} style={{ padding: '8px 10px', background: 'rgba(15, 23, 42, 0.5)', borderRadius: '8px', border: '1px solid rgba(51, 65, 85, 0.4)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#F8FAFC' }}>
                   <span>{step.label}</span>
-                  <strong style={{ color: idx === 4 ? '#16A34A' : '#2563EB', fontSize: '13px' }}>{step.value}</strong>
+                  <strong style={{ color: idx === 4 ? '#34D399' : '#60A5FA', fontSize: '13px' }}>{step.value}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                  <small style={{ fontSize: '10px', color: '#64748B' }}>{step.sub}</small>
-                  <span style={{ fontSize: '10px', fontWeight: 800, color: '#475569' }}>{step.pct}</span>
+                  <small style={{ fontSize: '10px', color: '#94A3B8' }}>{step.sub}</small>
+                  <span style={{ fontSize: '10px', fontWeight: 800, color: '#CBD5E1' }}>{step.pct}</span>
                 </div>
-                <div style={{ width: '100%', height: '5px', background: '#E2E8F0', borderRadius: '999px', marginTop: '4px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '5px', background: 'rgba(51, 65, 85, 0.6)', borderRadius: '999px', marginTop: '4px', overflow: 'hidden' }}>
                   <div
                     style={{
                       width: step.pct,

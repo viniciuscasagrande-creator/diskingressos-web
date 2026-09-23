@@ -616,4 +616,206 @@
   border-radius: 12px;
   padding: 1.25rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  color: var(--ll-text);
 }
+
+.disk-limitless-page .marketing-os-panel h3 {
+  color: var(--ll-text);
+}
+
+.disk-limitless-page .marketing-os-panel > button {
+  background: var(--ll-muted) !important;
+  color: var(--ll-primary) !important;
+  border: 1px solid var(--ll-border) !important;
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+}
+
+.dark .disk-limitless-page .marketing-os-panel > button,
+[data-theme='dark'] .disk-limitless-page .marketing-os-panel > button {
+  background: rgba(30, 41, 59, 0.9) !important;
+  color: #60a5fa !important;
+  border: 1px solid #334155 !important;
+}
+
+.dark .disk-limitless-page .marketing-os-panel > button:hover,
+[data-theme='dark'] .disk-limitless-page .marketing-os-panel > button:hover {
+  background: rgba(51, 65, 85, 0.9) !important;
+  color: #93c5fd !important;
+  border-color: #475569 !important;
+}
+
+/* Health Gauge */
+.dark .disk-limitless-page .health-ring:after,
+[data-theme='dark'] .disk-limitless-page .health-ring:after {
+  background: var(--ll-surface, #1e293b) !important;
+}
+
+.dark .disk-limitless-page .health-ring strong,
+[data-theme='dark'] .disk-limitless-page .health-ring strong {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .health-ring small,
+[data-theme='dark'] .disk-limitless-page .health-ring small {
+  color: var(--ll-text-muted, #94a3b8) !important;
+}
+
+.dark .disk-limitless-page .health-bars span,
+[data-theme='dark'] .disk-limitless-page .health-bars span {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .health-bars i,
+[data-theme='dark'] .disk-limitless-page .health-bars i {
+  background: rgba(51, 65, 85, 0.5) !important;
+}
+
+/* Alert Lines */
+.dark .disk-limitless-page .alert-line,
+[data-theme='dark'] .disk-limitless-page .alert-line {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark .disk-limitless-page .alert-line div,
+[data-theme='dark'] .disk-limitless-page .alert-line div {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .alert-line b,
+[data-theme='dark'] .disk-limitless-page .alert-line b {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .alert-line small,
+[data-theme='dark'] .disk-limitless-page .alert-line small {
+  color: var(--ll-text-muted, #94a3b8) !important;
+}
+
+/* Module Columns */
+.dark .disk-limitless-page .module-col,
+[data-theme='dark'] .disk-limitless-page .module-col {
+  background: rgba(30, 41, 59, 0.5) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .disk-limitless-page .module-col:nth-child(1),
+[data-theme='dark'] .disk-limitless-page .module-col:nth-child(1) {
+  background: rgba(37, 99, 235, 0.08) !important;
+  border-color: rgba(37, 99, 235, 0.25) !important;
+}
+
+.dark .disk-limitless-page .module-col:nth-child(2),
+[data-theme='dark'] .disk-limitless-page .module-col:nth-child(2) {
+  background: rgba(236, 72, 153, 0.08) !important;
+  border-color: rgba(236, 72, 153, 0.25) !important;
+}
+
+.dark .disk-limitless-page .module-col:nth-child(3),
+[data-theme='dark'] .disk-limitless-page .module-col:nth-child(3) {
+  background: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+.dark .disk-limitless-page .module-col:nth-child(4),
+[data-theme='dark'] .disk-limitless-page .module-col:nth-child(4) {
+  background: rgba(168, 85, 247, 0.08) !important;
+  border-color: rgba(168, 85, 247, 0.25) !important;
+}
+
+.dark .disk-limitless-page .module-col h4,
+[data-theme='dark'] .disk-limitless-page .module-col h4 {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .module-col > div,
+[data-theme='dark'] .disk-limitless-page .module-col > div {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(51, 65, 85, 0.3) !important;
+  border-radius: 9px !important;
+}
+
+.dark .disk-limitless-page .module-col > div button,
+[data-theme='dark'] .disk-limitless-page .module-col > div button {
+  color: #cbd5e1 !important;
+}
+
+.dark .disk-limitless-page .module-col > div button:hover,
+[data-theme='dark'] .disk-limitless-page .module-col > div button:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #ffffff !important;
+}
+
+.dark .disk-limitless-page .module-col .module-access,
+[data-theme='dark'] .disk-limitless-page .module-col .module-access {
+  color: #60a5fa !important;
+}
+
+/* Channels & Mini-stats & Goal */
+.dark .disk-limitless-page .channel-list span,
+[data-theme='dark'] .disk-limitless-page .channel-list span {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .channel-list i,
+[data-theme='dark'] .disk-limitless-page .channel-list i {
+  background: rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .disk-limitless-page .mini-stats span,
+.dark .disk-limitless-page .goal-box,
+[data-theme='dark'] .disk-limitless-page .mini-stats span,
+[data-theme='dark'] .disk-limitless-page .goal-box {
+  background: rgba(15, 23, 42, 0.5) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .disk-limitless-page .mini-stats b,
+.dark .disk-limitless-page .goal-box strong,
+[data-theme='dark'] .disk-limitless-page .mini-stats b,
+[data-theme='dark'] .disk-limitless-page .goal-box strong {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .mini-stats small,
+.dark .disk-limitless-page .goal-box span,
+.dark .disk-limitless-page .goal-box small,
+[data-theme='dark'] .disk-limitless-page .mini-stats small,
+[data-theme='dark'] .disk-limitless-page .goal-box span,
+[data-theme='dark'] .disk-limitless-page .goal-box small {
+  color: var(--ll-text-muted, #94a3b8) !important;
+}
+
+.dark .disk-limitless-page .top-table > div,
+[data-theme='dark'] .disk-limitless-page .top-table > div {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark .disk-limitless-page .top-table b,
+[data-theme='dark'] .disk-limitless-page .top-table b {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .top-table small,
+[data-theme='dark'] .disk-limitless-page .top-table small {
+  color: var(--ll-text-muted, #94a3b8) !important;
+}
+
+/* Tip */
+.dark .disk-limitless-page .tip,
+[data-theme='dark'] .disk-limitless-page .tip {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .disk-limitless-page .tip h3,
+[data-theme='dark'] .disk-limitless-page .tip h3 {
+  color: var(--ll-text, #f8fafc) !important;
+}
+
+.dark .disk-limitless-page .tip p,
+[data-theme='dark'] .disk-limitless-page .tip p {
+  color: #cbd5e1 !important;
+}
+

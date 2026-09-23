@@ -10486,3 +10486,57 @@ html[data-theme='light'] {
   background: var(--disk-color-success-subtle) !important;
   border-color: var(--disk-color-success-border) !important;
 }
+
+/* ========================================================================== 
+   Disk — Ponte de tema real para Marketing OS
+   ========================================================================== */
+.dark .marketing-os-panel,
+[data-theme='dark'] .marketing-os-panel {
+  background: var(--disk-bg-surface, #1e293b) !important;
+  border-color: var(--disk-border-default, #334155) !important;
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .marketing-os-panel h3,
+[data-theme='dark'] .marketing-os-panel h3 {
+  color: var(--disk-text-primary, #f8fafc) !important;
+}
+.dark .marketing-os-panel>button,
+[data-theme='dark'] .marketing-os-panel>button {
+  background: #1e293b !important;
+  color: #38bdf8 !important;
+  border: 1px solid #334155 !important;
+}
+.dark .marketing-os-panel>button:hover,
+[data-theme='dark'] .marketing-os-panel>button:hover {
+  background: #334155 !important;
+  color: #7dd3fc !important;
+}
+.dark .health-ring:after,
+[data-theme='dark'] .health-ring:after {
+  background: #1e293b !important;
+}
+.dark .health-ring strong,
+[data-theme='dark'] .health-ring strong {
+  color: #f8fafc !important;
+}
+.dark .health-ring small,
+[data-theme='dark'] .health-ring small {
+  color: #94a3b8 !important;
+}
+.dark .alert-line,
+[data-theme='dark'] .alert-line {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+.dark .alert-line div,
+[data-theme='dark'] .alert-line div {
+  color: #f8fafc !important;
+}
+.dark .alert-line b,
+[data-theme='dark'] .alert-line b {
+  color: #f8fafc !important;
+}
+.dark .alert-line small,
+[data-theme='dark'] .alert-line small {
+  color: #94a3b8 !important;
+}
+
