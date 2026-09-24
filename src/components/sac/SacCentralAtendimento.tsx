@@ -2,7 +2,7 @@ import { useState, useMemo, type FormEvent } from 'react'
 import {
   Search, Phone, Mail, MessageSquare, Star, Clock3, Users,
   CheckCircle2, AlertTriangle, ChevronRight, SendHorizontal, Paperclip,
-  Bot, Sparkles, HelpCircle, Ticket, RotateCcw, QrCode, Shield, ArrowRightLeft,
+  Bot, Sparkles, HelpCircle, Ticket, TicketPlus, RotateCcw, QrCode, Shield, ArrowRightLeft,
   UserCheck, ExternalLink, Download, Plus, Filter, ThumbsUp, ChevronDown,
   RefreshCw, Check, X, ShieldAlert, FileText, ArrowUpRight, Zap, Info,
   CircleDot, Radio, MessageCircle, AlertCircle
@@ -679,6 +679,20 @@ export function SacCentralAtendimento({ notify, onOpenTicketTab, onOpenSearch360
             <Plus size={14} />
             <span>Nova Conversa</span>
           </button>
+
+          {/* Botão de Destaque: Abrir Ticket */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onOpenTicketTab) onOpenTicketTab()
+              notify('Abrindo formulário de protocolo de novo ticket com SLA!')
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-md hover:shadow-emerald-500/30 border border-emerald-400/50 transition cursor-pointer"
+            title="Abrir Novo Ticket no Sistema"
+          >
+            <TicketPlus size={15} className="text-emerald-100" />
+            <span>Abrir Ticket</span>
+          </button>
         </div>
       </div>
 
@@ -1165,6 +1179,19 @@ export function SacCentralAtendimento({ notify, onOpenTicketTab, onOpenSearch360
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
+                  onClick={() => {
+                    if (onOpenTicketTab) onOpenTicketTab()
+                    notify(`Convertendo atendimento de ${selectedConv.customerName} em Ticket Oficial com SLA!`)
+                  }}
+                  className="px-2.5 py-1 text-xs font-bold rounded bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border border-emerald-400/40 flex items-center gap-1 shadow-xs cursor-pointer"
+                  title="Abrir Ticket formal a partir deste atendimento"
+                >
+                  <TicketPlus size={13} />
+                  <span>Abrir Ticket</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setShowTransferModal(true)}
                   className="px-2 py-1 text-xs font-semibold rounded bg-[#1e293b] hover:bg-[#283548] text-slate-200 border border-[#334155] flex items-center gap-1 cursor-pointer"
                   title="Transferir para outro operador ou fila"
@@ -1574,9 +1601,9 @@ export function SacCentralAtendimento({ notify, onOpenTicketTab, onOpenSearch360
                   if (onOpenTicketTab) onOpenTicketTab()
                   else notify(`Novo chamado protocolado para ${selectedConv.customerName}!`)
                 }}
-                className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-semibold bg-[#151c27] hover:bg-[#1e293b] text-slate-200 border border-[#283548] transition cursor-pointer"
+                className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg text-xs font-extrabold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-md hover:shadow-emerald-500/30 border border-emerald-400/50 transition cursor-pointer"
               >
-                <Ticket size={13} className="text-blue-400" />
+                <TicketPlus size={15} className="text-emerald-100" />
                 <span>Abrir Ticket</span>
               </button>
 

@@ -23,6 +23,12 @@ Foi implementado o pacote de evolução do módulo **SAC / Atendimento**, manten
    - **Solicitar Estorno:** Fluxo amparado pelas regras do CDC e políticas financeiras com protocolo automático para o Centro de Controle de Estornos.
    - **Visualizador de QR Code:** Renderização de alta fidelidade para conferência e envio imediato.
    - **Base de Conhecimento Contextual:** Consulta de artigos e inserção direta da resposta no chat sem abandonar a conversa.
+4. **Destaque Visual Exclusivo para Abertura de Ticket (TicketPlus)**:
+   - Substituição do ícone genérico `Plus` pelo ícone semântico especializado **`TicketPlus`** em todas as áreas do SAC.
+   - **Cabeçalho Global do SAC:** Adicionado botão CTA em destaque com gradiente esmeralda (`from-emerald-600 via-teal-600 to-emerald-500`), sombra suave e tag `+ Novo`, acessível de qualquer aba.
+   - **Carrossel de Lançamento (Launcher Bar):** Adicionado círculo destacado `Abrir Ticket` com halo esmeralda e ícone `TicketPlus`.
+   - **Central de Atendimento:** Botão de destaque "Abrir Ticket" na barra superior, no cabeçalho da conversa ativa e no painel de Ações Rápidas.
+   - **Formulário de Protocolo Oficial (`activeTab === 'new'`):** Header corporativo escuro com badge "SLA Automático" e botão de submissão destacado.
 
 ---
 
@@ -30,9 +36,9 @@ Foi implementado o pacote de evolução do módulo **SAC / Atendimento**, manten
 
 | Arquivo | Tipo | Descrição |
 |---|---|---|
-| [`src/components/sac/SacCentralAtendimento.tsx`](file:///C:/Users/vinad/OneDrive/Desktop/safesaff/src/components/sac/SacCentralAtendimento.tsx) | Criado | Componente mestre da Central de Atendimento com cockpit operacional de 3 colunas, gestão de filas, lista de conversas, integração com Copilot IA, visualizador de QR Code e ações rápidas. |
-| [`src/pages/SupportPage.tsx`](file:///C:/Users/vinad/OneDrive/Desktop/safesaff/src/pages/SupportPage.tsx) | Alterado | Adição da tab `'central'` ao tipo `ServiceTab`, integração de `SacCentralAtendimento` no topo do launcher carousel (ao lado do Hub Geral), inclusão do card nos Módulos Principais do Hub Geral e nas Ações Rápidas, suporte ao modo `mode === 'central' \|\| mode === 'atendimento'`. |
-| [`RELATORIO_ATUALIZACAO_SAC.md`](file:///C:/Users/vinad/OneDrive/Desktop/safesaff/RELATORIO_ATUALIZACAO_SAC.md) | Criado | Relatório formal de homologação e auditoria técnica da entrega. |
+| [`src/components/sac/SacCentralAtendimento.tsx`](file:///C:/Users/vinad/OneDrive/Desktop/safesaff/src/components/sac/SacCentralAtendimento.tsx) | Criado/Atualizado | Componente mestre da Central de Atendimento com cockpit operacional de 3 colunas, gestão de filas, lista de conversas, integração com Copilot IA, visualizador de QR Code e botões destacados com `TicketPlus`. |
+| [`src/pages/SupportPage.tsx`](file:///C:/Users/vinad/OneDrive/Desktop/safesaff/src/pages/SupportPage.tsx) | Alterado | Adição da tab `'central'` ao `ServiceTab`, botão destacado no header com `TicketPlus`, botão `Abrir Ticket` no carrossel, botões de ação rápida e formulário modernizado de novo ticket. |
+| [`RELATORIO_ATUALIZACAO_SAC.md`](file:///C:/Users/vinad/OneDrive/Desktop/safesaff/RELATORIO_ATUALIZACAO_SAC.md) | Atualizado | Relatório formal de homologação e auditoria técnica da entrega. |
 
 ---
 

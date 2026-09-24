@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, type FormEvent } from 'react'
 import {
-  LayoutDashboard, Ticket, AlertTriangle, BookOpen, Users, Clock3, Plus, Search,
+  LayoutDashboard, Ticket, TicketPlus, AlertTriangle, BookOpen, Users, Clock3, Plus, Search,
   RefreshCw, CheckCircle2, MessageCircle, Mail, Phone, Globe, ShieldAlert,
   Send, UserCheck, Sparkles, Filter, ChevronRight, ArrowRight, ExternalLink,
   Flame, HelpCircle, FileText, CheckCheck, PlayCircle, XCircle, AlertCircle, Headphones, Link2, Sparkle,
@@ -349,6 +349,22 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
             <button
               type="button"
+              onClick={() => {
+                setActiveTab('new')
+                notify('Abertura de novo ticket acionada com SLA automático!')
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-extrabold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-md hover:shadow-emerald-500/30 border border-emerald-400/50 transition cursor-pointer"
+              title="Abrir Novo Ticket de Atendimento"
+            >
+              <TicketPlus size={15} className="text-emerald-100" />
+              <span>Abrir Ticket</span>
+              <span className="hidden sm:inline-block px-1.5 py-0.2 text-[9px] font-extrabold uppercase rounded bg-white/20 text-white">
+                + Novo
+              </span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => notify('12 notificações ativas: 1 War Room P1, 3 alertas de SLA e 8 novos chamados')}
               className="relative p-2 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/60 cursor-pointer"
               title="Notificações"
@@ -416,6 +432,29 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <span className="ds-mini-tag blue">5</span>
               </div>
               <span className="ds-launcher-label">Tickets</span>
+            </button>
+
+            <button
+              className={`ds-launcher-item ${activeTab === 'new' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveTab('new')
+                notify('Abertura de novo ticket acionada!')
+              }}
+              title="Abrir Novo Ticket / Protocolo Oficial"
+            >
+              <div
+                className="ds-launcher-circle"
+                style={{
+                  background: activeTab === 'new' ? undefined : 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.4) 100%)',
+                  borderColor: '#10b981',
+                  color: '#34d399',
+                  boxShadow: '0 0 14px rgba(16, 185, 129, 0.35)'
+                }}
+              >
+                <TicketPlus size={24} />
+                <span className="ds-mini-tag green" style={{ fontWeight: 800 }}>+ Ticket</span>
+              </div>
+              <span className="ds-launcher-label" style={{ color: '#34d399', fontWeight: 800 }}>Abrir Ticket</span>
             </button>
 
             <button className={`ds-launcher-item ${activeTab === 'inbox' ? 'active' : ''}`} onClick={() => setActiveTab('inbox')}>
@@ -681,7 +720,22 @@ export default function SupportPage({ events, producerId, producerName, mode = '
 
             <div className="ds-quick-actions-bar">
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('central')} style={{ background: 'rgba(59, 130, 246, 0.15)', borderColor: 'rgba(59, 130, 246, 0.4)', color: '#60a5fa', fontWeight: 'bold' }}><Headphones size={14} style={{ color: '#60a5fa' }} /> Central Ao Vivo</button>
-              <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#059669' }} /> Novo Ticket</button>
+              <button
+                className="ds-quick-action-pill"
+                onClick={() => {
+                  setActiveTab('new')
+                  notify('Abertura de novo ticket acionada com SLA automático!')
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.45) 100%)',
+                  borderColor: '#10b981',
+                  color: '#34d399',
+                  fontWeight: '800',
+                  boxShadow: '0 2px 10px rgba(16, 185, 129, 0.3)'
+                }}
+              >
+                <TicketPlus size={15} style={{ color: '#34d399' }} /> Abrir Novo Ticket
+              </button>
               <button className="ds-quick-action-pill" onClick={() => onNavigate('customer-search-hub')} style={{ background: 'rgba(255, 128, 71, 0.12)', borderColor: 'rgba(255, 128, 71, 0.35)', color: '#FF8047', fontWeight: 'bold' }}><Users size={14} style={{ color: '#FF8047' }} /> Central de Clientes</button>
               <button className="ds-quick-action-pill" onClick={() => onNavigate('tickets-hub')}><Ticket size={14} style={{ color: '#2563eb' }} /> Ingressos & QR</button>
               <button className="ds-quick-action-pill" onClick={() => onNavigate('access-control-hub')}><ScanLine size={14} style={{ color: '#059669' }} /> Disk Acesso</button>
@@ -702,7 +756,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
           <div style={{ marginTop: '10px' }}>
             <SacCentralAtendimento
               notify={notify}
-              onOpenTicketTab={() => setActiveTab('tickets')}
+              onOpenTicketTab={() => setActiveTab('new')}
               onOpenSearch360={(q) => {
                 setGlobalSearchInput(q)
                 handleGlobalSearch(q)
@@ -1084,8 +1138,23 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
 
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')} style={{ background: '#2563eb', color: '#fff', border: 0 }}>
-                  <Plus size={14} /> Novo Chamado
+                <button
+                  className="ds-quick-action-pill"
+                  onClick={() => {
+                    setActiveTab('new')
+                    notify('Abertura de novo ticket acionada com SLA automático!')
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: '#ffffff',
+                    border: '1px solid #34d399',
+                    fontWeight: '800',
+                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                    padding: '8px 16px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <TicketPlus size={16} /> Abrir Novo Ticket
                 </button>
                 <button className="ds-quick-action-pill" onClick={() => notify('Exportação de tickets concluída')}>
                   <Download size={14} /> Exportar CSV
@@ -1987,25 +2056,38 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 notify('Novo chamado protocolado com sucesso sob protocolo #DS-2026-984222!')
                 setActiveTab('tickets')
               }}
-              style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '24px', maxWidth: '800px', boxShadow: '0 1px 3px rgba(15,23,42,0.04)' }}
+              style={{ background: '#111722', border: '1px solid #1e293b', borderRadius: '16px', padding: '24px', maxWidth: '850px', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}
             >
-              <h3 style={{ margin: '0 0 16px', color: '#0f172a', fontSize: '18px' }}>Protocolar Novo Chamado no Disk Service</h3>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #1e293b' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', boxShadow: '0 0 16px rgba(16,185,129,0.35)' }}>
+                    <TicketPlus size={24} />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '18px', fontWeight: 800 }}>Abertura de Novo Ticket & Protocolo Oficial</h3>
+                    <p style={{ margin: '2px 0 0', color: '#94a3b8', fontSize: '12px' }}>Registro unificado com cálculo dinâmico de SLA e roteamento por prioridade</p>
+                  </div>
+                </div>
+                <span className="ds-badge green" style={{ padding: '6px 12px', fontSize: '11px', fontWeight: 800 }}>
+                  SLA Automático
+                </span>
+              </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Nome do Solicitante</label>
-                  <input type="text" placeholder="Nome completo" required style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a' }} />
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '4px' }}>Nome do Solicitante</label>
+                  <input type="text" placeholder="Nome completo" required style={{ width: '100%', background: '#151c27', border: '1px solid #283548', borderRadius: '8px', padding: '10px 12px', color: '#f8fafc' }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>E-mail ou Telefone</label>
-                  <input type="text" placeholder="joao@email.com ou (41) 99999-8888" required style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a' }} />
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '4px' }}>E-mail ou Telefone</label>
+                  <input type="text" placeholder="joao@email.com ou (41) 99999-8888" required style={{ width: '100%', background: '#151c27', border: '1px solid #283548', borderRadius: '8px', padding: '10px 12px', color: '#f8fafc' }} />
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '12px' }}>
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Canal de Entrada</label>
-                  <select style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '4px' }}>Canal de Entrada</label>
+                  <select style={{ width: '100%', background: '#151c27', border: '1px solid #283548', borderRadius: '8px', padding: '10px 12px', color: '#f8fafc' }}>
                     <option>WhatsApp</option>
                     <option>E-mail</option>
                     <option>Chat Web</option>
@@ -2013,8 +2095,8 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Prioridade (SLA)</label>
-                  <select style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '4px' }}>Prioridade (SLA)</label>
+                  <select style={{ width: '100%', background: '#151c27', border: '1px solid #283548', borderRadius: '8px', padding: '10px 12px', color: '#f8fafc' }}>
                     <option>P2 — Alto (1h FRT / 8h MTTR)</option>
                     <option>P1 — Crítico (15m FRT / 2h MTTR)</option>
                     <option>P3 — Médio (4h FRT / 24h MTTR)</option>
@@ -2022,8 +2104,8 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Evento Vinculado</label>
-                  <select style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a' }}>
+                  <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '4px' }}>Evento Vinculado</label>
+                  <select style={{ width: '100%', background: '#151c27', border: '1px solid #283548', borderRadius: '8px', padding: '10px 12px', color: '#f8fafc' }}>
                     <option>Festival XPTO 2026</option>
                     <option>Rock Arena Festival 2026</option>
                     <option>Seu Jorge — Turnê Exclusiva</option>
@@ -2032,17 +2114,28 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               </div>
 
               <div style={{ marginBottom: '12px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Assunto do Chamado</label>
-                <input type="text" placeholder="Ex: Dificuldade no recebimento de QR Code Pix" required style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a' }} />
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '4px' }}>Assunto do Chamado</label>
+                <input type="text" placeholder="Ex: Dificuldade no recebimento de QR Code Pix" required style={{ width: '100%', background: '#151c27', border: '1px solid #283548', borderRadius: '8px', padding: '10px 12px', color: '#f8fafc' }} />
               </div>
 
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 700, color: '#475569', display: 'block', marginBottom: '4px' }}>Descrição Detalhada do Problema</label>
-                <textarea placeholder="Relate as informações fornecidas pelo cliente..." rows={4} required style={{ width: '100%', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '10px 12px', color: '#0f172a' }} />
+                <label style={{ fontSize: '12px', fontWeight: 700, color: '#cbd5e1', display: 'block', marginBottom: '4px' }}>Descrição Detalhada do Problema</label>
+                <textarea placeholder="Relate as informações fornecidas pelo cliente..." rows={4} required style={{ width: '100%', background: '#151c27', border: '1px solid #283548', borderRadius: '8px', padding: '10px 12px', color: '#f8fafc' }} />
               </div>
 
-              <button type="submit" className="ds-search360-btn" style={{ background: '#2563eb', padding: '12px 24px' }}>
-                <Plus size={16} /> Protocolar Chamado com SLA Ativo
+              <button
+                type="submit"
+                className="ds-search360-btn"
+                style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  padding: '12px 24px',
+                  fontWeight: 800,
+                  border: '1px solid #34d399',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)',
+                  cursor: 'pointer'
+                }}
+              >
+                <TicketPlus size={16} /> Protocolar Chamado com SLA Ativo
               </button>
             </form>
           </div>
