@@ -2,7 +2,7 @@ export type Role = 'admin-master' | 'admin' | 'producer-admin' | 'producer-finan
 export type Producer = { id:number; name:string; document:string; status:'ativo'|'inativo' }
 export type AppUser = {
   id:number; name:string; email:string; password?:string; role:Role; producerId:number|null;
-  status:'ativo'|'inativo'; lastLogin?:string
+  status:'ativo'|'inativo'; lastLogin?:string; permissions?: Record<string, boolean>;
 }
 
 export const producers:Producer[] = [
@@ -35,4 +35,12 @@ export function canAccess(user:AppUser, area:'events'|'finance'|'pos'|'admin'|'m
   if(area==='sac') return ['producer-admin','producer-operation','viewer'].includes(user.role)
   if(area==='commercial') return ['producer-admin','commercial','viewer'].includes(user.role)
   return ['producer-admin','producer-operation','producer-marketing','viewer'].includes(user.role)
+}
+
+export function hasPermission(user: AppUser, permissionKey: string): boolean {
+  if (user.role === 'admin-master') return true
+  if (user.permissions && typeof user.permissions[permissionKey] === 'boolean') {
+    return user.permissions[permissionKey]
+  }
+  return true
 }

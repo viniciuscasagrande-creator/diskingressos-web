@@ -819,7 +819,7 @@
 
 /* --- Tabela do Demonstrativo Consolidado Original --- */
 .producer-ledger-table { padding-bottom: 0; }
-.table-scroll { overflow: auto; margin: 15px -19px 0; }
+.producer-ledger-table .table-scroll { overflow: auto; margin: 15px 0 0; }
 .producer-ledger-table table {
   width: 100%;
   border-collapse: collapse;

@@ -437,8 +437,8 @@ html[data-ui-framework='limitless'] #main-app-content > .disk-content-container 
   margin: 0 !important;
   padding-top: 8px !important;
   padding-bottom: 40px !important;
-  padding-left: 8px !important; /* Quase beirando a barra lateral esquerda */
-  padding-right: 12px !important; /* Expandindo ate a borda direita do monitor */
+  padding-left: 16px !important; /* Espacamento seguro da barra lateral */
+  padding-right: 16px !important; /* Espacamento seguro da borda direita */
   box-sizing: border-box !important;
 }
 
@@ -2892,6 +2892,16 @@ html body .table-card {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
 }
 
+#main-app-content .table-card .table-scroll,
+html body .table-card .table-scroll,
+#main-app-content .table-scroll,
+html body .table-scroll {
+  margin: 0 !important;
+  overflow-x: auto !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
 #main-app-content .table-tools,
 html body .table-tools {
   background: #0f172a !important;
@@ -2927,14 +2937,14 @@ html body .users-table th {
   background: #131b2e !important;
   color: #94a3b8 !important;
   border-bottom: 1px solid #1e293b !important;
-  padding: 14px 16px !important;
+  padding: 14px 20px !important;
 }
 
 #main-app-content .users-table td,
 html body .users-table td {
   border-bottom: 1px solid #1e293b !important;
   color: #cbd5e1 !important;
-  padding: 15px 16px !important;
+  padding: 15px 20px !important;
 }
 
 #main-app-content .users-table tr:hover td,
