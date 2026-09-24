@@ -47,3 +47,12 @@ Qualquer alteração feita no projeto deve passar nos três níveis de proteçã
 - Estados de interface devem ser apresentados traduzidos: `HEALTHY → Saudável`, `OPEN → Aberto`, `PENDING → Pendente`, `APPROVED → Aprovado`, etc.
 - Datas e números devem seguir a localização brasileira (`04/09/2026`, `R$ 1.842.630,45`).
 
+---
+
+## REGRA PERMANENTE: REALIZAR FLUXO GIT APÓS CADA ATUALIZAÇÃO
+
+> **SEMPRE EXECUTAR GIT (ADD, COMMIT, PUSH) AO TÉRMINO DE QUALQUER MODIFICAÇÃO OU PEDIDO DO USUÁRIO.**
+
+- Após concluir os testes, gates de validação e ajustes de qualquer tarefa, o agente DEVE automaticamente preparar (`git add`), comitar (`git commit -m "..."`) com mensagem descritiva em padrão convencional e enviar (`git push origin main`) as alterações para o repositório.
+- A árvore de trabalho deve sempre permanecer limpa (`working tree clean`).
+
