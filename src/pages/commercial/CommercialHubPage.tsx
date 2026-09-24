@@ -12,7 +12,9 @@ import {
   ExternalLink,
   ChevronRight,
   X,
-  ShieldCheck
+  ShieldCheck,
+  Plus,
+  Trash2
 } from 'lucide-react'
 import type { PageKey } from '../../components/ModuleSidebar'
 import { getAuthHeader } from '../../services/api'
@@ -579,13 +581,14 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
   }, [filteredEvents, eventPage, eventPageSize])
 
   // Abre Modal de Taxa Preenchido
-  const handleOpenFeeModal = (item: CommercialEventItem) => {
+  const handleOpenFeeModal = (item: CommercialEventItem, forceSpread?: boolean) => {
     setEditingItem(item)
     setServiceFeeType(item.serviceFeeType || 'percentage')
     setServiceFeePercent(item.serviceFeeBps ? (item.serviceFeeBps / 100).toFixed(1) : '10.0')
     setServiceFeeFixed(item.serviceFeeFixedCents ? (item.serviceFeeFixedCents / 100).toFixed(2) : '5.00')
     setServiceFeePaidBy(item.serviceFeePaidBy || 'buyer')
-    setSpreadEnabled(Boolean(item.spreadEnabled))
+    const hasSpread = forceSpread !== undefined ? forceSpread : Boolean(item.spreadEnabled)
+    setSpreadEnabled(hasSpread)
     setSpreadPercent(item.spreadBps ? (item.spreadBps / 100).toFixed(1) : '1.5')
     setAdvancedEnabled(Boolean(item.advancedEnabled))
     setAdvancedRate(item.advancedRateBps ? (item.advancedRateBps / 100).toFixed(1) : '2.5')
@@ -754,14 +757,33 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
       key: 'spread',
       header: 'Spread',
       align: 'center',
-      width: '90px',
+      width: '105px',
       render: (ev) =>
         ev.spreadEnabled ? (
-          <span className="text-purple-600 dark:text-purple-400 font-bold font-mono text-xs">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleOpenFeeModal(ev, true)
+            }}
+            className="px-2 py-0.5 rounded text-purple-600 dark:text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 font-bold font-mono text-xs transition cursor-pointer"
+            title="Ajustar taxa de spread deste evento"
+          >
             {(ev.spreadBps / 100).toFixed(1)}%
-          </span>
+          </button>
         ) : (
-          <span className="text-[var(--disk-text-muted,#64748b)] text-xs">—</span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleOpenFeeModal(ev, true)
+            }}
+            className="px-2 py-0.5 rounded text-[11px] font-semibold text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 border border-purple-300 dark:border-purple-800 transition inline-flex items-center gap-1 cursor-pointer"
+            title="Inserir e adicionar taxa de spread do evento"
+          >
+            <Plus className="w-3 h-3" />
+            <span>Adicionar</span>
+          </button>
         )
     },
     {
@@ -1294,7 +1316,22 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
               </div>
 
               <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
-                <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Spread Comercial</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Spread Comercial</span>
+                  {!selectedEventDossier.spreadEnabled && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ev = selectedEventDossier
+                        setSelectedEventDossier(null)
+                        handleOpenFeeModal(ev, true)
+                      }}
+                      className="text-[10px] text-purple-600 dark:text-purple-400 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
+                    >
+                      <Plus className="w-2.5 h-2.5" /> Adicionar
+                    </button>
+                  )}
+                </div>
                 <span className="text-base font-black text-purple-600 dark:text-purple-400">
                   {selectedEventDossier.spreadEnabled ? `${(selectedEventDossier.spreadBps / 100).toFixed(1)}%` : 'Inativo'}
                 </span>
@@ -1440,16 +1477,101 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
               </div>
             </div>
 
+            {/* 2. TAXA DE SPREAD DO EVENTO */}
+            <div className="p-4 rounded-xl bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)] space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <label className="text-xs font-bold text-[var(--disk-text-primary,#0f172a)] uppercase tracking-wider block">
+                    2. Taxa de Spread do Evento
+                  </label>
+                  <span className="text-[11px] text-[var(--disk-text-muted,#64748b)]">
+                    Margem adicional retida sobre o volume de transações e adquirentes do evento
+                  </span>
+                </div>
+
+                {!spreadEnabled ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSpreadEnabled(true)
+                      if (!spreadPercent || spreadPercent === '0') setSpreadPercent('1.5')
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs self-start sm:self-auto"
+                    data-testid="btn-add-spread-modal"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Inserir e Adicionar Taxa de Spread</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setSpreadEnabled(false)}
+                    className="px-2.5 py-1 rounded-lg border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition flex items-center gap-1 cursor-pointer self-start sm:self-auto"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    <span>Remover Spread</span>
+                  </button>
+                )}
+              </div>
+
+              {spreadEnabled ? (
+                <div className="pt-2 border-t border-[var(--disk-border-subtle,#e2e8f0)] grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fadeIn">
+                  <div>
+                    <label className="text-xs text-[var(--disk-text-muted,#64748b)] font-semibold block mb-1">
+                      Percentual da Taxa de Spread (%)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="30"
+                        value={spreadPercent}
+                        onChange={(e) => setSpreadPercent(e.target.value)}
+                        placeholder="Ex: 1.5"
+                        className="w-full pr-8 py-1.5 px-3 rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-xs font-mono font-bold text-purple-600 dark:text-purple-400"
+                        autoFocus
+                      />
+                      <Percent className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-purple-500" />
+                    </div>
+                    <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] mt-1 block">
+                      Aplicado sobre o volume processado em cartões/gateways deste evento
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-[var(--disk-text-muted,#64748b)] font-semibold block mb-1">
+                      Situação do Spread Comercial
+                    </label>
+                    <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-700 dark:text-purple-300 text-xs flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+                        <span className="font-bold">Spread Ativo: {spreadPercent || '0'}%</span>
+                      </div>
+                      <span className="text-[10px] font-mono uppercase bg-purple-600 text-white px-2 py-0.5 rounded font-bold">
+                        Habilitado
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 rounded-lg bg-[var(--disk-bg-surface,#ffffff)] border border-dashed border-[var(--disk-border-default,#e2e8f0)] text-center text-xs text-[var(--disk-text-muted,#64748b)]">
+                  Nenhuma taxa de spread configurada para este evento. Clique no botão <strong>Inserir e Adicionar Taxa de Spread</strong> acima para habilitar.
+                </div>
+              )}
+            </div>
+
+            {/* 3. JUSTIFICATIVA COMERCIAL OBRIGATÓRIA */}
             <div className="p-4 rounded-xl bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)] space-y-3">
               <label className="text-xs font-bold text-[var(--disk-text-primary,#0f172a)] uppercase tracking-wider block">
-                2. Justificativa Comercial Obrigatória
+                3. Justificativa Comercial Obrigatória
               </label>
               <textarea
                 required
                 rows={2}
                 value={changeReason}
                 onChange={(e) => setChangeReason(e.target.value)}
-                placeholder="Ex: Condição comercial de 10% acordada com o produtor conforme proposta..."
+                placeholder="Ex: Condição comercial de taxa de serviço e spread acordada com o produtor..."
                 className="w-full p-2 text-xs rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-[var(--disk-text-primary,#0f172a)]"
               />
             </div>
