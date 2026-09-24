@@ -18,9 +18,11 @@ import {
   DiskPageHeader,
   DiskKpiCard
 } from '../components/ui/disk'
+import { SacCentralAtendimento } from '../components/sac/SacCentralAtendimento'
 
 export type ServiceTab =
   | 'hub'
+  | 'central'
   | 'search360'
   | 'bi'
   | 'tickets'
@@ -286,6 +288,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
   useEffect(() => {
     if (!mode) return
     if (mode === 'hub') setActiveTab('hub')
+    else if (mode === 'central' || mode === 'atendimento') setActiveTab('central')
     else if (mode === 'search360') setActiveTab('search360')
     else if (mode === 'bi' || mode === 'reports' || mode === 'dashboard') setActiveTab('bi')
     else if (mode === 'predictive') setActiveTab('predictive')
@@ -389,6 +392,14 @@ export default function SupportPage({ events, producerId, producerName, mode = '
                 <LifeBuoy size={22} />
               </div>
               <span className="ds-launcher-label">Hub Geral</span>
+            </button>
+
+            <button className={`ds-launcher-item ${activeTab === 'central' ? 'active' : ''}`} onClick={() => setActiveTab('central')}>
+              <div className="ds-launcher-circle">
+                <Headphones size={22} />
+                <span className="ds-mini-tag orange">333</span>
+              </div>
+              <span className="ds-launcher-label">Central Atendimento</span>
             </button>
 
             <button className={`ds-launcher-item ${activeTab === 'search360' ? 'active' : ''}`} onClick={() => setActiveTab('search360')}>
@@ -522,6 +533,12 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             </div>
 
             <div className="ds-modules-grid">
+              <div className="ds-module-card" onClick={() => setActiveTab('central')}>
+                <div className="ds-card-icon-wrap blue"><Headphones size={22} /></div>
+                <div className="ds-card-text"><h4>Central de Atendimento</h4><p>Cockpit em tempo real com filas, conversas, cliente 360° e IA</p></div>
+                <ChevronRight size={18} className="ds-card-chevron" />
+              </div>
+
               <div className="ds-module-card" onClick={() => setActiveTab('search360')}>
                 <div className="ds-card-icon-wrap blue"><Search size={22} /></div>
                 <div className="ds-card-text"><h4>Busca ID</h4><p>Localização rápida por CPF, pedido, nome, fone ou ingresso</p></div>
@@ -663,6 +680,7 @@ export default function SupportPage({ events, producerId, producerName, mode = '
             </div>
 
             <div className="ds-quick-actions-bar">
+              <button className="ds-quick-action-pill" onClick={() => setActiveTab('central')} style={{ background: 'rgba(59, 130, 246, 0.15)', borderColor: 'rgba(59, 130, 246, 0.4)', color: '#60a5fa', fontWeight: 'bold' }}><Headphones size={14} style={{ color: '#60a5fa' }} /> Central Ao Vivo</button>
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('new')}><Plus size={14} style={{ color: '#059669' }} /> Novo Ticket</button>
               <button className="ds-quick-action-pill" onClick={() => onNavigate('customer-search-hub')} style={{ background: 'rgba(255, 128, 71, 0.12)', borderColor: 'rgba(255, 128, 71, 0.35)', color: '#FF8047', fontWeight: 'bold' }}><Users size={14} style={{ color: '#FF8047' }} /> Central de Clientes</button>
               <button className="ds-quick-action-pill" onClick={() => onNavigate('tickets-hub')}><Ticket size={14} style={{ color: '#2563eb' }} /> Ingressos & QR</button>
@@ -675,6 +693,23 @@ export default function SupportPage({ events, producerId, producerName, mode = '
               <button className="ds-quick-action-pill" onClick={() => setActiveTab('sla')}><SlidersHorizontal size={14} /> Configurações</button>
             </div>
           </>
+        )}
+
+        {/* ========================================================
+            NOVA CENTRAL DE ATENDIMENTO (COCKPIT OPERACIONAL EM TEMPO REAL)
+            ======================================================== */}
+        {activeTab === 'central' && (
+          <div style={{ marginTop: '10px' }}>
+            <SacCentralAtendimento
+              notify={notify}
+              onOpenTicketTab={() => setActiveTab('tickets')}
+              onOpenSearch360={(q) => {
+                setGlobalSearchInput(q)
+                handleGlobalSearch(q)
+              }}
+              onOpenKnowledgeTab={() => setActiveTab('knowledge')}
+            />
+          </div>
         )}
 
         {/* ========================================================
