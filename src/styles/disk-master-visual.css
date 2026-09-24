@@ -65,8 +65,8 @@ tbody, td, tr { border-color: var(--disk-border-subtle); }
 
 /* Compatibilidade Tailwind/legado: apenas cores ESTRUTURAIS. */
 html.dark :is(.bg-white,[class~="bg-white"],[class*="bg-white/"]) { background-color: var(--disk-bg-surface) !important; }
-html.dark :is(.bg-slate-50,.bg-gray-50,.bg-zinc-50) { background-color: var(--disk-bg-app) !important; }
-html.dark :is(.bg-slate-100,.bg-gray-100,.bg-zinc-100) { background-color: var(--disk-bg-muted) !important; }
+html.dark :is(.bg-slate-50,[class*="bg-slate-50/"],.bg-gray-50,[class*="bg-gray-50/"],.bg-zinc-50,[class*="bg-zinc-50/"]) { background-color: var(--disk-bg-app) !important; }
+html.dark :is(.bg-slate-100,[class*="bg-slate-100/"],.bg-gray-100,[class*="bg-gray-100/"],.bg-zinc-100,[class*="bg-zinc-100/"]) { background-color: var(--disk-bg-muted) !important; }
 html.dark :is(.text-slate-900,.text-gray-900,.text-zinc-900,.text-black) { color: var(--disk-text-primary) !important; }
 html.dark :is(.text-slate-800,.text-slate-700,.text-gray-800,.text-gray-700,.text-zinc-800,.text-zinc-700) { color: var(--disk-text-secondary) !important; }
 html.dark :is(.text-slate-600,.text-slate-500,.text-gray-600,.text-gray-500,.text-zinc-600,.text-zinc-500) { color: var(--disk-text-muted) !important; }

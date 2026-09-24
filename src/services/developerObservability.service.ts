@@ -204,7 +204,10 @@ export const developerObservabilityService = {
         headers: getAuthHeaders()
       })
       if (res.ok) {
-        return await res.json()
+        const data = await res.json()
+        if (data && typeof data === 'object' && !Array.isArray(data) && Array.isArray(data.componentsHealth)) {
+          return data
+        }
       }
     } catch (e) {
       console.warn('[developerObservability] Fallback local para summary:', e)
@@ -251,7 +254,10 @@ export const developerObservabilityService = {
         headers: getAuthHeaders()
       })
       if (res.ok) {
-        return await res.json()
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          return data
+        }
       }
     } catch (e) {
       console.warn('[developerObservability] Fallback local para logs:', e)
@@ -281,7 +287,10 @@ export const developerObservabilityService = {
         headers: getAuthHeaders()
       })
       if (res.ok) {
-        return await res.json()
+        const data = await res.json()
+        if (data && typeof data === 'object' && !Array.isArray(data) && data.correlationId) {
+          return data
+        }
       }
     } catch (e) {
       console.warn('[developerObservability] Fallback local para journey:', e)
