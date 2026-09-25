@@ -32,7 +32,7 @@ export default function AdvancedTaxesRouter({ activeModule, onNavigate, onBack, 
     case 'fin-spread':
     case 'finance-spread':
     case 'spread':
-      return <FinanceSpreadPage notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
+      return <FinanceSpreadPage events={props.events} eventId={props.eventId} producerId={props.producerId} notify={props.notify} onBack={handleBack} onNavigate={onNavigate} />
 
     case 'simulador-spread':
     case 'finance-spread-simulator':
