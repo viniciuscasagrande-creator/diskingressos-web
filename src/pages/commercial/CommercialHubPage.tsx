@@ -614,27 +614,19 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
         ? Math.round(parseFloat(serviceFeeFixed || '0') * 100)
         : 0
 
-      const spreadBps = spreadEnabled
-        ? Math.round(parseFloat(spreadPercent || '0') * 100)
-        : 0
-
-      const advBps = advancedEnabled
-        ? Math.round(parseFloat(advancedRate || '0') * 100)
-        : 0
-
       const payload = {
         serviceFeeType,
         serviceFeeBps: bps,
         serviceFeeFixedCents: fixedCents,
         serviceFeePaidBy,
         serviceFeeMinCents: 0,
-        spreadEnabled,
+        spreadEnabled: Boolean(editingItem.spreadEnabled),
         spreadType: 'percentage',
-        spreadBps,
+        spreadBps: editingItem.spreadBps || 0,
         spreadFixedCents: 0,
-        advancedEnabled,
-        advancedRateBps: advBps,
-        advancedMaxPercent: parseInt(advancedMax, 10) || 70,
+        advancedEnabled: Boolean(editingItem.advancedEnabled),
+        advancedRateBps: editingItem.advancedRateBps || 0,
+        advancedMaxPercent: 70,
         advancedMinDays: 2,
         payoutTermsDays: parseInt(payoutTermsDays, 10) || 2,
         payoutModel,
@@ -1128,7 +1120,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
           }
         >
           <div className="space-y-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
                 <span className="text-[var(--disk-text-muted,#64748b)] font-semibold block">Eventos Totais</span>
                 <span className="text-lg font-black text-[var(--disk-text-primary,#0f172a)]">{selectedProducer.totalEventsCount}</span>
@@ -1145,11 +1137,6 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
               <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
                 <span className="text-[var(--disk-text-muted,#64748b)] font-semibold block">Taxas Disk Geradas</span>
                 <span className="text-lg font-black text-[var(--disk-color-primary,#f97316)]">{money(selectedProducer.totalDiskFeesCents)}</span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
-                <span className="text-[var(--disk-text-muted,#64748b)] font-semibold block">Spread Acumulado</span>
-                <span className="text-lg font-black text-purple-600 dark:text-purple-400">{money(selectedProducer.totalSpreadCents)}</span>
               </div>
             </div>
 
@@ -1231,7 +1218,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
           }
         >
           <div className="space-y-4 text-xs">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
                 <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Taxa de Serviço</span>
                 <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
@@ -1241,41 +1228,6 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
                 </span>
                 <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block">
                   Paga pelo: {selectedEventDossier.serviceFeePaidBy === 'buyer' ? 'Comprador' : 'Produtor'}
-                </span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
-                <div className="flex items-center justify-between">
-                  <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Spread Comercial</span>
-                  {!selectedEventDossier.spreadEnabled && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const ev = selectedEventDossier
-                        setSelectedEventDossier(null)
-                        handleOpenFeeModal(ev, true)
-                      }}
-                      className="text-[10px] text-purple-600 dark:text-purple-400 font-bold hover:underline cursor-pointer flex items-center gap-0.5"
-                    >
-                      <Plus className="w-2.5 h-2.5" /> Adicionar
-                    </button>
-                  )}
-                </div>
-                <span className="text-base font-black text-purple-600 dark:text-purple-400">
-                  {selectedEventDossier.spreadEnabled ? `${(selectedEventDossier.spreadBps / 100).toFixed(1)}%` : 'Inativo'}
-                </span>
-                <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block">
-                  {selectedEventDossier.spreadEnabled ? money(selectedEventDossier.spreadCents) : 'Sem operações'}
-                </span>
-              </div>
-
-              <div className="p-3 rounded-lg bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)]">
-                <span className="text-[var(--disk-text-muted,#64748b)] block font-semibold">Advanced (Antecipação)</span>
-                <span className="text-base font-black text-amber-500">
-                  {selectedEventDossier.advancedEnabled ? `${(selectedEventDossier.advancedRateBps / 100).toFixed(1)}% a.m.` : 'Inativo'}
-                </span>
-                <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] block">
-                  {selectedEventDossier.hasActiveAdvance ? 'Operação ativa' : 'Sem saldo antecipado'}
                 </span>
               </div>
 
@@ -1406,101 +1358,17 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
               </div>
             </div>
 
-            {/* 2. TAXA DE SPREAD DO EVENTO */}
-            <div className="p-4 rounded-xl bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)] space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <label className="text-xs font-bold text-[var(--disk-text-primary,#0f172a)] uppercase tracking-wider block">
-                    2. Taxa de Spread do Evento
-                  </label>
-                  <span className="text-[11px] text-[var(--disk-text-muted,#64748b)]">
-                    Margem adicional retida sobre o volume de transações e adquirentes do evento
-                  </span>
-                </div>
-
-                {!spreadEnabled ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSpreadEnabled(true)
-                      if (!spreadPercent || spreadPercent === '0') setSpreadPercent('1.5')
-                    }}
-                    className="px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs self-start sm:self-auto"
-                    data-testid="btn-add-spread-modal"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Inserir e Adicionar Taxa de Spread</span>
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setSpreadEnabled(false)}
-                    className="px-2.5 py-1 rounded-lg border border-rose-300 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-semibold hover:bg-rose-100 dark:hover:bg-rose-900/60 transition flex items-center gap-1 cursor-pointer self-start sm:self-auto"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    <span>Remover Spread</span>
-                  </button>
-                )}
-              </div>
-
-              {spreadEnabled ? (
-                <div className="pt-2 border-t border-[var(--disk-border-subtle,#e2e8f0)] grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fadeIn">
-                  <div>
-                    <label className="text-xs text-[var(--disk-text-muted,#64748b)] font-semibold block mb-1">
-                      Percentual da Taxa de Spread (%)
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        step="0.1"
-                        min="0"
-                        max="30"
-                        value={spreadPercent}
-                        onChange={(e) => setSpreadPercent(e.target.value)}
-                        placeholder="Ex: 1.5"
-                        className="w-full pr-8 py-1.5 px-3 rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-xs font-mono font-bold text-purple-600 dark:text-purple-400"
-                        autoFocus
-                      />
-                      <Percent className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-purple-500" />
-                    </div>
-                    <span className="text-[10px] text-[var(--disk-text-muted,#64748b)] mt-1 block">
-                      Aplicado sobre o volume processado em cartões/gateways deste evento
-                    </span>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-[var(--disk-text-muted,#64748b)] font-semibold block mb-1">
-                      Situação do Spread Comercial
-                    </label>
-                    <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-700 dark:text-purple-300 text-xs flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
-                        <span className="font-bold">Spread Ativo: {spreadPercent || '0'}%</span>
-                      </div>
-                      <span className="text-[10px] font-mono uppercase bg-purple-600 text-white px-2 py-0.5 rounded font-bold">
-                        Habilitado
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="p-3 rounded-lg bg-[var(--disk-bg-surface,#ffffff)] border border-dashed border-[var(--disk-border-default,#e2e8f0)] text-center text-xs text-[var(--disk-text-muted,#64748b)]">
-                  Nenhuma taxa de spread configurada para este evento. Clique no botão <strong>Inserir e Adicionar Taxa de Spread</strong> acima para habilitar.
-                </div>
-              )}
-            </div>
-
-            {/* 3. JUSTIFICATIVA COMERCIAL OBRIGATÓRIA */}
+            {/* 2. JUSTIFICATIVA COMERCIAL OBRIGATÓRIA */}
             <div className="p-4 rounded-xl bg-[var(--disk-bg-muted,#f1f5f9)] border border-[var(--disk-border-default,#e2e8f0)] space-y-3">
               <label className="text-xs font-bold text-[var(--disk-text-primary,#0f172a)] uppercase tracking-wider block">
-                3. Justificativa Comercial Obrigatória
+                2. Justificativa Comercial Obrigatória
               </label>
               <textarea
                 required
                 rows={2}
                 value={changeReason}
                 onChange={(e) => setChangeReason(e.target.value)}
-                placeholder="Ex: Condição comercial de taxa de serviço e spread acordada com o produtor..."
+                placeholder="Ex: Condição comercial de taxa de serviço acordada com o produtor..."
                 className="w-full p-2 text-xs rounded-lg border border-[var(--disk-border-default,#e2e8f0)] bg-[var(--disk-bg-surface,#ffffff)] text-[var(--disk-text-primary,#0f172a)]"
               />
             </div>

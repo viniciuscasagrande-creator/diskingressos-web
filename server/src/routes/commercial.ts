@@ -210,13 +210,11 @@ const saveAgreementHandler = async (req: AuthRequest, res: any) => {
           serviceFeeBps: data.serviceFeeBps,
           serviceFeeFixedCents: data.serviceFeeFixedCents,
           serviceFeePaidBy: data.serviceFeePaidBy,
-          serviceFeeMinCents: data.serviceFeeMinCents,
-
-          spreadEnabled: data.spreadEnabled,
-          spreadType: data.spreadType,
-          spreadBps: data.spreadBps,
-          spreadFixedCents: data.spreadFixedCents,
-          spreadNotes: data.spreadNotes || null,
+          spreadEnabled: agreement.versions?.[0]?.spreadEnabled ?? data.spreadEnabled ?? false,
+          spreadType: agreement.versions?.[0]?.spreadType ?? data.spreadType ?? 'percentage',
+          spreadBps: agreement.versions?.[0]?.spreadBps ?? data.spreadBps ?? 0,
+          spreadFixedCents: agreement.versions?.[0]?.spreadFixedCents ?? data.spreadFixedCents ?? 0,
+          spreadNotes: agreement.versions?.[0]?.spreadNotes ?? data.spreadNotes ?? null,
 
           advancedEnabled: data.advancedEnabled,
           advancedRateBps: data.advancedRateBps,
