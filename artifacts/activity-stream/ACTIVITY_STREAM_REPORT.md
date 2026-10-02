@@ -1,7 +1,7 @@
 # RELATÓRIO DE AUDITORIA — HISTÓRICO DE ATIVIDADES UNIFICADO
 
 **Release:** `26.17.5-historico-atividades-unificado-ptbr-2026-09-04`  
-**Data:** 04/09/2026, 15:06:27  
+**Data:** 02/10/2026, 10:03:20  
 **Status Global:** **PASS**
 
 ### Resumo das Validações

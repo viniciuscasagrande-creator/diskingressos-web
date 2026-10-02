@@ -1,17 +1,25 @@
 {
   "release": "26.17.3.1-padronizacao-total-pt-br-2026-09-04",
-  "auditedAt": "2026-09-04T20:20:49.948Z",
+  "auditedAt": "2026-10-02T13:01:13.886Z",
   "totalFilesScanned": 184,
-  "untranslatedCount": 326,
+  "untranslatedCount": 341,
   "status": "FINDINGS_DETECTED",
   "findings": [
     {
       "file": "src/pages/AccountingDashboardPage.tsx",
-      "line": 104,
+      "line": 109,
       "component": "AccountingDashboardPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "<h1>Dashboard Contábil Integrado</h1>"
+      "snippet": "breadcrumbs={['Contabilidade', 'Dashboard']}"
+    },
+    {
+      "file": "src/pages/AccountingDashboardPage.tsx",
+      "line": 112,
+      "component": "AccountingDashboardPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "title=\"Dashboard Contábil Integrado\""
     },
     {
       "file": "src/pages/AccountingJournalPage.tsx",
@@ -102,6 +110,22 @@
       "snippet": "onChange={() => togglePermission('events', 'edit')}"
     },
     {
+      "file": "src/pages/commercial/CommercialHubPage.tsx",
+      "line": 497,
+      "component": "CommercialHubPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "const url = `/api/commercial/dashboard${params.toString() ? `?${params.toString()}` : ''}`"
+    },
+    {
+      "file": "src/pages/commercial/CommercialHubPage.tsx",
+      "line": 846,
+      "component": "CommercialHubPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "title=\"Dashboard Comercial\""
+    },
+    {
       "file": "src/pages/CommunicationPage.tsx",
       "line": 8,
       "component": "CommunicationPage.tsx",
@@ -118,16 +142,32 @@
       "snippet": "<div className=\"growth-context\"><div><span>Produtora</span><strong>{producerName}</strong></div><div><span>Arquitetura</"
     },
     {
-      "file": "src/pages/Dashboard.tsx",
-      "line": 81,
-      "component": "Dashboard.tsx",
+      "file": "src/pages/EventCommercialDashboardPage.tsx",
+      "line": 75,
+      "component": "EventCommercialDashboardPage.tsx",
+      "found": "Edit",
+      "suggestion": "Editar",
+      "snippet": "<button className=\"ghost\" onClick={()=>onNavigate?.('edit-event')}><Pencil size={16}/>Editar Evento</button>"
+    },
+    {
+      "file": "src/pages/EventCommercialDashboardPage.tsx",
+      "line": 84,
+      "component": "EventCommercialDashboardPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "title={isGlobalAdminView ? \"Dashboard Administrativo Master\" : `Dashboard — ${selectedProducer?.name}`}"
+      "snippet": "<button onClick={()=>onNavigate?.('finance-dashboard')}>Financeiro</button>"
+    },
+    {
+      "file": "src/pages/EventCommercialDashboardPage.tsx",
+      "line": 87,
+      "component": "EventCommercialDashboardPage.tsx",
+      "found": "Details",
+      "suggestion": "Detalhes",
+      "snippet": "<button onClick={()=>onNavigate?.('event-details')}>Configurações</button>"
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 38,
+      "line": 39,
       "component": "EventContextPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -135,7 +175,7 @@
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 46,
+      "line": 47,
       "component": "EventContextPage.tsx",
       "found": "Readiness",
       "suggestion": "Preparação do Evento",
@@ -143,7 +183,7 @@
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 47,
+      "line": 49,
       "component": "EventContextPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -151,7 +191,7 @@
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 51,
+      "line": 53,
       "component": "EventContextPage.tsx",
       "found": "Details",
       "suggestion": "Detalhes",
@@ -159,7 +199,7 @@
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 171,
+      "line": 173,
       "component": "EventContextPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -167,7 +207,7 @@
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 245,
+      "line": 247,
       "component": "EventContextPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -175,7 +215,7 @@
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 247,
+      "line": 249,
       "component": "EventContextPage.tsx",
       "found": "Details",
       "suggestion": "Detalhes",
@@ -183,7 +223,7 @@
     },
     {
       "file": "src/pages/EventContextPage.tsx",
-      "line": 253,
+      "line": 255,
       "component": "EventContextPage.tsx",
       "found": "Details",
       "suggestion": "Detalhes",
@@ -196,30 +236,6 @@
       "found": "Customer 360",
       "suggestion": "Cliente 360°",
       "snippet": "const load=useCallback(async()=>{setLoading(true);setError('');try{setData(await getEventCustomer360(event.id))}catch(e:"
-    },
-    {
-      "file": "src/pages/EventCustomer360Page.tsx",
-      "line": 41,
-      "component": "EventCustomer360Page.tsx",
-      "found": "Customer 360",
-      "suggestion": "Cliente 360°",
-      "snippet": "const exportCsv=()=>{if(!rows.length){notify('Nenhum cliente para exportar.');return}const csv=['Nome;Email;Telefone;Doc"
-    },
-    {
-      "file": "src/pages/EventCustomer360Page.tsx",
-      "line": 48,
-      "component": "EventCustomer360Page.tsx",
-      "found": "Customer 360",
-      "suggestion": "Cliente 360°",
-      "snippet": "<header className=\"customer360-head\"><div><span>CRM · FASE 26.16.4</span><h2>Customer 360 Operacional</h2><p>Busca, segm"
-    },
-    {
-      "file": "src/pages/EventCustomer360Page.tsx",
-      "line": 64,
-      "component": "EventCustomer360Page.tsx",
-      "found": "Customer 360",
-      "suggestion": "Cliente 360°",
-      "snippet": "{selected&&<div className=\"crm-modal-bg\" onClick={close}><div className=\"crm-modal crm-modal-wide\" onClick={e=>e.stopPro"
     },
     {
       "file": "src/pages/EventCustomer360Page.tsx",
@@ -254,46 +270,6 @@
       "snippet": "<div className=\"inventory-modal-actions\"><button className=\"btn secondary\" onClick={()=>setShowLot(false)} disabled={sav"
     },
     {
-      "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
-      "line": 170,
-      "component": "EventCommercialDashboardPage.tsx",
-      "found": "Edit",
-      "suggestion": "Editar",
-      "snippet": "onClick={() => onNavigate?.('edit-event')}"
-    },
-    {
-      "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
-      "line": 215,
-      "component": "EventCommercialDashboardPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "onClick={() => onNavigate?.('finance-dashboard')}"
-    },
-    {
-      "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
-      "line": 229,
-      "component": "EventCommercialDashboardPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "onClick={() => onNavigate?.('marketing-dashboard')}"
-    },
-    {
-      "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
-      "line": 236,
-      "component": "EventCommercialDashboardPage.tsx",
-      "found": "Details",
-      "suggestion": "Detalhes",
-      "snippet": "onClick={() => onNavigate?.('event-details')}"
-    },
-    {
-      "file": "src/pages/eventos/EventCommercialDashboardPage.tsx",
-      "line": 516,
-      "component": "EventCommercialDashboardPage.tsx",
-      "found": "Search",
-      "suggestion": "Pesquisar",
-      "snippet": "onClick={() => onNavigate?.('event-global-search')}"
-    },
-    {
       "file": "src/pages/eventos/EventDayCommandPage.tsx",
       "line": 158,
       "component": "EventDayCommandPage.tsx",
@@ -323,7 +299,7 @@
       "component": "EventDayCommandPage.tsx",
       "found": "Event Day Command",
       "suggestion": "Central do Dia do Evento",
-      "snippet": "<span data-testid=\"edc-eyebrow-badge\">EVENT DAY COMMAND · FASE 26.16.7</span>"
+      "snippet": "<span data-testid=\"edc-eyebrow-badge\">EVENT DAY COMMAND · COMANDO AO VIVO</span>"
     },
     {
       "file": "src/pages/eventos/EventDayCommandPage.tsx",
@@ -759,15 +735,15 @@
     },
     {
       "file": "src/pages/EventsPage.tsx",
-      "line": 123,
+      "line": 83,
       "component": "EventsPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "onClick={() => (onNavigate ? onNavigate('profile-dashboard') : window.history.back())}"
+      "snippet": "onClick={() => onNavigate ? onNavigate('profile-dashboard') : window.history.back()}"
     },
     {
       "file": "src/pages/EventsPage.tsx",
-      "line": 127,
+      "line": 86,
       "component": "EventsPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -775,15 +751,15 @@
     },
     {
       "file": "src/pages/FacialPage.tsx",
-      "line": 11,
+      "line": 12,
       "component": "FacialPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}"
+      "snippet": "onClick={() => onNavigate ? onNavigate('profile-dashboard') : window.history.back()}"
     },
     {
       "file": "src/pages/FacialPage.tsx",
-      "line": 15,
+      "line": 16,
       "component": "FacialPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -796,6 +772,22 @@
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "const handleBack = onBack || (() => onNavigate?.('finance-dashboard'))"
+    },
+    {
+      "file": "src/pages/finance/EventCostCentersBudgetPage.tsx",
+      "line": 246,
+      "component": "EventCostCentersBudgetPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "<button onClick={() => onNavigate('finance-dashboard')}>"
+    },
+    {
+      "file": "src/pages/finance/EventCostCentersBudgetPage.tsx",
+      "line": 1284,
+      "component": "EventCostCentersBudgetPage.tsx",
+      "found": "Close",
+      "suggestion": "Fechar",
+      "snippet": "const action = eventClosingStatus === 'fechado' ? 'reopen' : 'close'"
     },
     {
       "file": "src/pages/finance/FinanceAdvancedPage.tsx",
@@ -1047,7 +1039,7 @@
     },
     {
       "file": "src/pages/finance/FinanceSpreadPage.tsx",
-      "line": 15,
+      "line": 453,
       "component": "FinanceSpreadPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1055,7 +1047,7 @@
     },
     {
       "file": "src/pages/finance/FinanceSpreadPage.tsx",
-      "line": 19,
+      "line": 457,
       "component": "FinanceSpreadPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1079,35 +1071,43 @@
     },
     {
       "file": "src/pages/FinanceAccountingHubPage.tsx",
-      "line": 23,
+      "line": 45,
       "component": "FinanceAccountingHubPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "['dashboard','Dashboard',WalletCards],['cost-centers','Centros de Custos',Boxes],['accounts','Plano de Contas',BookOpenC"
+      "snippet": "['dashboard', 'Visão Geral', WalletCards],"
     },
     {
       "file": "src/pages/FinanceAccountingHubPage.tsx",
-      "line": 220,
-      "component": "FinanceAccountingHubPage.tsx",
-      "found": "Loading",
-      "suggestion": "Carregando",
-      "snippet": "<div className=\"fa-toolbar\"><div className=\"fa-search\"><Search size={15}/><input value={q} onChange={e=>setQ(e.target.va"
-    },
-    {
-      "file": "src/pages/FinanceAccountingHubPage.tsx",
-      "line": 221,
+      "line": 353,
       "component": "FinanceAccountingHubPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "{tab==='dashboard'&&<Dashboard summary={summary} dre={dre} recs={recs} obligations={obligations} borderos={borderos} sig"
+      "snippet": "id=\"accounting-panel-dashboard\""
     },
     {
       "file": "src/pages/FinanceAccountingHubPage.tsx",
-      "line": 244,
+      "line": 354,
       "component": "FinanceAccountingHubPage.tsx",
-      "found": "Save",
-      "suggestion": "Salvar",
-      "snippet": "const [f,setF]=useState<Record<string,string>>({competence:new Date().toISOString().slice(0,7),dueDate:new Date().toISOS"
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "data-accounting-panel=\"dashboard\""
+    },
+    {
+      "file": "src/pages/FinanceAccountingHubPage.tsx",
+      "line": 356,
+      "component": "FinanceAccountingHubPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "aria-labelledby=\"accounting-tab-dashboard\""
+    },
+    {
+      "file": "src/pages/FinanceAccountingHubPage.tsx",
+      "line": 358,
+      "component": "FinanceAccountingHubPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "hidden={tab !== 'dashboard'}"
     },
     {
       "file": "src/pages/FinanceAdvancedTaxesPage.tsx",
@@ -1183,15 +1183,15 @@
     },
     {
       "file": "src/pages/FinanceCashFlowPage.tsx",
-      "line": 57,
+      "line": 208,
       "component": "FinanceCashFlowPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "onClick={() => onNavigate ? onNavigate('finance-dashboard') : window.history.back()}"
+      "snippet": "onClick={() => (onNavigate ? onNavigate('finance-dashboard') : window.history.back())}"
     },
     {
       "file": "src/pages/FinanceCashFlowPage.tsx",
-      "line": 61,
+      "line": 212,
       "component": "FinanceCashFlowPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1231,51 +1231,107 @@
     },
     {
       "file": "src/pages/FinanceCommandCenterPage.tsx",
-      "line": 46,
+      "line": 158,
+      "component": "FinanceCommandCenterPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "navigateWithFinanceDrilldown(onNavigate, page, { status, eventName: selectedEventName, source: 'finance-dashboard-hub', "
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 162,
+      "component": "FinanceCommandCenterPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "dataTestId=\"finance-dashboard-page\""
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 171,
+      "component": "FinanceCommandCenterPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "title=\"Dashboard Financeiro\""
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 202,
       "component": "FinanceCommandCenterPage.tsx",
       "found": "Loading",
       "suggestion": "Carregando",
-      "snippet": "const [eventId,setEventId]=useState<number|undefined>();const [loading,setLoading]=useState(true),[error,setError]=useSt"
+      "snippet": "<span>{loading ? 'Atualizando...' : 'Atualizar'}</span>"
     },
     {
       "file": "src/pages/FinanceCommandCenterPage.tsx",
-      "line": 52,
+      "line": 273,
       "component": "FinanceCommandCenterPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "const openHubPage=(page:PageKey,label:string,status?:string)=>navigateWithFinanceDrilldown(onNavigate,page,{status,event"
+      "snippet": "onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance', { eventName: selectedEventName, source: 'finance-dash"
     },
     {
       "file": "src/pages/FinanceCommandCenterPage.tsx",
-      "line": 54,
+      "line": 281,
       "component": "FinanceCommandCenterPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "<header className=\"finance-command-hero\"><div><span className=\"finance-command-eyebrow\">FINANCEIRO</span><h1>Dashboard F"
+      "snippet": "onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-receivables', { status: 'open', eventName: selectedEven"
     },
     {
       "file": "src/pages/FinanceCommandCenterPage.tsx",
-      "line": 71,
+      "line": 289,
       "component": "FinanceCommandCenterPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "<section className=\"finance-command-footer\"><div><strong>Financeiro e Contabilidade agora são separados</strong><span>Fi"
+      "snippet": "onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-payables', { status: 'open', eventName: selectedEventNa"
     },
     {
       "file": "src/pages/FinanceCommandCenterPage.tsx",
-      "line": 72,
+      "line": 297,
       "component": "FinanceCommandCenterPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "function Kpi({icon:Icon,label,value,sub,tone,page,onNavigate,status,eventName}:{icon:any;label:string;value:string;sub:s"
+      "snippet": "onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-payouts', { status: 'pending', eventName: selectedEvent"
     },
     {
       "file": "src/pages/FinanceCommandCenterPage.tsx",
-      "line": 73,
+      "line": 305,
       "component": "FinanceCommandCenterPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "function HealthLink({page,onNavigate,children,status,eventName}:{page:PageKey;onNavigate:(p:PageKey)=>void;children:any;"
+      "snippet": "onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-spread', { eventName: selectedEventName, source: 'finan"
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 313,
+      "component": "FinanceCommandCenterPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "onClick={() => navigateWithFinanceDrilldown(onNavigate, 'finance-reconciliation', { status: 'divergent', eventName: sele"
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 388,
+      "component": "FinanceCommandCenterPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "onClick={() => onNavigate('accounting-dashboard')}"
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 391,
+      "component": "FinanceCommandCenterPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "<span>Abrir Dashboard Contábil</span>"
+    },
+    {
+      "file": "src/pages/FinanceCommandCenterPage.tsx",
+      "line": 415,
+      "component": "FinanceCommandCenterPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "const open = () => navigateWithFinanceDrilldown(onNavigate, page, { status, eventName, source: 'finance-dashboard' })"
     },
     {
       "file": "src/pages/FinanceDashboardPage.tsx",
@@ -1327,7 +1383,7 @@
     },
     {
       "file": "src/pages/FinanceiroConsolidadoPage.tsx",
-      "line": 15,
+      "line": 26,
       "component": "FinanceiroConsolidadoPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1335,7 +1391,7 @@
     },
     {
       "file": "src/pages/FinanceiroConsolidadoPage.tsx",
-      "line": 34,
+      "line": 173,
       "component": "FinanceiroConsolidadoPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1343,7 +1399,7 @@
     },
     {
       "file": "src/pages/FinanceiroConsolidadoPage.tsx",
-      "line": 38,
+      "line": 177,
       "component": "FinanceiroConsolidadoPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1351,7 +1407,7 @@
     },
     {
       "file": "src/pages/FinanceiroConsolidadoPage.tsx",
-      "line": 161,
+      "line": 499,
       "component": "FinanceiroConsolidadoPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1391,27 +1447,19 @@
     },
     {
       "file": "src/pages/FinancePayablesPage.tsx",
-      "line": 123,
+      "line": 389,
       "component": "FinancePayablesPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "onClick={() => onNavigate ? onNavigate('finance-dashboard') : window.history.back()}"
+      "snippet": "onClick={() => (onNavigate ? onNavigate('finance-dashboard') : window.history.back())}"
     },
     {
       "file": "src/pages/FinancePayablesPage.tsx",
-      "line": 127,
+      "line": 393,
       "component": "FinancePayablesPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "<span>Voltar ao Dashboard Financeiro</span>"
-    },
-    {
-      "file": "src/pages/FinancePayablesPage.tsx",
-      "line": 248,
-      "component": "FinancePayablesPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "<option value=\"open\">Em aberto do Dashboard</option>"
     },
     {
       "file": "src/pages/FinancePayoutsPage.tsx",
@@ -1439,31 +1487,23 @@
     },
     {
       "file": "src/pages/FinanceProducerAccountPage.tsx",
-      "line": 40,
+      "line": 607,
       "component": "FinanceProducerAccountPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "<button onClick={()=>onNavigate('finance-dashboard')}><ArrowLeft size={15}/> Dashboard Financeiro</button>"
+      "snippet": "<button onClick={() => onNavigate('finance-dashboard')}>"
     },
     {
       "file": "src/pages/FinanceReceivablesPage.tsx",
-      "line": 82,
+      "line": 256,
       "component": "FinanceReceivablesPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "<div className=\"flex items-center\"><LLButton onClick={()=>onNavigate?onNavigate('finance-dashboard'):window.history.back"
-    },
-    {
-      "file": "src/pages/FinanceReceivablesPage.tsx",
-      "line": 109,
-      "component": "FinanceReceivablesPage.tsx",
-      "found": "Search",
-      "suggestion": "Pesquisar",
-      "snippet": "<LLCard><LLCardHeader title=\"Recebíveis detalhados\" subtitle={`${filtered.length} registro(s) no filtro atual`}/><LLCard"
+      "snippet": "<LLButton onClick={() => (onNavigate ? onNavigate('finance-dashboard') : window.history.back())}>"
     },
     {
       "file": "src/pages/FinanceReconciliationPage.tsx",
-      "line": 123,
+      "line": 267,
       "component": "FinanceReconciliationPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1471,7 +1511,7 @@
     },
     {
       "file": "src/pages/FinanceReconciliationPage.tsx",
-      "line": 127,
+      "line": 271,
       "component": "FinanceReconciliationPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1510,22 +1550,6 @@
       "snippet": "<span>Voltar ao Dashboard Financeiro</span>"
     },
     {
-      "file": "src/pages/GenericModulePage.tsx",
-      "line": 131,
-      "component": "GenericModulePage.tsx",
-      "found": "Details",
-      "suggestion": "Detalhes",
-      "snippet": "<h3 className=\"text-lg font-bold text-slate-900\">{details.title}</h3>"
-    },
-    {
-      "file": "src/pages/GenericModulePage.tsx",
-      "line": 138,
-      "component": "GenericModulePage.tsx",
-      "found": "Details",
-      "suggestion": "Detalhes",
-      "snippet": "onClick={() => alert(`Ação disparada no módulo ${details.title}`)}"
-    },
-    {
       "file": "src/pages/LoginPage.tsx",
       "line": 10,
       "component": "LoginPage.tsx",
@@ -1534,12 +1558,12 @@
       "snippet": "return <div className=\"login-page\"><div className=\"login-aside\"><div className=\"login-brand\"><span>Di</span><strong>Disk"
     },
     {
-      "file": "src/pages/LotsPage.tsx",
-      "line": 48,
-      "component": "LotsPage.tsx",
+      "file": "src/pages/marketing/GoogleAnalyticsHubPage.tsx",
+      "line": 133,
+      "component": "GoogleAnalyticsHubPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
-      "snippet": "<div className=\"table-toolbar\"><div><h2>Lotes cadastrados</h2><p>Controle comercial do evento selecionado.</p></div><div"
+      "snippet": "{ channel: 'Google Ads (Search & PMax)', sessions: 12800, users: 9640, bounceRate: '28,6%', convRate: '6,4%', revenue: '"
     },
     {
       "file": "src/pages/marketing/MarketingAttributionPage.tsx",
@@ -1551,7 +1575,7 @@
     },
     {
       "file": "src/pages/marketing/MarketingCampaignsPage.tsx",
-      "line": 204,
+      "line": 207,
       "component": "MarketingCampaignsPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -1559,71 +1583,15 @@
     },
     {
       "file": "src/pages/marketing/MarketingCampaignsPage.tsx",
-      "line": 562,
+      "line": 602,
       "component": "MarketingCampaignsPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "title=\"Abrir Dashboard Detalhado\""
     },
     {
-      "file": "src/pages/marketing/MarketingHub.tsx",
-      "line": 19,
-      "component": "MarketingHub.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "| 'mkt-dashboard'"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHub.tsx",
-      "line": 44,
-      "component": "MarketingHub.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "initialTab = 'mkt-dashboard',"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHub.tsx",
-      "line": 51,
-      "component": "MarketingHub.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "{ id: 'mkt-dashboard', title: 'Dashboard', desc: 'KPIs, funil de conversão e desempenho geral.', icon: LayoutDashboard, "
-    },
-    {
-      "file": "src/pages/marketing/MarketingHub.tsx",
-      "line": 81,
-      "component": "MarketingHub.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "onClick={() => setActiveTab('mkt-dashboard')}"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHub.tsx",
-      "line": 83,
-      "component": "MarketingHub.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "activeTab === 'mkt-dashboard'"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHub.tsx",
-      "line": 89,
-      "component": "MarketingHub.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "<span>Dashboard</span>"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHub.tsx",
-      "line": 212,
-      "component": "MarketingHub.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "{activeTab === 'mkt-dashboard' && ("
-    },
-    {
       "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 64,
+      "line": 72,
       "component": "MarketingHubOSPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1631,7 +1599,7 @@
     },
     {
       "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 91,
+      "line": 99,
       "component": "MarketingHubOSPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1639,7 +1607,7 @@
     },
     {
       "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 93,
+      "line": 101,
       "component": "MarketingHubOSPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1647,7 +1615,15 @@
     },
     {
       "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 185,
+      "line": 196,
+      "component": "MarketingHubOSPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "title=\"Dashboard Marketing\""
+    },
+    {
+      "file": "src/pages/marketing/MarketingHubOSPage.tsx",
+      "line": 202,
       "component": "MarketingHubOSPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1655,47 +1631,23 @@
     },
     {
       "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 189,
-      "component": "MarketingHubOSPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "<span>Voltar ao Dashboard</span>"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 196,
-      "component": "MarketingHubOSPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "<p className=\"eyebrow\">MARKETING OS · DASHBOARD UNIFICADO</p>"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 197,
-      "component": "MarketingHubOSPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "<h2>Dashboard Marketing</h2>"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 296,
-      "component": "MarketingHubOSPage.tsx",
-      "found": "Loading",
-      "suggestion": "Carregando",
-      "snippet": "<strong>{loading ? '—' : value}</strong>"
-    },
-    {
-      "file": "src/pages/marketing/MarketingHubOSPage.tsx",
-      "line": 564,
+      "line": 635,
       "component": "MarketingHubOSPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "<small>Planeje, execute, meça e fidelize sem sair do Dashboard.</small>"
     },
     {
+      "file": "src/pages/marketing/status-real/CampaignRealStatusPage.tsx",
+      "line": 194,
+      "component": "CampaignRealStatusPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "onClick={() => onNavigate ? onNavigate('marketing-dashboard') : window.history.back()}"
+    },
+    {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 32,
+      "line": 57,
       "component": "MarketingPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1703,7 +1655,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 62,
+      "line": 91,
       "component": "MarketingPage.tsx",
       "found": "Insights",
       "suggestion": "Análises Inteligentes",
@@ -1711,7 +1663,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 98,
+      "line": 127,
       "component": "MarketingPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1719,7 +1671,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 138,
+      "line": 169,
       "component": "MarketingPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1727,7 +1679,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 155,
+      "line": 186,
       "component": "MarketingPage.tsx",
       "found": "Insights",
       "suggestion": "Análises Inteligentes",
@@ -1735,7 +1687,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 181,
+      "line": 217,
       "component": "MarketingPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1743,7 +1695,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 296,
+      "line": 389,
       "component": "MarketingPage.tsx",
       "found": "Insights",
       "suggestion": "Análises Inteligentes",
@@ -1751,7 +1703,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 314,
+      "line": 408,
       "component": "MarketingPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1759,7 +1711,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 345,
+      "line": 440,
       "component": "MarketingPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -1767,7 +1719,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 401,
+      "line": 496,
       "component": "MarketingPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -1775,7 +1727,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 716,
+      "line": 816,
       "component": "MarketingPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -1783,7 +1735,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 774,
+      "line": 874,
       "component": "MarketingPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -1791,7 +1743,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 1066,
+      "line": 1173,
       "component": "MarketingPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -1799,7 +1751,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 1914,
+      "line": 2039,
       "component": "MarketingPage.tsx",
       "found": "Search",
       "suggestion": "Pesquisar",
@@ -1807,7 +1759,7 @@
     },
     {
       "file": "src/pages/MarketingPage.tsx",
-      "line": 1926,
+      "line": 2051,
       "component": "MarketingPage.tsx",
       "found": "Insights",
       "suggestion": "Análises Inteligentes",
@@ -1847,27 +1799,43 @@
     },
     {
       "file": "src/pages/POSPage.tsx",
-      "line": 45,
+      "line": 133,
       "component": "POSPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "onClick={()=>onNavigate?onNavigate('profile-dashboard'):window.history.back()}"
-    },
-    {
-      "file": "src/pages/POSPage.tsx",
-      "line": 49,
-      "component": "POSPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "<span>Voltar ao Dashboard</span>"
+      "snippet": "onClick={() => onNavigate('profile-dashboard')}"
     },
     {
       "file": "src/pages/ProfileDashboardPage.tsx",
-      "line": 19,
+      "line": 44,
       "component": "ProfileDashboardPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "{label:'Dashboard Financeiro',description:'Saldo consolidado, vendas, repasses e extratos.',page:'finance-hub',icon:Wall"
+      "snippet": "{ label: 'Dashboard Financeiro', description: 'Saldo consolidado, vendas, repasses e extratos.', page: 'finance-dashboar"
+    },
+    {
+      "file": "src/pages/ProfileDashboardPage.tsx",
+      "line": 46,
+      "component": "ProfileDashboardPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "{ label: 'Marketing', description: 'Campanhas, pixels, links e automações.', page: 'marketing-dashboard', icon: Megaphon"
+    },
+    {
+      "file": "src/pages/ProfileDashboardPage.tsx",
+      "line": 48,
+      "component": "ProfileDashboardPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "{ label: 'Contabilidade', description: 'Plano de contas, lançamentos e fechamento.', page: 'accounting-dashboard', icon:"
+    },
+    {
+      "file": "src/pages/ProfileDashboardPage.tsx",
+      "line": 205,
+      "component": "ProfileDashboardPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "onClick={() => onNavigate('finance-dashboard')}"
     },
     {
       "file": "src/pages/RecoveryCenterPage.tsx",
@@ -2031,7 +1999,7 @@
     },
     {
       "file": "src/pages/SupportPage.tsx",
-      "line": 285,
+      "line": 293,
       "component": "SupportPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2039,23 +2007,15 @@
     },
     {
       "file": "src/pages/SupportPage.tsx",
-      "line": 310,
+      "line": 322,
       "component": "SupportPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "onClick={() => onNavigate ? onNavigate('profile-dashboard') : window.history.back()}"
+      "snippet": "onClick={() => onNavigate('profile-dashboard')}"
     },
     {
       "file": "src/pages/SupportPage.tsx",
-      "line": 315,
-      "component": "SupportPage.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "<span>Voltar ao Dashboard</span>"
-    },
-    {
-      "file": "src/pages/SupportPage.tsx",
-      "line": 400,
+      "line": 472,
       "component": "SupportPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2063,107 +2023,187 @@
     },
     {
       "file": "src/pages/SupportPage.tsx",
-      "line": 571,
+      "line": 649,
       "component": "SupportPage.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "<div className=\"ds-card-text\"><h4>Dashboard & BI</h4><p>Indicadores, métricas e análises em tempo real</p></div>"
     },
     {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 16,
-      "component": "EventContextSidebar.tsx",
-      "found": "Customer 360",
-      "suggestion": "Cliente 360°",
-      "snippet": "{key:'event-customer-360',label:'Customer 360',icon:ContactRound},"
+      "file": "src/pages/SupportPage.tsx",
+      "line": 739,
+      "component": "SupportPage.tsx",
+      "found": "Search",
+      "suggestion": "Pesquisar",
+      "snippet": "<button className=\"ds-quick-action-pill\" onClick={() => onNavigate('customer-search-hub')} style={{ background: 'rgba(25"
+    },
+    {
+      "file": "src/pages/UsersPage.tsx",
+      "line": 24,
+      "component": "UsersPage.tsx",
+      "found": "Edit",
+      "suggestion": "Editar",
+      "snippet": "{ key: 'eventos.edit', label: 'Editar Eventos & Lotes', description: 'Alterar datas, preços, descrições e configurações "
+    },
+    {
+      "file": "src/pages/UsersPage.tsx",
+      "line": 26,
+      "component": "UsersPage.tsx",
+      "found": "Delete",
+      "suggestion": "Excluir",
+      "snippet": "{ key: 'eventos.delete', label: 'Excluir / Arquivar Eventos', description: 'Remover eventos ou arquivar históricos da pl"
+    },
+    {
+      "file": "src/pages/UsersPage.tsx",
+      "line": 29,
+      "component": "UsersPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "{ key: 'financeiro.view', label: 'Visualizar Dashboard Financeiro', description: 'Acessar receitas, balanços consolidado"
+    },
+    {
+      "file": "src/pages/UsersPage.tsx",
+      "line": 383,
+      "component": "UsersPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "onClick={() => onNavigate('profile-dashboard')}"
+    },
+    {
+      "file": "src/components/BlockedStateView.tsx",
+      "line": 40,
+      "component": "BlockedStateView.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "else AppRouter.navigate('/dashboard')"
+    },
+    {
+      "file": "src/components/BlockedStateView.tsx",
+      "line": 45,
+      "component": "BlockedStateView.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "<span>Voltar ao Dashboard</span>"
+    },
+    {
+      "file": "src/components/BlockedStateView.tsx",
+      "line": 74,
+      "component": "BlockedStateView.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "else AppRouter.navigate('/dashboard')"
+    },
+    {
+      "file": "src/components/commerce/OrderDossier360Modal.tsx",
+      "line": 445,
+      "component": "OrderDossier360Modal.tsx",
+      "found": "Details",
+      "suggestion": "Detalhes",
+      "snippet": "<p className=\"mt-1 text-slate-600 text-[11px] font-mono\">{event.details}</p>"
+    },
+    {
+      "file": "src/components/developer/UniversalComponentsShowcase.tsx",
+      "line": 180,
+      "component": "UniversalComponentsShowcase.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "description=\"Conjunto definitivo de componentes visuais padronizados para aplicação em todos os módulos da plataforma (D"
+    },
+    {
+      "file": "src/components/event-support/EventBuilderView.tsx",
+      "line": 137,
+      "component": "EventBuilderView.tsx",
+      "found": "Readiness",
+      "suggestion": "Preparação do Evento",
+      "snippet": "style={{ width: `${readiness.totalPercent}%` }}"
     },
     {
       "file": "src/components/EventContextSidebar.tsx",
-      "line": 17,
+      "line": 26,
       "component": "EventContextSidebar.tsx",
       "found": "Live Operations",
       "suggestion": "Operação ao Vivo",
-      "snippet": "{key:'event-live-ops',label:'Live Operations',icon:RadioTower},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 18,
-      "component": "EventContextSidebar.tsx",
-      "found": "Incident Center",
-      "suggestion": "Central de Incidentes",
-      "snippet": "{key:'event-incidents',label:'Incident Center',icon:Siren},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 19,
-      "component": "EventContextSidebar.tsx",
-      "found": "Revenue Intelligence",
-      "suggestion": "Inteligência de Receita",
-      "snippet": "{key:'event-revenue-intel',label:'Revenue Intelligence',icon:LineChart},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 20,
-      "component": "EventContextSidebar.tsx",
-      "found": "Search",
-      "suggestion": "Pesquisar",
-      "snippet": "{key:'event-global-search',label:'Busca Global',icon:Search},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 21,
-      "component": "EventContextSidebar.tsx",
-      "found": "Disk Intelligence",
-      "suggestion": "Inteligência Disk",
-      "snippet": "{key:'event-intelligence',label:'Disk Intelligence',icon:Brain},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 22,
-      "component": "EventContextSidebar.tsx",
-      "found": "Go-Live",
-      "suggestion": "Liberação do Evento",
-      "snippet": "{key:'event-readiness',label:'Readiness / Go-Live',icon:ClipboardCheck},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 23,
-      "component": "EventContextSidebar.tsx",
-      "found": "Forecast Center",
-      "suggestion": "Central de Previsões",
-      "snippet": "{key:'event-forecast',label:'Forecast Center',icon:Gauge},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 24,
-      "component": "EventContextSidebar.tsx",
-      "found": "Event Day Command",
-      "suggestion": "Central do Dia do Evento",
-      "snippet": "{key:'event-day-command',label:'Event Day Command',icon:Activity},"
-    },
-    {
-      "file": "src/components/EventContextSidebar.tsx",
-      "line": 25,
-      "component": "EventContextSidebar.tsx",
-      "found": "Executive Dashboard",
-      "suggestion": "Painel Executivo",
-      "snippet": "{key:'event-producer-executive',label:'Executive Dashboard',icon:BarChart3},"
+      "snippet": "{ key: 'event-live-ops', label: 'Live Operations', icon: RadioTower },"
     },
     {
       "file": "src/components/EventContextSidebar.tsx",
       "line": 27,
       "component": "EventContextSidebar.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "{key:'event-dashboard',label:'Dashboard',icon:CircleGauge},"
+      "found": "Incident Center",
+      "suggestion": "Central de Incidentes",
+      "snippet": "{ key: 'event-incidents', label: 'Incident Center', icon: Siren },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 28,
+      "component": "EventContextSidebar.tsx",
+      "found": "Revenue Intelligence",
+      "suggestion": "Inteligência de Receita",
+      "snippet": "{ key: 'event-revenue-intel', label: 'Revenue Intelligence', icon: LineChart },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 29,
+      "component": "EventContextSidebar.tsx",
+      "found": "Search",
+      "suggestion": "Pesquisar",
+      "snippet": "{ key: 'event-global-search', label: 'Busca Global', icon: Search },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 30,
+      "component": "EventContextSidebar.tsx",
+      "found": "Disk Intelligence",
+      "suggestion": "Inteligência Disk",
+      "snippet": "{ key: 'event-intelligence', label: 'Disk Intelligence', icon: Brain },"
     },
     {
       "file": "src/components/EventContextSidebar.tsx",
       "line": 31,
       "component": "EventContextSidebar.tsx",
+      "found": "Go-Live",
+      "suggestion": "Liberação do Evento",
+      "snippet": "{ key: 'event-readiness', label: 'Readiness / Go-Live', icon: ClipboardCheck },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 32,
+      "component": "EventContextSidebar.tsx",
+      "found": "Forecast Center",
+      "suggestion": "Central de Previsões",
+      "snippet": "{ key: 'event-forecast', label: 'Forecast Center', icon: Gauge },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 33,
+      "component": "EventContextSidebar.tsx",
+      "found": "Event Day Command",
+      "suggestion": "Central do Dia do Evento",
+      "snippet": "{ key: 'event-day-command', label: 'Event Day Command', icon: Activity },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 34,
+      "component": "EventContextSidebar.tsx",
+      "found": "Executive Dashboard",
+      "suggestion": "Painel Executivo",
+      "snippet": "{ key: 'event-producer-executive', label: 'Executive Dashboard', icon: BarChart3 },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 36,
+      "component": "EventContextSidebar.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "{ key: 'event-dashboard', label: 'Dashboard', icon: CircleGauge },"
+    },
+    {
+      "file": "src/components/EventContextSidebar.tsx",
+      "line": 40,
+      "component": "EventContextSidebar.tsx",
       "found": "Details",
       "suggestion": "Detalhes",
-      "snippet": "{key:'event-details',label:'Detalhes',icon:Settings2},"
+      "snippet": "{ key: 'event-details', label: 'Detalhes', icon: Settings2 },"
     },
     {
       "file": "src/components/events/EventTableView.tsx",
@@ -2207,7 +2247,7 @@
     },
     {
       "file": "src/components/layout/ModuleTitleBar.tsx",
-      "line": 85,
+      "line": 89,
       "component": "ModuleTitleBar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2215,7 +2255,7 @@
     },
     {
       "file": "src/components/layout/ModuleTitleBar.tsx",
-      "line": 101,
+      "line": 105,
       "component": "ModuleTitleBar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2223,7 +2263,7 @@
     },
     {
       "file": "src/components/layout/ModuleTitleBar.tsx",
-      "line": 121,
+      "line": 125,
       "component": "ModuleTitleBar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2279,7 +2319,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 352,
+      "line": 354,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2287,7 +2327,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 358,
+      "line": 360,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2295,7 +2335,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 410,
+      "line": 412,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2303,7 +2343,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 412,
+      "line": 414,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2311,7 +2351,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 416,
+      "line": 418,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2319,7 +2359,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 419,
+      "line": 421,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2327,7 +2367,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 469,
+      "line": 471,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2335,7 +2375,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 505,
+      "line": 507,
       "component": "Sidebar.tsx",
       "found": "Edit",
       "suggestion": "Editar",
@@ -2343,7 +2383,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 567,
+      "line": 569,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2351,7 +2391,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 569,
+      "line": 571,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2359,7 +2399,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 575,
+      "line": 577,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2367,7 +2407,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 757,
+      "line": 759,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2375,7 +2415,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 759,
+      "line": 761,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2383,7 +2423,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 765,
+      "line": 767,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2391,7 +2431,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 946,
+      "line": 996,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2399,7 +2439,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 948,
+      "line": 998,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2407,7 +2447,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 954,
+      "line": 1004,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2415,7 +2455,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 1134,
+      "line": 1184,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2423,7 +2463,7 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 1136,
+      "line": 1186,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2431,15 +2471,23 @@
     },
     {
       "file": "src/components/layout/Sidebar.tsx",
-      "line": 1142,
+      "line": 1192,
       "component": "Sidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "<span>Dashboard SAC</span>"
     },
     {
+      "file": "src/components/ModuleHubView.tsx",
+      "line": 145,
+      "component": "ModuleHubView.tsx",
+      "found": "Search",
+      "suggestion": "Pesquisar",
+      "snippet": "Nenhuma função encontrada com o termo \"{search}\"."
+    },
+    {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 18,
+      "line": 19,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2447,7 +2495,15 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 19,
+      "line": 27,
+      "component": "ModuleSidebar.tsx",
+      "found": "Search",
+      "suggestion": "Pesquisar",
+      "snippet": "| 'customer-search-hub'"
+    },
+    {
+      "file": "src/components/ModuleSidebar.tsx",
+      "line": 29,
       "component": "ModuleSidebar.tsx",
       "found": "Readiness",
       "suggestion": "Preparação do Evento",
@@ -2455,7 +2511,7 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 20,
+      "line": 30,
       "component": "ModuleSidebar.tsx",
       "found": "Details",
       "suggestion": "Detalhes",
@@ -2463,7 +2519,7 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 23,
+      "line": 37,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2471,7 +2527,7 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 28,
+      "line": 42,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2479,7 +2535,7 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 32,
+      "line": 46,
       "component": "ModuleSidebar.tsx",
       "found": "Settings",
       "suggestion": "Configurações",
@@ -2487,15 +2543,15 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 36,
+      "line": 51,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "| 'marketing-hub' | 'marketing-dashboard' | 'marketing-campaigns' | 'marketing-ready-campaigns' | 'marketing-create' | '"
+      "snippet": "| 'marketing-hub' | 'marketing-dashboard' | 'marketing-status-real' | 'marketing-real-status' | 'marketing-campaigns' | "
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 37,
+      "line": 52,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2503,7 +2559,7 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 38,
+      "line": 53,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2511,7 +2567,7 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 60,
+      "line": 78,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2519,7 +2575,15 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 76,
+      "line": 96,
+      "component": "ModuleSidebar.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "const mainFinanceDashboardItem: Item = { key: 'finance-dashboard', label: 'Dashboard Financeiro', icon: WalletCards }"
+    },
+    {
+      "file": "src/components/ModuleSidebar.tsx",
+      "line": 99,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2527,15 +2591,15 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 85,
+      "line": 112,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
-      "snippet": "{ key: 'accounting-dashboard', label: 'Dashboard Contábil', icon: BarChart3, badge: 'Contábil' },"
+      "snippet": "{ key: 'accounting-dashboard', label: 'Visão Geral', icon: BarChart3, badge: 'Contábil', route: '/contabilidade/dashboar"
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 101,
+      "line": 122,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2543,7 +2607,31 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 121,
+      "line": 142,
+      "component": "ModuleSidebar.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "if (itemKey === 'finance-dashboard') return currentPage === 'finance-dashboard'"
+    },
+    {
+      "file": "src/components/ModuleSidebar.tsx",
+      "line": 169,
+      "component": "ModuleSidebar.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "if (itemKey === 'accounting-dashboard') return currentPage === 'accounting-dashboard' || currentPage === 'finance-accoun"
+    },
+    {
+      "file": "src/components/ModuleSidebar.tsx",
+      "line": 187,
+      "component": "ModuleSidebar.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "if (itemKey === 'marketing-dashboard') return currentPage === 'marketing-dashboard' || currentPage === 'marketing-hub'"
+    },
+    {
+      "file": "src/components/ModuleSidebar.tsx",
+      "line": 198,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2551,7 +2639,15 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 193,
+      "line": 225,
+      "component": "ModuleSidebar.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "if (p === 'finance-accounting') return 'accounting-dashboard'"
+    },
+    {
+      "file": "src/components/ModuleSidebar.tsx",
+      "line": 352,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2559,15 +2655,7 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 209,
-      "component": "ModuleSidebar.tsx",
-      "found": "Dashboard",
-      "suggestion": "Painel",
-      "snippet": "(it.key === 'finance-dashboard' && ['finance', 'finance-dashboard', 'finance-hub', 'finance-producer-account', 'finance-"
-    },
-    {
-      "file": "src/components/ModuleSidebar.tsx",
-      "line": 383,
+      "line": 526,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
@@ -2575,11 +2663,35 @@
     },
     {
       "file": "src/components/ModuleSidebar.tsx",
-      "line": 385,
+      "line": 528,
       "component": "ModuleSidebar.tsx",
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "'marketing-dashboard': 'marketing',"
+    },
+    {
+      "file": "src/components/payments/PaymentsHubPage.tsx",
+      "line": 230,
+      "component": "PaymentsHubPage.tsx",
+      "found": "Dashboard",
+      "suggestion": "Painel",
+      "snippet": "<span>Dashboard Financeiro</span>"
+    },
+    {
+      "file": "src/components/payments/PaymentsHubPage.tsx",
+      "line": 762,
+      "component": "PaymentsHubPage.tsx",
+      "found": "Retry",
+      "suggestion": "Tentar novamente",
+      "snippet": "<span className=\"font-bold text-emerald-700\">Consulta Status Pré-Retry</span>"
+    },
+    {
+      "file": "src/components/payments/PaymentsHubPage.tsx",
+      "line": 1047,
+      "component": "PaymentsHubPage.tsx",
+      "found": "Edit",
+      "suggestion": "Editar",
+      "snippet": "<span>Garantia de Saldo Não Editável Manualmente (29.9.37)</span>"
     },
     {
       "file": "src/components/Sidebar.tsx",
@@ -2612,6 +2724,14 @@
       "found": "Dashboard",
       "suggestion": "Painel",
       "snippet": "{financeOpen&&<div className=\"submenu\"><button onClick={()=>onNavigate('finance-dashboard')} className={`sub-item ${page"
+    },
+    {
+      "file": "src/components/tracking/TrackingRecentActivity.tsx",
+      "line": 274,
+      "component": "TrackingRecentActivity.tsx",
+      "found": "Retry",
+      "suggestion": "Tentar novamente",
+      "snippet": "<div style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>Reprocessando (Retry)</div>"
     }
   ]
 }

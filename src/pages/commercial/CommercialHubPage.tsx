@@ -754,53 +754,6 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
       }
     },
     {
-      key: 'spread',
-      header: 'Spread',
-      align: 'center',
-      width: '105px',
-      render: (ev) =>
-        ev.spreadEnabled ? (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              handleOpenFeeModal(ev, true)
-            }}
-            className="px-2 py-0.5 rounded text-purple-600 dark:text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 font-bold font-mono text-xs transition cursor-pointer"
-            title="Ajustar taxa de spread deste evento"
-          >
-            {(ev.spreadBps / 100).toFixed(1)}%
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              handleOpenFeeModal(ev, true)
-            }}
-            className="px-2 py-0.5 rounded text-[11px] font-semibold text-purple-600 dark:text-purple-400 hover:bg-purple-500/10 border border-purple-300 dark:border-purple-800 transition inline-flex items-center gap-1 cursor-pointer"
-            title="Inserir e adicionar taxa de spread do evento"
-          >
-            <Plus className="w-3 h-3" />
-            <span>Adicionar</span>
-          </button>
-        )
-    },
-    {
-      key: 'advanced',
-      header: 'Advanced',
-      align: 'center',
-      width: '100px',
-      render: (ev) =>
-        ev.hasActiveAdvance ? (
-          <DiskStatusBadge status="ATIVO" label="Ativo" tone="success" />
-        ) : ev.advancedEnabled ? (
-          <DiskStatusBadge status="PENDING" label="Elegível" tone="warning" />
-        ) : (
-          <span className="text-[var(--disk-text-muted,#64748b)] text-xs">—</span>
-        )
-    },
-    {
       key: 'situation',
       header: 'Situação',
       width: '120px',
@@ -1118,9 +1071,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
               { key: 'ativos', label: `Ativos (${data.kpis.activeEvents})` },
               { key: 'configuracao', label: `Configuração (${data.kpis.configuringEvents})` },
               { key: 'publicados', label: `Publicados (${data.kpis.publishedEvents})` },
-              { key: 'com_pendencia', label: `Com Pendência (${data.kpis.commercialIssuesCount})` },
-              { key: 'advanced', label: 'Advanced' },
-              { key: 'spread', label: 'Spread' }
+              { key: 'com_pendencia', label: `Com Pendência (${data.kpis.commercialIssuesCount})` }
             ].map((tab) => {
               const isActive = eventFilter === tab.key
               return (
