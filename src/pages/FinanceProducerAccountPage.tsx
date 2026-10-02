@@ -23,8 +23,10 @@ import {
   TrendingUp,
   Undo2,
   WalletCards,
+  Landmark,
   X,
 } from 'lucide-react'
+import FinanceInternalAccountModule from '../components/finance/FinanceInternalAccountModule'
 import type { EventItem } from '../data/events'
 import { eventBalances, financeSummary } from '../data/finance'
 import type { PageKey } from '../components/ModuleSidebar'
@@ -59,7 +61,18 @@ function generateIdempotencyKey(): string {
 
 export default function FinanceProducerAccountPage({ events, producerId, notify, onNavigate }: Props) {
   const effectiveProducerId = producerId || 1
-  const [activeTab, setActiveTab] = useState<'subaccounts' | 'transfers' | 'analytics'>('subaccounts')
+  const initialTab = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search)
+      const tab = p.get('tab')
+      if (tab === 'subaccounts') return 'subaccounts'
+      if (tab === 'transfers') return 'transfers'
+      if (tab === 'analytics') return 'analytics'
+      if (tab === 'interna' || tab === 'internal-account' || tab === 'conta') return 'internal-account'
+    }
+    return 'internal-account'
+  }, [])
+  const [activeTab, setActiveTab] = useState<'internal-account' | 'subaccounts' | 'transfers' | 'analytics'>(initialTab)
   const [eventId, setEventId] = useState('all')
   const [period, setPeriod] = useState('30d')
   const [searchTerm, setSearchTerm] = useState('')
@@ -655,39 +668,48 @@ export default function FinanceProducerAccountPage({ events, producerId, notify,
       </header>
 
       {/* --- KPIs Executivos --- */}
-      <section className="producer-kpi-grid">
-        <Kpi
-          icon={WalletCards}
-          label="Saldo disponível"
-          value={brl(totals.available || financeSummary.availableBalance)}
-          sub="Liberado para repasse ou transferência"
-          tone="blue"
-        />
-        <Kpi
-          icon={Clock3}
-          label="A liquidar"
-          value={brl(totals.receivable || financeSummary.receivable)}
-          sub="Recebíveis e parcelamentos futuros"
-          tone="green"
-        />
-        <Kpi
-          icon={ShieldCheck}
-          label="Reserva financeira"
-          value={brl(totals.blocked || financeSummary.blockedBalance)}
-          sub="Garantias, disputas e retenções"
-          tone="orange"
-        />
-        <Kpi
-          icon={HandCoins}
-          label="Já repassado"
-          value={brl(totals.paid)}
-          sub="Liquidações concluídas ao produtor"
-          tone="purple"
-        />
-      </section>
+      {activeTab !== 'internal-account' && (
+        <section className="producer-kpi-grid">
+          <Kpi
+            icon={WalletCards}
+            label="Saldo disponível"
+            value={brl(totals.available || financeSummary.availableBalance)}
+            sub="Liberado para repasse ou transferência"
+            tone="blue"
+          />
+          <Kpi
+            icon={Clock3}
+            label="A liquidar"
+            value={brl(totals.receivable || financeSummary.receivable)}
+            sub="Recebíveis e parcelamentos futuros"
+            tone="green"
+          />
+          <Kpi
+            icon={ShieldCheck}
+            label="Reserva financeira"
+            value={brl(totals.blocked || financeSummary.blockedBalance)}
+            sub="Garantias, disputas e retenções"
+            tone="orange"
+          />
+          <Kpi
+            icon={HandCoins}
+            label="Já repassado"
+            value={brl(totals.paid)}
+            sub="Liquidações concluídas ao produtor"
+            tone="purple"
+          />
+        </section>
+      )}
 
       {/* --- Abas de Navegação --- */}
       <nav className="pa-tabs-container">
+        <button
+          className={`pa-tab-btn ${activeTab === 'internal-account' ? 'active' : ''}`}
+          onClick={() => setActiveTab('internal-account')}
+        >
+          <Landmark size={16} /> Conta Interna Disk (V0.5)
+          <span className="pa-tab-badge" style={{ background: '#e0f2fe', color: '#0369a1' }}>Novo V0.5</span>
+        </button>
         <button
           className={`pa-tab-btn ${activeTab === 'subaccounts' ? 'active' : ''}`}
           onClick={() => setActiveTab('subaccounts')}
@@ -709,6 +731,13 @@ export default function FinanceProducerAccountPage({ events, producerId, notify,
           <TrendingUp size={16} /> Visão Gráfica & Indicadores
         </button>
       </nav>
+
+      {/* ====================================================================
+          ABA 0: CONTA FINANCEIRA INTERNA DISK V0.5
+          ==================================================================== */}
+      {activeTab === 'internal-account' && (
+        <FinanceInternalAccountModule />
+      )}
 
       {/* ====================================================================
           ABA 1: SUBCONTAS POR EVENTO (ESTILO CONTA AZUL)

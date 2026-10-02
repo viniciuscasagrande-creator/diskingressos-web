@@ -41,6 +41,7 @@ import { ticketsAccessRouter } from './routes/ticketsAccess.js'
 import { customerServiceItilRouter } from './routes/customerServiceItil.js'
 import { financialAccountingCoreRouter } from './routes/financialAccountingCore.js'
 import { commercialRouter } from './routes/commercial.js'
+import { financeInternalAccountRouter } from './routes/financeInternalAccount.js'
 
 const app = express()
 app.disable('x-powered-by')
@@ -133,6 +134,8 @@ app.use('/api/finance/settlement', financeSettlementRouter)
 app.use('/api/finance/disputes', financeDisputesRouter)
 app.use('/api/finance/ledger', ledgerRouter)
 app.use('/api/finance/split', financeSplitRouter)
+app.use('/api/finance/internal-account', financeInternalAccountRouter)
+app.use('/api/interno', financeInternalAccountRouter)
 app.use('/api/operations', operationsRouter)
 app.use('/api/marketing/spotify', spotifyAdsRouter)
 app.use('/api/marketing/conversions', conversionsRouter)
