@@ -27,8 +27,6 @@ test.describe('Dashboard Comercial — Central de Trabalho da Equipe Comercial',
     await expect(page.getByText('Vendas Atuais')).toBeVisible()
     await expect(page.getByText('Ingressos Vendidos')).toBeVisible()
     await expect(page.getByText('Taxas Disk')).toBeVisible()
-    await expect(page.getByText('Spread')).toBeVisible()
-    await expect(page.getByText('Advanced')).toBeVisible()
     await expect(page.getByText('A Receber')).toBeVisible()
     await expect(page.getByText('Pendências')).toBeVisible()
 

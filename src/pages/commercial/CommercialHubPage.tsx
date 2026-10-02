@@ -172,14 +172,6 @@ const DEFAULT_COMMERCIAL_DATA: DashboardResponse = {
       description: 'Contratos pendentes de aceite pelo produtor responsável.',
       severity: 'warning',
       filterKey: 'com_pendencia'
-    },
-    {
-      id: 'advanced',
-      count: 3,
-      title: 'Operações elegíveis para Antecipação (Advanced)',
-      description: 'Produtores com limite disponível para solicitação de antecipação.',
-      severity: 'info',
-      filterKey: 'advanced'
     }
   ],
   events: [
@@ -797,7 +789,7 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
       {/* 1. Header Canônico com DiskPageHeader */}
       <DiskPageHeader
         title="Dashboard Comercial"
-        subtitle="Localize produtores ou eventos, acompanhe a situação contratual e gerencie as taxas Disk, spread e antecipações."
+        subtitle="Localize produtores ou eventos, acompanhe a situação contratual e gerencie as taxas comerciais Disk."
         eyebrow="Painel de Operação Comercial"
         badge={
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
@@ -990,20 +982,6 @@ export const CommercialHubPage: React.FC<CommercialHubPageProps> = ({
             value={moneyCompact(data.kpis.diskFeesCents)}
             note="Receita de taxas"
             accent="primary"
-            loading={loading}
-          />
-          <DiskKpiCard
-            label="Spread"
-            value={moneyCompact(data.kpis.spreadCents)}
-            note="Operações ativas"
-            accent="purple"
-            loading={loading}
-          />
-          <DiskKpiCard
-            label="Advanced"
-            value={moneyCompact(data.kpis.advancedActiveCents)}
-            note="Antecipações"
-            accent="warning"
             loading={loading}
           />
           <DiskKpiCard

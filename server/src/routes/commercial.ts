@@ -546,18 +546,6 @@ commercialRouter.get('/dashboard', optionalAuth, async (req: AuthRequest, res) =
       })
     }
 
-    const advEligibleCount = formattedEvents.filter(e => e.advancedEnabled).length
-    if (advEligibleCount > 0) {
-      alerts.push({
-        id: 'advanced',
-        count: advEligibleCount,
-        title: `${advEligibleCount} ${advEligibleCount === 1 ? 'evento elegível para Advanced' : 'eventos elegíveis para Advanced'}`,
-        description: 'Operações de antecipação com limite liberado',
-        severity: 'neutral' as const,
-        filterKey: 'advanced'
-      })
-    }
-
     // Produtores Consolidados
     const formattedProducers = producers.map(p => {
       const prodEvents = formattedEvents.filter(e => e.producerId === p.id)
